@@ -10,6 +10,22 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="description" content="AshaJolies UGC Creator HQ — Gig tracker, content planner, moodboard, brand hub">
 <title>AshaJolies UGC HQ</title>
+<!-- ═══ PWA MANIFEST (inline data URI) ═══ -->
+<link rel="manifest" href="data:application/manifest+json,{
+  %22name%22:%22AshaJolies%20HQ%22,
+  %22short_name%22:%22AJ%20HQ%22,
+  %22description%22:%22AshaJolies%20UGC%20Creator%20HQ%22,
+  %22start_url%22:%22.%22,
+  %22display%22:%22standalone%22,
+  %22orientation%22:%22portrait%22,
+  %22background_color%22:%22%231E1916%22,
+  %22theme_color%22:%22%231E1916%22,
+  %22icons%22:[
+    {%22src%22:%22data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%20512%20512'%3E%3Crect%20width%3D'512'%20height%3D'512'%20rx%3D'80'%20fill%3D'%231E1916'%2F%3E%3Ctext%20x%3D'256'%20y%3D'340'%20text-anchor%3D'middle'%20font-size%3D'260'%20font-family%3D'serif'%20fill%3D'%23E8C4B0'%3EAJ%3C%2Ftext%3E%3C%2Fsvg%3E%22,%22sizes%22:%22512x512%22,%22type%22:%22image/svg+xml%22,%22purpose%22:%22any%20maskable%22}
+  ]
+}">
+<!-- Apple touch icon (SVG inline) -->
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%20512%20512'%3E%3Crect%20width%3D'512'%20height%3D'512'%20rx%3D'80'%20fill%3D'%231E1916'%2F%3E%3Ctext%20x%3D'256'%20y%3D'340'%20text-anchor%3D'middle'%20font-size%3D'260'%20font-family%3D'serif'%20fill%3D'%23E8C4B0'%3EAJ%3C%2Ftext%3E%3C%2Fsvg%3E">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@200;300;400;500;600&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 /* ─── TOKENS ─── */
@@ -340,6 +356,23 @@ body{background:var(--ivory);font-family:'Jost',sans-serif;font-weight:300;color
   .fp-grid{max-width:100%!important;}
   #feed-layout{grid-template-columns:1fr!important;}
 }
+
+/* ─── PWA INSTALL BANNER ─── */
+#pwa-banner{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--ivory);border-radius:100px;padding:10px 14px 10px 16px;display:none;align-items:center;gap:10px;box-shadow:0 8px 32px rgba(0,0,0,.4);z-index:9998;white-space:nowrap;animation:pwaUp .3s ease;}
+#pwa-banner.show{display:flex;}
+@keyframes pwaUp{from{opacity:0;transform:translateX(-50%) translateY(16px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+.pwa-icon{font-size:22px;}
+.pwa-text{font-size:11px;line-height:1.35;}
+.pwa-text strong{display:block;font-size:12px;font-weight:600;}
+.pwa-text span{opacity:.55;}
+#pwa-btn-install{background:var(--terracotta);color:#fff;border:none;border-radius:100px;padding:7px 15px;font-family:'Jost',sans-serif;font-size:11px;font-weight:600;letter-spacing:.05em;cursor:pointer;flex-shrink:0;}
+#pwa-btn-install:hover{background:#b05e3d;}
+#pwa-btn-dismiss{background:none;border:none;color:rgba(250,246,239,.35);font-size:17px;cursor:pointer;padding:0 2px;line-height:1;flex-shrink:0;}
+#pwa-btn-dismiss:hover{color:var(--ivory);}
+#ios-tip{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--ivory);border-radius:18px;padding:16px 20px;display:none;max-width:300px;width:calc(100% - 32px);text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.4);z-index:9998;font-size:12px;line-height:1.65;animation:pwaUp .3s ease;}
+#ios-tip.show{display:block;}
+#ios-tip strong{display:block;font-size:13px;font-weight:600;margin-bottom:6px;color:var(--blush);}
+.ios-close{margin-top:12px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);color:var(--ivory);border-radius:100px;padding:6px 18px;cursor:pointer;font-family:'Jost',sans-serif;font-size:11px;}
 </style>
 </head>
 <body>
@@ -841,8 +874,96 @@ body{background:var(--ivory);font-family:'Jost',sans-serif;font-weight:300;color
   <div class="mb2" id="status-opts" style="display:flex;flex-direction:column;gap:7px;"></div>
 </div></div>
 
+<!-- ═══ PWA INSTALL BANNER ═══ -->
+<div id="pwa-banner">
+  <span class="pwa-icon">📲</span>
+  <div class="pwa-text"><strong>Install AshaJolies HQ</strong><span>Works offline · Feels like a native app</span></div>
+  <button id="pwa-btn-install" onclick="pwaDo()">Install</button>
+  <button id="pwa-btn-dismiss" onclick="pwaDismiss()" title="Dismiss">×</button>
+</div>
+<div id="ios-tip">
+  <strong>📲 Install on iPhone / iPad</strong>
+  Tap the <strong>Share</strong> button (⬆) at the bottom of Safari, then choose <strong>"Add to Home Screen"</strong>.
+  <br><button class="ios-close" onclick="document.getElementById('ios-tip').classList.remove('show')">Got it</button>
+</div>
+
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════════
+//  PWA — Service Worker + Install Prompt
+// ══════════════════════════════════════════════
+(function(){
+  // ── Service Worker (inline blob) ──
+  const SW_SRC = `
+const CACHE='ajhq-v1';
+const ASSETS=[]; // Firebase app fetches its own assets; we just cache the shell
+self.addEventListener('install',e=>{self.skipWaiting();});
+self.addEventListener('activate',e=>{
+  e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k)))));
+  self.clients.claim();
+});
+self.addEventListener('fetch',e=>{
+  // Network-first for Firebase; cache-first for everything else
+  const url=new URL(e.request.url);
+  const isFirebase=url.hostname.includes('firestore.googleapis.com')||url.hostname.includes('firebase');
+  if(isFirebase){e.respondWith(fetch(e.request).catch(()=>caches.match(e.request)));return;}
+  e.respondWith(
+    caches.open(CACHE).then(cache=>
+      cache.match(e.request).then(hit=>{
+        const net=fetch(e.request).then(res=>{if(res.ok)cache.put(e.request,res.clone());return res;});
+        return hit||net;
+      })
+    )
+  );
+});`;
+
+  if('serviceWorker' in navigator){
+    const blob=new Blob([SW_SRC],{type:'application/javascript'});
+    const swUrl=URL.createObjectURL(blob);
+    navigator.serviceWorker.register(swUrl,{scope:'./'}).catch(e=>console.warn('SW reg failed',e));
+  }
+
+  // ── Install prompt ──
+  let deferredPrompt=null;
+  const banner=document.getElementById('pwa-banner');
+  const iosTip=document.getElementById('ios-tip');
+  const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent)&&!window.MSStream;
+  const isInStandalone=window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone;
+
+  if(!isInStandalone){
+    if(isIOS){
+      // Show iOS manual tip after 3s
+      setTimeout(()=>iosTip.classList.add('show'),3000);
+    } else {
+      window.addEventListener('beforeinstallprompt',e=>{
+        e.preventDefault();deferredPrompt=e;
+        setTimeout(()=>banner.classList.add('show'),2000);
+      });
+    }
+  }
+
+  window.pwaDo=function(){
+    if(!deferredPrompt)return;
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(r=>{
+      if(r.outcome==='accepted')banner.classList.remove('show');
+      deferredPrompt=null;
+    });
+  };
+  window.pwaDismiss=function(){
+    banner.classList.remove('show');
+    deferredPrompt=null;
+  };
+
+  // Hide banner once installed
+  window.addEventListener('appinstalled',()=>{
+    banner.classList.remove('show');
+    if(typeof toast==='function')toast('App installed! 🎉');
+  });
+})();
+</script>
 
 <!-- Firebase bootstrap: initialises Firestore, exposes window.D, window.save, window._fbReady -->
 <script type="module">
