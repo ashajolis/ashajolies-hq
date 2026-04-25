@@ -9,24 +9,44 @@
 <meta name="apple-mobile-web-app-title" content="AshaJolies HQ">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="description" content="AshaJolies UGC Creator HQ — Gig tracker, content planner, moodboard, brand hub">
+<link rel="manifest" href="manifest.json">
 <title>AshaJolies UGC HQ</title>
-<!-- ═══ PWA MANIFEST (inline data URI) ═══ -->
-<link rel="manifest" href="data:application/manifest+json,{
-  %22name%22:%22AshaJolies%20HQ%22,
-  %22short_name%22:%22AJ%20HQ%22,
-  %22description%22:%22AshaJolies%20UGC%20Creator%20HQ%22,
-  %22start_url%22:%22.%22,
-  %22display%22:%22standalone%22,
-  %22orientation%22:%22portrait%22,
-  %22background_color%22:%22%231E1916%22,
-  %22theme_color%22:%22%231E1916%22,
-  %22icons%22:[
-    {%22src%22:%22data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%20512%20512'%3E%3Crect%20width%3D'512'%20height%3D'512'%20rx%3D'80'%20fill%3D'%231E1916'%2F%3E%3Ctext%20x%3D'256'%20y%3D'340'%20text-anchor%3D'middle'%20font-size%3D'260'%20font-family%3D'serif'%20fill%3D'%23E8C4B0'%3EAJ%3C%2Ftext%3E%3C%2Fsvg%3E%22,%22sizes%22:%22512x512%22,%22type%22:%22image/svg+xml%22,%22purpose%22:%22any%20maskable%22}
-  ]
-}">
-<!-- Apple touch icon (SVG inline) -->
-<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%20512%20512'%3E%3Crect%20width%3D'512'%20height%3D'512'%20rx%3D'80'%20fill%3D'%231E1916'%2F%3E%3Ctext%20x%3D'256'%20y%3D'340'%20text-anchor%3D'middle'%20font-size%3D'260'%20font-family%3D'serif'%20fill%3D'%23E8C4B0'%3EAJ%3C%2Ftext%3E%3C%2Fsvg%3E">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@200;300;400;500;600&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<!-- Firebase SDK (compat build — most reliable across all browsers/PWAs) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+// ── SERVICE WORKER (real file for PWA install support) ──
+if('serviceWorker' in navigator){
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').then(reg => {
+      window.addEventListener('online',()=>{const b=document.getElementById('offline-bar');if(b)b.style.display='none';});
+      window.addEventListener('offline',()=>{const b=document.getElementById('offline-bar');if(b)b.style.display='flex';});
+    }).catch(()=>{});
+  });
+}
+
+// ── PWA INSTALL PROMPT ──
+let _deferredInstallPrompt = null;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  _deferredInstallPrompt = e;
+  // Show install button if present
+  const btn = document.getElementById('pwa-install-btn');
+  if (btn) btn.style.display = 'inline-flex';
+});
+window.addEventListener('appinstalled', () => {
+  _deferredInstallPrompt = null;
+  const btn = document.getElementById('pwa-install-btn');
+  if (btn) btn.style.display = 'none';
+});
+function installPWA() {
+  if (_deferredInstallPrompt) {
+    _deferredInstallPrompt.prompt();
+    _deferredInstallPrompt.userChoice.then(() => { _deferredInstallPrompt = null; });
+  }
+}
+</script>
 <style>
 /* ─── TOKENS ─── */
 :root{
@@ -327,6 +347,95 @@ body{background:var(--ivory);font-family:'Jost',sans-serif;font-weight:300;color
 .ex-bar-text{flex:1;font-size:12px;color:var(--forest);}
 .ex-bar-text strong{font-weight:600;}
 
+/* ─── OFFLINE BAR ─── */
+#offline-bar{display:none;position:fixed;top:0;left:0;right:0;z-index:9998;background:#b05e3d;color:#fff;padding:7px 18px;font-size:11px;letter-spacing:.06em;align-items:center;gap:8px;justify-content:center;}
+
+/* ─── SYNC HUB MODAL ─── */
+.sync-backdrop{
+  position:fixed;inset:0;
+  background:rgba(20,16,14,.72);
+  z-index:3000;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  backdrop-filter:blur(6px);
+  -webkit-backdrop-filter:blur(6px);
+}
+.sync-backdrop.open{display:flex;}
+.sync-box{
+  background:var(--ivory);
+  border-radius:24px;
+  width:100%;
+  max-width:500px;
+  max-height:90vh;
+  overflow-y:auto;
+  box-shadow:0 32px 80px rgba(0,0,0,.35),0 0 0 1px rgba(255,255,255,.06);
+  animation:syncIn .36s cubic-bezier(.22,1,.36,1) both;
+  position:relative;
+}
+@keyframes syncIn{
+  from{opacity:0;transform:translateY(28px) scale(.95)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+.sync-hero{
+  background:linear-gradient(140deg,#1E1916 60%,#2e201a);
+  padding:30px 28px 24px;
+  position:relative;
+  border-radius:24px 24px 0 0;
+}
+.sync-hero-eyebrow{font-size:8px;letter-spacing:.4em;text-transform:uppercase;color:var(--warm-gold);font-family:'DM Mono',monospace;margin-bottom:6px;}
+.sync-hero-title{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:300;color:var(--ivory);line-height:1.1;}
+.sync-hero-title em{font-style:italic;color:var(--blush);}
+.sync-hero-sub{font-size:11.5px;color:rgba(250,246,239,.42);margin-top:7px;line-height:1.6;}
+.sync-close{
+  position:absolute;top:18px;right:20px;
+  background:rgba(255,255,255,.1);border:none;
+  color:rgba(255,255,255,.6);width:30px;height:30px;border-radius:50%;
+  font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:all .15s;line-height:1;
+}
+.sync-close:hover{background:rgba(255,255,255,.2);color:#fff;}
+.sync-tabs{display:flex;border-bottom:1px solid rgba(0,0,0,.07);background:#fff;}
+.sync-tab{flex:1;padding:11px 0;font-size:11px;font-weight:500;text-align:center;cursor:pointer;border:none;background:transparent;font-family:'Jost',sans-serif;letter-spacing:.06em;color:var(--warm-gray);border-bottom:2px solid transparent;transition:all .15s;}
+.sync-tab.on{color:var(--terracotta);border-bottom-color:var(--terracotta);}
+.sync-panel{display:none;padding:22px 26px 26px;flex-direction:column;gap:14px;}
+.sync-panel.on{display:flex;}
+.sync-status-row{display:flex;align-items:center;gap:8px;padding:9px 13px;background:var(--warm-white);border-radius:10px;font-size:11px;color:var(--warm-gray);}
+.sync-dot{width:8px;height:8px;border-radius:50%;background:#4A6B50;flex-shrink:0;box-shadow:0 0 0 2px rgba(74,107,80,.2);}
+.sync-dot.off{background:#c0392b;box-shadow:0 0 0 2px rgba(192,57,43,.2);}
+.sync-dot.pulse{animation:pulse 1.4s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* Live sync code area */
+.sync-code-box{background:var(--ink);border-radius:14px;padding:18px 20px;text-align:center;}
+.sync-code-label{font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:rgba(250,246,239,.35);font-family:'DM Mono',monospace;margin-bottom:8px;}
+.sync-code-val{font-family:'DM Mono',monospace;font-size:2rem;letter-spacing:.18em;color:var(--warm-gold);font-weight:500;cursor:pointer;transition:opacity .15s;}
+.sync-code-val:hover{opacity:.75;}
+.sync-code-sub{font-size:10px;color:rgba(250,246,239,.28);margin-top:6px;}
+.sync-input-row{display:flex;gap:8px;}
+.sync-input-row input{flex:1;background:#fff;border:1.5px solid rgba(0,0,0,.1);border-radius:10px;padding:10px 14px;font-family:'DM Mono',monospace;font-size:1.1rem;letter-spacing:.15em;outline:none;text-transform:uppercase;color:var(--ink);text-align:center;transition:border .15s;}
+.sync-input-row input:focus{border-color:var(--terracotta);}
+.sync-input-row button{background:var(--terracotta);color:#fff;border:none;border-radius:10px;padding:10px 18px;font-family:'Jost',sans-serif;font-size:11px;font-weight:500;cursor:pointer;white-space:nowrap;transition:background .15s;}
+.sync-input-row button:hover{background:#b05e3d;}
+.sync-divider{display:flex;align-items:center;gap:10px;font-size:10px;color:var(--mid-gray);}
+.sync-divider::before,.sync-divider::after{content:'';flex:1;height:1px;background:rgba(0,0,0,.08);}
+.sync-btn-row{display:flex;gap:8px;}
+.sync-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:13px 14px;border-radius:13px;border:1.5px solid rgba(0,0,0,.08);background:#fff;cursor:pointer;transition:all .16s;font-family:'Jost',sans-serif;}
+.sync-btn:hover{border-color:var(--terracotta);box-shadow:0 3px 14px rgba(196,113,79,.13);}
+.sync-btn-icon{font-size:20px;width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;}
+.sync-btn-icon.exp{background:rgba(74,107,80,.1);}
+.sync-btn-icon.imp{background:rgba(196,113,79,.1);}
+.sync-btn-text{text-align:left;}
+.sync-btn-title{font-size:12px;font-weight:600;color:var(--ink);}
+.sync-btn-sub{font-size:10px;color:var(--warm-gray);}
+.sync-log{background:var(--warm-white);border-radius:10px;padding:10px 13px;font-size:10.5px;color:var(--warm-gray);font-family:'DM Mono',monospace;line-height:1.7;min-height:36px;}
+.sync-footer2{display:flex;align-items:center;justify-content:space-between;padding:0 26px 20px;}
+.sync-skip{font-size:11px;color:var(--mid-gray);cursor:pointer;background:none;border:none;font-family:'Jost',sans-serif;}
+.sync-skip:hover{color:var(--warm-gray);}
+.sync-remember{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--warm-gray);cursor:pointer;}
+.sync-remember input{accent-color:var(--terracotta);}
+
 /* ─── LINKED BADGE ─── */
 .lb2{display:inline-flex;align-items:center;gap:5px;background:rgba(74,107,80,.08);border:1px solid rgba(74,107,80,.15);border-radius:20px;padding:3px 9px;font-size:10px;color:var(--forest);font-family:'DM Mono',monospace;}
 
@@ -356,23 +465,6 @@ body{background:var(--ivory);font-family:'Jost',sans-serif;font-weight:300;color
   .fp-grid{max-width:100%!important;}
   #feed-layout{grid-template-columns:1fr!important;}
 }
-
-/* ─── PWA INSTALL BANNER ─── */
-#pwa-banner{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--ivory);border-radius:100px;padding:10px 14px 10px 16px;display:none;align-items:center;gap:10px;box-shadow:0 8px 32px rgba(0,0,0,.4);z-index:9998;white-space:nowrap;animation:pwaUp .3s ease;}
-#pwa-banner.show{display:flex;}
-@keyframes pwaUp{from{opacity:0;transform:translateX(-50%) translateY(16px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
-.pwa-icon{font-size:22px;}
-.pwa-text{font-size:11px;line-height:1.35;}
-.pwa-text strong{display:block;font-size:12px;font-weight:600;}
-.pwa-text span{opacity:.55;}
-#pwa-btn-install{background:var(--terracotta);color:#fff;border:none;border-radius:100px;padding:7px 15px;font-family:'Jost',sans-serif;font-size:11px;font-weight:600;letter-spacing:.05em;cursor:pointer;flex-shrink:0;}
-#pwa-btn-install:hover{background:#b05e3d;}
-#pwa-btn-dismiss{background:none;border:none;color:rgba(250,246,239,.35);font-size:17px;cursor:pointer;padding:0 2px;line-height:1;flex-shrink:0;}
-#pwa-btn-dismiss:hover{color:var(--ivory);}
-#ios-tip{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--ivory);border-radius:18px;padding:16px 20px;display:none;max-width:300px;width:calc(100% - 32px);text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.4);z-index:9998;font-size:12px;line-height:1.65;animation:pwaUp .3s ease;}
-#ios-tip.show{display:block;}
-#ios-tip strong{display:block;font-size:13px;font-weight:600;margin-bottom:6px;color:var(--blush);}
-.ios-close{margin-top:12px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);color:var(--ivory);border-radius:100px;padding:6px 18px;cursor:pointer;font-family:'Jost',sans-serif;font-size:11px;}
 </style>
 </head>
 <body>
@@ -405,15 +497,7 @@ body{background:var(--ivory);font-family:'Jost',sans-serif;font-weight:300;color
       <div class="sb-rate-val" id="sb-rate">$20</div>
       <div class="sb-rate-sub">per UGC video</div>
     </div>
-    <!-- User info + sign out -->
-    <div style="display:flex;align-items:center;gap:8px;margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.06);">
-      <div id="sb-avatar" style="flex-shrink:0;"></div>
-      <div style="flex:1;min-width:0;">
-        <div id="sb-user-email" style="font-size:10px;color:rgba(250,246,239,.45);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></div>
-        <div id="sb-saved" style="font-size:9px;color:rgba(250,246,239,.22);font-family:'DM Mono',monospace;">Connecting…</div>
-      </div>
-      <button onclick="authSignOut()" title="Sign out" style="background:none;border:1px solid rgba(255,255,255,.1);border-radius:7px;padding:4px 7px;cursor:pointer;font-size:12px;color:rgba(250,246,239,.35);flex-shrink:0;" onmouseover="this.style.color='var(--ivory)'" onmouseout="this.style.color='rgba(250,246,239,.35)'">⏻</button>
-    </div>
+    <div id="sb-saved" style="font-size:9px;color:rgba(250,246,239,.25);margin-top:8px;text-align:center;font-family:'DM Mono',monospace;">Auto-saves locally</div>
   </div>
 </aside>
 
@@ -429,6 +513,8 @@ body{background:var(--ivory);font-family:'Jost',sans-serif;font-weight:300;color
       <button class="btn btn-g btn-s" onclick="openGigModal()">+ Gig</button>
       <button class="btn btn-g btn-s" onclick="openModal('content-modal')">+ Content</button>
       <button class="btn btn-p btn-s" onclick="openModal('idea-modal')">+ Idea</button>
+      <button id="pwa-install-btn" class="btn btn-g btn-s" onclick="installPWA()" title="Install App" style="padding:5px 10px;font-size:14px;display:none;">📲 Install App</button>
+      <button class="btn btn-g btn-s" onclick="openSync()" title="Sync Hub" style="padding:5px 10px;font-size:14px;">🔄</button>
     </div>
   </div>
   <div class="ca">
@@ -451,10 +537,9 @@ body{background:var(--ivory);font-family:'Jost',sans-serif;font-weight:300;color
       <div class="card"><div class="ch"><span class="ct">Follow-Ups Due</span></div><div id="d-fu"></div></div>
       <div class="card"><div class="ch"><span class="ct">Recent Ideas</span></div><div id="d-ideas"></div></div>
       <div class="ex-bar">
-        <span class="ex-bar-icon">💾</span>
-        <div class="ex-bar-text"><strong>Cross-Device Sync:</strong> Export your data to move between devices</div>
-        <button class="btn btn-g btn-s" onclick="exportData()">⬇ Export</button>
-        <label class="btn btn-g btn-s" style="cursor:pointer;">⬆ Import<input type="file" accept=".json" style="display:none" onchange="importData(event)"></label>
+        <span class="ex-bar-icon">🔄</span>
+        <div class="ex-bar-text"><strong>Cross-Device Sync:</strong> Export to laptop or import a backup to keep everything in sync</div>
+        <button class="btn btn-p btn-s" onclick="openSync()">Open Sync Hub</button>
       </div>
     </div>
   </div>
@@ -882,253 +967,146 @@ body{background:var(--ivory);font-family:'Jost',sans-serif;font-weight:300;color
   <div class="mb2" id="status-opts" style="display:flex;flex-direction:column;gap:7px;"></div>
 </div></div>
 
-<!-- ═══ PWA INSTALL BANNER ═══ -->
-<div id="pwa-banner">
-  <span class="pwa-icon">📲</span>
-  <div class="pwa-text"><strong>Install AshaJolies HQ</strong><span>Works offline · Feels like a native app</span></div>
-  <button id="pwa-btn-install" onclick="pwaDo()">Install</button>
-  <button id="pwa-btn-dismiss" onclick="pwaDismiss()" title="Dismiss">×</button>
-</div>
-<div id="ios-tip">
-  <strong>📲 Install on iPhone / iPad</strong>
-  Tap the <strong>Share</strong> button (⬆) at the bottom of Safari, then choose <strong>"Add to Home Screen"</strong>.
-  <br><button class="ios-close" onclick="document.getElementById('ios-tip').classList.remove('show')">Got it</button>
-</div>
-
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
-<script>
-// ══════════════════════════════════════════════
-//  PWA — Service Worker + Install Prompt
-// ══════════════════════════════════════════════
-(function(){
-  // ── Service Worker (inline blob) ──
-  const SW_SRC = `
-const CACHE='ajhq-v1';
-const ASSETS=[]; // Firebase app fetches its own assets; we just cache the shell
-self.addEventListener('install',e=>{self.skipWaiting();});
-self.addEventListener('activate',e=>{
-  e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k)))));
-  self.clients.claim();
-});
-self.addEventListener('fetch',e=>{
-  // Network-first for Firebase; cache-first for everything else
-  const url=new URL(e.request.url);
-  const isFirebase=url.hostname.includes('firestore.googleapis.com')||url.hostname.includes('firebase');
-  if(isFirebase){e.respondWith(fetch(e.request).catch(()=>caches.match(e.request)));return;}
-  e.respondWith(
-    caches.open(CACHE).then(cache=>
-      cache.match(e.request).then(hit=>{
-        const net=fetch(e.request).then(res=>{if(res.ok)cache.put(e.request,res.clone());return res;});
-        return hit||net;
-      })
-    )
-  );
-});`;
+<!-- OFFLINE BAR -->
+<div id="offline-bar">📡 You're offline — your data is still available and saved locally</div>
 
-  if('serviceWorker' in navigator){
-    const blob=new Blob([SW_SRC],{type:'application/javascript'});
-    const swUrl=URL.createObjectURL(blob);
-    navigator.serviceWorker.register(swUrl,{scope:'./'}).catch(e=>console.warn('SW reg failed',e));
-  }
+<!-- SYNC HUB MODAL -->
+<div class="sync-backdrop" id="sync-modal" onclick="if(event.target===this)closeSync()">
+  <div class="sync-box">
 
-  // ── Install prompt ──
-  let deferredPrompt=null;
-  const banner=document.getElementById('pwa-banner');
-  const iosTip=document.getElementById('ios-tip');
-  const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent)&&!window.MSStream;
-  const isInStandalone=window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone;
+    <!-- Hero Header -->
+    <div class="sync-hero">
+      <button class="sync-close" onclick="closeSync()">×</button>
+      <div class="sync-hero-eyebrow">AshaJolies HQ</div>
+      <div class="sync-hero-title">Sync <em>Hub</em></div>
+      <div class="sync-hero-sub">Keep your phone and laptop perfectly in sync — live or via backup file.</div>
+    </div>
 
-  if(!isInStandalone){
-    if(isIOS){
-      // Show iOS manual tip after 3s
-      setTimeout(()=>iosTip.classList.add('show'),3000);
-    } else {
-      window.addEventListener('beforeinstallprompt',e=>{
-        e.preventDefault();deferredPrompt=e;
-        setTimeout(()=>banner.classList.add('show'),2000);
-      });
-    }
-  }
+    <!-- Tabs -->
+    <div class="sync-tabs">
+      <button class="sync-tab on" onclick="syncTab('live',this)">⚡ Live Sync</button>
+      <button class="sync-tab" onclick="syncTab('file',this)">📁 File Backup</button>
+    </div>
 
-  window.pwaDo=function(){
-    if(!deferredPrompt)return;
-    deferredPrompt.prompt();
-    deferredPrompt.userChoice.then(r=>{
-      if(r.outcome==='accepted')banner.classList.remove('show');
-      deferredPrompt=null;
-    });
-  };
-  window.pwaDismiss=function(){
-    banner.classList.remove('show');
-    deferredPrompt=null;
-  };
+    <!-- LIVE SYNC PANEL -->
+    <div class="sync-panel on" id="sp-live">
+      <div class="sync-status-row">
+        <div class="sync-dot" id="sync-dot"></div>
+        <span id="sync-status-lbl">Connecting to Firebase…</span>
+      </div>
 
-  // Hide banner once installed
-  window.addEventListener('appinstalled',()=>{
-    banner.classList.remove('show');
-    if(typeof toast==='function')toast('App installed! 🎉');
-  });
-})();
-</script>
+      <!-- FIREBASE REAL-TIME STATUS -->
+      <div style="display:flex;flex-direction:column;gap:12px;">
 
-<!-- ═══ LOGIN SCREEN ═══ -->
-<div id="login-screen" style="
-  position:fixed;inset:0;z-index:99999;
-  background:var(--ink);
-  display:flex;align-items:center;justify-content:center;
-  flex-direction:column;gap:0;
-  font-family:'Jost',sans-serif;
-">
-  <div style="text-align:center;margin-bottom:32px;">
-    <div style="font-size:10px;letter-spacing:.35em;text-transform:uppercase;color:var(--warm-gold);margin-bottom:8px;font-family:'DM Mono',monospace;">Creator HQ</div>
-    <div style="font-family:'Cormorant Garamond',serif;font-size:2.8rem;font-weight:300;color:var(--ivory);line-height:1;">Asha<em style="font-style:italic;color:var(--blush);">Jolies</em></div>
-    <div style="font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:rgba(250,246,239,.22);margin-top:6px;">UGC · Mitheru, Kenya 🇰🇪</div>
+        <!-- Status card -->
+        <div style="display:flex;align-items:center;justify-content:space-between;background:rgba(74,107,80,.08);border:1px solid rgba(74,107,80,.2);border-radius:12px;padding:14px 16px;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <span style="font-size:22px;">🔥</span>
+            <div>
+              <div style="font-size:12px;font-weight:600;color:var(--forest);">Firebase Live Sync</div>
+              <div style="font-size:10px;color:var(--warm-gray);margin-top:2px;" id="fb-status-label">Starting up…</div>
+            </div>
+          </div>
+          <div id="fb-auto-badge" style="font-size:9px;font-family:'DM Mono',monospace;padding:3px 10px;border-radius:20px;background:rgba(74,107,80,.18);color:var(--forest);display:none;letter-spacing:.06em;">● LIVE</div>
+        </div>
+
+        <!-- Last sync info -->
+        <div style="background:var(--warm-white);border-radius:10px;padding:12px 14px;">
+          <div style="font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--warm-gray);font-weight:500;margin-bottom:6px;font-family:'DM Mono',monospace;">How it works</div>
+          <div style="font-size:11px;color:var(--ink);line-height:1.75;">
+            ✦ Every change you make is <strong>instantly saved</strong> to Firebase<br>
+            ✦ Your other devices <strong>update automatically</strong> — no buttons needed<br>
+            ✦ Works as long as you're online
+          </div>
+        </div>
+
+        <div class="sync-log" id="sync-log">Initialising real-time sync…</div>
+
+        <div style="font-size:10px;color:var(--mid-gray);line-height:1.6;text-align:center;">
+          Powered by <strong>Firebase Firestore</strong> · Changes sync in under a second
+        </div>
+      </div>
+    </div>
+
+    <!-- FILE BACKUP PANEL -->
+    <div class="sync-panel" id="sp-file">
+      <div class="sync-status-row">
+        <div class="sync-dot" id="sync-dot2"></div>
+        <span id="sync-status-lbl2">Ready for file sync</span>
+      </div>
+      <div class="sync-btn-row">
+        <div class="sync-btn" onclick="exportData()">
+          <div class="sync-btn-icon exp">⬇️</div>
+          <div class="sync-btn-text">
+            <div class="sync-btn-title">Export Backup</div>
+            <div class="sync-btn-sub">Download JSON to laptop</div>
+          </div>
+        </div>
+        <label class="sync-btn" style="cursor:pointer;">
+          <div class="sync-btn-icon imp">⬆️</div>
+          <div class="sync-btn-text">
+            <div class="sync-btn-title">Import Backup</div>
+            <div class="sync-btn-sub">Merge JSON from laptop</div>
+          </div>
+          <input type="file" accept=".json" style="display:none" onchange="importData(event)">
+        </label>
+      </div>
+      <div style="font-size:11px;color:var(--warm-gray);background:var(--warm-white);border-radius:10px;padding:12px 14px;line-height:1.7;">
+        <strong style="color:var(--ink);">How to sync via file:</strong><br>
+        1. On phone → Export Backup → file downloads<br>
+        2. Transfer file to laptop (email, AirDrop, USB…)<br>
+        3. On laptop → Import Backup → data merges in
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="sync-footer2">
+      <label class="sync-remember">
+        <input type="checkbox" id="sync-skip-cb" onchange="syncSkipPref(this.checked)">
+        Don't show on startup
+      </label>
+      <button class="sync-skip" onclick="closeSync()">Done</button>
+    </div>
+
   </div>
-
-  <!-- Email/password form -->
-  <div id="login-box" style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:28px 28px 24px;width:320px;max-width:calc(100vw - 32px);">
-    <div id="login-err" style="display:none;background:rgba(192,57,43,.15);border:1px solid rgba(192,57,43,.3);border-radius:10px;padding:9px 13px;font-size:12px;color:#e87c6a;margin-bottom:14px;"></div>
-
-    <div style="margin-bottom:12px;">
-      <label style="font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:rgba(250,246,239,.4);display:block;margin-bottom:5px;">Email</label>
-      <input id="li-email" type="email" placeholder="you@email.com" autocomplete="email"
-        style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:10px 13px;font-family:'Jost',sans-serif;font-size:13px;color:var(--ivory);outline:none;"
-        onkeydown="if(event.key==='Enter')document.getElementById('li-pass').focus()">
-    </div>
-    <div style="margin-bottom:20px;">
-      <label style="font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:rgba(250,246,239,.4);display:block;margin-bottom:5px;">Password</label>
-      <input id="li-pass" type="password" placeholder="••••••••" autocomplete="current-password"
-        style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:10px 13px;font-family:'Jost',sans-serif;font-size:13px;color:var(--ivory);outline:none;"
-        onkeydown="if(event.key==='Enter')loginEmail()">
-    </div>
-
-    <button onclick="loginEmail()" id="li-btn"
-      style="width:100%;background:var(--terracotta);color:#fff;border:none;border-radius:100px;padding:11px;font-family:'Jost',sans-serif;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;margin-bottom:10px;">
-      Sign In
-    </button>
-
-    <div style="text-align:center;font-size:11px;color:rgba(250,246,239,.3);margin-bottom:10px;">or</div>
-
-    <button onclick="loginGoogle()"
-      style="width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);color:var(--ivory);border-radius:100px;padding:10px;font-family:'Jost',sans-serif;font-size:12px;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">
-      <svg width="16" height="16" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.35-8.16 2.35-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
-      Continue with Google
-    </button>
-
-    <div style="text-align:center;margin-top:16px;">
-      <button onclick="showSignup()" style="background:none;border:none;color:rgba(250,246,239,.35);font-size:11px;cursor:pointer;font-family:'Jost',sans-serif;">
-        No account? <span style="color:var(--blush);text-decoration:underline;">Create one</span>
-      </button>
-      &nbsp;·&nbsp;
-      <button onclick="showReset()" style="background:none;border:none;color:rgba(250,246,239,.35);font-size:11px;cursor:pointer;font-family:'Jost',sans-serif;">
-        <span style="color:rgba(250,246,239,.35);text-decoration:underline;">Forgot password?</span>
-      </button>
-    </div>
-  </div>
-
-  <!-- Sign-up panel -->
-  <div id="signup-box" style="display:none;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:28px 28px 24px;width:320px;max-width:calc(100vw - 32px);">
-    <div style="font-size:13px;font-weight:500;color:var(--ivory);margin-bottom:16px;">Create your account</div>
-    <div id="su-err" style="display:none;background:rgba(192,57,43,.15);border:1px solid rgba(192,57,43,.3);border-radius:10px;padding:9px 13px;font-size:12px;color:#e87c6a;margin-bottom:14px;"></div>
-    <div style="margin-bottom:12px;">
-      <label style="font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:rgba(250,246,239,.4);display:block;margin-bottom:5px;">Email</label>
-      <input id="su-email" type="email" placeholder="you@email.com"
-        style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:10px 13px;font-family:'Jost',sans-serif;font-size:13px;color:var(--ivory);outline:none;">
-    </div>
-    <div style="margin-bottom:20px;">
-      <label style="font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:rgba(250,246,239,.4);display:block;margin-bottom:5px;">Password (min 6 chars)</label>
-      <input id="su-pass" type="password" placeholder="••••••••"
-        style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:10px 13px;font-family:'Jost',sans-serif;font-size:13px;color:var(--ivory);outline:none;"
-        onkeydown="if(event.key==='Enter')signupEmail()">
-    </div>
-    <button onclick="signupEmail()"
-      style="width:100%;background:var(--terracotta);color:#fff;border:none;border-radius:100px;padding:11px;font-family:'Jost',sans-serif;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;margin-bottom:12px;">
-      Create Account
-    </button>
-    <div style="text-align:center;">
-      <button onclick="showLogin()" style="background:none;border:none;color:rgba(250,246,239,.35);font-size:11px;cursor:pointer;font-family:'Jost',sans-serif;">
-        ← Back to sign in
-      </button>
-    </div>
-  </div>
-
-  <!-- Reset password panel -->
-  <div id="reset-box" style="display:none;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:28px 28px 24px;width:320px;max-width:calc(100vw - 32px);">
-    <div style="font-size:13px;font-weight:500;color:var(--ivory);margin-bottom:8px;">Reset password</div>
-    <div style="font-size:11px;color:rgba(250,246,239,.4);margin-bottom:16px;">We'll send a reset link to your email.</div>
-    <div id="rs-msg" style="display:none;background:rgba(74,107,80,.15);border:1px solid rgba(74,107,80,.3);border-radius:10px;padding:9px 13px;font-size:12px;color:#8ecf96;margin-bottom:14px;"></div>
-    <div style="margin-bottom:20px;">
-      <input id="rs-email" type="email" placeholder="you@email.com"
-        style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:10px 13px;font-family:'Jost',sans-serif;font-size:13px;color:var(--ivory);outline:none;"
-        onkeydown="if(event.key==='Enter')sendReset()">
-    </div>
-    <button onclick="sendReset()"
-      style="width:100%;background:var(--terracotta);color:#fff;border:none;border-radius:100px;padding:11px;font-family:'Jost',sans-serif;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;margin-bottom:12px;">
-      Send Reset Link
-    </button>
-    <div style="text-align:center;">
-      <button onclick="showLogin()" style="background:none;border:none;color:rgba(250,246,239,.35);font-size:11px;cursor:pointer;font-family:'Jost',sans-serif;">
-        ← Back to sign in
-      </button>
-    </div>
-  </div>
-
-  <div style="margin-top:20px;font-size:10px;color:rgba(250,246,239,.15);text-align:center;">Secured by Firebase Auth · Your data stays private</div>
 </div>
 
-<!-- Firebase bootstrap: Auth + Firestore, exposes window.D, window.save, window._fbReady -->
-<script type="module">
-import { initializeApp }                                          from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-import { getFirestore, doc, getDoc, setDoc }                     from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
-import { getAuth, onAuthStateChanged,
-         signInWithEmailAndPassword, createUserWithEmailAndPassword,
-         sendPasswordResetEmail, signOut,
-         GoogleAuthProvider, signInWithPopup }                    from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+<script>
+// ══════════════════════════════════════════════
+//  DATA LAYER — localStorage with versioned keys
+// ══════════════════════════════════════════════
+const K='ajhq3_';
+const rd=(k,d)=>{try{const v=localStorage.getItem(K+k);return v!==null?JSON.parse(v):d;}catch{return d;}};
+const wr=(k,v)=>{try{localStorage.setItem(K+k,JSON.stringify(v));}catch(e){console.warn('Storage full',e);}};
 
-const firebaseConfig = {
-  apiKey: "AIzaSyCwxs5BnMb9Josvq8JZwo7esEhX6Y-0uN0",
-  authDomain: "ashajolies-hq.firebaseapp.com",
-  projectId: "ashajolies-hq",
-  storageBucket: "ashajolies-hq.firebasestorage.app",
-  messagingSenderId: "482954813458",
-  appId: "1:482954813458:web:1149aa0141a5ad1ffaf8cb",
-  measurementId: "G-BXRLY66TM6"
-};
-
-const app  = initializeApp(firebaseConfig);
-const db   = getFirestore(app);
-const auth = getAuth(app);
-const gProvider = new GoogleAuthProvider();
-
-const HEAVY      = ['feedIg','feedTt','feedBank','visuals','outfits','moodboards'];
-const LIGHT_KEYS = ['gigs','content','ideas','followups','pitches','rates','colors','niches','platforms','bio','links','locations','cameras','calM','calY'];
-
-// ── Default data ──
-const DEFAULTS = () => ({
-  gigs:[],content:[],
-  ideas:[
+// ── INITIAL STATE ──
+let D={
+  gigs: rd('gigs',[]),
+  content: rd('content',[]),
+  ideas: rd('ideas',[
     {id:'i1',title:'My honest skincare routine for melanin skin',niche:'Beauty',platform:'TikTok',status:'idea',types:['Talking to Camera','Review'],hook:'POV: you finally found a routine that works 🙌',audio:'',notes:'Feature 3–4 products. 30–45s.',img:'',linkedGig:'',added:Date.now()},
-    {id:'i2',title:"Braiding my daughter's hair — full tutorial",niche:'Hair',platform:'YouTube',status:'idea',types:['Tutorial'],hook:'Come braid with me 🧡',audio:'Original audio — voiceover',notes:'Film full session. Natural light.',img:'',linkedGig:'',added:Date.now()},
+    {id:'i2',title:'Braiding my daughter\'s hair — full tutorial',niche:'Hair',platform:'YouTube',status:'idea',types:['Tutorial'],hook:'Come braid with me 🧡',audio:'Original audio — voiceover',notes:'Film full session. Natural light.',img:'',linkedGig:'',added:Date.now()},
     {id:'i3',title:'Day in my life: SAHM in rural Kenya',niche:'Lifestyle',platform:'TikTok',status:'idea',types:['Day in the Life'],hook:'Nobody shows this side of life...',audio:'',notes:'Morning to evening. Authentic.',img:'',linkedGig:'',added:Date.now()},
     {id:'i4',title:'I built an app using AI for my household',niche:'Tech',platform:'Instagram',status:'idea',types:['Product Demo'],hook:'Wait — you can do this with AI? 👀',audio:'',notes:'Show the actual app.',img:'',linkedGig:'',added:Date.now()},
-    {id:'i5',title:"GRWM: Kenyan wedding guest outfit",niche:'Fashion',platform:'TikTok',status:'idea',types:['GRWM'],hook:"It's a whole vibe from Mitheru 💃🏿",audio:'',notes:'Show local fabrics and accessories.',img:'',linkedGig:'',added:Date.now()},
-  ],
-  followups:[],
-  pitches:[
-    {id:'p1',name:'Beauty — Gifted DM',niche:'Beauty',type:'Gifted Collab',platform:'Instagram DM',subject:'',body:"Hi [Brand Name] team! 👋\n\nI'm Asha Jolies, a UGC creator based in Kenya creating authentic content for beauty brands.\n\nI'd love to collaborate on a gifted basis — I'll create a genuine review/tutorial of [Product] and deliver raw UGC files.\n\nWhat I offer:\n✦ Talking-to-camera or voiceover videos\n✦ Melanin skin perspective — largely underserved audience\n✦ 3–5 day turnaround · Full usage rights included\n\nHappy to share my portfolio!\n\nWarmly,\nAsha Jolies | @ashajoliesUgc"},
-    {id:'p2',name:'Paid Collab — Email',niche:'General',type:'Paid Collab',platform:'Email',subject:'UGC Creator Collaboration – Asha Jolies | Starting from $20',body:"Hi [Brand] team,\n\nMy name is Asha Jolies — UGC creator based in Kenya specialising in beauty, hair, lifestyle and tech.\n\nRates start from $20 per UGC video. Full raw files + usage rights included.\n\nCould I send my media kit?\n\nBest,\nAsha Jolies\nashajoliesugc@email.com | @ashajoliesUgc"},
-    {id:'p3',name:'Hair — Gifted Email',niche:'Hair',type:'Gifted Collab',platform:'Email',subject:'UGC Hair Content – Gifted Collaboration | Asha Jolies',body:"Hello [Brand Name],\n\nI'm Asha Jolies, a creator focused on African hair care.\n\nI'd love to create UGC for [Product] on a gifted basis:\n✂️ Honest review video (30–60s)\n✂️ Styling/tutorial clip\n✂️ Full raw footage files\n\nAsha Jolies | @ashajoliesUgc"},
-  ],
-  rates:[
+    {id:'i5',title:'GRWM: Kenyan wedding guest outfit',niche:'Fashion',platform:'TikTok',status:'idea',types:['GRWM'],hook:'It\'s a whole vibe from Mitheru 💃🏿',audio:'',notes:'Show local fabrics and accessories.',img:'',linkedGig:'',added:Date.now()},
+  ]),
+  followups: rd('followups',[]),
+  pitches: rd('pitches',[
+    {id:'p1',name:'Beauty — Gifted DM',niche:'Beauty',type:'Gifted Collab',platform:'Instagram DM',subject:'',body:`Hi [Brand Name] team! 👋\n\nI'm Asha Jolies, a UGC creator based in Kenya creating authentic content for beauty brands.\n\nI'd love to collaborate on a gifted basis — I'll create a genuine review/tutorial of [Product] and deliver raw UGC files.\n\nWhat I offer:\n✦ Talking-to-camera or voiceover videos\n✦ Melanin skin perspective — largely underserved audience\n✦ 3–5 day turnaround · Full usage rights included\n\nHappy to share my portfolio!\n\nWarmly,\nAsha Jolies | @ashajoliesUgc`},
+    {id:'p2',name:'Paid Collab — Email',niche:'General',type:'Paid Collab',platform:'Email',subject:'UGC Creator Collaboration – Asha Jolies | Starting from $20',body:`Hi [Brand] team,\n\nMy name is Asha Jolies — UGC creator based in Kenya specialising in beauty, hair, lifestyle and tech.\n\nRates start from $20 per UGC video. Full raw files + usage rights included.\n\nCould I send my media kit?\n\nBest,\nAsha Jolies\nashajoliesugc@email.com | @ashajoliesUgc`},
+    {id:'p3',name:'Hair — Gifted Email',niche:'Hair',type:'Gifted Collab',platform:'Email',subject:'UGC Hair Content – Gifted Collaboration | Asha Jolies',body:`Hello [Brand Name],\n\nI'm Asha Jolies, a creator focused on African hair care.\n\nI'd love to create UGC for [Product] on a gifted basis:\n✂️ Honest review video (30–60s)\n✂️ Styling/tutorial clip\n✂️ Full raw footage files\n\nAsha Jolies | @ashajoliesUgc`},
+  ]),
+  rates: rd('rates',[
     {id:'r1',type:'UGC Video (15–30s)',price:'$20',desc:'Talking to camera or voiceover, 1 revision'},
     {id:'r2',type:'UGC Video (60s)',price:'$30',desc:'Full review or tutorial, 1 revision'},
     {id:'r3',type:'Photo Set (3 images)',price:'$15',desc:'Flat lay or lifestyle photos'},
     {id:'r4',type:'Bundle (2 videos + 3 photos)',price:'$70',desc:'Full content package'},
     {id:'r5',type:'Gifted Collab',price:'Product only',desc:'Product in exchange for UGC'},
-  ],
-  colors:[
+  ]),
+  colors: rd('colors',[
     {id:'c1',n:'Ivory',h:'#FAF6EF',l:true},{id:'c2',n:'Warm White',h:'#F5EFE6',l:true},
     {id:'c3',n:'Blush',h:'#E8C4B0',l:true},{id:'c4',n:'Terracotta',h:'#C4714F'},
     {id:'c5',n:'Dusty Rose',h:'#C9897A'},{id:'c6',n:'Lavender',h:'#C2AECE',l:true},
@@ -1136,169 +1114,31 @@ const DEFAULTS = () => ({
     {id:'c9',n:'Gold',h:'#C4963A'},{id:'c10',n:'Warm Gold',h:'#E8C06A',l:true},
     {id:'c11',n:'Ink',h:'#1E1916'},{id:'c12',n:'Warm Gray',h:'#7A6F68'},
     {id:'c13',n:'Mid Gray',h:'#B5ADA8',l:true},
-  ],
-  niches:['Beauty & Skincare','Hair Care','Lifestyle & Home','Tech & Apps','Fashion'],
-  platforms:['TikTok','Instagram','YouTube','Pinterest','Facebook','Threads'],
-  bio:'Raw. Relatable. Real. Asha Jolies is a UGC creator from Mitheru, Tharaka Nithi, Kenya 🇰🇪',
-  links:{email:'ashajoliesugc@email.com',location:'Mitheru, Tharaka Nithi, Kenya',tt:'@ashajoliesUgc',ig:'@ashajoliesUgc',yt:'@ashajoliesUgc',portfolio:''},
-  visuals:[],outfits:[],locations:[],cameras:[],
-  feedIg:Array(9).fill(null),feedTt:Array(6).fill(null),feedBank:[],
-  moodboards:{},
-  calM:new Date().getMonth(),calY:new Date().getFullYear(),
-});
-
-window.D = DEFAULTS();
-
-// ── Save (user-scoped path) ──
-let _saveTimer = null;
-window.save = function() {
-  const el = document.getElementById('sb-saved');
-  if(el) el.textContent = 'Saving…';
-  clearTimeout(_saveTimer);
-  _saveTimer = setTimeout(async () => {
-    const uid = auth.currentUser?.uid;
-    if(!uid){ if(el) el.textContent = '⚠ Not signed in'; return; }
-    try {
-      const light = {};
-      LIGHT_KEYS.forEach(k => light[k] = window.D[k]);
-      await setDoc(doc(db,'users',uid,'hq','main'), light, {merge:true});
-      for(const k of HEAVY)
-        await setDoc(doc(db,'users',uid,'hq', k), {[k]: window.D[k]});
-      if(el){ const n=new Date(); el.textContent='Synced '+n.toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit'}); }
-    } catch(e){
-      console.error('Save error',e);
-      if(el) el.textContent='⚠ Sync failed';
-    }
-  }, 800);
+  ]),
+  niches: rd('niches',['Beauty & Skincare','Hair Care','Lifestyle & Home','Tech & Apps','Fashion']),
+  platforms: rd('platforms',['TikTok','Instagram','YouTube','Pinterest','Facebook','Threads']),
+  bio: rd('bio','Raw. Relatable. Real. Asha Jolies is a UGC creator from Mitheru, Tharaka Nithi, Kenya 🇰🇪'),
+  links: rd('links',{email:'ashajoliesugc@email.com',location:'Mitheru, Tharaka Nithi, Kenya',tt:'@ashajoliesUgc',ig:'@ashajoliesUgc',yt:'@ashajoliesUgc',portfolio:''}),
+  visuals: rd('visuals',[]),
+  outfits: rd('outfits',[]),
+  locations: rd('locations',[]),
+  cameras: rd('cameras',[]),
+  feedIg: rd('feedIg',Array(9).fill(null)),
+  feedTt: rd('feedTt',Array(6).fill(null)),
+  feedBank: rd('feedBank',[]),
+  moodboards: rd('moodboards',{}),
+  calM: rd('calM',new Date().getMonth()),
+  calY: rd('calY',new Date().getFullYear()),
 };
 
-// ── Load user data ──
-async function loadUserData(uid) {
-  const el = document.getElementById('sb-saved');
-  if(el) el.textContent = 'Loading…';
-  window.D = DEFAULTS();
-  try {
-    const snap = await getDoc(doc(db,'users',uid,'hq','main'));
-    if(snap.exists()){ const d=snap.data(); Object.keys(d).forEach(k=>{ if(k in window.D) window.D[k]=d[k]; }); }
-    for(const k of HEAVY){
-      const s = await getDoc(doc(db,'users',uid,'hq',k));
-      if(s.exists() && s.data()[k]!==undefined) window.D[k]=s.data()[k];
-    }
-    if(el) el.textContent='Synced ✓';
-  } catch(e){
-    console.error('Load error',e);
-    if(el) el.textContent='⚠ Offline — using defaults';
-  }
+function save(){
+  const keys=['gigs','content','ideas','followups','pitches','rates','colors','niches','platforms','bio','links','visuals','outfits','locations','cameras','feedIg','feedTt','feedBank','moodboards','calM','calY'];
+  keys.forEach(k=>wr(k,D[k]));
+  const el=document.getElementById('sb-saved');
+  if(el){const now=new Date();el.textContent='Saved '+now.toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit'});}
+  // Push to Firebase on every save — this is what syncs to other devices
+  if(_fbInited) fbWrite();
 }
-
-// ── Auth state observer ──
-onAuthStateChanged(auth, async user => {
-  if(user){
-    // Signed in — load data then boot app
-    await loadUserData(user.uid);
-    // Update sidebar avatar
-    const av = document.getElementById('sb-avatar');
-    if(av) av.innerHTML = user.photoURL
-      ? `<img src="${user.photoURL}" style="width:28px;height:28px;border-radius:50%;object-fit:cover;">`
-      : `<div style="width:28px;height:28px;border-radius:50%;background:var(--terracotta);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:#fff;">${(user.displayName||user.email||'A')[0].toUpperCase()}</div>`;
-    const em = document.getElementById('sb-user-email');
-    if(em) em.textContent = user.displayName || user.email;
-    // Hide login screen
-    document.getElementById('login-screen').style.display='none';
-    // Boot app
-    window._fbReady = true;
-    document.dispatchEvent(new Event('fb-ready'));
-  } else {
-    // Signed out — show login
-    document.getElementById('login-screen').style.display='flex';
-    window._fbReady = false;
-  }
-});
-
-// ── Auth actions exposed to regular script ──
-window.loginEmail = async function(){
-  const email = document.getElementById('li-email').value.trim();
-  const pass  = document.getElementById('li-pass').value;
-  const err   = document.getElementById('login-err');
-  const btn   = document.getElementById('li-btn');
-  err.style.display='none'; btn.textContent='Signing in…'; btn.disabled=true;
-  try {
-    await signInWithEmailAndPassword(auth, email, pass);
-  } catch(e){
-    err.textContent = friendlyAuthError(e.code);
-    err.style.display='block';
-  }
-  btn.textContent='Sign In'; btn.disabled=false;
-};
-
-window.loginGoogle = async function(){
-  try {
-    await signInWithPopup(auth, gProvider);
-  } catch(e){
-    const err = document.getElementById('login-err');
-    err.textContent = friendlyAuthError(e.code);
-    err.style.display='block';
-  }
-};
-
-window.signupEmail = async function(){
-  const email = document.getElementById('su-email').value.trim();
-  const pass  = document.getElementById('su-pass').value;
-  const err   = document.getElementById('su-err');
-  err.style.display='none';
-  try {
-    await createUserWithEmailAndPassword(auth, email, pass);
-  } catch(e){
-    err.textContent = friendlyAuthError(e.code);
-    err.style.display='block';
-  }
-};
-
-window.sendReset = async function(){
-  const email = document.getElementById('rs-email').value.trim();
-  const msg   = document.getElementById('rs-msg');
-  try {
-    await sendPasswordResetEmail(auth, email);
-    msg.textContent='Reset link sent! Check your inbox.';
-    msg.style.display='block';
-  } catch(e){
-    msg.style.background='rgba(192,57,43,.15)';
-    msg.style.color='#e87c6a';
-    msg.textContent = friendlyAuthError(e.code);
-    msg.style.display='block';
-  }
-};
-
-window.authSignOut = async function(){
-  await signOut(auth);
-  window.D = DEFAULTS();
-  if(typeof toast==='function') toast('Signed out 👋');
-};
-
-window.showSignup = ()=>{ document.getElementById('login-box').style.display='none'; document.getElementById('reset-box').style.display='none'; document.getElementById('signup-box').style.display='block'; };
-window.showLogin  = ()=>{ document.getElementById('signup-box').style.display='none'; document.getElementById('reset-box').style.display='none'; document.getElementById('login-box').style.display='block'; };
-window.showReset  = ()=>{ document.getElementById('login-box').style.display='none'; document.getElementById('signup-box').style.display='none'; document.getElementById('reset-box').style.display='block'; };
-
-function friendlyAuthError(code){
-  const map = {
-    'auth/invalid-email':'Invalid email address.',
-    'auth/user-not-found':'No account with that email.',
-    'auth/wrong-password':'Incorrect password.',
-    'auth/invalid-credential':'Incorrect email or password.',
-    'auth/email-already-in-use':'An account with this email already exists.',
-    'auth/weak-password':'Password must be at least 6 characters.',
-    'auth/too-many-requests':'Too many attempts. Try again later.',
-    'auth/popup-closed-by-user':'Google sign-in was cancelled.',
-    'auth/network-request-failed':'Network error. Check your connection.',
-  };
-  return map[code] || 'Something went wrong. Please try again.';
-}
-</script>
-
-<script>
-// ══════════════════════════════════════════════
-//  APP LOGIC — D and save() are on window (set by the Firebase module above)
-// ══════════════════════════════════════════════
 
 // ── CONTENT TYPES ──
 const CTYPES=['Talking to Camera','Voiceover','Tutorial','Product Demo','Review','Day in the Life','GRWM','Before & After','Flat Lay Photos','Reel','TikTok Video','YouTube Short','Haul','Routine','Storytime','Unboxing','Recipe','Challenge'];
@@ -1652,7 +1492,7 @@ function saveIdea(){
   const id=v('i-id');
   const idea={id:id||'i'+Date.now(),title,niche:v('i-niche'),platform:v('i-plat'),status:v('i-status'),types:TP.i||[],linkedGig:v('i-lgig'),hook:v('i-hook'),audio:v('i-audio'),notes:v('i-notes'),img:v('i-img-data'),added:Date.now()};
   if(id)D.ideas=D.ideas.map(x=>x.id===id?idea:x);else D.ideas.push(idea);
-  save();closeModal('idea-modal');resetTP('i');['i-title','i-hook','i-audio','i-notes'].forEach(i=>setV(i,''));setV('i-img-data','');document.getElementById('i-img-pre').innerHTML='';
+  save();closeModal('idea-modal');resetTP('i');setV('i-id','');['i-title','i-hook','i-audio','i-notes'].forEach(f=>setV(f,''));setV('i-img-data','');document.getElementById('i-img-pre').innerHTML='';
   rIdeas(ideaFilt);rDash();toast('Idea saved!');
 }
 function delIdea(id){if(!confirm('Delete idea?'))return;D.ideas=D.ideas.filter(x=>x.id!==id);save();rIdeas(ideaFilt);}
@@ -2051,7 +1891,7 @@ function saveMB(){
 }
 function clearMBAll(){if(!confirm('Clear all moodboard elements?'))return;D.moodboards[mbKey]={items:[],drawing:''};document.getElementById('mb-cvs').innerHTML='';clearMBDraw();updateLayers();toast('Moodboard cleared');}
 
-// ── INIT ──
+// ── INIT — called at bottom of script after all functions are defined ──
 function init(){
   const h=new Date().getHours();
   const g=h<12?'Good morning':h<17?'Good afternoon':'Good evening';
@@ -2060,13 +1900,205 @@ function init(){
   rDash();
   setEl('gig-badge',D.gigs.filter(g=>!['delivered','declined'].includes(g.status)).length||'');
   setEl('fu-badge',D.followups.filter(f=>!f.done).length||'');
+  // Offline bar state
+  if(!navigator.onLine){const b=document.getElementById('offline-bar');if(b)b.style.display='flex';}
+  // Sync hub is opened at the very end of the script after all functions load
+}
+
+// ══════════════════════════════════════════════
+//  FIREBASE REAL-TIME SYNC
+//  Uses compat SDK (loaded via <script> in <head>)
+//  — no dynamic imports, works in all browsers & PWAs
+// ══════════════════════════════════════════════
+const _FB_CONFIG = {
+  apiKey:            "AIzaSyCwxs5BnMb9Josvq8JZwo7esEhX6Y-0uN0",
+  authDomain:        "ashajolies-hq.firebaseapp.com",
+  projectId:         "ashajolies-hq",
+  storageBucket:     "ashajolies-hq.firebasestorage.app",
+  messagingSenderId: "482954813458",
+  appId:             "1:482954813458:web:1149aa0141a5ad1ffaf8cb"
+};
+const _FB_DOC_PATH = 'hq/ashajolies-hq';   // collection/document
+
+let _fbInited  = false;
+let _fbWriting = false;   // true while we are writing — suppresses echo
+let _fbUnsub   = null;    // unsubscribe handle for the listener
+let _fbDoc     = null;    // Firestore DocumentReference
+
+// ── Initialise Firebase & start the live listener ──
+function initFirebase() {
+  if (_fbInited) return;
+  if (!navigator.onLine) { syncLog('Offline — will connect when online.', '#c0392b'); return; }
+
+  try {
+    // Initialise app only once
+    if (!firebase.apps.length) firebase.initializeApp(_FB_CONFIG);
+    const db = firebase.firestore();
+    _fbDoc   = db.doc(_FB_DOC_PATH);
+    _fbInited = true;
+
+    // ── Live listener — fires on connect AND on every remote write ──
+    _fbUnsub = _fbDoc.onSnapshot(snap => {
+      // Skip echo from our own writes
+      if (_fbWriting) return;
+
+      if (!snap.exists) {
+        // First time — push local data up to cloud
+        syncLog('No cloud data yet — uploading local data…', 'var(--warm-gold)');
+        fbWrite();
+        return;
+      }
+
+      const remote    = snap.data();
+      const remoteTs  = remote._ts  || 0;
+      const localTs   = parseInt(localStorage.getItem('ajhq_lastWrite') || '0');
+
+      if (remoteTs > localTs) {
+        syncLog('↓ Change from another device — syncing…', 'var(--sky-deep)');
+        applyRemote(remote.data || remote);
+        syncLog('✓ Synced from cloud', 'var(--forest)');
+        flashDot();
+      }
+    }, err => {
+      syncLog('Sync error: ' + err.message, '#c0392b');
+      // Show the error detail in console too
+      console.error('[Firebase listener]', err);
+    });
+
+    // Update the Sync Hub UI
+    const lbl   = document.getElementById('fb-status-label');
+    const badge = document.getElementById('fb-auto-badge');
+    if (lbl)   lbl.textContent   = 'Connected · changes sync instantly';
+    if (badge) badge.style.display = 'block';
+    setSyncStatus(true);
+    syncLog('🔥 Firebase connected — live sync active', 'var(--forest)');
+
+  } catch (e) {
+    syncLog('Firebase init error: ' + e.message, '#c0392b');
+    console.error('[Firebase init]', e);
+  }
+}
+
+// ── Write D to Firestore ──
+function fbWrite() {
+  if (!_fbInited || !_fbDoc) return;
+  _fbWriting = true;
+  const now  = Date.now();
+  localStorage.setItem('ajhq_lastWrite', String(now));
+
+  _fbDoc.set({
+    _ts:     now,
+    _device: /Mobi|Android/i.test(navigator.userAgent) ? 'mobile' : 'desktop',
+    data:    JSON.parse(JSON.stringify(D))   // deep-clone so Firestore doesn't reject non-plain objects
+  })
+  .then(() => {
+    // Wait 1.5 s before accepting incoming events again
+    // (the listener fires once for our own write)
+    setTimeout(() => { _fbWriting = false; }, 1500);
+  })
+  .catch(e => {
+    syncLog('Write failed: ' + e.message, '#c0392b');
+    console.error('[fbWrite]', e);
+    _fbWriting = false;
+  });
+}
+
+// ── Apply remote data to local state ──
+function applyRemote(imported) {
+  if (!imported) return;
+  const arrayKeys = ['gigs','content','ideas','followups','pitches','rates','colors',
+                     'niches','platforms','visuals','outfits','locations','cameras'];
+  arrayKeys.forEach(k => {
+    if (!Array.isArray(imported[k])) return;
+    const existing = D[k] || [];
+    if (existing.length && existing[0]?.id) {
+      // Merge by id — remote wins on conflict
+      const merged = [...existing];
+      imported[k].forEach(item => {
+        const idx = merged.findIndex(x => x.id === item.id);
+        if (idx >= 0) merged[idx] = item; else merged.push(item);
+      });
+      D[k] = merged;
+    } else {
+      D[k] = imported[k];
+    }
+  });
+  ['bio','links','feedIg','feedTt','feedBank','moodboards'].forEach(k => {
+    if (imported[k] !== undefined) D[k] = imported[k];
+  });
+  // Persist locally and re-render current page
+  const keys = ['gigs','content','ideas','followups','pitches','rates','colors','niches',
+                 'platforms','bio','links','visuals','outfits','locations','cameras',
+                 'feedIg','feedTt','feedBank','moodboards','calM','calY'];
+  keys.forEach(k => wr(k, D[k]));
+  renderPage(currentPage);
+}
+
+// ── Pulse the sync dot briefly ──
+function flashDot() {
+  const dot = document.getElementById('sync-dot');
+  if (!dot) return;
+  dot.classList.add('pulse');
+  setTimeout(() => dot.classList.remove('pulse'), 900);
+}
+
+// ── Sync Hub UI helpers ──
+function syncLog(msg, color) {
+  const el = document.getElementById('sync-log');
+  if (!el) return;
+  const ts = new Date().toLocaleTimeString('en', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
+  el.innerHTML = `<span style="color:${color || 'var(--warm-gray)'}">[${ts}] ${msg}</span>\n` + el.innerHTML;
+}
+
+function setSyncStatus(online) {
+  ['sync-dot','sync-dot2'].forEach(id => {
+    const d = document.getElementById(id);
+    if (d) d.className = 'sync-dot' + (online ? '' : ' off');
+  });
+  const lbl  = document.getElementById('sync-status-lbl');
+  const lbl2 = document.getElementById('sync-status-lbl2');
+  if (lbl)  lbl.textContent  = online ? 'Live — changes sync instantly' : 'Offline — file backup available';
+  if (lbl2) lbl2.textContent = online ? 'Online · file sync also works'  : 'Offline — file sync available';
+}
+
+function syncTab(tab, el) {
+  document.querySelectorAll('.sync-tab').forEach(t => t.classList.remove('on'));
+  document.querySelectorAll('.sync-panel').forEach(p => p.classList.remove('on'));
+  el.classList.add('on');
+  document.getElementById('sp-' + tab)?.classList.add('on');
+}
+
+function openSync() {
+  document.getElementById('sync-modal')?.classList.add('open');
+  setSyncStatus(navigator.onLine);
+  const cb = document.getElementById('sync-skip-cb');
+  if (cb) cb.checked = localStorage.getItem('ajhq_skipSync') === 'true';
+}
+
+function closeSync() {
+  document.getElementById('sync-modal')?.classList.remove('open');
+}
+
+function syncSkipPref(val) {
+  localStorage.setItem('ajhq_skipSync', val ? 'true' : 'false');
 }
 
 // Close search on outside click
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeSearch();document.getElementById('moodboard').classList.contains('open')&&closeMB();}});
 
-// ── BOOT: wait for Firebase data, then init ──
-if(window._fbReady){init();}else{document.addEventListener('fb-ready',()=>init(),{once:true});}
+// ── STARTUP ──
+init();
+window.addEventListener('load', () => {
+  // Start Firebase immediately — the listener will pull latest cloud data
+  initFirebase();
+  // Show Sync Hub on first visit (or if user hasn't opted out)
+  if (localStorage.getItem('ajhq_skipSync') !== 'true') {
+    setTimeout(openSync, 800);
+  }
+});
+// Re-connect if the browser comes back online
+window.addEventListener('online',  () => { setSyncStatus(true);  if (!_fbInited) initFirebase(); });
+window.addEventListener('offline', () => { setSyncStatus(false); });
 </script>
 </body>
 </html>
