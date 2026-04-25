@@ -1292,12 +1292,23 @@ async function loadUserData(uid) {
     lsSave(window.D);
     lsClearDirty();
     if(el){ const n=new Date(); el.textContent='Synced ✓ '+n.toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit'}); }
-    // Re-render current page with fresh data
-    if(typeof renderPage==='function' && typeof currentPage!=='undefined') renderPage(currentPage);
-    if(typeof rDash==='function') rDash();
+    // If no local data existed, fire fb-ready now that Firebase has loaded
+    if(!window._fbReady){
+      window._fbReady = true;
+      document.dispatchEvent(new Event('fb-ready'));
+    } else {
+      // Already booted from local data — re-render with fresh Firebase data
+      if(typeof renderPage==='function' && typeof currentPage!=='undefined') renderPage(currentPage);
+      if(typeof rDash==='function') rDash();
+    }
   } catch(e){
     console.error('Load error',e);
     if(el) el.textContent = local ? '💾 Using local data' : '⚠ Load failed';
+    // Still need to fire fb-ready if we haven't yet, so the app doesn't hang
+    if(!window._fbReady){
+      window._fbReady = true;
+      document.dispatchEvent(new Event('fb-ready'));
+    }
   }
 }
 
@@ -2219,8 +2230,15 @@ function init(){
 // Close search on outside click
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeSearch();document.getElementById('moodboard').classList.contains('open')&&closeMB();}});
 
-// ── BOOT: wait for Firebase data, then init ──
-if(window._fbReady){init();}else{document.addEventListener('fb-ready',()=>init(),{once:true});}
+// ── BOOT ──
+(function bootWhenReady(){
+  if(window._fbReady){ init(); return; }
+  document.addEventListener('fb-ready', ()=>init(), {once:true});
+  var _poll=setInterval(function(){
+    if(window._fbReady){ clearInterval(_poll); init(); }
+  }, 150);
+  setTimeout(function(){ clearInterval(_poll); }, 12000);
+})();
 
 // ── Offline indicator in topbar ──
 (function(){
@@ -2232,7 +2250,7 @@ if(window._fbReady){init();}else{document.addEventListener('fb-ready',()=>init()
       if(!bar){
         bar = document.createElement('div');
         bar.id = 'offline-bar';
-        bar.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:99990;background:#b05e3d;color:#fff;text-align:center;font-size:11px;font-family:'Jost',sans-serif;padding:5px;letter-spacing:.05em;';
+        bar.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:99990;background:#b05e3d;color:#fff;text-align:center;font-size:11px;font-family:Jost,sans-serif;padding:5px;letter-spacing:.05em;';
         bar.textContent = '📴 Offline — changes save locally and sync when you reconnect';
         document.body.prepend(bar);
       }
