@@ -2,10 +2,9 @@
   "name": "AshaJolies HQ",
   "short_name": "AJ HQ",
   "description": "AshaJolies UGC Creator HQ — Gig tracker, content planner, moodboard, brand hub",
-  "start_url": "/ashajolies-hq/",
-  "scope": "/ashajolies-hq/",
+  "start_url": "./index.html",
   "display": "standalone",
-  "orientation": "portrait",
+  "orientation": "any",
   "background_color": "#1E1916",
   "theme_color": "#1E1916",
   "icons": [
