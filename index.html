@@ -992,40 +992,38 @@ body{background:var(--ivory);font-family:'Jost',sans-serif;font-weight:300;color
     <div class="sync-panel on" id="sp-live">
       <div class="sync-status-row">
         <div class="sync-dot" id="sync-dot"></div>
-        <span id="sync-status-lbl">Checking connection…</span>
+        <span id="sync-status-lbl">Connecting to Firebase…</span>
       </div>
 
-      <!-- FIREBASE CONNECTED -->
-      <div id="firebase-panel" style="display:flex;flex-direction:column;gap:12px;">
+      <!-- FIREBASE REAL-TIME STATUS -->
+      <div style="display:flex;flex-direction:column;gap:12px;">
 
-        <!-- Connected badge -->
-        <div style="display:flex;align-items:center;justify-content:space-between;background:rgba(74,107,80,.08);border:1px solid rgba(74,107,80,.2);border-radius:12px;padding:11px 14px;">
-          <div style="display:flex;align-items:center;gap:8px;">
-            <span style="font-size:16px;">🔥</span>
+        <!-- Status card -->
+        <div style="display:flex;align-items:center;justify-content:space-between;background:rgba(74,107,80,.08);border:1px solid rgba(74,107,80,.2);border-radius:12px;padding:14px 16px;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <span style="font-size:22px;">🔥</span>
             <div>
-              <div style="font-size:12px;font-weight:600;color:var(--forest);">Firebase Firestore</div>
-              <div style="font-size:10px;color:var(--warm-gray);" id="fb-status-label">Connecting…</div>
+              <div style="font-size:12px;font-weight:600;color:var(--forest);">Firebase Live Sync</div>
+              <div style="font-size:10px;color:var(--warm-gray);margin-top:2px;" id="fb-status-label">Starting up…</div>
             </div>
           </div>
-          <div id="fb-auto-badge" style="font-size:9px;font-family:'DM Mono',monospace;padding:2px 8px;border-radius:20px;background:rgba(74,107,80,.15);color:var(--forest);display:none;">AUTO-SYNC ON</div>
+          <div id="fb-auto-badge" style="font-size:9px;font-family:'DM Mono',monospace;padding:3px 10px;border-radius:20px;background:rgba(74,107,80,.18);color:var(--forest);display:none;letter-spacing:.06em;">● LIVE</div>
         </div>
 
-        <!-- Push -->
-        <button onclick="pushSync()" style="width:100%;padding:13px;background:var(--terracotta);color:#fff;border:none;border-radius:12px;font-family:'Jost',sans-serif;font-size:12px;font-weight:500;cursor:pointer;letter-spacing:.06em;transition:background .15s;" onmouseover="this.style.background='#b05e3d'" onmouseout="this.style.background='var(--terracotta)'">
-          ⬆ Push — Save my data to Firebase now
-        </button>
+        <!-- Last sync info -->
+        <div style="background:var(--warm-white);border-radius:10px;padding:12px 14px;">
+          <div style="font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--warm-gray);font-weight:500;margin-bottom:6px;font-family:'DM Mono',monospace;">How it works</div>
+          <div style="font-size:11px;color:var(--ink);line-height:1.75;">
+            ✦ Every change you make is <strong>instantly saved</strong> to Firebase<br>
+            ✦ Your other devices <strong>update automatically</strong> — no buttons needed<br>
+            ✦ Works as long as you're online
+          </div>
+        </div>
 
-        <div class="sync-divider">or sync to this device</div>
-
-        <!-- Pull -->
-        <button onclick="pullSync()" style="width:100%;padding:13px;background:var(--ink);color:var(--ivory);border:none;border-radius:12px;font-family:'Jost',sans-serif;font-size:12px;font-weight:500;cursor:pointer;letter-spacing:.06em;transition:opacity .15s;" onmouseover="this.style.opacity='.8'" onmouseout="this.style.opacity='1'">
-          ⬇ Pull — Load latest data from Firebase
-        </button>
-
-        <div class="sync-log" id="sync-log">Ready — push to save, pull to load.</div>
+        <div class="sync-log" id="sync-log">Initialising real-time sync…</div>
 
         <div style="font-size:10px;color:var(--mid-gray);line-height:1.6;text-align:center;">
-          Data syncs securely to <strong>Firebase Firestore</strong> — your private cloud.<br>Real-time · No account needed · Free tier.
+          Powered by <strong>Firebase Firestore</strong> · Changes sync in under a second
         </div>
       </div>
     </div>
@@ -1135,6 +1133,8 @@ function save(){
   keys.forEach(k=>wr(k,D[k]));
   const el=document.getElementById('sb-saved');
   if(el){const now=new Date();el.textContent='Saved '+now.toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit'});}
+  // Auto-write to Firebase on every save
+  if(_fbInited) fbWrite();
 }
 
 // ── CONTENT TYPES ──
@@ -1902,8 +1902,7 @@ function init(){
   // Sync hub is opened at the very end of the script after all functions load
 }
 
-// ── SYNC HUB — Firebase Firestore ──
-// Firebase config
+// ── SYNC HUB — Firebase Firestore (real-time) ──
 const firebaseConfig = {
   apiKey: "AIzaSyCwxs5BnMb9Josvq8JZwo7esEhX6Y-0uN0",
   authDomain: "ashajolies-hq.firebaseapp.com",
@@ -1915,95 +1914,97 @@ const firebaseConfig = {
 };
 
 const FB_DOC_ID = 'ashajolies-hq';
-let _fbApp = null, _fbDb = null, _fbInited = false;
-
-async function initFirebase(){
-  if(_fbInited) return true;
-  try {
-    const { initializeApp, getApps } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js');
-    const { getFirestore, doc, setDoc, getDoc } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
-    if(!getApps().length) _fbApp = initializeApp(firebaseConfig);
-    else _fbApp = getApps()[0];
-    _fbDb = getFirestore(_fbApp);
-    _fbInited = true;
-    window._fbGetDoc = getDoc;
-    window._fbSetDoc = setDoc;
-    window._fbDoc = doc;
-    const lbl = document.getElementById('fb-status-label');
-    if(lbl) lbl.textContent = 'Connected to ashajolies-hq';
-    const badge = document.getElementById('fb-auto-badge');
-    if(badge) badge.style.display = 'block';
-    return true;
-  } catch(e) {
-    syncLog('Firebase init failed: ' + e.message, '#c0392b');
-    return false;
-  }
-}
+let _fbDb = null, _fbDocRef = null, _fbInited = false, _fbWriting = false, _fbListener = null;
 
 function syncLog(msg, color){
   const el = document.getElementById('sync-log');
   if(!el) return;
   const ts = new Date().toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
-  el.innerHTML = `<span style="color:${color||'var(--warm-gray)'}">[${ts}] ${msg}</span>\n` + (el.innerHTML || '');
+  el.innerHTML = `<span style="color:${color||'var(--warm-gray)'}">[${ts}] ${msg}</span>\n` + (el.innerHTML||'');
 }
 
 function setSyncStatus(online){
   ['sync-dot','sync-dot2'].forEach(id=>{
-    const d = document.getElementById(id);
-    if(d) d.className = 'sync-dot' + (online ? '' : ' off');
+    const d=document.getElementById(id);
+    if(d) d.className='sync-dot'+(online?'':' off');
   });
-  const lbl = document.getElementById('sync-status-lbl');
-  const lbl2 = document.getElementById('sync-status-lbl2');
-  if(lbl) lbl.textContent = online ? 'Online — Firebase sync ready' : 'Offline — use file backup instead';
-  if(lbl2) lbl2.textContent = online ? 'Online · file sync also works' : 'Offline — file sync available';
+  const lbl=document.getElementById('sync-status-lbl');
+  const lbl2=document.getElementById('sync-status-lbl2');
+  if(lbl) lbl.textContent=online?'Live — changes sync instantly':'Offline — file backup available';
+  if(lbl2) lbl2.textContent=online?'Online · file sync also works':'Offline — file sync available';
 }
 
-async function pushSync(){
-  if(!navigator.onLine){ syncLog('Offline — use file backup instead.', '#c0392b'); return; }
-  const dot = document.getElementById('sync-dot');
-  if(dot) dot.classList.add('pulse');
-  syncLog('Connecting to Firebase…', 'var(--warm-gold)');
-
-  const ok = await initFirebase();
-  if(!ok){ if(dot) dot.classList.remove('pulse'); return; }
-
-  syncLog('Pushing data to Firestore…', 'var(--warm-gold)');
+async function initFirebase(){
+  if(_fbInited) return true;
+  if(!navigator.onLine){ syncLog('Offline — real-time sync paused.','#c0392b'); return false; }
   try {
-    const ref = window._fbDoc(_fbDb, 'hq', FB_DOC_ID);
-    await window._fbSetDoc(ref, {
-      _pushed: new Date().toISOString(),
+    const { initializeApp, getApps } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js');
+    const { getFirestore, doc, setDoc, onSnapshot, serverTimestamp } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
+
+    const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+    _fbDb = getFirestore(app);
+    _fbDocRef = doc(_fbDb, 'hq', FB_DOC_ID);
+    window._fbSetDoc = setDoc;
+    window._fbServerTimestamp = serverTimestamp;
+    _fbInited = true;
+
+    // ── REAL-TIME LISTENER ──
+    // Fires immediately with current cloud data, then on every remote change
+    _fbListener = onSnapshot(_fbDocRef, snap => {
+      if(!snap.exists()) {
+        // No cloud data yet — write our local data up
+        syncLog('No cloud data yet — uploading local data…','var(--warm-gold)');
+        fbWrite();
+        return;
+      }
+      const remote = snap.data();
+      // Ignore updates that we ourselves just wrote (avoid echo loop)
+      if(_fbWriting) return;
+
+      const remoteTs = remote._ts || 0;
+      const localTs  = parseInt(localStorage.getItem('ajhq_lastWrite')||'0');
+
+      if(remoteTs > localTs){
+        syncLog('↓ Remote change detected — updating…','var(--sky-deep)');
+        applyImport(remote.data || remote);
+        syncLog('✓ Synced from cloud','var(--forest)');
+        const dot=document.getElementById('sync-dot');
+        if(dot){dot.classList.add('pulse');setTimeout(()=>dot.classList.remove('pulse'),800);}
+      }
+    }, err => {
+      syncLog('Listener error: '+err.message,'#c0392b');
+    });
+
+    // Update UI
+    const lbl=document.getElementById('fb-status-label');
+    if(lbl) lbl.textContent='Connected · changes sync instantly';
+    const badge=document.getElementById('fb-auto-badge');
+    if(badge) badge.style.display='block';
+    setSyncStatus(true);
+    syncLog('✓ Firebase connected — live sync active','var(--forest)');
+    return true;
+  } catch(e){
+    syncLog('Firebase init failed: '+e.message,'#c0392b');
+    return false;
+  }
+}
+
+async function fbWrite(){
+  if(!_fbInited || !_fbDocRef) return;
+  _fbWriting = true;
+  const now = Date.now();
+  localStorage.setItem('ajhq_lastWrite', String(now));
+  try {
+    await window._fbSetDoc(_fbDocRef, {
+      _ts: now,
+      _device: navigator.userAgent.includes('Mobile') ? 'mobile' : 'desktop',
       data: JSON.parse(JSON.stringify(D))
     });
-    syncLog('✓ Pushed successfully to Firebase!', 'var(--forest)');
-    toast('Pushed to Firebase ✓');
-  } catch(e) {
-    syncLog('Push failed: ' + e.message, '#c0392b');
+  } catch(e){
+    syncLog('Write failed: '+e.message,'#c0392b');
   }
-  if(dot) dot.classList.remove('pulse');
-}
-
-async function pullSync(){
-  if(!navigator.onLine){ syncLog('Offline — use file import instead.', '#c0392b'); return; }
-  const dot = document.getElementById('sync-dot');
-  if(dot) dot.classList.add('pulse');
-  syncLog('Connecting to Firebase…', 'var(--warm-gold)');
-
-  const ok = await initFirebase();
-  if(!ok){ if(dot) dot.classList.remove('pulse'); return; }
-
-  syncLog('Pulling from Firestore…', 'var(--warm-gold)');
-  try {
-    const ref = window._fbDoc(_fbDb, 'hq', FB_DOC_ID);
-    const snap = await window._fbGetDoc(ref);
-    if(!snap.exists()) throw new Error('No data found — push from another device first');
-    const fetched = snap.data();
-    applyImport(fetched.data || fetched);
-    syncLog('✓ Data pulled and merged from Firebase!', 'var(--forest)');
-    toast('Sync complete ✓');
-  } catch(e) {
-    syncLog('Pull failed: ' + e.message, '#c0392b');
-  }
-  if(dot) dot.classList.remove('pulse');
+  // Small delay so the listener's echo arrives during _fbWriting=true
+  setTimeout(()=>{ _fbWriting=false; }, 1200);
 }
 
 function applyImport(imported){
@@ -2050,13 +2051,15 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeSearch();docum
 
 // ── STARTUP — runs after every function above is fully defined ──
 init();
-// Show sync popup on first visit or if not skipped
-const _isFirstVisit = !localStorage.getItem('ajhq_fbInited');
-if(_isFirstVisit || localStorage.getItem('ajhq_skipSync')!=='true'){
-  window.addEventListener('load',()=>setTimeout(openSync,700));
-} else {
-  localStorage.setItem('ajhq_fbInited','true');
-}
+// Auto-initialise Firebase real-time sync on load
+window.addEventListener('load', () => {
+  initFirebase();
+  // Show sync popup on first visit or if not skipped
+  const skip = localStorage.getItem('ajhq_skipSync') === 'true';
+  if(!skip) setTimeout(openSync, 700);
+});
+window.addEventListener('online',  () => { setSyncStatus(true);  if(!_fbInited) initFirebase(); });
+window.addEventListener('offline', () => { setSyncStatus(false); });
 </script>
 </body>
 </html>
