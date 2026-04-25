@@ -405,7 +405,15 @@ body{background:var(--ivory);font-family:'Jost',sans-serif;font-weight:300;color
       <div class="sb-rate-val" id="sb-rate">$20</div>
       <div class="sb-rate-sub">per UGC video</div>
     </div>
-    <div id="sb-saved" style="font-size:9px;color:rgba(250,246,239,.25);margin-top:8px;text-align:center;font-family:'DM Mono',monospace;">Connecting…</div>
+    <!-- User info + sign out -->
+    <div style="display:flex;align-items:center;gap:8px;margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.06);">
+      <div id="sb-avatar" style="flex-shrink:0;"></div>
+      <div style="flex:1;min-width:0;">
+        <div id="sb-user-email" style="font-size:10px;color:rgba(250,246,239,.45);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></div>
+        <div id="sb-saved" style="font-size:9px;color:rgba(250,246,239,.22);font-family:'DM Mono',monospace;">Connecting…</div>
+      </div>
+      <button onclick="authSignOut()" title="Sign out" style="background:none;border:1px solid rgba(255,255,255,.1);border-radius:7px;padding:4px 7px;cursor:pointer;font-size:12px;color:rgba(250,246,239,.35);flex-shrink:0;" onmouseover="this.style.color='var(--ivory)'" onmouseout="this.style.color='rgba(250,246,239,.35)'">⏻</button>
+    </div>
   </div>
 </aside>
 
@@ -965,10 +973,119 @@ self.addEventListener('fetch',e=>{
 })();
 </script>
 
-<!-- Firebase bootstrap: initialises Firestore, exposes window.D, window.save, window._fbReady -->
+<!-- ═══ LOGIN SCREEN ═══ -->
+<div id="login-screen" style="
+  position:fixed;inset:0;z-index:99999;
+  background:var(--ink);
+  display:flex;align-items:center;justify-content:center;
+  flex-direction:column;gap:0;
+  font-family:'Jost',sans-serif;
+">
+  <div style="text-align:center;margin-bottom:32px;">
+    <div style="font-size:10px;letter-spacing:.35em;text-transform:uppercase;color:var(--warm-gold);margin-bottom:8px;font-family:'DM Mono',monospace;">Creator HQ</div>
+    <div style="font-family:'Cormorant Garamond',serif;font-size:2.8rem;font-weight:300;color:var(--ivory);line-height:1;">Asha<em style="font-style:italic;color:var(--blush);">Jolies</em></div>
+    <div style="font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:rgba(250,246,239,.22);margin-top:6px;">UGC · Mitheru, Kenya 🇰🇪</div>
+  </div>
+
+  <!-- Email/password form -->
+  <div id="login-box" style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:28px 28px 24px;width:320px;max-width:calc(100vw - 32px);">
+    <div id="login-err" style="display:none;background:rgba(192,57,43,.15);border:1px solid rgba(192,57,43,.3);border-radius:10px;padding:9px 13px;font-size:12px;color:#e87c6a;margin-bottom:14px;"></div>
+
+    <div style="margin-bottom:12px;">
+      <label style="font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:rgba(250,246,239,.4);display:block;margin-bottom:5px;">Email</label>
+      <input id="li-email" type="email" placeholder="you@email.com" autocomplete="email"
+        style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:10px 13px;font-family:'Jost',sans-serif;font-size:13px;color:var(--ivory);outline:none;"
+        onkeydown="if(event.key==='Enter')document.getElementById('li-pass').focus()">
+    </div>
+    <div style="margin-bottom:20px;">
+      <label style="font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:rgba(250,246,239,.4);display:block;margin-bottom:5px;">Password</label>
+      <input id="li-pass" type="password" placeholder="••••••••" autocomplete="current-password"
+        style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:10px 13px;font-family:'Jost',sans-serif;font-size:13px;color:var(--ivory);outline:none;"
+        onkeydown="if(event.key==='Enter')loginEmail()">
+    </div>
+
+    <button onclick="loginEmail()" id="li-btn"
+      style="width:100%;background:var(--terracotta);color:#fff;border:none;border-radius:100px;padding:11px;font-family:'Jost',sans-serif;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;margin-bottom:10px;">
+      Sign In
+    </button>
+
+    <div style="text-align:center;font-size:11px;color:rgba(250,246,239,.3);margin-bottom:10px;">or</div>
+
+    <button onclick="loginGoogle()"
+      style="width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);color:var(--ivory);border-radius:100px;padding:10px;font-family:'Jost',sans-serif;font-size:12px;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">
+      <svg width="16" height="16" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.35-8.16 2.35-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+      Continue with Google
+    </button>
+
+    <div style="text-align:center;margin-top:16px;">
+      <button onclick="showSignup()" style="background:none;border:none;color:rgba(250,246,239,.35);font-size:11px;cursor:pointer;font-family:'Jost',sans-serif;">
+        No account? <span style="color:var(--blush);text-decoration:underline;">Create one</span>
+      </button>
+      &nbsp;·&nbsp;
+      <button onclick="showReset()" style="background:none;border:none;color:rgba(250,246,239,.35);font-size:11px;cursor:pointer;font-family:'Jost',sans-serif;">
+        <span style="color:rgba(250,246,239,.35);text-decoration:underline;">Forgot password?</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Sign-up panel -->
+  <div id="signup-box" style="display:none;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:28px 28px 24px;width:320px;max-width:calc(100vw - 32px);">
+    <div style="font-size:13px;font-weight:500;color:var(--ivory);margin-bottom:16px;">Create your account</div>
+    <div id="su-err" style="display:none;background:rgba(192,57,43,.15);border:1px solid rgba(192,57,43,.3);border-radius:10px;padding:9px 13px;font-size:12px;color:#e87c6a;margin-bottom:14px;"></div>
+    <div style="margin-bottom:12px;">
+      <label style="font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:rgba(250,246,239,.4);display:block;margin-bottom:5px;">Email</label>
+      <input id="su-email" type="email" placeholder="you@email.com"
+        style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:10px 13px;font-family:'Jost',sans-serif;font-size:13px;color:var(--ivory);outline:none;">
+    </div>
+    <div style="margin-bottom:20px;">
+      <label style="font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:rgba(250,246,239,.4);display:block;margin-bottom:5px;">Password (min 6 chars)</label>
+      <input id="su-pass" type="password" placeholder="••••••••"
+        style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:10px 13px;font-family:'Jost',sans-serif;font-size:13px;color:var(--ivory);outline:none;"
+        onkeydown="if(event.key==='Enter')signupEmail()">
+    </div>
+    <button onclick="signupEmail()"
+      style="width:100%;background:var(--terracotta);color:#fff;border:none;border-radius:100px;padding:11px;font-family:'Jost',sans-serif;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;margin-bottom:12px;">
+      Create Account
+    </button>
+    <div style="text-align:center;">
+      <button onclick="showLogin()" style="background:none;border:none;color:rgba(250,246,239,.35);font-size:11px;cursor:pointer;font-family:'Jost',sans-serif;">
+        ← Back to sign in
+      </button>
+    </div>
+  </div>
+
+  <!-- Reset password panel -->
+  <div id="reset-box" style="display:none;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:28px 28px 24px;width:320px;max-width:calc(100vw - 32px);">
+    <div style="font-size:13px;font-weight:500;color:var(--ivory);margin-bottom:8px;">Reset password</div>
+    <div style="font-size:11px;color:rgba(250,246,239,.4);margin-bottom:16px;">We'll send a reset link to your email.</div>
+    <div id="rs-msg" style="display:none;background:rgba(74,107,80,.15);border:1px solid rgba(74,107,80,.3);border-radius:10px;padding:9px 13px;font-size:12px;color:#8ecf96;margin-bottom:14px;"></div>
+    <div style="margin-bottom:20px;">
+      <input id="rs-email" type="email" placeholder="you@email.com"
+        style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:10px 13px;font-family:'Jost',sans-serif;font-size:13px;color:var(--ivory);outline:none;"
+        onkeydown="if(event.key==='Enter')sendReset()">
+    </div>
+    <button onclick="sendReset()"
+      style="width:100%;background:var(--terracotta);color:#fff;border:none;border-radius:100px;padding:11px;font-family:'Jost',sans-serif;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;margin-bottom:12px;">
+      Send Reset Link
+    </button>
+    <div style="text-align:center;">
+      <button onclick="showLogin()" style="background:none;border:none;color:rgba(250,246,239,.35);font-size:11px;cursor:pointer;font-family:'Jost',sans-serif;">
+        ← Back to sign in
+      </button>
+    </div>
+  </div>
+
+  <div style="margin-top:20px;font-size:10px;color:rgba(250,246,239,.15);text-align:center;">Secured by Firebase Auth · Your data stays private</div>
+</div>
+
+<!-- Firebase bootstrap: Auth + Firestore, exposes window.D, window.save, window._fbReady -->
 <script type="module">
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-import { getFirestore, doc, getDoc, setDoc } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+import { initializeApp }                                          from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+import { getFirestore, doc, getDoc, setDoc }                     from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+import { getAuth, onAuthStateChanged,
+         signInWithEmailAndPassword, createUserWithEmailAndPassword,
+         sendPasswordResetEmail, signOut,
+         GoogleAuthProvider, signInWithPopup }                    from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 
 const firebaseConfig = {
   apiKey: "AIzaSyCwxs5BnMb9Josvq8JZwo7esEhX6Y-0uN0",
@@ -980,15 +1097,16 @@ const firebaseConfig = {
   measurementId: "G-BXRLY66TM6"
 };
 
-const app = initializeApp(firebaseConfig);
-const db  = getFirestore(app);
-const DOC_ID = 'ashajolies-hq';
-const COLL   = 'hq-data';
-const HEAVY  = ['feedIg','feedTt','feedBank','visuals','outfits','moodboards'];
+const app  = initializeApp(firebaseConfig);
+const db   = getFirestore(app);
+const auth = getAuth(app);
+const gProvider = new GoogleAuthProvider();
+
+const HEAVY      = ['feedIg','feedTt','feedBank','visuals','outfits','moodboards'];
 const LIGHT_KEYS = ['gigs','content','ideas','followups','pitches','rates','colors','niches','platforms','bio','links','locations','cameras','calM','calY'];
 
-// expose D globally so the regular script below can reference it
-window.D = {
+// ── Default data ──
+const DEFAULTS = () => ({
   gigs:[],content:[],
   ideas:[
     {id:'i1',title:'My honest skincare routine for melanin skin',niche:'Beauty',platform:'TikTok',status:'idea',types:['Talking to Camera','Review'],hook:'POV: you finally found a routine that works 🙌',audio:'',notes:'Feature 3–4 products. 30–45s.',img:'',linkedGig:'',added:Date.now()},
@@ -1027,52 +1145,154 @@ window.D = {
   feedIg:Array(9).fill(null),feedTt:Array(6).fill(null),feedBank:[],
   moodboards:{},
   calM:new Date().getMonth(),calY:new Date().getFullYear(),
-};
+});
 
-// expose save() globally with Firestore backend + 800ms debounce
+window.D = DEFAULTS();
+
+// ── Save (user-scoped path) ──
 let _saveTimer = null;
-window.save = function save() {
+window.save = function() {
   const el = document.getElementById('sb-saved');
-  if (el) el.textContent = 'Saving…';
+  if(el) el.textContent = 'Saving…';
   clearTimeout(_saveTimer);
   _saveTimer = setTimeout(async () => {
+    const uid = auth.currentUser?.uid;
+    if(!uid){ if(el) el.textContent = '⚠ Not signed in'; return; }
     try {
       const light = {};
       LIGHT_KEYS.forEach(k => light[k] = window.D[k]);
-      await setDoc(doc(db, COLL, DOC_ID), light, { merge: true });
-      for (const k of HEAVY) {
-        await setDoc(doc(db, COLL, DOC_ID + '_' + k), { [k]: window.D[k] });
-      }
-      if (el) { const n = new Date(); el.textContent = 'Synced ' + n.toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit'}); }
-    } catch(e) {
-      console.error('Firebase save error', e);
-      if (el) el.textContent = '⚠ Sync failed';
+      await setDoc(doc(db,'users',uid,'hq','main'), light, {merge:true});
+      for(const k of HEAVY)
+        await setDoc(doc(db,'users',uid,'hq', k), {[k]: window.D[k]});
+      if(el){ const n=new Date(); el.textContent='Synced '+n.toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit'}); }
+    } catch(e){
+      console.error('Save error',e);
+      if(el) el.textContent='⚠ Sync failed';
     }
   }, 800);
 };
 
-// load from Firestore, then signal the app script to boot
-async function loadFromFirebase() {
+// ── Load user data ──
+async function loadUserData(uid) {
   const el = document.getElementById('sb-saved');
-  if (el) el.textContent = 'Loading…';
+  if(el) el.textContent = 'Loading…';
+  window.D = DEFAULTS();
   try {
-    const snap = await getDoc(doc(db, COLL, DOC_ID));
-    if (snap.exists()) { const d = snap.data(); Object.keys(d).forEach(k => { if (k in window.D) window.D[k] = d[k]; }); }
-    for (const k of HEAVY) {
-      const s = await getDoc(doc(db, COLL, DOC_ID + '_' + k));
-      if (s.exists() && s.data()[k] !== undefined) window.D[k] = s.data()[k];
+    const snap = await getDoc(doc(db,'users',uid,'hq','main'));
+    if(snap.exists()){ const d=snap.data(); Object.keys(d).forEach(k=>{ if(k in window.D) window.D[k]=d[k]; }); }
+    for(const k of HEAVY){
+      const s = await getDoc(doc(db,'users',uid,'hq',k));
+      if(s.exists() && s.data()[k]!==undefined) window.D[k]=s.data()[k];
     }
-    if (el) el.textContent = 'Synced ✓';
-  } catch(e) {
-    console.error('Firebase load error', e);
-    if (el) el.textContent = '⚠ Offline — using defaults';
+    if(el) el.textContent='Synced ✓';
+  } catch(e){
+    console.error('Load error',e);
+    if(el) el.textContent='⚠ Offline — using defaults';
   }
-  // signal app script
-  window._fbReady = true;
-  document.dispatchEvent(new Event('fb-ready'));
 }
 
-loadFromFirebase();
+// ── Auth state observer ──
+onAuthStateChanged(auth, async user => {
+  if(user){
+    // Signed in — load data then boot app
+    await loadUserData(user.uid);
+    // Update sidebar avatar
+    const av = document.getElementById('sb-avatar');
+    if(av) av.innerHTML = user.photoURL
+      ? `<img src="${user.photoURL}" style="width:28px;height:28px;border-radius:50%;object-fit:cover;">`
+      : `<div style="width:28px;height:28px;border-radius:50%;background:var(--terracotta);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:#fff;">${(user.displayName||user.email||'A')[0].toUpperCase()}</div>`;
+    const em = document.getElementById('sb-user-email');
+    if(em) em.textContent = user.displayName || user.email;
+    // Hide login screen
+    document.getElementById('login-screen').style.display='none';
+    // Boot app
+    window._fbReady = true;
+    document.dispatchEvent(new Event('fb-ready'));
+  } else {
+    // Signed out — show login
+    document.getElementById('login-screen').style.display='flex';
+    window._fbReady = false;
+  }
+});
+
+// ── Auth actions exposed to regular script ──
+window.loginEmail = async function(){
+  const email = document.getElementById('li-email').value.trim();
+  const pass  = document.getElementById('li-pass').value;
+  const err   = document.getElementById('login-err');
+  const btn   = document.getElementById('li-btn');
+  err.style.display='none'; btn.textContent='Signing in…'; btn.disabled=true;
+  try {
+    await signInWithEmailAndPassword(auth, email, pass);
+  } catch(e){
+    err.textContent = friendlyAuthError(e.code);
+    err.style.display='block';
+  }
+  btn.textContent='Sign In'; btn.disabled=false;
+};
+
+window.loginGoogle = async function(){
+  try {
+    await signInWithPopup(auth, gProvider);
+  } catch(e){
+    const err = document.getElementById('login-err');
+    err.textContent = friendlyAuthError(e.code);
+    err.style.display='block';
+  }
+};
+
+window.signupEmail = async function(){
+  const email = document.getElementById('su-email').value.trim();
+  const pass  = document.getElementById('su-pass').value;
+  const err   = document.getElementById('su-err');
+  err.style.display='none';
+  try {
+    await createUserWithEmailAndPassword(auth, email, pass);
+  } catch(e){
+    err.textContent = friendlyAuthError(e.code);
+    err.style.display='block';
+  }
+};
+
+window.sendReset = async function(){
+  const email = document.getElementById('rs-email').value.trim();
+  const msg   = document.getElementById('rs-msg');
+  try {
+    await sendPasswordResetEmail(auth, email);
+    msg.textContent='Reset link sent! Check your inbox.';
+    msg.style.display='block';
+  } catch(e){
+    msg.style.background='rgba(192,57,43,.15)';
+    msg.style.color='#e87c6a';
+    msg.textContent = friendlyAuthError(e.code);
+    msg.style.display='block';
+  }
+};
+
+window.authSignOut = async function(){
+  await signOut(auth);
+  window.D = DEFAULTS();
+  if(typeof toast==='function') toast('Signed out 👋');
+};
+
+window.showSignup = ()=>{ document.getElementById('login-box').style.display='none'; document.getElementById('reset-box').style.display='none'; document.getElementById('signup-box').style.display='block'; };
+window.showLogin  = ()=>{ document.getElementById('signup-box').style.display='none'; document.getElementById('reset-box').style.display='none'; document.getElementById('login-box').style.display='block'; };
+window.showReset  = ()=>{ document.getElementById('login-box').style.display='none'; document.getElementById('signup-box').style.display='none'; document.getElementById('reset-box').style.display='block'; };
+
+function friendlyAuthError(code){
+  const map = {
+    'auth/invalid-email':'Invalid email address.',
+    'auth/user-not-found':'No account with that email.',
+    'auth/wrong-password':'Incorrect password.',
+    'auth/invalid-credential':'Incorrect email or password.',
+    'auth/email-already-in-use':'An account with this email already exists.',
+    'auth/weak-password':'Password must be at least 6 characters.',
+    'auth/too-many-requests':'Too many attempts. Try again later.',
+    'auth/popup-closed-by-user':'Google sign-in was cancelled.',
+    'auth/network-request-failed':'Network error. Check your connection.',
+  };
+  return map[code] || 'Something went wrong. Please try again.';
+}
 </script>
 
 <script>
