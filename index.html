@@ -10,22 +10,10 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="description" content="AshaJolies UGC Creator HQ — Gig tracker, content planner, moodboard, brand hub">
 <title>AshaJolies UGC HQ</title>
-<!-- ═══ PWA MANIFEST (inline data URI) ═══ -->
-<link rel="manifest" href="data:application/manifest+json,{
-  %22name%22:%22AshaJolies%20HQ%22,
-  %22short_name%22:%22AJ%20HQ%22,
-  %22description%22:%22AshaJolies%20UGC%20Creator%20HQ%22,
-  %22start_url%22:%22.%22,
-  %22display%22:%22standalone%22,
-  %22orientation%22:%22portrait%22,
-  %22background_color%22:%22%231E1916%22,
-  %22theme_color%22:%22%231E1916%22,
-  %22icons%22:[
-    {%22src%22:%22data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%20512%20512'%3E%3Crect%20width%3D'512'%20height%3D'512'%20rx%3D'80'%20fill%3D'%231E1916'%2F%3E%3Ctext%20x%3D'256'%20y%3D'340'%20text-anchor%3D'middle'%20font-size%3D'260'%20font-family%3D'serif'%20fill%3D'%23E8C4B0'%3EAJ%3C%2Ftext%3E%3C%2Fsvg%3E%22,%22sizes%22:%22512x512%22,%22type%22:%22image/svg+xml%22,%22purpose%22:%22any%20maskable%22}
-  ]
-}">
-<!-- Apple touch icon (SVG inline) -->
-<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%20512%20512'%3E%3Crect%20width%3D'512'%20height%3D'512'%20rx%3D'80'%20fill%3D'%231E1916'%2F%3E%3Ctext%20x%3D'256'%20y%3D'340'%20text-anchor%3D'middle'%20font-size%3D'260'%20font-family%3D'serif'%20fill%3D'%23E8C4B0'%3EAJ%3C%2Ftext%3E%3C%2Fsvg%3E">
+<!-- ═══ PWA MANIFEST ═══ -->
+<link rel="manifest" href="manifest.json">
+<!-- Apple touch icon -->
+<link rel="apple-touch-icon" href="icon-192.png">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@200;300;400;500;600&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 /* ─── TOKENS ─── */
@@ -905,22 +893,44 @@ body{background:var(--ivory);font-family:'Jost',sans-serif;font-weight:300;color
 (function(){
   // ── Service Worker (inline blob) ──
   const SW_SRC = `
-const CACHE='ajhq-v1';
-const ASSETS=[]; // Firebase app fetches its own assets; we just cache the shell
-self.addEventListener('install',e=>{self.skipWaiting();});
+const CACHE='ajhq-v3';
+const PRECACHE=[
+  'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js',
+  'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js',
+  'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js',
+  'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@200;300;400;500;600&family=DM+Mono:wght@300;400;500&display=swap'
+];
+self.addEventListener('install',e=>{
+  self.skipWaiting();
+  e.waitUntil(
+    caches.open(CACHE).then(cache=>
+      Promise.allSettled(PRECACHE.map(url=>
+        fetch(url,{mode:'no-cors'}).then(r=>cache.put(url,r)).catch(()=>{})
+      ))
+    )
+  );
+});
 self.addEventListener('activate',e=>{
   e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k)))));
   self.clients.claim();
 });
 self.addEventListener('fetch',e=>{
-  // Network-first for Firebase; cache-first for everything else
   const url=new URL(e.request.url);
-  const isFirebase=url.hostname.includes('firestore.googleapis.com')||url.hostname.includes('firebase');
-  if(isFirebase){e.respondWith(fetch(e.request).catch(()=>caches.match(e.request)));return;}
+  if(url.hostname.includes('firestore.googleapis.com')){
+    e.respondWith(fetch(e.request).catch(()=>caches.match(e.request)||new Response('',{status:503})));
+    return;
+  }
+  if(url.hostname.includes('securetoken.googleapis.com')||url.hostname.includes('identitytoolkit')){
+    e.respondWith(fetch(e.request).catch(()=>new Response('',{status:503})));
+    return;
+  }
   e.respondWith(
     caches.open(CACHE).then(cache=>
       cache.match(e.request).then(hit=>{
-        const net=fetch(e.request).then(res=>{if(res.ok)cache.put(e.request,res.clone());return res;});
+        const net=fetch(e.request).then(res=>{
+          if(res.ok||res.type==='opaque')cache.put(e.request,res.clone());
+          return res;
+        }).catch(()=>{});
         return hit||net;
       })
     )
@@ -1104,6 +1114,50 @@ const gProvider = new GoogleAuthProvider();
 
 const HEAVY      = ['feedIg','feedTt','feedBank','visuals','outfits','moodboards'];
 const LIGHT_KEYS = ['gigs','content','ideas','followups','pitches','rates','colors','niches','platforms','bio','links','locations','cameras','calM','calY'];
+const LS_KEY     = 'ajhq_data_v1';
+const LS_USER    = 'ajhq_user_v1';
+const LS_DIRTY   = 'ajhq_dirty_v1';
+
+// ── localStorage helpers ──
+function lsSave(data) {
+  try {
+    const all = [...LIGHT_KEYS, ...HEAVY];
+    const out = {};
+    all.forEach(k => { if(k in data) out[k] = data[k]; });
+    localStorage.setItem(LS_KEY, JSON.stringify(out));
+  } catch(e) { console.warn('lsSave failed', e); }
+}
+function lsLoad() {
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch(e) { return null; }
+}
+function lsSaveUser(user) {
+  try {
+    localStorage.setItem(LS_USER, JSON.stringify({
+      uid: user.uid,
+      email: user.email,
+      displayName: user.displayName || null,
+      photoURL: user.photoURL || null
+    }));
+  } catch(e) {}
+}
+function lsLoadUser() {
+  try {
+    const raw = localStorage.getItem(LS_USER);
+    return raw ? JSON.parse(raw) : null;
+  } catch(e) { return null; }
+}
+function lsMarkDirty() {
+  try { localStorage.setItem(LS_DIRTY, '1'); } catch(e) {}
+}
+function lsClearDirty() {
+  try { localStorage.removeItem(LS_DIRTY); } catch(e) {}
+}
+function lsIsDirty() {
+  try { return !!localStorage.getItem(LS_DIRTY); } catch(e) { return false; }
+}
 
 // ── Default data ──
 const DEFAULTS = () => ({
@@ -1149,34 +1203,84 @@ const DEFAULTS = () => ({
 
 window.D = DEFAULTS();
 
-// ── Save (user-scoped path) ──
+// ── Save (local-first, then Firebase) ──
 let _saveTimer = null;
 window.save = function() {
   const el = document.getElementById('sb-saved');
   if(el) el.textContent = 'Saving…';
+  // Always save to localStorage immediately
+  lsSave(window.D);
+  lsMarkDirty();
   clearTimeout(_saveTimer);
   _saveTimer = setTimeout(async () => {
     const uid = auth.currentUser?.uid;
-    if(!uid){ if(el) el.textContent = '⚠ Not signed in'; return; }
+    if(!uid){
+      if(el) el.textContent = '💾 Saved locally';
+      return;
+    }
+    if(!navigator.onLine){
+      if(el) el.textContent = '📴 Offline — saved locally';
+      return;
+    }
     try {
       const light = {};
       LIGHT_KEYS.forEach(k => light[k] = window.D[k]);
       await setDoc(doc(db,'users',uid,'hq','main'), light, {merge:true});
       for(const k of HEAVY)
         await setDoc(doc(db,'users',uid,'hq', k), {[k]: window.D[k]});
-      if(el){ const n=new Date(); el.textContent='Synced '+n.toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit'}); }
+      lsClearDirty();
+      if(el){ const n=new Date(); el.textContent='Synced ✓ '+n.toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit'}); }
     } catch(e){
       console.error('Save error',e);
-      if(el) el.textContent='⚠ Sync failed';
+      if(el) el.textContent='💾 Saved locally (sync pending)';
     }
   }, 800);
 };
 
-// ── Load user data ──
+// ── Sync dirty local data to Firebase when coming back online ──
+window.addEventListener('online', async () => {
+  const el = document.getElementById('sb-saved');
+  if(!lsIsDirty()) return;
+  const uid = auth.currentUser?.uid;
+  if(!uid) return;
+  if(el) el.textContent = '🔄 Syncing…';
+  try {
+    const light = {};
+    LIGHT_KEYS.forEach(k => light[k] = window.D[k]);
+    await setDoc(doc(db,'users',uid,'hq','main'), light, {merge:true});
+    for(const k of HEAVY)
+      await setDoc(doc(db,'users',uid,'hq', k), {[k]: window.D[k]});
+    lsClearDirty();
+    if(el){ const n=new Date(); el.textContent='Synced ✓ '+n.toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit'}); }
+    if(typeof toast==='function') toast('Back online — all changes synced ✓');
+  } catch(e){
+    console.error('Online sync error', e);
+    if(el) el.textContent='⚠ Sync failed';
+  }
+});
+
+// ── Load user data (local-first, then Firebase) ──
 async function loadUserData(uid) {
   const el = document.getElementById('sb-saved');
   if(el) el.textContent = 'Loading…';
   window.D = DEFAULTS();
+
+  // 1. Load from localStorage immediately so app is usable at once
+  const local = lsLoad();
+  if(local) {
+    Object.keys(local).forEach(k => { if(k in window.D) window.D[k] = local[k]; });
+    if(el) el.textContent = navigator.onLine ? 'Syncing…' : '📴 Offline — local data';
+    // Boot the app with local data right away
+    window._fbReady = true;
+    document.dispatchEvent(new Event('fb-ready'));
+  }
+
+  if(!navigator.onLine) {
+    if(!local && el) el.textContent = '📴 Offline — no local data';
+    return;
+  }
+
+  // 2. Then fetch from Firebase in the background and merge
   try {
     const snap = await getDoc(doc(db,'users',uid,'hq','main'));
     if(snap.exists()){ const d=snap.data(); Object.keys(d).forEach(k=>{ if(k in window.D) window.D[k]=d[k]; }); }
@@ -1184,34 +1288,81 @@ async function loadUserData(uid) {
       const s = await getDoc(doc(db,'users',uid,'hq',k));
       if(s.exists() && s.data()[k]!==undefined) window.D[k]=s.data()[k];
     }
-    if(el) el.textContent='Synced ✓';
+    // Update localStorage with latest Firebase data
+    lsSave(window.D);
+    lsClearDirty();
+    if(el){ const n=new Date(); el.textContent='Synced ✓ '+n.toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit'}); }
+    // Re-render current page with fresh data
+    if(typeof renderPage==='function' && typeof currentPage!=='undefined') renderPage(currentPage);
+    if(typeof rDash==='function') rDash();
   } catch(e){
     console.error('Load error',e);
-    if(el) el.textContent='⚠ Offline — using defaults';
+    if(el) el.textContent = local ? '💾 Using local data' : '⚠ Load failed';
   }
 }
 
 // ── Auth state observer ──
+let _appBooted = false;
+
+// Offline boot timeout: if Firebase auth hasn't responded in 4s and we have local data, boot from cache
+setTimeout(() => {
+  if(window._fbReady) return; // already booted
+  const cachedUser = lsLoadUser();
+  const localData  = lsLoad();
+  if(cachedUser && localData) {
+    console.log('AJ HQ: Firebase timeout — booting from local cache');
+    const loginScreen = document.getElementById('login-screen');
+    if(loginScreen && loginScreen.style.display !== 'none') {
+      // Only boot offline if login screen is still showing (not yet authenticated)
+      bootWithUser(cachedUser);
+      Object.keys(localData).forEach(k => { if(k in window.D) window.D[k] = localData[k]; });
+      const el = document.getElementById('sb-saved');
+      if(el) el.textContent = '📴 Offline mode';
+      window._fbReady = true;
+      document.dispatchEvent(new Event('fb-ready'));
+    }
+  }
+}, 4000);
+
+function bootWithUser(user) {
+  const av = document.getElementById('sb-avatar');
+  if(av) av.innerHTML = user.photoURL
+    ? `<img src="${user.photoURL}" style="width:28px;height:28px;border-radius:50%;object-fit:cover;">`
+    : `<div style="width:28px;height:28px;border-radius:50%;background:var(--terracotta);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:#fff;">${(user.displayName||user.displayName||user.email||'A')[0].toUpperCase()}</div>`;
+  const em = document.getElementById('sb-user-email');
+  if(em) em.textContent = user.displayName || user.email;
+  document.getElementById('login-screen').style.display='none';
+}
+
 onAuthStateChanged(auth, async user => {
   if(user){
-    // Signed in — load data then boot app
+    lsSaveUser(user);
+    bootWithUser(user);
     await loadUserData(user.uid);
-    // Update sidebar avatar
-    const av = document.getElementById('sb-avatar');
-    if(av) av.innerHTML = user.photoURL
-      ? `<img src="${user.photoURL}" style="width:28px;height:28px;border-radius:50%;object-fit:cover;">`
-      : `<div style="width:28px;height:28px;border-radius:50%;background:var(--terracotta);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:#fff;">${(user.displayName||user.email||'A')[0].toUpperCase()}</div>`;
-    const em = document.getElementById('sb-user-email');
-    if(em) em.textContent = user.displayName || user.email;
-    // Hide login screen
-    document.getElementById('login-screen').style.display='none';
-    // Boot app
-    window._fbReady = true;
-    document.dispatchEvent(new Event('fb-ready'));
+    // loadUserData fires fb-ready itself; only fire here if it didn't (no local data + offline)
+    if(!window._fbReady){
+      window._fbReady = true;
+      document.dispatchEvent(new Event('fb-ready'));
+    }
   } else {
-    // Signed out — show login
-    document.getElementById('login-screen').style.display='flex';
-    window._fbReady = false;
+    // Firebase says no user — but check if we have a cached session for offline use
+    const cachedUser = lsLoadUser();
+    const localData  = lsLoad();
+    if(cachedUser && localData && !navigator.onLine){
+      // Offline with a previous session — boot with local data, skip login
+      bootWithUser(cachedUser);
+      Object.keys(localData).forEach(k => { if(k in window.D) window.D[k] = localData[k]; });
+      const el = document.getElementById('sb-saved');
+      if(el) el.textContent = '📴 Offline mode';
+      if(!window._fbReady){
+        window._fbReady = true;
+        document.dispatchEvent(new Event('fb-ready'));
+      }
+    } else {
+      // Truly signed out or first visit — show login
+      document.getElementById('login-screen').style.display='flex';
+      window._fbReady = false;
+    }
   }
 });
 
@@ -1271,7 +1422,10 @@ window.sendReset = async function(){
 
 window.authSignOut = async function(){
   await signOut(auth);
+  // Clear cached session so offline mode doesn't re-login automatically
+  try { localStorage.removeItem(LS_USER); localStorage.removeItem(LS_DIRTY); } catch(e){}
   window.D = DEFAULTS();
+  window._fbReady = false;
   if(typeof toast==='function') toast('Signed out 👋');
 };
 
@@ -2067,6 +2221,27 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeSearch();docum
 
 // ── BOOT: wait for Firebase data, then init ──
 if(window._fbReady){init();}else{document.addEventListener('fb-ready',()=>init(),{once:true});}
+
+// ── Offline indicator in topbar ──
+(function(){
+  function updateOnlineBar(){
+    let bar = document.getElementById('offline-bar');
+    if(navigator.onLine){
+      if(bar) bar.remove();
+    } else {
+      if(!bar){
+        bar = document.createElement('div');
+        bar.id = 'offline-bar';
+        bar.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:99990;background:#b05e3d;color:#fff;text-align:center;font-size:11px;font-family:'Jost',sans-serif;padding:5px;letter-spacing:.05em;';
+        bar.textContent = '📴 Offline — changes save locally and sync when you reconnect';
+        document.body.prepend(bar);
+      }
+    }
+  }
+  window.addEventListener('online', updateOnlineBar);
+  window.addEventListener('offline', updateOnlineBar);
+  updateOnlineBar();
+})();
 </script>
 </body>
 </html>
