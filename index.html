@@ -1,0 +1,2132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="theme-color" content="#1E1916">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="AshaJolies HQ">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="description" content="AshaJolies UGC Creator HQ — Gig tracker, content planner, moodboard, brand hub">
+<link rel="manifest" href="manifest.json">
+<title>AshaJolies UGC HQ</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@200;300;400;500;600&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<script>
+// ── SERVICE WORKER (real file for PWA install support) ──
+if('serviceWorker' in navigator){
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').then(reg => {
+      window.addEventListener('online',()=>{const b=document.getElementById('offline-bar');if(b)b.style.display='none';});
+      window.addEventListener('offline',()=>{const b=document.getElementById('offline-bar');if(b)b.style.display='flex';});
+    }).catch(()=>{});
+  });
+}
+
+// ── PWA INSTALL PROMPT ──
+let _deferredInstallPrompt = null;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  _deferredInstallPrompt = e;
+  // Show install button if present
+  const btn = document.getElementById('pwa-install-btn');
+  if (btn) btn.style.display = 'inline-flex';
+});
+window.addEventListener('appinstalled', () => {
+  _deferredInstallPrompt = null;
+  const btn = document.getElementById('pwa-install-btn');
+  if (btn) btn.style.display = 'none';
+});
+function installPWA() {
+  if (_deferredInstallPrompt) {
+    _deferredInstallPrompt.prompt();
+    _deferredInstallPrompt.userChoice.then(() => { _deferredInstallPrompt = null; });
+  }
+}
+</script>
+<style>
+/* ─── TOKENS ─── */
+:root{
+  --ivory:#FAF6EF;--warm-white:#F5EFE6;--blush:#E8C4B0;
+  --terracotta:#C4714F;--dusty-rose:#C9897A;--lavender:#C2AECE;
+  --soft-lilac:#DDD0E8;--sage:#8FAF8A;--forest:#4A6B50;
+  --gold:#C4963A;--warm-gold:#E8C06A;
+  --ink:#1E1916;--warm-gray:#7A6F68;--mid-gray:#B5ADA8;
+  --sky:#7AAECC;--sky-deep:#3A7A9C;
+  --sw:240px;--r:16px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;overflow:hidden;}
+body{background:var(--ivory);font-family:'Jost',sans-serif;font-weight:300;color:var(--ink);line-height:1.6;display:flex;height:100vh;}
+
+/* ─── SIDEBAR ─── */
+.sb{width:var(--sw);min-width:var(--sw);background:var(--ink);display:flex;flex-direction:column;height:100vh;overflow:hidden;z-index:10;flex-shrink:0;}
+.sb-logo{padding:20px 18px 14px;border-bottom:1px solid rgba(255,255,255,0.06);}
+.sb-eyebrow{font-size:8px;letter-spacing:.3em;text-transform:uppercase;color:var(--warm-gold);margin-bottom:4px;font-family:'DM Mono',monospace;}
+.sb-name{font-family:'Cormorant Garamond',serif;font-size:1.35rem;font-weight:300;color:var(--ivory);line-height:1;}
+.sb-name em{font-style:italic;color:var(--blush);}
+.sb-sub{font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:rgba(250,246,239,.22);margin-top:3px;}
+.sb-nav{flex:1;overflow-y:auto;padding:10px 0;scrollbar-width:none;}
+.sb-nav::-webkit-scrollbar{display:none;}
+.nl{font-size:8px;letter-spacing:.28em;text-transform:uppercase;color:rgba(250,246,239,.18);padding:14px 18px 5px;font-family:'DM Mono',monospace;}
+.ni{display:flex;align-items:center;gap:9px;padding:9px 18px;cursor:pointer;font-size:12px;font-weight:400;letter-spacing:.03em;color:rgba(250,246,239,.38);border-left:2px solid transparent;transition:all .16s;}
+.ni:hover{color:rgba(250,246,239,.72);background:rgba(255,255,255,.03);}
+.ni.active{color:var(--ivory);border-left-color:var(--terracotta);background:rgba(255,255,255,.04);}
+.ni-icon{font-size:14px;width:16px;text-align:center;flex-shrink:0;}
+.ni-badge{margin-left:auto;background:var(--terracotta);color:#fff;font-size:9px;font-family:'DM Mono',monospace;padding:1px 6px;border-radius:20px;font-weight:500;}
+.sb-foot{padding:12px 18px;border-top:1px solid rgba(255,255,255,.06);}
+.sb-rate{background:rgba(196,113,79,.12);border:1px solid rgba(196,113,79,.2);border-radius:10px;padding:9px 12px;}
+.sb-rate-label{font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:var(--terracotta);margin-bottom:2px;}
+.sb-rate-val{font-family:'Cormorant Garamond',serif;font-size:1.25rem;color:var(--blush);}
+.sb-rate-sub{font-size:9px;color:rgba(250,246,239,.28);}
+
+/* ─── MAIN ─── */
+.main{flex:1;display:flex;flex-direction:column;height:100vh;overflow:hidden;}
+.topbar{background:var(--ivory);border-bottom:1px solid rgba(0,0,0,.07);padding:0 22px;height:54px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;gap:12px;}
+.tb-title{font-family:'Cormorant Garamond',serif;font-size:1.25rem;font-weight:300;flex-shrink:0;}
+.tb-title em{font-style:italic;color:var(--terracotta);}
+.tb-search{flex:1;max-width:320px;position:relative;}
+.tb-search input{width:100%;background:var(--warm-white);border:1px solid rgba(0,0,0,.09);border-radius:100px;padding:7px 14px 7px 36px;font-family:'Jost',sans-serif;font-size:12px;outline:none;transition:border .14s;}
+.tb-search input:focus{border-color:var(--terracotta);}
+.tb-search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:13px;opacity:.4;}
+.tb-actions{display:flex;gap:6px;align-items:center;}
+.ca{flex:1;overflow-y:auto;padding:22px;scrollbar-width:thin;scrollbar-color:rgba(0,0,0,.1) transparent;}
+.pg{display:none;animation:fi .22s ease;}
+.pg.active{display:block;}
+@keyframes fi{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+
+/* ─── BUTTONS ─── */
+.btn{padding:7px 16px;border-radius:100px;font-family:'Jost',sans-serif;font-size:11px;font-weight:500;letter-spacing:.08em;cursor:pointer;text-transform:uppercase;border:none;transition:all .16s;white-space:nowrap;}
+.btn-p{background:var(--terracotta);color:#fff;}
+.btn-p:hover{background:#b05e3d;}
+.btn-g{background:transparent;color:var(--warm-gray);border:1px solid rgba(0,0,0,.12);}
+.btn-g:hover{background:rgba(0,0,0,.04);}
+.btn-s{padding:5px 12px;font-size:10px;}
+.btn-d{background:rgba(192,57,43,.1);color:#c0392b;border:1px solid rgba(192,57,43,.2);}
+
+/* ─── CARDS ─── */
+.card{background:#fff;border-radius:var(--r);border:1px solid rgba(0,0,0,.06);overflow:hidden;}
+.ch{padding:13px 17px;border-bottom:1px solid rgba(0,0,0,.05);display:flex;align-items:center;justify-content:space-between;}
+.ct{font-size:10px;letter-spacing:.15em;text-transform:uppercase;font-weight:500;color:var(--warm-gray);}
+.cb{padding:15px 17px;}
+
+/* ─── STATS ─── */
+.sg{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:18px;}
+.sc{background:#fff;border-radius:var(--r);padding:15px 17px;border:1px solid rgba(0,0,0,.06);}
+.sc-l{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--warm-gray);margin-bottom:5px;}
+.sc-v{font-family:'Cormorant Garamond',serif;font-size:1.85rem;font-weight:300;line-height:1;}
+.sc-s{font-size:10px;color:var(--mid-gray);margin-top:2px;}
+.c-t{color:var(--terracotta);}.c-f{color:var(--forest);}.c-g{color:var(--gold);}.c-k{color:var(--sky-deep);}
+
+/* ─── STATUS PILLS ─── */
+.sp{font-size:9px;letter-spacing:.08em;text-transform:uppercase;font-weight:600;padding:3px 9px;border-radius:20px;font-family:'DM Mono',monospace;white-space:nowrap;cursor:pointer;border:none;display:inline-block;}
+.s-pending{background:rgba(196,150,58,.12);color:var(--gold);}
+.s-negotiating{background:rgba(194,174,206,.2);color:#7a5a8a;}
+.s-waitingapproval{background:rgba(122,174,204,.15);color:var(--sky-deep);}
+.s-paid,.s-active{background:rgba(74,107,80,.12);color:var(--forest);}
+.s-gifted{background:rgba(196,113,79,.12);color:var(--terracotta);}
+.s-delivered,.s-done,.s-published{background:rgba(74,107,80,.2);color:#2d5a35;}
+.s-declined{background:rgba(181,173,168,.15);color:var(--warm-gray);}
+.s-idea{background:rgba(194,174,206,.15);color:#7a5a8a;}
+.s-scripting{background:rgba(196,150,58,.1);color:var(--gold);}
+.s-filming{background:rgba(196,113,79,.12);color:var(--terracotta);}
+.s-editing{background:rgba(122,174,204,.15);color:var(--sky-deep);}
+
+/* ─── FORM ─── */
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
+.fr.f1{grid-template-columns:1fr;}
+.fr.f3{grid-template-columns:1fr 1fr 1fr;}
+.fg{display:flex;flex-direction:column;gap:4px;}
+.fl{font-size:9px;letter-spacing:.15em;text-transform:uppercase;font-weight:500;color:var(--warm-gray);}
+.fi,.fs,.ft{background:var(--warm-white);border:1px solid rgba(0,0,0,.09);border-radius:9px;padding:8px 11px;font-family:'Jost',sans-serif;font-size:13px;font-weight:300;color:var(--ink);outline:none;transition:border .14s;width:100%;}
+.fi:focus,.fs:focus,.ft:focus{border-color:var(--terracotta);}
+.ft{resize:vertical;min-height:70px;}
+.fa{display:flex;gap:7px;justify-content:flex-end;margin-top:14px;padding-top:14px;border-top:1px solid rgba(0,0,0,.06);}
+
+/* ─── TAG PICKER ─── */
+.tp{border:1px solid rgba(0,0,0,.09);border-radius:9px;background:var(--warm-white);padding:6px 8px;min-height:40px;display:flex;flex-wrap:wrap;gap:5px;cursor:text;align-items:center;}
+.tp:focus-within{border-color:var(--terracotta);}
+.tc{display:inline-flex;align-items:center;gap:4px;background:rgba(196,113,79,.12);color:var(--terracotta);border-radius:20px;padding:2px 9px;font-size:11px;font-weight:500;font-family:'DM Mono',monospace;white-space:nowrap;}
+.tc button{cursor:pointer;font-size:13px;line-height:1;border:none;background:none;color:inherit;padding:0;opacity:.6;}
+.tc button:hover{opacity:1;}
+.tp-input{border:none;background:transparent;outline:none;font-family:'Jost',sans-serif;font-size:13px;min-width:80px;flex:1;}
+.tp-wrap{position:relative;}
+.tp-dd{position:absolute;z-index:500;background:#fff;border:1px solid rgba(0,0,0,.1);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.12);max-height:200px;overflow-y:auto;width:100%;top:calc(100% + 3px);left:0;display:none;}
+.to{padding:8px 13px;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:7px;}
+.to:hover{background:var(--warm-white);}
+.to.sel{color:var(--terracotta);font-weight:500;}
+.to-chk{width:14px;height:14px;border:1.5px solid var(--mid-gray);border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:9px;flex-shrink:0;}
+.to.sel .to-chk{background:var(--terracotta);border-color:var(--terracotta);color:#fff;}
+
+/* ─── MODAL ─── */
+.mo{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1000;display:none;align-items:center;justify-content:center;padding:16px;}
+.mo.open{display:flex;}
+.md{background:#fff;border-radius:20px;width:100%;max-width:580px;max-height:92vh;overflow-y:auto;box-shadow:0 32px 80px rgba(0,0,0,.2);}
+.md.wide{max-width:800px;}
+.md.xl{max-width:960px;}
+.mh{padding:17px 22px 13px;border-bottom:1px solid rgba(0,0,0,.06);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:#fff;z-index:1;border-radius:20px 20px 0 0;}
+.mt{font-family:'Cormorant Garamond',serif;font-size:1.35rem;font-weight:300;}
+.mt em{font-style:italic;color:var(--terracotta);}
+.mc{background:none;border:none;font-size:20px;cursor:pointer;color:var(--warm-gray);}
+.mb2{padding:18px 22px 22px;}
+
+/* ─── TABS ─── */
+.tr{display:flex;border-bottom:1px solid rgba(0,0,0,.07);margin-bottom:16px;overflow-x:auto;scrollbar-width:none;}
+.tr::-webkit-scrollbar{display:none;}
+.tb{padding:8px 15px;font-size:11px;font-weight:500;color:var(--warm-gray);cursor:pointer;border:none;background:transparent;border-bottom:2px solid transparent;font-family:'Jost',sans-serif;letter-spacing:.05em;transition:all .14s;white-space:nowrap;}
+.tb.active,.tb:hover{color:var(--terracotta);border-bottom-color:var(--terracotta);}
+.tp2{display:none;} .tp2.active{display:block;}
+
+/* ─── TABLE ─── */
+.dt{width:100%;border-collapse:collapse;font-size:13px;}
+.dt th{padding:9px 13px;text-align:left;font-size:9px;letter-spacing:.2em;text-transform:uppercase;font-weight:600;color:var(--warm-gray);background:var(--warm-white);border-bottom:1px solid rgba(0,0,0,.06);}
+.dt td{padding:11px 13px;border-bottom:1px solid rgba(0,0,0,.04);vertical-align:middle;}
+.dt tr:last-child td{border-bottom:none;}
+.dt tr:hover td{background:rgba(250,246,239,.5);}
+.ib{background:none;border:1px solid rgba(0,0,0,.09);border-radius:6px;padding:4px 8px;cursor:pointer;font-size:12px;color:var(--warm-gray);transition:all .14s;}
+.ib:hover{background:var(--warm-white);color:var(--terracotta);}
+
+/* ─── SEARCH RESULTS ─── */
+.sr-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:900;display:none;align-items:flex-start;justify-content:center;padding:80px 16px 16px;}
+.sr-overlay.open{display:flex;}
+.sr-box{background:#fff;border-radius:18px;width:100%;max-width:640px;max-height:70vh;overflow-y:auto;box-shadow:0 24px 60px rgba(0,0,0,.2);}
+.sr-head{padding:16px 20px;border-bottom:1px solid rgba(0,0,0,.06);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--warm-gray);}
+.sr-item{display:flex;align-items:center;gap:12px;padding:12px 20px;border-bottom:1px solid rgba(0,0,0,.04);cursor:pointer;transition:background .12s;}
+.sr-item:hover{background:var(--warm-white);}
+.sr-item:last-child{border-bottom:none;}
+.sr-icon{font-size:18px;flex-shrink:0;}
+.sr-title{font-size:13px;font-weight:500;}
+.sr-meta{font-size:11px;color:var(--warm-gray);}
+.sr-type{font-size:9px;font-family:'DM Mono',monospace;padding:2px 7px;border-radius:10px;background:rgba(196,113,79,.1);color:var(--terracotta);}
+
+/* ─── UPLOAD ZONE ─── */
+.uz{border:2px dashed rgba(0,0,0,.12);border-radius:12px;padding:18px;text-align:center;cursor:pointer;transition:border .14s;background:var(--warm-white);}
+.uz:hover{border-color:var(--terracotta);}
+.uz input{display:none;}
+
+/* ─── IMAGE GRID ─── */
+.ig2{display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:7px;margin-top:8px;}
+.it{position:relative;border-radius:8px;overflow:hidden;aspect-ratio:1;}
+.it img{width:100%;height:100%;object-fit:cover;}
+.it-del{position:absolute;top:3px;right:3px;background:rgba(0,0,0,.6);color:#fff;border:none;border-radius:50%;width:17px;height:17px;font-size:9px;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .14s;}
+.it:hover .it-del{opacity:1;}
+
+/* ─── EMPTY STATE ─── */
+.es{text-align:center;padding:38px 20px;}
+.es-icon{font-size:34px;margin-bottom:9px;opacity:.35;}
+.es-title{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:300;color:var(--warm-gray);}
+.es-sub{font-size:11px;color:var(--mid-gray);margin-top:3px;}
+
+/* ─── TOAST ─── */
+.toast{position:fixed;bottom:20px;right:20px;background:var(--ink);color:var(--ivory);padding:9px 18px;border-radius:100px;font-size:12px;z-index:9999;transform:translateY(60px);opacity:0;transition:all .26s;pointer-events:none;}
+.toast.show{transform:translateY(0);opacity:1;}
+
+/* ─── CALENDAR ─── */
+.cg{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;}
+.cdh{text-align:center;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--warm-gray);padding:5px 0;font-weight:500;}
+.cc{background:#fff;border-radius:8px;min-height:70px;border:1px solid rgba(0,0,0,.05);padding:5px;cursor:pointer;transition:border .13s;display:flex;flex-direction:column;}
+.cc:hover{border-color:var(--terracotta);}
+.cc.om{background:transparent;border-color:transparent;}
+.cc.td{border-color:var(--terracotta);background:rgba(196,113,79,.02);}
+.cc-n{font-size:10px;font-weight:500;color:var(--warm-gray);}
+.cc.td .cc-n{color:var(--terracotta);font-weight:700;}
+.chip{font-size:9px;padding:2px 5px;border-radius:3px;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:'DM Mono',monospace;}
+.chip-tt{background:rgba(1,1,1,.06);color:#333;}
+.chip-ig{background:rgba(225,48,108,.08);color:#c13584;}
+.chip-yt{background:rgba(255,0,0,.07);color:#c00;}
+.chip-done{text-decoration:line-through;opacity:.5;}
+
+/* ─── FEED PLANNER ─── */
+.fp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;max-width:330px;border-radius:12px;overflow:hidden;}
+.fp-grid.tt{grid-template-columns:repeat(3,1fr);}
+.fc{position:relative;background:var(--warm-white);cursor:pointer;overflow:hidden;border:2px solid transparent;transition:border .13s;}
+.fc.ig-cell{aspect-ratio:1;}
+.fc.tt-cell{aspect-ratio:9/16;}
+.fc:hover{border-color:var(--terracotta);}
+.fc.selected-cell{border-color:var(--terracotta);box-shadow:0 0 0 2px rgba(196,113,79,.3);}
+.fc img{width:100%;height:100%;object-fit:cover;}
+.fc-add{display:flex;align-items:center;justify-content:center;height:100%;font-size:20px;color:var(--mid-gray);}
+.fc-n{position:absolute;top:3px;left:4px;font-size:9px;font-family:'DM Mono',monospace;background:rgba(0,0,0,.5);color:#fff;padding:1px 4px;border-radius:3px;}
+.fc-ov{position:absolute;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;gap:5px;}
+.fc:hover .fc-ov{display:flex;}
+.fc-btn{background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.4);color:#fff;border-radius:5px;padding:3px 7px;font-size:9px;cursor:pointer;}
+
+/* ─── IDEAS ─── */
+.id-card{background:#fff;border-radius:var(--r);border:1px solid rgba(0,0,0,.06);padding:14px;display:flex;flex-direction:column;gap:7px;}
+.id-tag{font-size:9px;letter-spacing:.12em;text-transform:uppercase;font-weight:600;padding:3px 8px;border-radius:20px;display:inline-block;font-family:'DM Mono',monospace;}
+.t-Beauty{background:rgba(201,137,122,.12);color:var(--dusty-rose);}
+.t-Hair{background:rgba(74,107,80,.1);color:var(--forest);}
+.t-Lifestyle{background:rgba(194,174,206,.15);color:#7a5a8a;}
+.t-Tech{background:rgba(122,174,204,.12);color:var(--sky-deep);}
+.t-Fashion{background:rgba(232,192,106,.12);color:var(--gold);}
+.t-Food{background:rgba(74,107,80,.1);color:var(--sage);}
+.id-title{font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:400;line-height:1.3;}
+.id-img{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:8px;background:var(--warm-white);}
+
+/* ─── PITCH ─── */
+.pitch-item{background:#fff;border-radius:var(--r);border:1px solid rgba(0,0,0,.06);overflow:hidden;}
+.pi-head{padding:13px 16px;display:flex;align-items:center;gap:10px;cursor:pointer;}
+.pi-chev{color:var(--mid-gray);font-size:12px;transition:transform .18s;}
+.pitch-item.open .pi-chev{transform:rotate(180deg);}
+.pi-body{display:none;border-top:1px solid rgba(0,0,0,.05);padding:15px;}
+.pitch-item.open .pi-body{display:block;}
+.pi-pre{font-size:12px;color:var(--warm-gray);line-height:1.8;white-space:pre-wrap;}
+
+/* ─── MOODBOARD ─── */
+.mb-full{position:fixed;inset:0;background:var(--warm-white);z-index:2000;display:none;flex-direction:column;}
+.mb-full.open{display:flex;}
+.mb-tb{background:var(--ink);padding:0 16px;height:50px;display:flex;align-items:center;gap:10px;flex-shrink:0;overflow-x:auto;}
+.mb-tb::-webkit-scrollbar{display:none;}
+.mb-ttl{font-family:'Cormorant Garamond',serif;font-size:1rem;color:var(--ivory);flex-shrink:0;}
+.mb-ttl em{font-style:italic;color:var(--blush);}
+.mbt{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.8);padding:4px 10px;border-radius:7px;font-size:10px;cursor:pointer;font-family:'Jost',sans-serif;transition:all .14s;white-space:nowrap;flex-shrink:0;}
+.mbt:hover,.mbt.on{background:var(--terracotta);border-color:var(--terracotta);color:#fff;}
+.mbt-sep{width:1px;height:20px;background:rgba(255,255,255,.12);flex-shrink:0;}
+.mb-body{display:flex;flex:1;overflow:hidden;}
+.mb-area{flex:1;position:relative;overflow:hidden;}
+.mb-cvs{width:100%;height:100%;position:relative;overflow:hidden;}
+.mb-dc{position:absolute;inset:0;touch-action:none;}
+.mb-side{width:200px;background:#fff;border-left:1px solid rgba(0,0,0,.07);display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0;}
+.mb-sec{padding:11px 13px;border-bottom:1px solid rgba(0,0,0,.06);}
+.mb-slbl{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--warm-gray);margin-bottom:7px;font-weight:500;}
+.sw-row{display:flex;flex-wrap:wrap;gap:4px;}
+.sw{width:20px;height:20px;border-radius:50%;cursor:pointer;border:2px solid transparent;}
+.sw:hover,.sw.on{border-color:var(--ink);}
+.bs-row{display:flex;gap:5px;align-items:center;}
+.bs{background:var(--ink);border-radius:50%;cursor:pointer;opacity:.3;}
+.bs.on{opacity:1;}
+.mb-el{position:absolute;cursor:move;user-select:none;}
+.mb-el-ctrl{position:absolute;top:-24px;left:0;display:none;gap:3px;}
+.mb-el:hover .mb-el-ctrl,.mb-el.sel .mb-el-ctrl{display:flex;}
+.mb-ctrl{background:var(--ink);color:#fff;border:none;border-radius:4px;padding:2px 5px;font-size:9px;cursor:pointer;}
+.mb-img-el{border-radius:8px;box-shadow:0 4px 20px rgba(0,0,0,.15);display:block;max-width:220px;}
+.mb-txt-el{padding:8px 12px;background:#fff;border-radius:8px;box-shadow:0 2px 12px rgba(0,0,0,.1);min-width:100px;outline:none;cursor:text;}
+.mb-stk{padding:13px;background:#fff9c4;border-radius:8px;box-shadow:0 2px 12px rgba(0,0,0,.12);min-width:130px;min-height:70px;outline:none;cursor:text;}
+.mb-shot{background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:10px;padding:11px 13px;min-width:190px;box-shadow:0 2px 10px rgba(0,0,0,.07);}
+.mb-shot-h{font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--terracotta);font-weight:600;margin-bottom:5px;}
+.mb-shot-b{font-size:12px;outline:none;min-height:40px;width:100%;}
+.mb-layers{flex:1;overflow-y:auto;padding:7px;}
+.mb-li{display:flex;align-items:center;gap:5px;padding:4px 6px;border-radius:5px;font-size:11px;cursor:pointer;}
+.mb-li:hover{background:var(--warm-white);}
+.mb-li.sel{background:rgba(196,113,79,.1);color:var(--terracotta);}
+
+/* ─── BRAND HUB ─── */
+.br-tabs{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:16px;}
+.br-tab{padding:6px 13px;border-radius:8px;font-size:11px;font-weight:500;cursor:pointer;color:var(--warm-gray);border:1px solid rgba(0,0,0,.08);background:#fff;font-family:'Jost',sans-serif;transition:all .14s;}
+.br-tab.active{background:var(--ink);color:#fff;border-color:var(--ink);}
+.br-sec{display:none;}
+.br-sec.active{display:block;}
+.swatch-e{position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;}
+.sw-circ{width:50px;height:50px;border-radius:50%;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.12);position:relative;border:2px solid transparent;}
+.sw-circ.lb{border-color:rgba(0,0,0,.1);}
+.sw-circ input[type=color]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;border-radius:50%;}
+.sw-del{position:absolute;top:-4px;right:-4px;background:#fff;border:1px solid rgba(0,0,0,.1);border-radius:50%;width:15px;height:15px;font-size:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0;}
+.swatch-e:hover .sw-del{opacity:1;}
+.cam-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px;margin-top:8px;}
+.cam-row{display:flex;justify-content:space-between;font-size:11px;padding:3px 0;border-bottom:1px solid rgba(0,0,0,.04);}
+.cam-k{color:var(--warm-gray);}
+.cam-v{font-weight:500;text-align:right;max-width:55%;}
+.rate-card{background:#fff;border-radius:var(--r);border:1px solid rgba(0,0,0,.06);padding:15px 17px;}
+.vc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;}
+.vc{border-radius:12px;overflow:hidden;border:1px solid rgba(0,0,0,.06);background:#fff;position:relative;}
+.vc img{width:100%;aspect-ratio:4/5;object-fit:cover;}
+.vc-empty{width:100%;aspect-ratio:4/5;background:var(--warm-white);display:flex;align-items:center;justify-content:center;font-size:26px;opacity:.25;}
+.vc-del{position:absolute;top:5px;right:5px;background:rgba(0,0,0,.5);color:#fff;border:none;border-radius:50%;width:21px;height:21px;font-size:11px;cursor:pointer;opacity:0;}
+.vc:hover .vc-del{opacity:1;}
+.vc-lbl{padding:8px 10px;font-size:11px;font-weight:500;}
+.ot-img{width:100%;aspect-ratio:3/4;object-fit:cover;}
+.ot-empty{width:100%;aspect-ratio:3/4;background:var(--warm-white);display:flex;align-items:center;justify-content:center;font-size:32px;opacity:.3;}
+.loc-img{width:100%;aspect-ratio:16/9;object-fit:cover;}
+
+/* ─── EXPORT BAR ─── */
+.ex-bar{background:rgba(74,107,80,.08);border:1px solid rgba(74,107,80,.2);border-radius:12px;padding:12px 16px;display:flex;align-items:center;gap:12px;margin-bottom:18px;flex-wrap:wrap;}
+.ex-bar-icon{font-size:20px;flex-shrink:0;}
+.ex-bar-text{flex:1;font-size:12px;color:var(--forest);}
+.ex-bar-text strong{font-weight:600;}
+
+/* ─── OFFLINE BAR ─── */
+#offline-bar{display:none;position:fixed;top:0;left:0;right:0;z-index:9998;background:#b05e3d;color:#fff;padding:7px 18px;font-size:11px;letter-spacing:.06em;align-items:center;gap:8px;justify-content:center;}
+
+/* ─── SYNC HUB MODAL ─── */
+.sync-backdrop{
+  position:fixed;inset:0;
+  background:rgba(20,16,14,.72);
+  z-index:3000;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  backdrop-filter:blur(6px);
+  -webkit-backdrop-filter:blur(6px);
+}
+.sync-backdrop.open{display:flex;}
+.sync-box{
+  background:var(--ivory);
+  border-radius:24px;
+  width:100%;
+  max-width:500px;
+  max-height:90vh;
+  overflow-y:auto;
+  box-shadow:0 32px 80px rgba(0,0,0,.35),0 0 0 1px rgba(255,255,255,.06);
+  animation:syncIn .36s cubic-bezier(.22,1,.36,1) both;
+  position:relative;
+}
+@keyframes syncIn{
+  from{opacity:0;transform:translateY(28px) scale(.95)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+.sync-hero{
+  background:linear-gradient(140deg,#1E1916 60%,#2e201a);
+  padding:30px 28px 24px;
+  position:relative;
+  border-radius:24px 24px 0 0;
+}
+.sync-hero-eyebrow{font-size:8px;letter-spacing:.4em;text-transform:uppercase;color:var(--warm-gold);font-family:'DM Mono',monospace;margin-bottom:6px;}
+.sync-hero-title{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:300;color:var(--ivory);line-height:1.1;}
+.sync-hero-title em{font-style:italic;color:var(--blush);}
+.sync-hero-sub{font-size:11.5px;color:rgba(250,246,239,.42);margin-top:7px;line-height:1.6;}
+.sync-close{
+  position:absolute;top:18px;right:20px;
+  background:rgba(255,255,255,.1);border:none;
+  color:rgba(255,255,255,.6);width:30px;height:30px;border-radius:50%;
+  font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:all .15s;line-height:1;
+}
+.sync-close:hover{background:rgba(255,255,255,.2);color:#fff;}
+.sync-tabs{display:flex;border-bottom:1px solid rgba(0,0,0,.07);background:#fff;}
+.sync-tab{flex:1;padding:11px 0;font-size:11px;font-weight:500;text-align:center;cursor:pointer;border:none;background:transparent;font-family:'Jost',sans-serif;letter-spacing:.06em;color:var(--warm-gray);border-bottom:2px solid transparent;transition:all .15s;}
+.sync-tab.on{color:var(--terracotta);border-bottom-color:var(--terracotta);}
+.sync-panel{display:none;padding:22px 26px 26px;flex-direction:column;gap:14px;}
+.sync-panel.on{display:flex;}
+.sync-status-row{display:flex;align-items:center;gap:8px;padding:9px 13px;background:var(--warm-white);border-radius:10px;font-size:11px;color:var(--warm-gray);}
+.sync-dot{width:8px;height:8px;border-radius:50%;background:#4A6B50;flex-shrink:0;box-shadow:0 0 0 2px rgba(74,107,80,.2);}
+.sync-dot.off{background:#c0392b;box-shadow:0 0 0 2px rgba(192,57,43,.2);}
+.sync-dot.pulse{animation:pulse 1.4s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* Live sync code area */
+.sync-code-box{background:var(--ink);border-radius:14px;padding:18px 20px;text-align:center;}
+.sync-code-label{font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:rgba(250,246,239,.35);font-family:'DM Mono',monospace;margin-bottom:8px;}
+.sync-code-val{font-family:'DM Mono',monospace;font-size:2rem;letter-spacing:.18em;color:var(--warm-gold);font-weight:500;cursor:pointer;transition:opacity .15s;}
+.sync-code-val:hover{opacity:.75;}
+.sync-code-sub{font-size:10px;color:rgba(250,246,239,.28);margin-top:6px;}
+.sync-input-row{display:flex;gap:8px;}
+.sync-input-row input{flex:1;background:#fff;border:1.5px solid rgba(0,0,0,.1);border-radius:10px;padding:10px 14px;font-family:'DM Mono',monospace;font-size:1.1rem;letter-spacing:.15em;outline:none;text-transform:uppercase;color:var(--ink);text-align:center;transition:border .15s;}
+.sync-input-row input:focus{border-color:var(--terracotta);}
+.sync-input-row button{background:var(--terracotta);color:#fff;border:none;border-radius:10px;padding:10px 18px;font-family:'Jost',sans-serif;font-size:11px;font-weight:500;cursor:pointer;white-space:nowrap;transition:background .15s;}
+.sync-input-row button:hover{background:#b05e3d;}
+.sync-divider{display:flex;align-items:center;gap:10px;font-size:10px;color:var(--mid-gray);}
+.sync-divider::before,.sync-divider::after{content:'';flex:1;height:1px;background:rgba(0,0,0,.08);}
+.sync-btn-row{display:flex;gap:8px;}
+.sync-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:13px 14px;border-radius:13px;border:1.5px solid rgba(0,0,0,.08);background:#fff;cursor:pointer;transition:all .16s;font-family:'Jost',sans-serif;}
+.sync-btn:hover{border-color:var(--terracotta);box-shadow:0 3px 14px rgba(196,113,79,.13);}
+.sync-btn-icon{font-size:20px;width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;}
+.sync-btn-icon.exp{background:rgba(74,107,80,.1);}
+.sync-btn-icon.imp{background:rgba(196,113,79,.1);}
+.sync-btn-text{text-align:left;}
+.sync-btn-title{font-size:12px;font-weight:600;color:var(--ink);}
+.sync-btn-sub{font-size:10px;color:var(--warm-gray);}
+.sync-log{background:var(--warm-white);border-radius:10px;padding:10px 13px;font-size:10.5px;color:var(--warm-gray);font-family:'DM Mono',monospace;line-height:1.7;min-height:36px;}
+.sync-footer2{display:flex;align-items:center;justify-content:space-between;padding:0 26px 20px;}
+.sync-skip{font-size:11px;color:var(--mid-gray);cursor:pointer;background:none;border:none;font-family:'Jost',sans-serif;}
+.sync-skip:hover{color:var(--warm-gray);}
+.sync-remember{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--warm-gray);cursor:pointer;}
+.sync-remember input{accent-color:var(--terracotta);}
+
+/* ─── LINKED BADGE ─── */
+.lb2{display:inline-flex;align-items:center;gap:5px;background:rgba(74,107,80,.08);border:1px solid rgba(74,107,80,.15);border-radius:20px;padding:3px 9px;font-size:10px;color:var(--forest);font-family:'DM Mono',monospace;}
+
+/* ─── AUDIO ─── */
+.au-chip{display:flex;align-items:center;gap:5px;background:rgba(196,113,79,.08);border:1px solid rgba(196,113,79,.15);border-radius:20px;padding:4px 10px;font-size:10px;color:var(--terracotta);}
+
+/* ─── SCROLLBAR ─── */
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:rgba(0,0,0,.1);border-radius:10px;}
+
+/* ─── RESPONSIVE ─── */
+@media(max-width:768px){
+  body{flex-direction:column;}
+  .sb{width:100%;min-width:0;height:auto;flex-direction:row;}
+  .sb-logo,.sb-foot{display:none;}
+  .sb-nav{display:flex;flex-direction:row;padding:0;overflow-x:auto;}
+  .nl{display:none;}
+  .ni{padding:9px 12px;font-size:11px;border-left:none;border-bottom:2px solid transparent;white-space:nowrap;}
+  .ni.active{border-bottom-color:var(--terracotta);border-left:none;background:transparent;}
+  .main{flex:1;}
+  .ca{padding:14px;}
+  .fr,.fr.f3{grid-template-columns:1fr;}
+  .tb-search{display:none;}
+  .mb-side{display:none;}
+  #dash-grid{grid-template-columns:1fr!important;}
+  .fp-grid{max-width:100%!important;}
+  #feed-layout{grid-template-columns:1fr!important;}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ SIDEBAR ═══ -->
+<aside class="sb">
+  <div class="sb-logo">
+    <div class="sb-eyebrow">Creator HQ</div>
+    <div class="sb-name">Asha<em>Jolies</em></div>
+    <div class="sb-sub">UGC · Mitheru, Kenya 🇰🇪</div>
+  </div>
+  <nav class="sb-nav">
+    <div class="nl">Overview</div>
+    <div class="ni active" onclick="goTo('dashboard',this)"><span class="ni-icon">🏠</span>Dashboard</div>
+    <div class="ni" onclick="goTo('earnings',this)"><span class="ni-icon">💰</span>Earnings</div>
+    <div class="nl">Gigs</div>
+    <div class="ni" onclick="goTo('gigs',this)"><span class="ni-icon">📋</span>Gig Tracker<span class="ni-badge" id="gig-badge"></span></div>
+    <div class="ni" onclick="goTo('followup',this)"><span class="ni-icon">🔔</span>Follow-Ups<span class="ni-badge" id="fu-badge" style="background:var(--gold)"></span></div>
+    <div class="nl">Content</div>
+    <div class="ni" onclick="goTo('planner',this)"><span class="ni-icon">📅</span>Planner</div>
+    <div class="ni" onclick="goTo('ideas',this)"><span class="ni-icon">💡</span>Ideas</div>
+    <div class="ni" onclick="goTo('feed',this)"><span class="ni-icon">🖼</span>Feed Planner</div>
+    <div class="nl">Resources</div>
+    <div class="ni" onclick="goTo('pitches',this)"><span class="ni-icon">✉️</span>Pitches</div>
+    <div class="ni" onclick="goTo('brand',this)"><span class="ni-icon">🎨</span>Brand Hub</div>
+  </nav>
+  <div class="sb-foot">
+    <div class="sb-rate">
+      <div class="sb-rate-label">Base Rate</div>
+      <div class="sb-rate-val" id="sb-rate">$20</div>
+      <div class="sb-rate-sub">per UGC video</div>
+    </div>
+    <div id="sb-saved" style="font-size:9px;color:rgba(250,246,239,.25);margin-top:8px;text-align:center;font-family:'DM Mono',monospace;">Auto-saves locally</div>
+  </div>
+</aside>
+
+<!-- ═══ MAIN ═══ -->
+<div class="main">
+  <div class="topbar">
+    <div class="tb-title" id="tb-title">Good morning, <em>Asha</em> ✨</div>
+    <div class="tb-search">
+      <span class="tb-search-icon">🔍</span>
+      <input type="text" placeholder="Search everything…" id="search-input" oninput="globalSearch(this.value)" onfocus="openSearch()" onkeydown="if(event.key==='Escape')closeSearch()">
+    </div>
+    <div class="tb-actions">
+      <button class="btn btn-g btn-s" onclick="openGigModal()">+ Gig</button>
+      <button class="btn btn-g btn-s" onclick="openModal('content-modal')">+ Content</button>
+      <button class="btn btn-p btn-s" onclick="openModal('idea-modal')">+ Idea</button>
+      <button id="pwa-install-btn" class="btn btn-g btn-s" onclick="installPWA()" title="Install App" style="padding:5px 10px;font-size:14px;display:none;">📲 Install App</button>
+      <button class="btn btn-g btn-s" onclick="openSync()" title="Sync Hub" style="padding:5px 10px;font-size:14px;">🔄</button>
+    </div>
+  </div>
+  <div class="ca">
+
+<!-- ─── DASHBOARD ─── -->
+<div class="pg active" id="pg-dashboard">
+  <div class="sg">
+    <div class="sc"><div class="sc-l">Active Gigs</div><div class="sc-v c-t" id="s-active">0</div><div class="sc-s">in progress</div></div>
+    <div class="sc"><div class="sc-l">Pending</div><div class="sc-v c-g" id="s-pending">0</div><div class="sc-s">awaiting reply</div></div>
+    <div class="sc"><div class="sc-l">Total Earned</div><div class="sc-v c-f" id="s-earned">$0</div><div class="sc-s">paid only</div></div>
+    <div class="sc"><div class="sc-l">Delivered</div><div class="sc-v c-k" id="s-delivered">0</div><div class="sc-s">completed</div></div>
+    <div class="sc"><div class="sc-l">Ideas</div><div class="sc-v" id="s-ideas" style="color:var(--lavender)">0</div><div class="sc-s">total</div></div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 300px;gap:16px;" id="dash-grid">
+    <div style="display:flex;flex-direction:column;gap:14px;">
+      <div class="card"><div class="ch"><span class="ct">Recent Gigs</span><button class="btn btn-g btn-s" onclick="goTo('gigs',document.querySelectorAll('.ni')[2])">All →</button></div><div id="d-gigs"></div></div>
+      <div class="card"><div class="ch"><span class="ct">This Week's Content</span></div><div id="d-content"></div></div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div class="card"><div class="ch"><span class="ct">Follow-Ups Due</span></div><div id="d-fu"></div></div>
+      <div class="card"><div class="ch"><span class="ct">Recent Ideas</span></div><div id="d-ideas"></div></div>
+      <div class="ex-bar">
+        <span class="ex-bar-icon">🔄</span>
+        <div class="ex-bar-text"><strong>Cross-Device Sync:</strong> Export to laptop or import a backup to keep everything in sync</div>
+        <button class="btn btn-p btn-s" onclick="openSync()">Open Sync Hub</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── EARNINGS ─── -->
+<div class="pg" id="pg-earnings">
+  <div style="font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:var(--terracotta);font-weight:500;margin-bottom:4px;">Financial Overview</div>
+  <div style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:300;margin-bottom:16px;">Your <em style="font-style:italic;color:var(--terracotta);">Earnings</em></div>
+  <div style="background:var(--ink);border-radius:var(--r);padding:20px 24px;display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+    <div><div style="font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:rgba(250,246,239,.4);margin-bottom:4px;">Total Earned (Paid)</div><div style="font-family:'Cormorant Garamond',serif;font-size:2.2rem;color:var(--blush);font-weight:300;" id="earn-total">$0.00</div><div style="font-size:10px;color:rgba(250,246,239,.3);margin-top:2px;" id="earn-sub">from 0 paid gigs</div></div>
+    <div style="font-size:40px;opacity:.25;">💸</div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:14px;">
+    <div class="sc"><div class="sc-l">Paid Out</div><div class="sc-v c-f" id="ep-paid">$0</div></div>
+    <div class="sc"><div class="sc-l">Pending</div><div class="sc-v c-g" id="ep-pend">$0</div></div>
+    <div class="sc"><div class="sc-l">Gifted Gigs</div><div class="sc-v c-t" id="ep-gift">0</div></div>
+    <div class="sc"><div class="sc-l">This Month</div><div class="sc-v c-k" id="ep-mo">0</div></div>
+  </div>
+  <div class="card"><div class="ch"><span class="ct">All Paid Gigs</span></div><div id="earn-list"></div></div>
+</div>
+
+<!-- ─── GIG TRACKER ─── -->
+<div class="pg" id="pg-gigs">
+  <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:16px;gap:10px;">
+    <div><div style="font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:var(--terracotta);font-weight:500;margin-bottom:3px;">Pipeline</div><div style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:300;">Gig <em style="font-style:italic;color:var(--terracotta);">Tracker</em></div></div>
+    <button class="btn btn-p btn-s" onclick="openGigModal()">+ New Gig</button>
+  </div>
+  <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;" id="gig-filters">
+    <button class="btn btn-g btn-s active" onclick="filterGigs('all',this)">All</button>
+    <button class="btn btn-g btn-s" onclick="filterGigs('pending',this)">Pending</button>
+    <button class="btn btn-g btn-s" onclick="filterGigs('negotiating',this)">Negotiating</button>
+    <button class="btn btn-g btn-s" onclick="filterGigs('paid',this)">Paid</button>
+    <button class="btn btn-g btn-s" onclick="filterGigs('gifted',this)">Gifted</button>
+    <button class="btn btn-g btn-s" onclick="filterGigs('delivered',this)">Delivered</button>
+    <button class="btn btn-g btn-s" onclick="filterGigs('declined',this)">Declined</button>
+  </div>
+  <div style="background:#fff;border-radius:var(--r);border:1px solid rgba(0,0,0,.06);overflow:hidden;overflow-x:auto;">
+    <table class="dt"><thead><tr><th>Brand</th><th>Types</th><th>Rate</th><th>Status</th><th>Due</th><th>Linked</th><th>Actions</th></tr></thead>
+    <tbody id="gig-tbody"></tbody></table>
+  </div>
+</div>
+
+<!-- ─── FOLLOW-UPS ─── -->
+<div class="pg" id="pg-followup">
+  <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:16px;">
+    <div><div style="font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:var(--terracotta);font-weight:500;margin-bottom:3px;">Stay On Top</div><div style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:300;">Follow-Up <em style="font-style:italic;color:var(--terracotta);">Tracker</em></div></div>
+    <button class="btn btn-p btn-s" onclick="openModal('fu-modal')">+ Follow-Up</button>
+  </div>
+  <div id="fu-list" style="display:flex;flex-direction:column;gap:10px;"></div>
+</div>
+
+<!-- ─── CONTENT PLANNER ─── -->
+<div class="pg" id="pg-planner">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
+    <div><div style="font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:var(--terracotta);font-weight:500;margin-bottom:3px;">Content Calendar</div><div style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:300;">Content <em style="font-style:italic;color:var(--terracotta);">Planner</em></div></div>
+    <div style="display:flex;align-items:center;gap:7px;">
+      <button style="background:#fff;border:1px solid rgba(0,0,0,.1);border-radius:8px;padding:5px 11px;cursor:pointer;font-size:14px;color:var(--warm-gray);" onclick="changeMonth(-1)">‹</button>
+      <span style="font-family:'Cormorant Garamond',serif;font-size:1.1rem;" id="cal-label">April 2025</span>
+      <button style="background:#fff;border:1px solid rgba(0,0,0,.1);border-radius:8px;padding:5px 11px;cursor:pointer;font-size:14px;color:var(--warm-gray);" onclick="changeMonth(1)">›</button>
+    </div>
+  </div>
+  <div class="cg" id="cal-grid">
+    <div class="cdh">Sun</div><div class="cdh">Mon</div><div class="cdh">Tue</div><div class="cdh">Wed</div><div class="cdh">Thu</div><div class="cdh">Fri</div><div class="cdh">Sat</div>
+  </div>
+  <div style="margin-top:16px;" id="plan-list"></div>
+</div>
+
+<!-- ─── IDEAS ─── -->
+<div class="pg" id="pg-ideas">
+  <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:14px;gap:10px;">
+    <div><div style="font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:var(--terracotta);font-weight:500;margin-bottom:3px;">Content Concepts</div><div style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:300;">Ideas <em style="font-style:italic;color:var(--terracotta);">Library</em></div></div>
+    <button class="btn btn-p btn-s" onclick="openModal('idea-modal')">+ New Idea</button>
+  </div>
+  <div class="tr" id="idea-tabs">
+    <button class="tb active" onclick="filterIdeas('all',this)">All</button>
+    <button class="tb" onclick="filterIdeas('Beauty',this)">💄 Beauty</button>
+    <button class="tb" onclick="filterIdeas('Hair',this)">✂️ Hair</button>
+    <button class="tb" onclick="filterIdeas('Lifestyle',this)">🏠 Lifestyle</button>
+    <button class="tb" onclick="filterIdeas('Tech',this)">📱 Tech</button>
+    <button class="tb" onclick="filterIdeas('Fashion',this)">👗 Fashion</button>
+    <button class="tb" onclick="filterIdeas('Food',this)">🍳 Food</button>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(255px,1fr));gap:12px;" id="ideas-grid"></div>
+</div>
+
+<!-- ─── FEED PLANNER ─── -->
+<div class="pg" id="pg-feed">
+  <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:14px;gap:10px;flex-wrap:wrap;">
+    <div><div style="font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:var(--terracotta);font-weight:500;margin-bottom:3px;">Visual Strategy</div><div style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:300;">Feed <em style="font-style:italic;color:var(--terracotta);">Planner</em></div></div>
+    <label class="btn btn-p btn-s" style="cursor:pointer;">+ Add Images<input type="file" multiple accept="image/*" style="display:none" onchange="addFeedImgs(event)"></label>
+  </div>
+  <div style="display:flex;gap:8px;margin-bottom:14px;">
+    <button class="btn btn-g btn-s active" id="feed-ig-btn" onclick="switchFeed('ig',this)">📸 Instagram</button>
+    <button class="btn btn-g btn-s" id="feed-tt-btn" onclick="switchFeed('tt',this)">🎵 TikTok</button>
+  </div>
+  <div style="display:grid;grid-template-columns:auto 1fr;gap:22px;align-items:start;" id="feed-layout">
+    <div>
+      <div style="font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--warm-gray);margin-bottom:7px;font-family:'DM Mono',monospace;" id="feed-plat-label">Instagram Grid</div>
+      <div id="feed-grid"></div>
+      <div style="margin-top:8px;font-size:11px;color:var(--mid-gray);">Click cell → then click image to place</div>
+      <button class="btn btn-g btn-s" style="margin-top:8px;" onclick="clearSelectedCell()">✕ Clear Cell</button>
+    </div>
+    <div>
+      <div style="font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--warm-gray);margin-bottom:7px;font-family:'DM Mono',monospace;">Image Bank</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(75px,1fr));gap:5px;" id="feed-bank"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── PITCHES ─── -->
+<div class="pg" id="pg-pitches">
+  <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:14px;gap:10px;">
+    <div><div style="font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:var(--terracotta);font-weight:500;margin-bottom:3px;">Ready to Send</div><div style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:300;">Pitch <em style="font-style:italic;color:var(--terracotta);">Templates</em></div></div>
+    <button class="btn btn-p btn-s" onclick="openModal('pitch-modal')">+ Template</button>
+  </div>
+  <input class="fi" style="margin-bottom:12px;" placeholder="Search pitches…" oninput="renderPitches(this.value)">
+  <div id="pitch-list" style="display:flex;flex-direction:column;gap:10px;"></div>
+</div>
+
+<!-- ─── BRAND HUB ─── -->
+<div class="pg" id="pg-brand">
+  <div style="font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:var(--terracotta);font-weight:500;margin-bottom:3px;">Your Identity</div>
+  <div style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:300;margin-bottom:14px;">Brand <em style="font-style:italic;color:var(--terracotta);">Hub</em></div>
+  <div class="br-tabs">
+    <button class="br-tab active" onclick="swBrand('colors',this)">🎨 Colors</button>
+    <button class="br-tab" onclick="swBrand('visuals',this)">🖼 Visuals</button>
+    <button class="br-tab" onclick="swBrand('outfits',this)">👗 Outfits</button>
+    <button class="br-tab" onclick="swBrand('locations',this)">📍 Locations</button>
+    <button class="br-tab" onclick="swBrand('camera',this)">📷 Camera</button>
+    <button class="br-tab" onclick="swBrand('rates',this)">💲 Rates</button>
+    <button class="br-tab" onclick="swBrand('niches',this)">🏷 Niches</button>
+    <button class="br-tab" onclick="swBrand('bio',this)">📝 Bio</button>
+  </div>
+
+  <div class="br-sec active" id="br-colors">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;"><span style="font-size:12px;color:var(--warm-gray);">Click swatch to change color. Click name to rename.</span><button class="btn btn-g btn-s" onclick="addColor()">+ Add</button></div>
+    <div style="display:flex;flex-wrap:wrap;gap:12px;" id="color-grid"></div>
+    <div style="margin-top:18px;background:var(--ink);border-radius:14px;padding:16px 20px;">
+      <div style="font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--warm-gold);margin-bottom:8px;font-family:'DM Mono',monospace;">Typography</div>
+      <div style="font-size:12px;color:rgba(255,255,255,.5);line-height:2;">Display / Headlines → <span style="color:#fff;font-family:'Cormorant Garamond',serif;font-size:14px;">Cormorant Garamond</span> (Italic, Light 300)<br>Body / Captions → <span style="color:#fff;">Jost</span> (Light 300, Regular 400)<br>Labels → <span style="color:#fff;">Jost Medium 500</span> (Uppercase, wide tracking)</div>
+    </div>
+  </div>
+
+  <div class="br-sec" id="br-visuals">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;"><span style="font-size:12px;color:var(--warm-gray);">Brand visual samples, mood references, aesthetic inspo.</span><button class="btn btn-p btn-s" onclick="openModal('visual-modal')">+ Add Visual</button></div>
+    <div class="vc-grid" id="visuals-grid"></div>
+  </div>
+
+  <div class="br-sec" id="br-outfits">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;"><span style="font-size:12px;color:var(--warm-gray);">Your filming outfits — define your brand identity on camera.</span><button class="btn btn-p btn-s" onclick="openModal('outfit-modal')">+ Add Outfit</button></div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px;" id="outfits-grid"></div>
+  </div>
+
+  <div class="br-sec" id="br-locations">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;"><span style="font-size:12px;color:var(--warm-gray);">Filming spots with angle guides, lighting notes, and setup details.</span><button class="btn btn-p btn-s" onclick="openModal('loc-modal')">+ Add Location</button></div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px;" id="locs-grid"></div>
+  </div>
+
+  <div class="br-sec" id="br-camera">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;"><span style="font-size:12px;color:var(--warm-gray);">Saved camera configurations for specific content types.</span><button class="btn btn-p btn-s" onclick="openModal('cam-modal')">+ Add Setting</button></div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px;" id="cam-grid"></div>
+  </div>
+
+  <div class="br-sec" id="br-rates">
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px;margin-bottom:12px;" id="rates-grid"></div>
+    <button class="btn btn-g btn-s" onclick="openModal('rate-modal')">+ Add Rate</button>
+  </div>
+
+  <div class="br-sec" id="br-niches">
+    <div style="margin-bottom:18px;">
+      <div style="font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--terracotta);margin-bottom:8px;font-weight:500;">Niches</div>
+      <div id="niche-disp" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;"></div>
+      <div style="display:flex;gap:7px;"><input class="fi" id="niche-in" placeholder="Add niche…" style="max-width:180px" onkeydown="if(event.key==='Enter')addNiche()"><button class="btn btn-g btn-s" onclick="addNiche()">Add</button></div>
+    </div>
+    <div>
+      <div style="font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--terracotta);margin-bottom:8px;font-weight:500;">Platforms</div>
+      <div id="plat-disp" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;"></div>
+      <div style="display:flex;gap:7px;"><input class="fi" id="plat-in" placeholder="Add platform…" style="max-width:180px" onkeydown="if(event.key==='Enter')addPlatform()"><button class="btn btn-g btn-s" onclick="addPlatform()">Add</button></div>
+    </div>
+  </div>
+
+  <div class="br-sec" id="br-bio">
+    <div class="card" style="margin-bottom:12px;"><div class="ch"><span class="ct">Creator Bio</span><button class="btn btn-g btn-s" onclick="saveBio()">Save</button></div><div class="cb"><textarea class="ft" id="bio-txt" style="min-height:100px;"></textarea></div></div>
+    <div class="card"><div class="ch"><span class="ct">Contact & Links</span><button class="btn btn-g btn-s" onclick="saveLinks()">Save</button></div><div class="cb">
+      <div class="fr"><div class="fg"><label class="fl">Email</label><input class="fi" id="l-email"></div><div class="fg"><label class="fl">Location</label><input class="fi" id="l-loc"></div></div>
+      <div class="fr"><div class="fg"><label class="fl">TikTok</label><input class="fi" id="l-tt"></div><div class="fg"><label class="fl">Instagram</label><input class="fi" id="l-ig"></div></div>
+      <div class="fr"><div class="fg"><label class="fl">YouTube</label><input class="fi" id="l-yt"></div><div class="fg"><label class="fl">Portfolio</label><input class="fi" id="l-port"></div></div>
+    </div></div>
+  </div>
+</div>
+
+  </div><!-- ca -->
+</div><!-- main -->
+
+<!-- ═══ SEARCH OVERLAY ═══ -->
+<div class="sr-overlay" id="sr-overlay" onclick="if(event.target===this)closeSearch()">
+  <div class="sr-box">
+    <div class="sr-head" id="sr-head">Type to search…</div>
+    <div id="sr-results"></div>
+  </div>
+</div>
+
+<!-- ═══ MOODBOARD ═══ -->
+<div class="mb-full" id="moodboard">
+  <div class="mb-tb">
+    <div class="mb-ttl">Moodboard — <em id="mb-name">Untitled</em></div>
+    <div class="mbt-sep"></div>
+    <button class="mbt on" id="mbt-sel" onclick="setMBT('sel')">↖ Select</button>
+    <button class="mbt" id="mbt-draw" onclick="setMBT('draw')">✏️ Draw</button>
+    <button class="mbt" id="mbt-erase" onclick="setMBT('erase')">⬜ Erase</button>
+    <div class="mbt-sep"></div>
+    <button class="mbt" onclick="addMBText()">T Text</button>
+    <button class="mbt" onclick="addMBSticky()">📝 Sticky</button>
+    <button class="mbt" onclick="trigMBImg()">🖼 Image</button>
+    <input type="file" id="mb-img-in" accept="image/*" style="display:none" onchange="handleMBImg(event)">
+    <button class="mbt" onclick="addMBShot()">🎬 Shot List</button>
+    <div class="mbt-sep"></div>
+    <button class="mbt" onclick="clearMBDraw()">🗑 Clear Drawing</button>
+    <button class="mbt" onclick="clearMBAll()">🔄 Reset All</button>
+    <button class="mbt" onclick="saveMB()">💾 Save</button>
+    <div class="mbt-sep"></div>
+    <button class="mbt" onclick="closeMB()" style="background:rgba(192,57,43,.3);">✕ Close</button>
+  </div>
+  <div class="mb-body">
+    <div class="mb-area">
+      <canvas id="mb-dc" class="mb-dc"></canvas>
+      <div id="mb-cvs" class="mb-cvs"></div>
+    </div>
+    <div class="mb-side">
+      <div class="mb-sec">
+        <div class="mb-slbl">Draw Color</div>
+        <div class="sw-row" id="mb-swatches">
+          <div class="sw on" style="background:#1E1916" onclick="setMBC('#1E1916',this)"></div>
+          <div class="sw" style="background:#C4714F" onclick="setMBC('#C4714F',this)"></div>
+          <div class="sw" style="background:#E8C4B0" onclick="setMBC('#E8C4B0',this)"></div>
+          <div class="sw" style="background:#8FAF8A" onclick="setMBC('#8FAF8A',this)"></div>
+          <div class="sw" style="background:#C2AECE" onclick="setMBC('#C2AECE',this)"></div>
+          <div class="sw" style="background:#E8C06A" onclick="setMBC('#E8C06A',this)"></div>
+          <div class="sw" style="background:#fff;border:1px solid #ddd" onclick="setMBC('#fff',this)"></div>
+          <div class="sw" style="background:#ff4757" onclick="setMBC('#ff4757',this)"></div>
+        </div>
+        <input type="color" value="#1E1916" id="mb-cc" style="width:100%;height:26px;margin-top:5px;border-radius:5px;border:1px solid rgba(0,0,0,.1);cursor:pointer;" oninput="setMBC(this.value,null)">
+      </div>
+      <div class="mb-sec">
+        <div class="mb-slbl">Brush Size</div>
+        <div class="bs-row">
+          <div class="bs" style="width:8px;height:8px;" onclick="setMBS(2,this)"></div>
+          <div class="bs on" style="width:12px;height:12px;" onclick="setMBS(4,this)"></div>
+          <div class="bs" style="width:16px;height:16px;" onclick="setMBS(8,this)"></div>
+          <div class="bs" style="width:20px;height:20px;" onclick="setMBS(16,this)"></div>
+        </div>
+      </div>
+      <div class="mb-sec">
+        <div class="mb-slbl">Text Size</div>
+        <div style="display:flex;gap:4px;flex-wrap:wrap;">
+          <button class="mbt on" id="ts-sm" onclick="setTS('sm',this)" style="padding:2px 7px;font-size:9px;">S</button>
+          <button class="mbt" id="ts-md" onclick="setTS('md',this)" style="padding:2px 7px;font-size:10px;">M</button>
+          <button class="mbt" id="ts-lg" onclick="setTS('lg',this)" style="padding:2px 7px;font-size:12px;">L</button>
+          <button class="mbt" id="ts-xl" onclick="setTS('xl',this)" style="padding:2px 7px;font-size:14px;">XL</button>
+        </div>
+      </div>
+      <div class="mb-sec" style="flex:1;overflow:hidden;display:flex;flex-direction:column;">
+        <div class="mb-slbl">Layers</div>
+        <div class="mb-layers" id="mb-layers"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODALS ═══ -->
+
+<!-- GIG -->
+<div class="mo" id="gig-modal">
+<div class="md">
+  <div class="mh"><div class="mt">New <em>Gig</em></div><button class="mc" onclick="closeModal('gig-modal')">×</button></div>
+  <div class="mb2">
+    <input type="hidden" id="g-id">
+    <div class="fr"><div class="fg"><label class="fl">Brand *</label><input class="fi" id="g-brand" placeholder="e.g. Neutrogena"></div><div class="fg"><label class="fl">Niche</label><select class="fs" id="g-niche"><option>Beauty & Skincare</option><option>Hair Care</option><option>Lifestyle & Home</option><option>Tech & Apps</option><option>Fashion</option><option>Food</option><option>Other</option></select></div></div>
+    <div class="fr f1"><div class="fg"><label class="fl">Content Types (multi-select)</label><div class="tp-wrap"><div class="tp" id="g-types-tp" onclick="focusTP('g-types-inp')"><div id="g-types-tags"></div><input class="tp-input" id="g-types-inp" placeholder="Search or type…" oninput="filterDD('g')" onfocus="showDD('g')" onblur="setTimeout(()=>hideDD('g'),200)" onkeydown="tpKey(event,'g')"></div><div class="tp-dd" id="g-dd"></div></div></div></div>
+    <div class="fr"><div class="fg"><label class="fl">Platform</label><select class="fs" id="g-plat"><option>TikTok</option><option>Instagram</option><option>YouTube</option><option>Multiple</option></select></div><div class="fg"><label class="fl">Rate Type</label><select class="fs" id="g-rtype" onchange="togGR()"><option value="paid">Paid ($)</option><option value="gifted">Gifted</option></select></div></div>
+    <div class="fr" id="g-rate-row"><div class="fg"><label class="fl">Amount ($)</label><input class="fi" id="g-rate" type="number" placeholder="20"></div><div class="fg"></div></div>
+    <div class="fr f1" id="g-gift-row" style="display:none;"><div class="fg"><label class="fl">Product / Gift Value</label><input class="fi" id="g-gift" placeholder="e.g. Skincare bundle ~$50 value"></div></div>
+    <div class="fr"><div class="fg"><label class="fl">Status</label><select class="fs" id="g-status"><option value="pending">Pending</option><option value="negotiating">Negotiating</option><option value="waitingapproval">Waiting Approval</option><option value="paid">Paid — In Progress</option><option value="gifted">Gifted — In Progress</option><option value="delivered">Delivered ✓</option><option value="declined">Declined</option></select></div><div class="fg"><label class="fl">Due Date</label><input class="fi" id="g-due" type="date"></div></div>
+    <div class="fr"><div class="fg"><label class="fl">Contact</label><input class="fi" id="g-contact" placeholder="email or DM handle"></div><div class="fg"></div></div>
+    <div class="fr"><div class="fg"><label class="fl">Linked Idea</label><select class="fs" id="g-lidea"><option value="">— none —</option></select></div><div class="fg"><label class="fl">Linked Content</label><select class="fs" id="g-lct"><option value="">— none —</option></select></div></div>
+    <div class="fr f1"><div class="fg"><label class="fl">Notes / Deliverables</label><textarea class="ft" id="g-notes" placeholder="Deliverables, agreements…"></textarea></div></div>
+    <div class="fr f1"><div class="fg"><label class="fl">Product Image</label><div class="uz" onclick="document.getElementById('g-img-in').click()"><input type="file" id="g-img-in" accept="image/*" onchange="handleImg(event,'g-img-pre','g-img-data')"><div style="font-size:12px;color:var(--warm-gray);">📦 Click to upload product photo</div></div><div id="g-img-pre" style="margin-top:7px;"></div><input type="hidden" id="g-img-data"></div></div>
+    <div class="fa"><button class="btn btn-g" onclick="closeModal('gig-modal')">Cancel</button><button class="btn btn-p" onclick="saveGig()">Save Gig</button></div>
+  </div>
+</div>
+</div>
+
+<!-- CONTENT -->
+<div class="mo" id="content-modal">
+<div class="md">
+  <div class="mh"><div class="mt">Plan <em>Content</em></div><button class="mc" onclick="closeModal('content-modal')">×</button></div>
+  <div class="mb2">
+    <input type="hidden" id="ct-id">
+    <div class="fr f1"><div class="fg"><label class="fl">Title *</label><input class="fi" id="ct-title" placeholder="Content title or concept"></div></div>
+    <div class="fr f1"><div class="fg"><label class="fl">Content Types</label><div class="tp-wrap"><div class="tp" id="ct-types-tp" onclick="focusTP('ct-types-inp')"><div id="ct-types-tags"></div><input class="tp-input" id="ct-types-inp" placeholder="Search or type…" oninput="filterDD('ct')" onfocus="showDD('ct')" onblur="setTimeout(()=>hideDD('ct'),200)" onkeydown="tpKey(event,'ct')"></div><div class="tp-dd" id="ct-dd"></div></div></div></div>
+    <div class="fr"><div class="fg"><label class="fl">Niche</label><select class="fs" id="ct-niche"><option>Beauty & Skincare</option><option>Hair Care</option><option>Lifestyle & Home</option><option>Tech & Apps</option><option>Fashion</option><option>Food</option></select></div><div class="fg"><label class="fl">Platform</label><select class="fs" id="ct-plat"><option>TikTok</option><option>Instagram</option><option>Instagram Reels</option><option>YouTube</option><option>YouTube Shorts</option><option>Multiple</option></select></div></div>
+    <div class="fr"><div class="fg"><label class="fl">Date</label><input class="fi" id="ct-date" type="date"></div><div class="fg"><label class="fl">Status</label><select class="fs" id="ct-status"><option value="idea">Idea</option><option value="scripting">Scripting</option><option value="filming">Filming</option><option value="editing">Editing</option><option value="done">Done ✓</option><option value="published">Published 🚀</option></select></div></div>
+    <div class="fr"><div class="fg"><label class="fl">Linked Gig</label><select class="fs" id="ct-lgig"><option value="">— none —</option></select></div><div class="fg"><label class="fl">Linked Idea</label><select class="fs" id="ct-lidea"><option value="">— none —</option></select></div></div>
+    <div class="fr f1"><div class="fg"><label class="fl">Hook / Opening</label><input class="fi" id="ct-hook" placeholder="First 3 seconds…"></div></div>
+    <div class="fr f1"><div class="fg"><label class="fl">Audio / Sound 🎵</label><input class="fi" id="ct-audio" placeholder="Trending sound name, original, voiceover…"></div></div>
+    <div class="fr f1"><div class="fg"><label class="fl">Notes / Script</label><textarea class="ft" id="ct-notes" placeholder="Key points, products, CTA…"></textarea></div></div>
+    <div class="fr f1"><div class="fg"><label class="fl">Product Image</label><div class="uz" onclick="document.getElementById('ct-img-in').click()"><input type="file" id="ct-img-in" accept="image/*" onchange="handleImg(event,'ct-img-pre','ct-img-data')"><div style="font-size:12px;color:var(--warm-gray);">📦 Click to upload product image</div></div><div id="ct-img-pre" style="margin-top:7px;"></div><input type="hidden" id="ct-img-data"></div></div>
+    <div class="fa"><button class="btn btn-g" onclick="closeModal('content-modal')">Cancel</button><button class="btn btn-p" onclick="saveContent()">Save</button></div>
+  </div>
+</div>
+</div>
+
+<!-- IDEA -->
+<div class="mo" id="idea-modal">
+<div class="md">
+  <div class="mh"><div class="mt">New Content <em>Idea</em></div><button class="mc" onclick="closeModal('idea-modal')">×</button></div>
+  <div class="mb2">
+    <input type="hidden" id="i-id">
+    <div class="fr f1"><div class="fg"><label class="fl">Title *</label><input class="fi" id="i-title" placeholder="Video title or concept"></div></div>
+    <div class="fr f1"><div class="fg"><label class="fl">Content Types</label><div class="tp-wrap"><div class="tp" id="i-types-tp" onclick="focusTP('i-types-inp')"><div id="i-types-tags"></div><input class="tp-input" id="i-types-inp" placeholder="Search or type…" oninput="filterDD('i')" onfocus="showDD('i')" onblur="setTimeout(()=>hideDD('i'),200)" onkeydown="tpKey(event,'i')"></div><div class="tp-dd" id="i-dd"></div></div></div></div>
+    <div class="fr"><div class="fg"><label class="fl">Niche</label><select class="fs" id="i-niche"><option>Beauty</option><option>Hair</option><option>Lifestyle</option><option>Tech</option><option>Fashion</option><option>Food</option></select></div><div class="fg"><label class="fl">Platform</label><select class="fs" id="i-plat"><option>TikTok</option><option>Instagram</option><option>YouTube</option><option>Multiple</option></select></div></div>
+    <div class="fr"><div class="fg"><label class="fl">Status</label><select class="fs" id="i-status"><option value="idea">Idea 💡</option><option value="scripting">Scripting ✍️</option><option value="filming">Filming 🎬</option><option value="editing">Editing ✂️</option><option value="done">Done ✓</option><option value="published">Published 🚀</option></select></div><div class="fg"><label class="fl">Linked Gig</label><select class="fs" id="i-lgig"><option value="">— none —</option></select></div></div>
+    <div class="fr f1"><div class="fg"><label class="fl">Hook</label><input class="fi" id="i-hook" placeholder="Opening line or concept hook"></div></div>
+    <div class="fr f1"><div class="fg"><label class="fl">Audio / Sound 🎵</label><input class="fi" id="i-audio" placeholder="Trending sound, original audio, voiceover…"></div></div>
+    <div class="fr f1"><div class="fg"><label class="fl">Notes</label><textarea class="ft" id="i-notes" placeholder="Shot list ideas, products, references…"></textarea></div></div>
+    <div class="fr f1"><div class="fg"><label class="fl">Reference Image</label><div class="uz" onclick="document.getElementById('i-img-in').click()"><input type="file" id="i-img-in" accept="image/*" onchange="handleImg(event,'i-img-pre','i-img-data')"><div style="font-size:12px;color:var(--warm-gray);">🖼 Click to upload reference image</div></div><div id="i-img-pre" style="margin-top:7px;"></div><input type="hidden" id="i-img-data"></div></div>
+    <div class="fa"><button class="btn btn-g" onclick="closeModal('idea-modal')">Cancel</button><button class="btn btn-p" onclick="saveIdea()">Save Idea</button></div>
+  </div>
+</div>
+</div>
+
+<!-- PITCH -->
+<div class="mo" id="pitch-modal"><div class="md">
+  <div class="mh"><div class="mt">Pitch <em>Template</em></div><button class="mc" onclick="closeModal('pitch-modal')">×</button></div>
+  <div class="mb2">
+    <div class="fr"><div class="fg"><label class="fl">Name *</label><input class="fi" id="p-name" placeholder="e.g. Beauty Gifted DM"></div><div class="fg"><label class="fl">Niche</label><select class="fs" id="p-niche"><option>Beauty</option><option>Hair</option><option>Lifestyle</option><option>Tech</option><option>Fashion</option><option>General</option></select></div></div>
+    <div class="fr"><div class="fg"><label class="fl">Type</label><select class="fs" id="p-type"><option>Gifted Collab</option><option>Paid Collab</option><option>Follow-Up</option><option>Cold Outreach</option></select></div><div class="fg"><label class="fl">Platform</label><select class="fs" id="p-plat"><option>Email</option><option>Instagram DM</option><option>TikTok DM</option><option>LinkedIn</option></select></div></div>
+    <div class="fr f1"><div class="fg"><label class="fl">Subject (email)</label><input class="fi" id="p-subj" placeholder="Email subject…"></div></div>
+    <div class="fr f1"><div class="fg"><label class="fl">Pitch Body *</label><textarea class="ft" id="p-body" style="min-height:150px;" placeholder="Write pitch. Use [Brand], [Product], [Rate] as placeholders…"></textarea></div></div>
+    <div class="fa"><button class="btn btn-g" onclick="closeModal('pitch-modal')">Cancel</button><button class="btn btn-p" onclick="savePitch()">Save</button></div>
+  </div>
+</div></div>
+
+<!-- FOLLOW-UP -->
+<div class="mo" id="fu-modal"><div class="md">
+  <div class="mh"><div class="mt">Add <em>Follow-Up</em></div><button class="mc" onclick="closeModal('fu-modal')">×</button></div>
+  <div class="mb2">
+    <div class="fr"><div class="fg"><label class="fl">Brand *</label><input class="fi" id="fu-brand" placeholder="Brand name"></div><div class="fg"><label class="fl">Date *</label><input class="fi" id="fu-date" type="date"></div></div>
+    <div class="fr"><div class="fg"><label class="fl">Platform</label><select class="fs" id="fu-plat"><option>Email</option><option>Instagram DM</option><option>WhatsApp</option><option>TikTok DM</option><option>LinkedIn</option></select></div><div class="fg"><label class="fl">Priority</label><select class="fs" id="fu-pri"><option value="high">🔴 High</option><option value="medium" selected>🟡 Medium</option><option value="low">🟢 Low</option></select></div></div>
+    <div class="fr f1"><div class="fg"><label class="fl">Notes</label><textarea class="ft" id="fu-note" placeholder="Context, what to say…"></textarea></div></div>
+    <div class="fa"><button class="btn btn-g" onclick="closeModal('fu-modal')">Cancel</button><button class="btn btn-p" onclick="saveFU()">Save</button></div>
+  </div>
+</div></div>
+
+<!-- RATE -->
+<div class="mo" id="rate-modal"><div class="md">
+  <div class="mh"><div class="mt">Add <em>Rate</em></div><button class="mc" onclick="closeModal('rate-modal')">×</button></div>
+  <div class="mb2">
+    <div class="fr"><div class="fg"><label class="fl">Type *</label><input class="fi" id="r-type" placeholder="e.g. UGC Video"></div><div class="fg"><label class="fl">Price</label><input class="fi" id="r-price" placeholder="e.g. $20"></div></div>
+    <div class="fr f1"><div class="fg"><label class="fl">Description</label><input class="fi" id="r-desc" placeholder="What's included…"></div></div>
+    <div class="fa"><button class="btn btn-g" onclick="closeModal('rate-modal')">Cancel</button><button class="btn btn-p" onclick="saveRate()">Save</button></div>
+  </div>
+</div></div>
+
+<!-- VISUAL -->
+<div class="mo" id="visual-modal"><div class="md">
+  <div class="mh"><div class="mt">Brand <em>Visual</em></div><button class="mc" onclick="closeModal('visual-modal')">×</button></div>
+  <div class="mb2">
+    <div class="fr"><div class="fg"><label class="fl">Label *</label><input class="fi" id="v-label" placeholder="e.g. Mood, Aesthetic, Inspo"></div><div class="fg"><label class="fl">Category</label><select class="fs" id="v-cat"><option>Mood / Aesthetic</option><option>Color Story</option><option>Set Design</option><option>Typography</option><option>Competitor Inspo</option><option>Other</option></select></div></div>
+    <div class="fr f1"><div class="fg"><label class="fl">Image</label><div class="uz" onclick="document.getElementById('v-img-in').click()"><input type="file" id="v-img-in" accept="image/*" onchange="handleImg(event,'v-img-pre','v-img-data')"><div style="font-size:12px;color:var(--warm-gray);">🖼 Click to upload</div></div><div id="v-img-pre" style="margin-top:7px;"></div><input type="hidden" id="v-img-data"></div></div>
+    <div class="fr f1"><div class="fg"><label class="fl">Notes</label><input class="fi" id="v-notes" placeholder="Brief note…"></div></div>
+    <div class="fa"><button class="btn btn-g" onclick="closeModal('visual-modal')">Cancel</button><button class="btn btn-p" onclick="saveVisual()">Save</button></div>
+  </div>
+</div></div>
+
+<!-- OUTFIT -->
+<div class="mo" id="outfit-modal"><div class="md">
+  <div class="mh"><div class="mt">Add <em>Outfit</em></div><button class="mc" onclick="closeModal('outfit-modal')">×</button></div>
+  <div class="mb2">
+    <div class="fr"><div class="fg"><label class="fl">Name *</label><input class="fi" id="o-name" placeholder="e.g. Casual filming look"></div><div class="fg"><label class="fl">Content Type</label><input class="fi" id="o-type" placeholder="e.g. Beauty, Lifestyle, All"></div></div>
+    <div class="fr"><div class="fg"><label class="fl">Brand / Source</label><input class="fi" id="o-brand" placeholder="Where you got the pieces"></div><div class="fg"></div></div>
+    <div class="fr f1"><div class="fg"><label class="fl">Notes</label><textarea class="ft" id="o-notes" placeholder="Styling notes, where to shop…"></textarea></div></div>
+    <div class="fr f1"><div class="fg"><label class="fl">Photo</label><div class="uz" onclick="document.getElementById('o-img-in').click()"><input type="file" id="o-img-in" accept="image/*" onchange="handleImg(event,'o-img-pre','o-img-data')"><div style="font-size:12px;color:var(--warm-gray);">👗 Upload outfit photo</div></div><div id="o-img-pre" style="margin-top:7px;"></div><input type="hidden" id="o-img-data"></div></div>
+    <div class="fa"><button class="btn btn-g" onclick="closeModal('outfit-modal')">Cancel</button><button class="btn btn-p" onclick="saveOutfit()">Save</button></div>
+  </div>
+</div></div>
+
+<!-- LOCATION -->
+<div class="mo" id="loc-modal"><div class="md wide">
+  <div class="mh"><div class="mt">Filming <em>Location</em></div><button class="mc" onclick="closeModal('loc-modal')">×</button></div>
+  <div class="mb2">
+    <div class="fr"><div class="fg"><label class="fl">Name *</label><input class="fi" id="loc-name" placeholder="e.g. Kitchen counter, Bedroom window"></div><div class="fg"><label class="fl">Best Content Type</label><input class="fi" id="loc-type" placeholder="e.g. Skincare, Lifestyle"></div></div>
+    <div class="fr"><div class="fg"><label class="fl">Camera Angle</label><input class="fi" id="loc-angle" placeholder="e.g. Eye level, 45° from left"></div><div class="fg"><label class="fl">Tripod Height</label><input class="fi" id="loc-tripod" placeholder="e.g. 120cm, waist height"></div></div>
+    <div class="fr"><div class="fg"><label class="fl">Best Time / Lighting</label><input class="fi" id="loc-light" placeholder="e.g. Morning 8–10am, face window"></div><div class="fg"><label class="fl">Zoom Setting</label><input class="fi" id="loc-zoom" placeholder="e.g. 1x, 2x, 0.5x"></div></div>
+    <div class="fr f1"><div class="fg"><label class="fl">Notes</label><textarea class="ft" id="loc-notes" placeholder="Setup tips, background styling, what to avoid…"></textarea></div></div>
+    <div class="fr f1"><div class="fg"><label class="fl">Photos (up to 4)</label><div class="uz" onclick="document.getElementById('loc-imgs-in').click()"><input type="file" id="loc-imgs-in" accept="image/*" multiple onchange="handleMultiImg(event,'loc-imgs-pre','loc-imgs-data')"><div style="font-size:12px;color:var(--warm-gray);">📍 Upload location photos</div></div><div id="loc-imgs-pre" class="ig2" style="margin-top:7px;"></div><input type="hidden" id="loc-imgs-data" value="[]"></div></div>
+    <div class="fa"><button class="btn btn-g" onclick="closeModal('loc-modal')">Cancel</button><button class="btn btn-p" onclick="saveLoc()">Save</button></div>
+  </div>
+</div></div>
+
+<!-- CAMERA -->
+<div class="mo" id="cam-modal"><div class="md wide">
+  <div class="mh"><div class="mt">Camera <em>Settings</em></div><button class="mc" onclick="closeModal('cam-modal')">×</button></div>
+  <div class="mb2">
+    <div class="fr"><div class="fg"><label class="fl">Setting Name *</label><input class="fi" id="cam-name" placeholder="e.g. Skincare close-up – kitchen"></div><div class="fg"><label class="fl">Content Type</label><input class="fi" id="cam-ct" placeholder="e.g. Beauty, Tutorial, DITL"></div></div>
+    <div class="fr"><div class="fg"><label class="fl">Location</label><input class="fi" id="cam-loc" placeholder="e.g. Kitchen window"></div><div class="fg"><label class="fl">Camera / Device</label><input class="fi" id="cam-dev" placeholder="e.g. iPhone 15 Pro, Sony ZV-E10"></div></div>
+    <div style="font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--terracotta);font-weight:500;margin:10px 0 7px;">📷 Camera Settings</div>
+    <div class="fr f3"><div class="fg"><label class="fl">Resolution</label><input class="fi" id="cam-res" placeholder="4K, 1080p"></div><div class="fg"><label class="fl">Frame Rate (fps)</label><input class="fi" id="cam-fps" placeholder="30, 60, 120"></div><div class="fg"><label class="fl">Aspect Ratio</label><input class="fi" id="cam-rat" placeholder="9:16, 16:9"></div></div>
+    <div class="fr f3"><div class="fg"><label class="fl">ISO</label><input class="fi" id="cam-iso" placeholder="Auto, 100, 400"></div><div class="fg"><label class="fl">Shutter Speed</label><input class="fi" id="cam-shu" placeholder="1/60, 1/120"></div><div class="fg"><label class="fl">Aperture</label><input class="fi" id="cam-ape" placeholder="f/1.8, f/2.8"></div></div>
+    <div class="fr f3"><div class="fg"><label class="fl">White Balance</label><input class="fi" id="cam-wb" placeholder="Auto, 5500K"></div><div class="fg"><label class="fl">Zoom Amount</label><input class="fi" id="cam-zm" placeholder="0.5x, 1x, 2x"></div><div class="fg"><label class="fl">Focus Mode</label><input class="fi" id="cam-foc" placeholder="Auto, Manual"></div></div>
+    <div style="font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--terracotta);font-weight:500;margin:10px 0 7px;">💡 Lighting & Setup</div>
+    <div class="fr f3"><div class="fg"><label class="fl">Lighting Type</label><input class="fi" id="cam-lit" placeholder="Natural, Ring light"></div><div class="fg"><label class="fl">Tripod Height</label><input class="fi" id="cam-tri" placeholder="120cm, eye level"></div><div class="fg"><label class="fl">Camera Angle</label><input class="fi" id="cam-ang" placeholder="Eye level, slight high"></div></div>
+    <div style="font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--terracotta);font-weight:500;margin:10px 0 7px;">🎙 Audio</div>
+    <div class="fr"><div class="fg"><label class="fl">Microphone</label><input class="fi" id="cam-mic" placeholder="Built-in, Rode Wireless, Lavalier"></div><div class="fg"><label class="fl">Audio Level</label><input class="fi" id="cam-aud" placeholder="-12dB, Auto"></div></div>
+    <div class="fr"><div class="fg"><label class="fl">Color Profile / Style</label><input class="fi" id="cam-col" placeholder="e.g. Cinematic, Standard, LOG"></div><div class="fg"><label class="fl">Stabilization</label><input class="fi" id="cam-sta" placeholder="e.g. On, OIS, Gimbal"></div></div>
+    <div class="fr f1"><div class="fg"><label class="fl">Additional Notes</label><textarea class="ft" id="cam-notes" placeholder="Extra setup notes, editing tips, colour grading…"></textarea></div></div>
+    <div class="fa"><button class="btn btn-g" onclick="closeModal('cam-modal')">Cancel</button><button class="btn btn-p" onclick="saveCam()">Save Settings</button></div>
+  </div>
+</div></div>
+
+<!-- STATUS QUICK-CHANGE -->
+<div class="mo" id="status-modal"><div class="md" style="max-width:380px;">
+  <div class="mh"><div class="mt">Change <em>Status</em></div><button class="mc" onclick="closeModal('status-modal')">×</button></div>
+  <div class="mb2" id="status-opts" style="display:flex;flex-direction:column;gap:7px;"></div>
+</div></div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- OFFLINE BAR -->
+<div id="offline-bar">📡 You're offline — your data is still available and saved locally</div>
+
+<!-- SYNC HUB MODAL -->
+<div class="sync-backdrop" id="sync-modal" onclick="if(event.target===this)closeSync()">
+  <div class="sync-box">
+
+    <!-- Hero Header -->
+    <div class="sync-hero">
+      <button class="sync-close" onclick="closeSync()">×</button>
+      <div class="sync-hero-eyebrow">AshaJolies HQ</div>
+      <div class="sync-hero-title">Sync <em>Hub</em></div>
+      <div class="sync-hero-sub">Keep your phone and laptop perfectly in sync — live or via backup file.</div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="sync-tabs">
+      <button class="sync-tab on" onclick="syncTab('live',this)">⚡ Live Sync</button>
+      <button class="sync-tab" onclick="syncTab('file',this)">📁 File Backup</button>
+    </div>
+
+    <!-- LIVE SYNC PANEL -->
+    <div class="sync-panel on" id="sp-live">
+      <div class="sync-status-row">
+        <div class="sync-dot" id="sync-dot"></div>
+        <span id="sync-status-lbl">Checking connection…</span>
+      </div>
+
+      <!-- Your sync code -->
+      <div class="sync-code-box">
+        <div class="sync-code-label">Your Sync Code</div>
+        <div class="sync-code-val" id="sync-code-val" onclick="copySyncCode()" title="Click to copy">––––</div>
+        <div class="sync-code-sub">Click to copy · Enter this code on your laptop to pull your data</div>
+      </div>
+
+      <div class="sync-divider">or pull from another device</div>
+
+      <!-- Enter code from other device -->
+      <div>
+        <div style="font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--warm-gray);font-weight:500;margin-bottom:7px;font-family:'DM Mono',monospace;">Enter code from your laptop</div>
+        <div class="sync-input-row">
+          <input id="sync-code-input" maxlength="6" placeholder="ABC123" oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9]/g,'')">
+          <button onclick="pullSync()">Pull Data →</button>
+        </div>
+      </div>
+
+      <!-- Push button -->
+      <button onclick="pushSync()" style="width:100%;padding:12px;background:var(--terracotta);color:#fff;border:none;border-radius:12px;font-family:'Jost',sans-serif;font-size:12px;font-weight:500;cursor:pointer;letter-spacing:.06em;transition:background .15s;" onmouseover="this.style.background='#b05e3d'" onmouseout="this.style.background='var(--terracotta)'">
+        ⬆ Push My Data (update the cloud)
+      </button>
+
+      <div class="sync-log" id="sync-log">Ready. Push your data or enter a code to pull.</div>
+
+      <div style="font-size:10px;color:var(--mid-gray);line-height:1.6;text-align:center;">
+        Data is stored temporarily on JSONBin.io (free, public relay).<br>Codes expire after 7 days of inactivity.
+      </div>
+    </div>
+
+    <!-- FILE BACKUP PANEL -->
+    <div class="sync-panel" id="sp-file">
+      <div class="sync-status-row">
+        <div class="sync-dot" id="sync-dot2"></div>
+        <span id="sync-status-lbl2">Ready for file sync</span>
+      </div>
+      <div class="sync-btn-row">
+        <div class="sync-btn" onclick="exportData()">
+          <div class="sync-btn-icon exp">⬇️</div>
+          <div class="sync-btn-text">
+            <div class="sync-btn-title">Export Backup</div>
+            <div class="sync-btn-sub">Download JSON to laptop</div>
+          </div>
+        </div>
+        <label class="sync-btn" style="cursor:pointer;">
+          <div class="sync-btn-icon imp">⬆️</div>
+          <div class="sync-btn-text">
+            <div class="sync-btn-title">Import Backup</div>
+            <div class="sync-btn-sub">Merge JSON from laptop</div>
+          </div>
+          <input type="file" accept=".json" style="display:none" onchange="importData(event)">
+        </label>
+      </div>
+      <div style="font-size:11px;color:var(--warm-gray);background:var(--warm-white);border-radius:10px;padding:12px 14px;line-height:1.7;">
+        <strong style="color:var(--ink);">How to sync via file:</strong><br>
+        1. On phone → Export Backup → file downloads<br>
+        2. Transfer file to laptop (email, AirDrop, USB…)<br>
+        3. On laptop → Import Backup → data merges in
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="sync-footer2">
+      <label class="sync-remember">
+        <input type="checkbox" id="sync-skip-cb" onchange="syncSkipPref(this.checked)">
+        Don't show on startup
+      </label>
+      <button class="sync-skip" onclick="closeSync()">Done</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════
+//  DATA LAYER — localStorage with versioned keys
+// ══════════════════════════════════════════════
+const K='ajhq3_';
+const rd=(k,d)=>{try{const v=localStorage.getItem(K+k);return v!==null?JSON.parse(v):d;}catch{return d;}};
+const wr=(k,v)=>{try{localStorage.setItem(K+k,JSON.stringify(v));}catch(e){console.warn('Storage full',e);}};
+
+// ── INITIAL STATE ──
+let D={
+  gigs: rd('gigs',[]),
+  content: rd('content',[]),
+  ideas: rd('ideas',[
+    {id:'i1',title:'My honest skincare routine for melanin skin',niche:'Beauty',platform:'TikTok',status:'idea',types:['Talking to Camera','Review'],hook:'POV: you finally found a routine that works 🙌',audio:'',notes:'Feature 3–4 products. 30–45s.',img:'',linkedGig:'',added:Date.now()},
+    {id:'i2',title:'Braiding my daughter\'s hair — full tutorial',niche:'Hair',platform:'YouTube',status:'idea',types:['Tutorial'],hook:'Come braid with me 🧡',audio:'Original audio — voiceover',notes:'Film full session. Natural light.',img:'',linkedGig:'',added:Date.now()},
+    {id:'i3',title:'Day in my life: SAHM in rural Kenya',niche:'Lifestyle',platform:'TikTok',status:'idea',types:['Day in the Life'],hook:'Nobody shows this side of life...',audio:'',notes:'Morning to evening. Authentic.',img:'',linkedGig:'',added:Date.now()},
+    {id:'i4',title:'I built an app using AI for my household',niche:'Tech',platform:'Instagram',status:'idea',types:['Product Demo'],hook:'Wait — you can do this with AI? 👀',audio:'',notes:'Show the actual app.',img:'',linkedGig:'',added:Date.now()},
+    {id:'i5',title:'GRWM: Kenyan wedding guest outfit',niche:'Fashion',platform:'TikTok',status:'idea',types:['GRWM'],hook:'It\'s a whole vibe from Mitheru 💃🏿',audio:'',notes:'Show local fabrics and accessories.',img:'',linkedGig:'',added:Date.now()},
+  ]),
+  followups: rd('followups',[]),
+  pitches: rd('pitches',[
+    {id:'p1',name:'Beauty — Gifted DM',niche:'Beauty',type:'Gifted Collab',platform:'Instagram DM',subject:'',body:`Hi [Brand Name] team! 👋\n\nI'm Asha Jolies, a UGC creator based in Kenya creating authentic content for beauty brands.\n\nI'd love to collaborate on a gifted basis — I'll create a genuine review/tutorial of [Product] and deliver raw UGC files.\n\nWhat I offer:\n✦ Talking-to-camera or voiceover videos\n✦ Melanin skin perspective — largely underserved audience\n✦ 3–5 day turnaround · Full usage rights included\n\nHappy to share my portfolio!\n\nWarmly,\nAsha Jolies | @ashajoliesUgc`},
+    {id:'p2',name:'Paid Collab — Email',niche:'General',type:'Paid Collab',platform:'Email',subject:'UGC Creator Collaboration – Asha Jolies | Starting from $20',body:`Hi [Brand] team,\n\nMy name is Asha Jolies — UGC creator based in Kenya specialising in beauty, hair, lifestyle and tech.\n\nRates start from $20 per UGC video. Full raw files + usage rights included.\n\nCould I send my media kit?\n\nBest,\nAsha Jolies\nashajoliesugc@email.com | @ashajoliesUgc`},
+    {id:'p3',name:'Hair — Gifted Email',niche:'Hair',type:'Gifted Collab',platform:'Email',subject:'UGC Hair Content – Gifted Collaboration | Asha Jolies',body:`Hello [Brand Name],\n\nI'm Asha Jolies, a creator focused on African hair care.\n\nI'd love to create UGC for [Product] on a gifted basis:\n✂️ Honest review video (30–60s)\n✂️ Styling/tutorial clip\n✂️ Full raw footage files\n\nAsha Jolies | @ashajoliesUgc`},
+  ]),
+  rates: rd('rates',[
+    {id:'r1',type:'UGC Video (15–30s)',price:'$20',desc:'Talking to camera or voiceover, 1 revision'},
+    {id:'r2',type:'UGC Video (60s)',price:'$30',desc:'Full review or tutorial, 1 revision'},
+    {id:'r3',type:'Photo Set (3 images)',price:'$15',desc:'Flat lay or lifestyle photos'},
+    {id:'r4',type:'Bundle (2 videos + 3 photos)',price:'$70',desc:'Full content package'},
+    {id:'r5',type:'Gifted Collab',price:'Product only',desc:'Product in exchange for UGC'},
+  ]),
+  colors: rd('colors',[
+    {id:'c1',n:'Ivory',h:'#FAF6EF',l:true},{id:'c2',n:'Warm White',h:'#F5EFE6',l:true},
+    {id:'c3',n:'Blush',h:'#E8C4B0',l:true},{id:'c4',n:'Terracotta',h:'#C4714F'},
+    {id:'c5',n:'Dusty Rose',h:'#C9897A'},{id:'c6',n:'Lavender',h:'#C2AECE',l:true},
+    {id:'c7',n:'Sage',h:'#8FAF8A'},{id:'c8',n:'Forest',h:'#4A6B50'},
+    {id:'c9',n:'Gold',h:'#C4963A'},{id:'c10',n:'Warm Gold',h:'#E8C06A',l:true},
+    {id:'c11',n:'Ink',h:'#1E1916'},{id:'c12',n:'Warm Gray',h:'#7A6F68'},
+    {id:'c13',n:'Mid Gray',h:'#B5ADA8',l:true},
+  ]),
+  niches: rd('niches',['Beauty & Skincare','Hair Care','Lifestyle & Home','Tech & Apps','Fashion']),
+  platforms: rd('platforms',['TikTok','Instagram','YouTube','Pinterest','Facebook','Threads']),
+  bio: rd('bio','Raw. Relatable. Real. Asha Jolies is a UGC creator from Mitheru, Tharaka Nithi, Kenya 🇰🇪'),
+  links: rd('links',{email:'ashajoliesugc@email.com',location:'Mitheru, Tharaka Nithi, Kenya',tt:'@ashajoliesUgc',ig:'@ashajoliesUgc',yt:'@ashajoliesUgc',portfolio:''}),
+  visuals: rd('visuals',[]),
+  outfits: rd('outfits',[]),
+  locations: rd('locations',[]),
+  cameras: rd('cameras',[]),
+  feedIg: rd('feedIg',Array(9).fill(null)),
+  feedTt: rd('feedTt',Array(6).fill(null)),
+  feedBank: rd('feedBank',[]),
+  moodboards: rd('moodboards',{}),
+  calM: rd('calM',new Date().getMonth()),
+  calY: rd('calY',new Date().getFullYear()),
+};
+
+function save(){
+  const keys=['gigs','content','ideas','followups','pitches','rates','colors','niches','platforms','bio','links','visuals','outfits','locations','cameras','feedIg','feedTt','feedBank','moodboards','calM','calY'];
+  keys.forEach(k=>wr(k,D[k]));
+  const el=document.getElementById('sb-saved');
+  if(el){const now=new Date();el.textContent='Saved '+now.toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit'});}
+}
+
+// ── CONTENT TYPES ──
+const CTYPES=['Talking to Camera','Voiceover','Tutorial','Product Demo','Review','Day in the Life','GRWM','Before & After','Flat Lay Photos','Reel','TikTok Video','YouTube Short','Haul','Routine','Storytime','Unboxing','Recipe','Challenge'];
+
+// ── TAG PICKER ──
+let TP={g:[],ct:[],i:[]};
+function focusTP(id){document.getElementById(id)?.focus();}
+function showDD(ns){
+  const dd=document.getElementById(ns+'-dd'); if(dd){dd.style.display='block';renderDD(ns,'');}
+}
+function hideDD(ns){const dd=document.getElementById(ns+'-dd');if(dd)dd.style.display='none';}
+function filterDD(ns){
+  const inp=document.getElementById(ns+'-types-inp');
+  const q=inp?inp.value:'';
+  renderDD(ns,q);
+}
+function renderDD(ns,q){
+  const dd=document.getElementById(ns+'-dd'); if(!dd)return;
+  const filtered=CTYPES.filter(t=>!q||t.toLowerCase().includes(q.toLowerCase()));
+  dd.innerHTML=(filtered.length?filtered:CTYPES).map(t=>{
+    const sel=TP[ns]&&TP[ns].includes(t);
+    return `<div class="to${sel?' sel':''}" onmousedown="event.preventDefault();toggleTP('${ns}','${t.replace(/'/g,"\\'")}')"><span class="to-chk">${sel?'✓':''}</span>${t}</div>`;
+  }).join('')||`<div style="padding:9px 13px;font-size:12px;color:var(--mid-gray);">Press Enter to add</div>`;
+}
+function toggleTP(ns,val){
+  if(!TP[ns])TP[ns]=[];
+  if(TP[ns].includes(val))TP[ns]=TP[ns].filter(x=>x!==val);
+  else TP[ns].push(val);
+  renderTPTags(ns);renderDD(ns,'');
+}
+function renderTPTags(ns){
+  const el=document.getElementById(ns+'-types-tags'); if(!el)return;
+  el.innerHTML=(TP[ns]||[]).map(t=>`<span class="tc">${t}<button onclick="toggleTP('${ns}','${t.replace(/'/g,"\\'")}')">×</button></span>`).join('');
+}
+function tpKey(e,ns){
+  if(e.key==='Enter'){e.preventDefault();const v=(document.getElementById(ns+'-types-inp')||{}).value?.trim();if(v&&!TP[ns].includes(v)){TP[ns].push(v);renderTPTags(ns);document.getElementById(ns+'-types-inp').value='';renderDD(ns,'');}}
+  if(e.key==='Backspace'&&!(document.getElementById(ns+'-types-inp')||{}).value&&TP[ns].length){TP[ns].pop();renderTPTags(ns);}
+}
+function resetTP(ns){TP[ns]=[];renderTPTags(ns);}
+function setTP(ns,arr){TP[ns]=[...(arr||[])];renderTPTags(ns);}
+
+// ── NAVIGATION ──
+const PAGES={dashboard:'Good morning, <em>Asha</em> ✨',earnings:'Earnings',gigs:'Gig Tracker',followup:'Follow-Ups',planner:'Content Planner',ideas:'Ideas Library',feed:'Feed Planner',pitches:'Pitch Templates',brand:'Brand Hub'};
+let currentPage='dashboard';
+function goTo(page,el){
+  document.querySelectorAll('.pg').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
+  const pg=document.getElementById('pg-'+page);if(pg)pg.classList.add('active');
+  if(el)el.classList.add('active');
+  currentPage=page;
+  document.getElementById('tb-title').innerHTML=PAGES[page]||page;
+  renderPage(page);
+}
+function renderPage(p){
+  if(p==='dashboard')rDash();
+  if(p==='earnings')rEarnings();
+  if(p==='gigs')rGigs();
+  if(p==='followup')rFU();
+  if(p==='planner')rCal();
+  if(p==='ideas')rIdeas('all');
+  if(p==='feed')rFeed();
+  if(p==='pitches')renderPitches('');
+  if(p==='brand')rBrand();
+}
+
+// ── MODAL ──
+function openModal(id){
+  if(id==='gig-modal'||id==='content-modal'||id==='idea-modal')populateLinks();
+  document.getElementById(id)?.classList.add('open');
+}
+function closeModal(id){document.getElementById(id)?.classList.remove('open');}
+function openGigModal(){
+  resetTP('g');
+  setV('g-id','');
+  ['g-brand','g-rate','g-gift','g-due','g-contact','g-notes'].forEach(i=>setV(i,''));
+  setV('g-rtype','paid');
+  setV('g-status','pending');
+  setV('g-niche','Beauty & Skincare');
+  document.getElementById('g-img-pre').innerHTML='';
+  setV('g-img-data','');
+  togGR();
+  populateLinks();
+  openModal('gig-modal');
+}
+document.querySelectorAll('.mo').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open');}));
+function populateLinks(){
+  ['g-lidea','ct-lgig','ct-lidea','i-lgig'].forEach(id=>{
+    const el=document.getElementById(id);if(!el)return;
+    const type=id.includes('lgig')||id.includes('g-lidea')?'gig':'idea';
+    const items=type==='gig'?D.gigs:D.ideas;
+    el.innerHTML='<option value="">— none —</option>'+items.map(x=>`<option value="${x.id}">${(x.brand||x.title||'').slice(0,40)}</option>`).join('');
+  });
+}
+
+// ── UTILS ──
+const v=id=>(document.getElementById(id)||{}).value||'';
+const setV=(id,val)=>{const el=document.getElementById(id);if(el)el.value=val;};
+const esc=s=>(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2400);}
+function sLabel(s){return{pending:'Pending',negotiating:'Negotiating',waitingapproval:'Awaiting Approval',paid:'Paid',gifted:'Gifted',delivered:'Delivered',declined:'Declined',idea:'Idea',scripting:'Scripting',filming:'Filming',editing:'Editing',done:'Done ✓',published:'Published 🚀'}[s]||s;}
+function fmtRate(g){return g.rateType==='paid'?'$'+g.rate:(g.gift||'Gifted');}
+
+// ── IMAGE HANDLER ──
+function handleImg(e,preId,dataId){
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();r.onload=ev=>{
+    setV(dataId,ev.target.result);
+    const pre=document.getElementById(preId);
+    if(pre)pre.innerHTML=`<img src="${ev.target.result}" style="max-height:90px;border-radius:8px;">`;
+  };r.readAsDataURL(f);
+}
+let multiImgTmp={};
+function handleMultiImg(e,preId,dataId){
+  const ns=dataId;
+  if(!multiImgTmp[ns])multiImgTmp[ns]=[];
+  Array.from(e.target.files).slice(0,4-multiImgTmp[ns].length).forEach(f=>{
+    const r=new FileReader();r.onload=ev=>{
+      multiImgTmp[ns].push(ev.target.result);
+      setV(dataId,JSON.stringify(multiImgTmp[ns]));
+      const pre=document.getElementById(preId);
+      if(pre)pre.innerHTML=multiImgTmp[ns].map((img,i)=>`<div class="it"><img src="${img}"><button class="it-del" onclick="removeMultiImg('${ns}',${i},'${preId}','${dataId}')">×</button></div>`).join('');
+    };r.readAsDataURL(f);
+  });
+}
+function removeMultiImg(ns,idx,preId,dataId){
+  if(multiImgTmp[ns])multiImgTmp[ns].splice(idx,1);
+  setV(dataId,JSON.stringify(multiImgTmp[ns]||[]));
+  const pre=document.getElementById(preId);
+  if(pre)pre.innerHTML=(multiImgTmp[ns]||[]).map((img,i)=>`<div class="it"><img src="${img}"><button class="it-del" onclick="removeMultiImg('${ns}',${i},'${preId}','${dataId}')">×</button></div>`).join('');
+}
+function lightbox(src){const d=document.createElement('div');d.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;display:flex;align-items:center;justify-content:center;cursor:pointer;';d.innerHTML=`<img src="${src}" style="max-width:90vw;max-height:90vh;border-radius:12px;">`;d.onclick=()=>d.remove();document.body.appendChild(d);}
+
+// ── DASHBOARD ──
+function rDash(){
+  const active=D.gigs.filter(g=>['paid','gifted','negotiating','waitingapproval'].includes(g.status)).length;
+  const pending=D.gigs.filter(g=>g.status==='pending').length;
+  const earned=D.gigs.filter(g=>g.rateType==='paid'&&g.status==='delivered').reduce((s,g)=>s+parseFloat(g.rate||0),0);
+  const delivered=D.gigs.filter(g=>g.status==='delivered').length;
+  setEl('s-active',active);setEl('s-pending',pending);setEl('s-earned','$'+earned.toFixed(0));setEl('s-delivered',delivered);setEl('s-ideas',D.ideas.length);
+  setEl('gig-badge',D.gigs.filter(g=>!['delivered','declined'].includes(g.status)).length||'');
+  setEl('fu-badge',D.followups.filter(f=>!f.done).length||'');
+  // recent gigs
+  const rg=document.getElementById('d-gigs');
+  const rgs=[...D.gigs].reverse().slice(0,5);
+  rg.innerHTML=rgs.length?rgs.map(g=>`<div style="display:flex;align-items:center;gap:10px;padding:9px 16px;border-bottom:1px solid rgba(0,0,0,.04);">${g.img?`<img src="${g.img}" style="width:34px;height:34px;border-radius:7px;object-fit:cover;flex-shrink:0;">`:''}
+    <div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${g.brand}</div><div style="font-size:10px;color:var(--warm-gray);">${g.niche}</div></div>
+    <span class="sp s-${g.status}">${sLabel(g.status)}</span>
+    <span style="font-family:'DM Mono',monospace;font-size:11px;font-weight:500;color:var(--forest);">${fmtRate(g)}</span>
+  </div>`).join(''):'<div class="es"><div class="es-icon">📋</div><div class="es-title">No gigs yet</div></div>';
+  // this week content
+  const dc=document.getElementById('d-content');
+  const sw=new Date();sw.setDate(sw.getDate()-sw.getDay());
+  const ew=new Date(sw);ew.setDate(ew.getDate()+6);
+  const wc=D.content.filter(c=>{if(!c.date)return false;const d=new Date(c.date);return d>=sw&&d<=ew;});
+  dc.innerHTML=wc.length?wc.map(c=>`<div style="display:flex;align-items:center;gap:8px;padding:9px 16px;border-bottom:1px solid rgba(0,0,0,.04);"><div style="flex:1;font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${c.title}</div><span style="font-size:9px;font-family:'DM Mono',monospace;color:var(--warm-gray);">${c.platform}</span><span class="sp s-${c.status}">${c.status}</span></div>`).join(''):'<div style="padding:14px 16px;font-size:12px;color:var(--mid-gray);">Nothing planned this week</div>';
+  // followups
+  const df=document.getElementById('d-fu');
+  const now=new Date();
+  const fus=D.followups.filter(f=>!f.done).sort((a,b)=>new Date(a.date)-new Date(b.date)).slice(0,4);
+  df.innerHTML=fus.length?fus.map(f=>`<div style="display:flex;align-items:center;gap:8px;padding:9px 16px;border-bottom:1px solid rgba(0,0,0,.04);"><div style="flex:1;font-size:13px;font-weight:500;">${f.brand}</div><div style="font-size:9px;font-family:'DM Mono',monospace;color:${new Date(f.date)<now?'#c0392b':'var(--warm-gray)'};">${f.date}</div></div>`).join(''):'<div style="padding:12px 16px;font-size:12px;color:var(--mid-gray);">None due 🎉</div>';
+  // ideas
+  const di=document.getElementById('d-ideas');
+  di.innerHTML=[...D.ideas].reverse().slice(0,4).map(i=>`<div style="display:flex;align-items:center;gap:8px;padding:9px 16px;border-bottom:1px solid rgba(0,0,0,.04);"><span class="id-tag t-${i.niche}" style="flex-shrink:0;">${i.niche}</span><div style="font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${i.title}</div></div>`).join('');
+}
+function setEl(id,val){const el=document.getElementById(id);if(el)el.textContent=val;}
+
+// ── EARNINGS ──
+function rEarnings(){
+  const paid=D.gigs.filter(g=>g.rateType==='paid'&&g.status==='delivered').reduce((s,g)=>s+parseFloat(g.rate||0),0);
+  const pend=D.gigs.filter(g=>g.rateType==='paid'&&['paid','negotiating','waitingapproval'].includes(g.status)).reduce((s,g)=>s+parseFloat(g.rate||0),0);
+  const gifted=D.gigs.filter(g=>g.rateType==='gifted').length;
+  const now=new Date();
+  const mo=D.gigs.filter(g=>{const d=new Date(g.added||Date.now());return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();}).length;
+  setEl('earn-total','$'+paid.toFixed(2));
+  document.getElementById('earn-sub').textContent='from '+D.gigs.filter(g=>g.rateType==='paid'&&g.status==='delivered').length+' paid gigs';
+  setEl('ep-paid','$'+paid.toFixed(2));setEl('ep-pend','$'+pend.toFixed(2));setEl('ep-gift',gifted);setEl('ep-mo',mo);
+  const el=document.getElementById('earn-list');
+  const pg=D.gigs.filter(g=>g.rateType==='paid').reverse();
+  el.innerHTML=pg.length?pg.map(g=>`<div style="display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid rgba(0,0,0,.04);">${g.img?`<img src="${g.img}" style="width:34px;height:34px;border-radius:7px;object-fit:cover;">`:''}
+    <div style="flex:1;"><div style="font-size:13px;font-weight:500;">${g.brand}</div><div style="font-size:10px;color:var(--warm-gray);">${g.niche}${g.due?' · '+g.due:''}</div></div>
+    <span class="sp s-${g.status}">${sLabel(g.status)}</span>
+    <span style="font-family:'DM Mono',monospace;font-size:12px;font-weight:600;color:var(--forest);">$${g.rate}</span>
+  </div>`).join(''):'<div class="es"><div class="es-icon">💰</div><div class="es-title">No paid gigs yet</div></div>';
+}
+
+// ── GIG TRACKER ──
+let gigFilt='all';
+function filterGigs(f,el){gigFilt=f;document.querySelectorAll('#gig-filters .btn').forEach(b=>b.classList.remove('active'));el.classList.add('active');rGigs();}
+function rGigs(){
+  let gs=gigFilt==='all'?D.gigs:D.gigs.filter(g=>g.status===gigFilt);
+  const tb=document.getElementById('gig-tbody');
+  tb.innerHTML=[...gs].reverse().map(g=>{
+    const typeHtml=(g.types||[]).map(t=>`<span style="font-size:9px;font-family:'DM Mono',monospace;padding:1px 6px;border-radius:20px;background:rgba(196,113,79,.1);color:var(--terracotta);margin:1px;display:inline-block;">${t}</span>`).join('');
+    const li=D.ideas.find(x=>x.id===g.linkedIdea);
+    const lc=D.content.find(x=>x.id===g.linkedContent);
+    return `<tr>
+      <td><div style="font-weight:500;">${g.brand}</div>${g.img?`<img src="${g.img}" style="width:34px;height:34px;border-radius:6px;object-fit:cover;margin-top:4px;cursor:pointer;" onclick="lightbox('${g.img}')">`:''}${g.contact?`<div style="font-size:10px;color:var(--warm-gray);">${g.contact}</div>`:''}</td>
+      <td>${typeHtml||'<span style="color:var(--mid-gray);font-size:11px;">—</span>'}</td>
+      <td style="font-family:'DM Mono',monospace;font-size:12px;font-weight:500;color:${g.rateType==='paid'?'var(--forest)':'var(--terracotta)'};">${fmtRate(g)}</td>
+      <td><select class="fs" style="padding:3px 7px;font-size:10px;width:auto;border-radius:20px;" onchange="updGigStatus('${g.id}',this.value)">${['pending','negotiating','waitingapproval','paid','gifted','delivered','declined'].map(s=>`<option value="${s}"${g.status===s?' selected':''}>${sLabel(s)}</option>`).join('')}</select></td>
+      <td style="font-family:'DM Mono',monospace;font-size:10px;color:var(--warm-gray);">${g.due||'—'}</td>
+      <td>${li?`<div class="lb2" style="margin-bottom:3px;">💡 ${li.title.slice(0,18)}</div>`:''}${lc?`<div class="lb2">📅 ${lc.title.slice(0,18)}</div>`:''}</td>
+      <td><div style="display:flex;gap:4px;">
+        <button class="ib" onclick="openMB('gig','${g.id}','${esc(g.brand)}')">🎨</button>
+        <button class="ib" onclick="editGig('${g.id}')">✏️</button>
+        <button class="ib" onclick="delGig('${g.id}')">🗑</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+  if(!gs.length)tb.innerHTML='<tr><td colspan="7" style="text-align:center;padding:26px;color:var(--mid-gray);">No gigs found.</td></tr>';
+  setEl('gig-badge',D.gigs.filter(g=>!['delivered','declined'].includes(g.status)).length||'');
+}
+function updGigStatus(id,val){const g=D.gigs.find(x=>x.id===id);if(g){g.status=val;save();rDash();}toast('Status → '+sLabel(val));}
+function togGR(){
+  const t=v('g-rtype');
+  const rr=document.getElementById('g-rate-row');
+  const gr=document.getElementById('g-gift-row');
+  if(rr)rr.style.display=t==='paid'?'':'none';
+  if(gr)gr.style.display=t==='gifted'?'':'none';
+}
+function editGig(id){
+  const g=D.gigs.find(x=>x.id===id);if(!g)return;
+  setV('g-id',id);setV('g-brand',g.brand);setV('g-niche',g.niche);setV('g-plat',g.platform);setV('g-rtype',g.rateType);setV('g-rate',g.rate||'');setV('g-gift',g.gift||'');setV('g-status',g.status);setV('g-due',g.due||'');setV('g-contact',g.contact||'');setV('g-notes',g.notes||'');setV('g-img-data',g.img||'');
+  setTP('g',g.types||[]);
+  document.getElementById('g-img-pre').innerHTML=g.img?`<img src="${g.img}" style="max-height:80px;border-radius:8px;">`:'';
+  togGR();populateLinks();
+  setV('g-lidea',g.linkedIdea||'');setV('g-lct',g.linkedContent||'');
+  openModal('gig-modal');
+}
+function saveGig(){
+  const brand=v('g-brand').trim();if(!brand){toast('Brand name required');return;}
+  const id=v('g-id');
+  const gig={id:id||'g'+Date.now(),brand,niche:v('g-niche'),types:TP.g||[],platform:v('g-plat'),rateType:v('g-rtype'),rate:v('g-rate'),gift:v('g-gift'),status:v('g-status'),due:v('g-due'),contact:v('g-contact'),notes:v('g-notes'),img:v('g-img-data'),linkedIdea:v('g-lidea'),linkedContent:v('g-lct'),added:id?(D.gigs.find(g=>g.id===id)||{}).added||Date.now():Date.now()};
+  if(id)D.gigs=D.gigs.map(g=>g.id===id?gig:g);else D.gigs.push(gig);
+  save();closeModal('gig-modal');resetTP('g');rGigs();rDash();toast(id?'Gig updated!':'Gig saved! 🎉');
+}
+function delGig(id){if(!confirm('Delete this gig?'))return;D.gigs=D.gigs.filter(g=>g.id!==id);save();rGigs();rDash();toast('Deleted');}
+
+// ── FOLLOW-UPS ──
+function rFU(){
+  const el=document.getElementById('fu-list');
+  const fus=[...D.followups].sort((a,b)=>new Date(a.date)-new Date(b.date));
+  const now=new Date();
+  if(!fus.length){el.innerHTML='<div class="es"><div class="es-icon">🔔</div><div class="es-title">No follow-ups</div></div>';return;}
+  el.innerHTML=fus.map(f=>`<div style="background:#fff;border-radius:var(--r);border:1px solid rgba(0,0,0,.06);padding:14px 16px;display:grid;grid-template-columns:1fr auto;gap:10px;align-items:start;opacity:${f.done?.5:1};">
+    <div><div style="font-weight:500;font-size:13px;">${f.brand}</div><div style="font-size:11px;color:var(--warm-gray);margin-top:2px;">${f.platform}${f.note?' · '+f.note.slice(0,55):''}</div>
+    <div style="font-family:'DM Mono',monospace;font-size:10px;margin-top:4px;color:${!f.done&&new Date(f.date)<now?'#c0392b':'var(--warm-gray)'};">${!f.done&&new Date(f.date)<now?'⚠ OVERDUE · ':''}${f.date}</div></div>
+    <div style="display:flex;flex-direction:column;gap:5px;align-items:flex-end;">
+      <span class="sp" style="background:rgba(${f.priority==='high'?'192,57,43':f.priority==='medium'?'196,150,58':'74,107,80'},.1);color:${f.priority==='high'?'#c0392b':f.priority==='medium'?'var(--gold)':'var(--forest)'};">${f.priority}</span>
+      ${!f.done?`<button onclick="doneFU('${f.id}')" style="padding:4px 10px;border-radius:20px;background:rgba(74,107,80,.1);border:1px solid rgba(74,107,80,.2);color:var(--forest);font-size:9px;cursor:pointer;font-family:'Jost',sans-serif;">✓ Done</button>`:'<span style="font-size:10px;color:var(--forest);">✓ Done</span>'}
+      <button class="ib" onclick="delFU('${f.id}')">🗑</button>
+    </div>
+  </div>`).join('');
+  setEl('fu-badge',D.followups.filter(f=>!f.done).length||'');
+}
+function saveFU(){
+  const brand=v('fu-brand').trim();const date=v('fu-date');if(!brand||!date){toast('Brand and date required');return;}
+  D.followups.push({id:'f'+Date.now(),brand,date,note:v('fu-note'),platform:v('fu-plat'),priority:v('fu-pri'),done:false});
+  save();closeModal('fu-modal');['fu-brand','fu-date','fu-note'].forEach(i=>setV(i,''));rFU();rDash();toast('Follow-up saved!');
+}
+function doneFU(id){const f=D.followups.find(x=>x.id===id);if(f)f.done=true;save();rFU();toast('Done ✓');}
+function delFU(id){D.followups=D.followups.filter(f=>f.id!==id);save();rFU();}
+
+// ── CONTENT PLANNER ──
+const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+function changeMonth(d){D.calM+=d;if(D.calM>11){D.calM=0;D.calY++;}if(D.calM<0){D.calM=11;D.calY--;}save();rCal();}
+function rCal(){
+  setEl('cal-label',MONTHS[D.calM]+' '+D.calY);
+  const grid=document.getElementById('cal-grid');
+  grid.querySelectorAll('.cc').forEach(c=>c.remove());
+  const first=new Date(D.calY,D.calM,1);
+  const last=new Date(D.calY,D.calM+1,0);
+  const today=new Date();
+  for(let i=0;i<first.getDay();i++){const cell=document.createElement('div');cell.className='cc om';const pd=new Date(D.calY,D.calM,1-first.getDay()+i);cell.innerHTML=`<div class="cc-n" style="opacity:.25">${pd.getDate()}</div>`;grid.appendChild(cell);}
+  for(let d=1;d<=last.getDate();d++){
+    const ds=`${D.calY}-${String(D.calM+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const isT=today.getDate()===d&&today.getMonth()===D.calM&&today.getFullYear()===D.calY;
+    const dc=D.content.filter(c=>c.date===ds);
+    const cell=document.createElement('div');cell.className='cc'+(isT?' td':'');cell.onclick=()=>openCtDate(ds);
+    cell.innerHTML=`<div class="cc-n">${d}</div>`+dc.map(c=>{
+      const pc=c.platform?.toLowerCase().includes('tiktok')?'chip-tt':c.platform?.toLowerCase().includes('insta')?'chip-ig':c.platform?.toLowerCase().includes('youtube')?'chip-yt':'';
+      return `<div class="chip ${pc} ${c.status==='done'||c.status==='published'?'chip-done':''}">${c.title.slice(0,13)}${c.title.length>13?'…':''}</div>`;
+    }).join('');grid.appendChild(cell);
+  }
+  const mc=D.content.filter(c=>{if(!c.date)return false;const d=new Date(c.date);return d.getMonth()===D.calM&&d.getFullYear()===D.calY;});
+  const pl=document.getElementById('plan-list');
+  if(!mc.length){pl.innerHTML='<div style="font-size:13px;color:var(--mid-gray);padding:10px 0;">No content planned. Click a date to add.</div>';return;}
+  pl.innerHTML='<div class="card"><div class="ch"><span class="ct">This Month</span></div>'+mc.sort((a,b)=>new Date(a.date)-new Date(b.date)).map(c=>`<div style="display:flex;align-items:center;gap:10px;padding:9px 16px;border-bottom:1px solid rgba(0,0,0,.04);">
+    <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--terracotta);width:52px;flex-shrink:0;">${c.date}</div>
+    <div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${c.title}</div>
+    <div style="font-size:10px;color:var(--warm-gray);">${c.platform}${c.audio?' · 🎵 '+c.audio.slice(0,25):''}</div>
+    ${(c.types||[]).length?`<div style="display:flex;flex-wrap:wrap;gap:2px;margin-top:3px;">${(c.types||[]).map(t=>`<span style="font-size:9px;font-family:'DM Mono',monospace;padding:1px 5px;border-radius:20px;background:rgba(196,113,79,.1);color:var(--terracotta);">${t}</span>`).join('')}</div>`:''}</div>
+    <select class="fs" style="padding:3px 7px;font-size:9px;width:auto;flex-shrink:0;" onchange="updCtStatus('${c.id}',this.value)">${['idea','scripting','filming','editing','done','published'].map(s=>`<option value="${s}"${c.status===s?' selected':''}>${s}</option>`).join('')}</select>
+    <button class="ib" onclick="delContent('${c.id}')">🗑</button>
+  </div>`).join('')+'</div>';
+}
+function openCtDate(ds){setV('ct-date',ds);openModal('content-modal');}
+function updCtStatus(id,val){const c=D.content.find(x=>x.id===id);if(c){c.status=val;save();}toast('Status → '+val);}
+function saveContent(){
+  const title=v('ct-title').trim();if(!title){toast('Title required');return;}
+  const id=v('ct-id');
+  const ct={id:id||'c'+Date.now(),title,niche:v('ct-niche'),platform:v('ct-plat'),date:v('ct-date'),types:TP.ct||[],status:v('ct-status'),linkedGig:v('ct-lgig'),linkedIdea:v('ct-lidea'),hook:v('ct-hook'),audio:v('ct-audio'),notes:v('ct-notes'),img:v('ct-img-data')};
+  if(id)D.content=D.content.map(c=>c.id===id?ct:c);else D.content.push(ct);
+  save();closeModal('content-modal');resetTP('ct');['ct-title','ct-date','ct-hook','ct-audio','ct-notes'].forEach(i=>setV(i,''));setV('ct-img-data','');document.getElementById('ct-img-pre').innerHTML='';
+  rCal();rDash();toast('Content saved!');
+}
+function delContent(id){D.content=D.content.filter(c=>c.id!==id);save();rCal();rDash();}
+
+// ── IDEAS ──
+let ideaFilt='all';
+function filterIdeas(f,el){ideaFilt=f;document.querySelectorAll('#idea-tabs .tb').forEach(b=>b.classList.remove('active'));el.classList.add('active');rIdeas(f);}
+function rIdeas(filt){
+  const grid=document.getElementById('ideas-grid');
+  let ideas=filt==='all'?D.ideas:D.ideas.filter(i=>i.niche===filt);
+  if(!ideas.length){grid.innerHTML='<div class="es" style="grid-column:1/-1"><div class="es-icon">💡</div><div class="es-title">No ideas yet</div></div>';return;}
+  grid.innerHTML=[...ideas].reverse().map(i=>{
+    const lg=i.linkedGig?D.gigs.find(g=>g.id===i.linkedGig):null;
+    const typeHtml=(i.types||[]).map(t=>`<span style="font-size:9px;font-family:'DM Mono',monospace;padding:1px 6px;border-radius:20px;background:rgba(196,113,79,.1);color:var(--terracotta);">${t}</span>`).join('');
+    return `<div class="id-card">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:6px;">
+        <span class="id-tag t-${i.niche}">${i.niche}</span>
+        <select class="fs" style="padding:2px 6px;font-size:9px;width:auto;" onchange="updIdeaStatus('${i.id}',this.value)">${['idea','scripting','filming','editing','done','published'].map(s=>`<option value="${s}"${i.status===s?' selected':''}>${s}</option>`).join('')}</select>
+      </div>
+      ${i.img?`<img src="${i.img}" class="id-img" onclick="lightbox('${i.img}')">`:''}
+      <div style="font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:400;line-height:1.3;">${i.title}</div>
+      ${typeHtml?`<div style="display:flex;flex-wrap:wrap;gap:3px;">${typeHtml}</div>`:''}
+      ${i.hook?`<div style="font-size:11px;color:var(--warm-gray);font-style:italic;">"${i.hook}"</div>`:''}
+      ${i.audio?`<div class="au-chip">🎵 ${i.audio.slice(0,35)}</div>`:''}
+      ${lg?`<div class="lb2">🔗 ${lg.brand}</div>`:''}
+      ${i.notes?`<div style="font-size:11px;color:var(--warm-gray);">${i.notes.slice(0,80)}${i.notes.length>80?'…':''}</div>`:''}
+      <div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:3px;">
+        <button class="btn btn-g btn-s" onclick="schedIdeaToContent('${i.id}')">📅 Schedule</button>
+        <button class="btn btn-g btn-s" onclick="openMB('idea','${i.id}','${esc(i.title.slice(0,20))}')">🎨 Moodboard</button>
+        <button class="ib" onclick="editIdea('${i.id}')">✏️</button>
+        <button class="ib" onclick="delIdea('${i.id}')">🗑</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+function updIdeaStatus(id,val){const i=D.ideas.find(x=>x.id===id);if(i){i.status=val;save();}toast('Status → '+val);}
+function editIdea(id){
+  const idea=D.ideas.find(x=>x.id===id);if(!idea)return;
+  setV('i-id',id);setV('i-title',idea.title);setV('i-niche',idea.niche);setV('i-plat',idea.platform);setV('i-status',idea.status);setV('i-hook',idea.hook||'');setV('i-audio',idea.audio||'');setV('i-notes',idea.notes||'');setV('i-img-data',idea.img||'');
+  setTP('i',idea.types||[]);
+  document.getElementById('i-img-pre').innerHTML=idea.img?`<img src="${idea.img}" style="width:100%;border-radius:8px;max-height:140px;object-fit:cover;">`:'';
+  populateLinks();setV('i-lgig',idea.linkedGig||'');
+  openModal('idea-modal');
+}
+function saveIdea(){
+  const title=v('i-title').trim();if(!title){toast('Title required');return;}
+  const id=v('i-id');
+  const idea={id:id||'i'+Date.now(),title,niche:v('i-niche'),platform:v('i-plat'),status:v('i-status'),types:TP.i||[],linkedGig:v('i-lgig'),hook:v('i-hook'),audio:v('i-audio'),notes:v('i-notes'),img:v('i-img-data'),added:Date.now()};
+  if(id)D.ideas=D.ideas.map(x=>x.id===id?idea:x);else D.ideas.push(idea);
+  save();closeModal('idea-modal');resetTP('i');setV('i-id','');['i-title','i-hook','i-audio','i-notes'].forEach(f=>setV(f,''));setV('i-img-data','');document.getElementById('i-img-pre').innerHTML='';
+  rIdeas(ideaFilt);rDash();toast('Idea saved!');
+}
+function delIdea(id){if(!confirm('Delete idea?'))return;D.ideas=D.ideas.filter(x=>x.id!==id);save();rIdeas(ideaFilt);}
+function schedIdeaToContent(id){
+  const idea=D.ideas.find(x=>x.id===id);if(!idea)return;
+  setV('ct-title',idea.title);setV('ct-hook',idea.hook||'');setV('ct-audio',idea.audio||'');setV('ct-notes',idea.notes||'');setV('ct-plat',idea.platform);setV('ct-niche',idea.niche.includes('Beauty')?'Beauty & Skincare':idea.niche.includes('Hair')?'Hair Care':idea.niche.includes('Lifestyle')?'Lifestyle & Home':idea.niche.includes('Tech')?'Tech & Apps':idea.niche);
+  setTP('ct',idea.types||[]);
+  openModal('content-modal');
+}
+
+// ── FEED PLANNER ──
+let feedP='ig',feedSel=-1;
+function switchFeed(p,el){feedP=p;document.querySelectorAll('#pg-feed .btn').forEach(b=>b.classList.remove('active'));el.classList.add('active');feedSel=-1;rFeed();}
+function rFeed(){
+  const grid=document.getElementById('feed-grid');
+  setEl('feed-plat-label',feedP==='ig'?'Instagram Grid (9 cells)':'TikTok Feed (6 videos)');
+  const cells=feedP==='ig'?D.feedIg:D.feedTt;
+  const cls=feedP==='ig'?'fc ig-cell':'fc tt-cell';
+  const cols=feedP==='ig'?'repeat(3,1fr)':'repeat(3,1fr)';
+  grid.innerHTML=`<div style="display:grid;grid-template-columns:${cols};gap:2px;border-radius:12px;overflow:hidden;background:${feedP==='ig'?'#fff':'#000'};">`+
+    cells.map((img,i)=>`<div class="${cls}${feedSel===i?' selected-cell':''}" id="fc-${i}" onclick="selCell(${i})">
+      ${img?`<img src="${img}">`:`<div class="fc-add">${feedP==='ig'?'➕':'▶'}</div>`}
+      <div class="fc-n">${i+1}</div>
+      <div class="fc-ov">${img?`<button class="fc-btn" onclick="clrCell(${i},event)">✕ Remove</button>`:'<button class="fc-btn">+ Select</button>'}</div>
+    </div>`).join('')+'</div>';
+  rFeedBank();
+}
+function selCell(i){feedSel=i;rFeed();}
+function clrCell(i,e){e&&e.stopPropagation();if(feedP==='ig')D.feedIg[i]=null;else D.feedTt[i]=null;save();rFeed();toast('Cell cleared');}
+function clearSelectedCell(){if(feedSel<0){toast('Select a cell first');return;}clrCell(feedSel,null);feedSel=-1;}
+function rFeedBank(){
+  const el=document.getElementById('feed-bank');
+  if(!D.feedBank.length){el.innerHTML='<div style="font-size:11px;color:var(--mid-gray);grid-column:1/-1;padding:10px;">Upload images to start placing them in the grid</div>';return;}
+  el.innerHTML=D.feedBank.map((img,i)=>`<div style="position:relative;border-radius:7px;overflow:hidden;aspect-ratio:${feedP==='ig'?'1':'9/16'};cursor:pointer;border:2px solid transparent;transition:border .12s;" onclick="placeImg(${i})" title="Click to place in selected cell">
+    <img src="${img}" style="width:100%;height:100%;object-fit:cover;">
+    <button onclick="removeFromBank(${i},event)" style="position:absolute;top:2px;right:2px;background:rgba(0,0,0,.6);color:#fff;border:none;border-radius:50%;width:15px;height:15px;font-size:8px;cursor:pointer;">×</button>
+  </div>`).join('');
+}
+function addFeedImgs(e){Array.from(e.target.files).forEach(f=>{const r=new FileReader();r.onload=ev=>{D.feedBank.push(ev.target.result);save();rFeedBank();};r.readAsDataURL(f);});e.target.value='';}
+function placeImg(bi){if(feedSel<0){toast('Click a cell first to select it');return;}const img=D.feedBank[bi];if(feedP==='ig')D.feedIg[feedSel]=img;else D.feedTt[feedSel]=img;save();rFeed();toast('Image placed ✓');}
+function removeFromBank(i,e){e.stopPropagation();D.feedBank.splice(i,1);save();rFeedBank();}
+
+// ── PITCHES ──
+function renderPitches(q=''){
+  const el=document.getElementById('pitch-list');
+  let ps=D.pitches;if(q)ps=ps.filter(p=>p.name.toLowerCase().includes(q.toLowerCase())||p.body.toLowerCase().includes(q.toLowerCase()));
+  if(!ps.length){el.innerHTML='<div class="es"><div class="es-icon">✉️</div><div class="es-title">No pitches</div></div>';return;}
+  const icons={Beauty:'💄',Hair:'✂️',Lifestyle:'🏠',Tech:'📱',Fashion:'👗',General:'📩'};
+  el.innerHTML=ps.map(p=>`<div class="pitch-item" id="pi-${p.id}">
+    <div class="pi-head" onclick="togglePitch('${p.id}')">
+      <span style="font-size:18px;">${icons[p.niche]||'📩'}</span>
+      <div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:500;">${p.name}</div><div style="font-size:10px;color:var(--warm-gray);font-family:'DM Mono',monospace;">${p.type} · ${p.platform}</div></div>
+      <span class="pi-chev">▼</span>
+    </div>
+    <div class="pi-body">
+      ${p.subject?`<div style="background:rgba(232,192,106,.08);border:1px solid rgba(232,192,106,.2);border-radius:9px;padding:9px 13px;margin-bottom:12px;"><div style="font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:var(--warm-gold);font-weight:600;margin-bottom:3px;">Subject</div><div style="font-size:13px;font-weight:500;">${p.subject}</div></div>`:''}
+      <div class="pi-pre">${esc(p.body)}</div>
+      <div style="display:flex;gap:7px;margin-top:12px;flex-wrap:wrap;">
+        <button class="btn btn-g btn-s" id="cpb-${p.id}" onclick="cpPitch('${p.id}')">Copy Pitch</button>
+        ${p.subject?`<button class="btn btn-g btn-s" onclick="cpTxt('${esc(p.subject)}','Subject copied!')">Copy Subject</button>`:''}
+        <button class="ib" onclick="delPitch('${p.id}')" style="margin-left:auto;">🗑</button>
+      </div>
+    </div>
+  </div>`).join('');
+}
+function togglePitch(id){document.getElementById('pi-'+id)?.classList.toggle('open');}
+function cpPitch(id){const p=D.pitches.find(x=>x.id===id);if(!p)return;navigator.clipboard?.writeText(p.body).then(()=>toast('Pitch copied! ✓'));}
+function cpTxt(txt,msg){navigator.clipboard?.writeText(txt).then(()=>toast(msg||'Copied!'));}
+function savePitch(){
+  const name=v('p-name').trim();const body=v('p-body').trim();if(!name||!body){toast('Name and body required');return;}
+  D.pitches.push({id:'p'+Date.now(),name,niche:v('p-niche'),type:v('p-type'),platform:v('p-plat'),subject:v('p-subj'),body});
+  save();closeModal('pitch-modal');['p-name','p-subj','p-body'].forEach(i=>setV(i,''));renderPitches('');toast('Pitch saved!');
+}
+function delPitch(id){if(!confirm('Delete pitch?'))return;D.pitches=D.pitches.filter(p=>p.id!==id);save();renderPitches('');}
+
+// ── BRAND HUB ──
+function swBrand(tab,el){
+  document.querySelectorAll('.br-tab').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.br-sec').forEach(s=>s.classList.remove('active'));
+  el.classList.add('active');document.getElementById('br-'+tab)?.classList.add('active');
+}
+function rBrand(){rColors();rVisuals();rOutfits();rLocs();rCams();rRates();rNiches();rBio();}
+
+function rColors(){
+  const el=document.getElementById('color-grid');
+  el.innerHTML=D.colors.map(c=>`<div class="swatch-e">
+    <div class="sw-circ${c.l?' lb':''}" style="background:${c.h};" title="Click to change color">
+      <input type="color" value="${c.h}" onchange="updColor('${c.id}',this.value)">
+    </div>
+    <button class="sw-del" onclick="delColor('${c.id}')">×</button>
+    <div style="font-size:10px;text-align:center;max-width:70px;cursor:pointer;" contenteditable="true" onblur="updColorName('${c.id}',this.textContent)">${c.n}</div>
+    <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--warm-gray);cursor:pointer;" onclick="cpTxt('${c.h}','Copied ${c.h}!')">${c.h}</div>
+  </div>`).join('');
+}
+function updColor(id,hex){const c=D.colors.find(x=>x.id===id);if(c){c.h=hex;c.l=isLight(hex);}save();rColors();}
+function updColorName(id,name){const c=D.colors.find(x=>x.id===id);if(c)c.n=name.trim();save();}
+function delColor(id){D.colors=D.colors.filter(c=>c.id!==id);save();rColors();}
+function addColor(){D.colors.push({id:'c'+Date.now(),n:'New Color',h:'#C4714F',l:false});save();rColors();}
+function isLight(hex){try{const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);return(r*299+g*587+b*114)/1000>155;}catch{return false;}}
+
+function rVisuals(){
+  const el=document.getElementById('visuals-grid');
+  if(!D.visuals.length){el.innerHTML='<div class="es"><div class="es-icon">🖼</div><div class="es-title">No brand visuals yet</div></div>';return;}
+  el.innerHTML=D.visuals.map(v=>`<div class="vc">
+    ${v.img?`<img src="${v.img}" style="width:100%;aspect-ratio:4/5;object-fit:cover;" onclick="lightbox('${v.img}')">`:'<div class="vc-empty">🖼</div>'}
+    <button class="vc-del" onclick="delVisual('${v.id}')">×</button>
+    <div class="vc-lbl"><div style="font-weight:500;">${v.label}</div><div style="font-size:10px;color:var(--warm-gray);">${v.cat}</div>${v.notes?`<div style="font-size:10px;color:var(--mid-gray);">${v.notes}</div>`:''}</div>
+  </div>`).join('');
+}
+function saveVisual(){
+  const label=v('v-label').trim();if(!label){toast('Label required');return;}
+  D.visuals.push({id:'v'+Date.now(),label,cat:v('v-cat'),img:v('v-img-data'),notes:v('v-notes')});
+  save();closeModal('visual-modal');['v-label','v-notes'].forEach(i=>setV(i,''));setV('v-img-data','');document.getElementById('v-img-pre').innerHTML='';rVisuals();toast('Visual saved!');
+}
+function delVisual(id){D.visuals=D.visuals.filter(v=>v.id!==id);save();rVisuals();}
+
+function rOutfits(){
+  const el=document.getElementById('outfits-grid');
+  if(!D.outfits.length){el.innerHTML='<div class="es"><div class="es-icon">👗</div><div class="es-title">No outfits yet</div></div>';return;}
+  el.innerHTML=D.outfits.map(o=>`<div style="background:#fff;border-radius:var(--r);border:1px solid rgba(0,0,0,.06);overflow:hidden;position:relative;">
+    ${o.img?`<img src="${o.img}" class="ot-img" onclick="lightbox('${o.img}')">`:`<div class="ot-empty">👗</div>`}
+    <button onclick="delOutfit('${o.id}')" style="position:absolute;top:6px;right:6px;background:rgba(0,0,0,.5);color:#fff;border:none;border-radius:50%;width:21px;height:21px;font-size:11px;cursor:pointer;opacity:0;" class="del-h">×</button>
+    <div style="padding:11px 12px;">
+      <div style="font-weight:500;font-size:13px;">${o.name}</div>
+      ${o.type?`<div style="font-size:10px;color:var(--terracotta);font-family:'DM Mono',monospace;margin-bottom:3px;">${o.type}</div>`:''}
+      ${o.brand?`<div style="font-size:11px;color:var(--warm-gray);">From: ${o.brand}</div>`:''}
+      ${o.notes?`<div style="font-size:11px;color:var(--mid-gray);margin-top:3px;">${o.notes}</div>`:''}
+    </div>
+  </div>`).join('');
+  el.querySelectorAll('[style*="position:relative"]').forEach(c=>{c.addEventListener('mouseenter',()=>c.querySelector('.del-h').style.opacity='1');c.addEventListener('mouseleave',()=>c.querySelector('.del-h').style.opacity='0');});
+}
+function saveOutfit(){
+  const name=v('o-name').trim();if(!name){toast('Name required');return;}
+  D.outfits.push({id:'o'+Date.now(),name,type:v('o-type'),brand:v('o-brand'),notes:v('o-notes'),img:v('o-img-data')});
+  save();closeModal('outfit-modal');['o-name','o-type','o-brand','o-notes'].forEach(i=>setV(i,''));setV('o-img-data','');document.getElementById('o-img-pre').innerHTML='';rOutfits();toast('Outfit saved!');
+}
+function delOutfit(id){D.outfits=D.outfits.filter(o=>o.id!==id);save();rOutfits();}
+
+function rLocs(){
+  const el=document.getElementById('locs-grid');
+  if(!D.locations.length){el.innerHTML='<div class="es"><div class="es-icon">📍</div><div class="es-title">No locations yet</div></div>';return;}
+  el.innerHTML=D.locations.map(l=>`<div style="background:#fff;border-radius:var(--r);border:1px solid rgba(0,0,0,.06);overflow:hidden;">
+    ${l.imgs&&l.imgs.length?`<div style="display:grid;grid-template-columns:${l.imgs.length>1?'1fr 1fr':'1fr'};gap:2px;">${l.imgs.slice(0,4).map(img=>`<img src="${img}" class="loc-img" style="aspect-ratio:${l.imgs.length>2?'4/3':'16/9'}" onclick="lightbox('${img}')">`).join('')}</div>`:`<div style="width:100%;aspect-ratio:16/9;background:var(--warm-white);display:flex;align-items:center;justify-content:center;font-size:36px;opacity:.3;">📍</div>`}
+    <div style="padding:12px;">
+      <div style="font-weight:500;font-size:13px;">${l.name}</div>
+      ${l.type?`<div style="font-size:10px;color:var(--terracotta);font-family:'DM Mono',monospace;margin-bottom:5px;">${l.type}</div>`:''}
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:3px;font-size:11px;color:var(--warm-gray);">
+        ${l.angle?`<div>📐 ${l.angle}</div>`:''}${l.tripod?`<div>📏 ${l.tripod}</div>`:''}${l.light?`<div>💡 ${l.light}</div>`:''}${l.zoom?`<div>🔭 ${l.zoom}</div>`:''}
+      </div>
+      ${l.notes?`<div style="font-size:11px;color:var(--mid-gray);margin-top:5px;">${l.notes}</div>`:''}
+      <button onclick="delLoc('${l.id}')" class="btn btn-d btn-s" style="margin-top:8px;">Delete</button>
+    </div>
+  </div>`).join('');
+}
+function saveLoc(){
+  const name=v('loc-name').trim();if(!name){toast('Name required');return;}
+  let imgs=[];try{imgs=JSON.parse(v('loc-imgs-data')||'[]');}catch{}
+  D.locations.push({id:'l'+Date.now(),name,type:v('loc-type'),angle:v('loc-angle'),tripod:v('loc-tripod'),light:v('loc-light'),zoom:v('loc-zoom'),notes:v('loc-notes'),imgs});
+  save();closeModal('loc-modal');['loc-name','loc-type','loc-angle','loc-tripod','loc-light','loc-zoom','loc-notes'].forEach(i=>setV(i,''));setV('loc-imgs-data','[]');document.getElementById('loc-imgs-pre').innerHTML='';multiImgTmp['loc-imgs-data']=[];rLocs();toast('Location saved!');
+}
+function delLoc(id){D.locations=D.locations.filter(l=>l.id!==id);save();rLocs();}
+
+function rCams(){
+  const el=document.getElementById('cam-grid');
+  if(!D.cameras.length){el.innerHTML='<div class="es"><div class="es-icon">📷</div><div class="es-title">No camera settings yet</div></div>';return;}
+  function row(k,val){return val?`<div class="cam-row"><span class="cam-k">${k}</span><span class="cam-v">${val}</span></div>`:''}
+  el.innerHTML=D.cameras.map(c=>`<div style="background:#fff;border-radius:var(--r);border:1px solid rgba(0,0,0,.06);padding:14px;">
+    <div style="font-weight:500;font-size:13px;">${c.name}</div>
+    ${c.ct||c.loc?`<div style="font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--terracotta);font-family:'DM Mono',monospace;margin-bottom:7px;">${[c.ct,c.loc].filter(Boolean).join(' · ')}</div>`:''}
+    ${c.dev?`<div style="font-size:11px;color:var(--warm-gray);margin-bottom:6px;">📱 ${c.dev}</div>`:''}
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;">
+      ${row('Resolution',c.res)}${row('FPS',c.fps)}${row('Aspect',c.rat)}${row('ISO',c.iso)}${row('Shutter',c.shu)}${row('Aperture',c.ape)}${row('White Balance',c.wb)}${row('Zoom',c.zm)}${row('Focus',c.foc)}${row('Lighting',c.lit)}${row('Tripod',c.tri)}${row('Angle',c.ang)}${row('Mic',c.mic)}${row('Audio Level',c.aud)}${row('Color Profile',c.col)}${row('Stabilization',c.sta)}
+    </div>
+    ${c.notes?`<div style="font-size:11px;color:var(--warm-gray);margin-top:7px;border-top:1px solid rgba(0,0,0,.05);padding-top:6px;">${c.notes}</div>`:''}
+    <button onclick="delCam('${c.id}')" class="btn btn-d btn-s" style="margin-top:8px;">Delete</button>
+  </div>`).join('');
+}
+function saveCam(){
+  const name=v('cam-name').trim();if(!name){toast('Name required');return;}
+  D.cameras.push({id:'cam'+Date.now(),name,ct:v('cam-ct'),loc:v('cam-loc'),dev:v('cam-dev'),res:v('cam-res'),fps:v('cam-fps'),rat:v('cam-rat'),iso:v('cam-iso'),shu:v('cam-shu'),ape:v('cam-ape'),wb:v('cam-wb'),zm:v('cam-zm'),foc:v('cam-foc'),lit:v('cam-lit'),tri:v('cam-tri'),ang:v('cam-ang'),mic:v('cam-mic'),aud:v('cam-aud'),col:v('cam-col'),sta:v('cam-sta'),notes:v('cam-notes')});
+  save();closeModal('cam-modal');['cam-name','cam-ct','cam-loc','cam-dev','cam-res','cam-fps','cam-rat','cam-iso','cam-shu','cam-ape','cam-wb','cam-zm','cam-foc','cam-lit','cam-tri','cam-ang','cam-mic','cam-aud','cam-col','cam-sta','cam-notes'].forEach(i=>setV(i,''));rCams();toast('Camera settings saved!');
+}
+function delCam(id){D.cameras=D.cameras.filter(c=>c.id!==id);save();rCams();}
+
+function rRates(){
+  const el=document.getElementById('rates-grid');
+  el.innerHTML=D.rates.map(r=>`<div class="rate-card">
+    <div style="font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--warm-gray);margin-bottom:4px;" contenteditable="true" onblur="updRate('${r.id}','type',this.textContent)">${r.type}</div>
+    <div style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;color:var(--terracotta);font-weight:300;" contenteditable="true" onblur="updRate('${r.id}','price',this.textContent)">${r.price}</div>
+    <div style="font-size:11px;color:var(--mid-gray);margin-top:3px;" contenteditable="true" onblur="updRate('${r.id}','desc',this.textContent)">${r.desc}</div>
+    <button onclick="delRate('${r.id}')" style="margin-top:8px;font-size:9px;color:var(--terracotta);background:none;border:none;cursor:pointer;">🗑 Remove</button>
+  </div>`).join('');
+  const base=D.rates.find(r=>r.type.toLowerCase().includes('video'));
+  if(base)setEl('sb-rate',base.price);
+}
+function updRate(id,f,val){const r=D.rates.find(x=>x.id===id);if(r)r[f]=val.trim();save();}
+function saveRate(){
+  const type=v('r-type').trim();if(!type){toast('Type required');return;}
+  D.rates.push({id:'r'+Date.now(),type,price:v('r-price'),desc:v('r-desc')});
+  save();closeModal('rate-modal');['r-type','r-price','r-desc'].forEach(i=>setV(i,''));rRates();toast('Rate added!');
+}
+function delRate(id){D.rates=D.rates.filter(r=>r.id!==id);save();rRates();}
+
+function rNiches(){
+  document.getElementById('niche-disp').innerHTML=D.niches.map(n=>`<span style="padding:5px 12px;border-radius:20px;background:#fff;border:1px solid rgba(0,0,0,.08);font-size:11px;display:flex;align-items:center;gap:4px;">${n}<span style="cursor:pointer;color:var(--mid-gray);" onclick="delNiche('${n}')">×</span></span>`).join('');
+  document.getElementById('plat-disp').innerHTML=D.platforms.map(p=>`<span style="padding:5px 12px;border-radius:20px;background:#fff;border:1px solid rgba(0,0,0,.08);font-size:11px;display:flex;align-items:center;gap:4px;">${p}<span style="cursor:pointer;color:var(--mid-gray);" onclick="delPlat('${p}')">×</span></span>`).join('');
+}
+function addNiche(){const val=document.getElementById('niche-in').value.trim();if(!val||D.niches.includes(val))return;D.niches.push(val);save();setV('niche-in','');rNiches();}
+function delNiche(n){D.niches=D.niches.filter(x=>x!==n);save();rNiches();}
+function addPlatform(){const val=document.getElementById('plat-in').value.trim();if(!val||D.platforms.includes(val))return;D.platforms.push(val);save();setV('plat-in','');rNiches();}
+function delPlat(p){D.platforms=D.platforms.filter(x=>x!==p);save();rNiches();}
+
+function rBio(){
+  setV('bio-txt',D.bio);
+  const l=D.links||{};
+  setV('l-email',l.email||'');setV('l-loc',l.location||'');setV('l-tt',l.tt||'');setV('l-ig',l.ig||'');setV('l-yt',l.yt||'');setV('l-port',l.portfolio||'');
+}
+function saveBio(){D.bio=v('bio-txt');save();toast('Bio saved!');}
+function saveLinks(){D.links={email:v('l-email'),location:v('l-loc'),tt:v('l-tt'),ig:v('l-ig'),yt:v('l-yt'),portfolio:v('l-port')};save();toast('Links saved!');}
+
+// ── GLOBAL SEARCH ──
+function openSearch(){document.getElementById('sr-overlay').classList.add('open');}
+function closeSearch(){document.getElementById('sr-overlay').classList.remove('open');setV('search-input','');}
+function globalSearch(q){
+  if(!q.trim()){document.getElementById('sr-head').textContent='Type to search…';document.getElementById('sr-results').innerHTML='';return;}
+  const ql=q.toLowerCase();
+  const results=[];
+  D.gigs.filter(g=>g.brand.toLowerCase().includes(ql)||g.niche.toLowerCase().includes(ql)||(g.notes||'').toLowerCase().includes(ql)).forEach(g=>results.push({type:'Gig',icon:'📋',title:g.brand,meta:g.niche+' · '+sLabel(g.status),action:()=>{closeSearch();goTo('gigs',document.querySelectorAll('.ni')[2]);}}));
+  D.ideas.filter(i=>i.title.toLowerCase().includes(ql)||(i.hook||'').toLowerCase().includes(ql)||(i.notes||'').toLowerCase().includes(ql)).forEach(i=>results.push({type:'Idea',icon:'💡',title:i.title,meta:i.niche+' · '+i.platform,action:()=>{closeSearch();goTo('ideas',document.querySelectorAll('.ni')[5]);}}));
+  D.content.filter(c=>c.title.toLowerCase().includes(ql)||(c.notes||'').toLowerCase().includes(ql)||(c.audio||'').toLowerCase().includes(ql)).forEach(c=>results.push({type:'Content',icon:'📅',title:c.title,meta:c.platform+' · '+c.date,action:()=>{closeSearch();goTo('planner',document.querySelectorAll('.ni')[4]);}}));
+  D.pitches.filter(p=>p.name.toLowerCase().includes(ql)||p.body.toLowerCase().includes(ql)).forEach(p=>results.push({type:'Pitch',icon:'✉️',title:p.name,meta:p.type+' · '+p.platform,action:()=>{closeSearch();goTo('pitches',document.querySelectorAll('.ni')[7]);}}));
+  D.outfits.filter(o=>o.name.toLowerCase().includes(ql)||(o.notes||'').toLowerCase().includes(ql)).forEach(o=>results.push({type:'Outfit',icon:'👗',title:o.name,meta:o.type||'',action:()=>{closeSearch();goTo('brand',document.querySelectorAll('.ni')[8]);swBrand('outfits',document.querySelectorAll('.br-tab')[2]);}}));
+  D.locations.filter(l=>l.name.toLowerCase().includes(ql)||(l.notes||'').toLowerCase().includes(ql)).forEach(l=>results.push({type:'Location',icon:'📍',title:l.name,meta:l.type||'',action:()=>{closeSearch();goTo('brand',document.querySelectorAll('.ni')[8]);swBrand('locations',document.querySelectorAll('.br-tab')[3]);}}));
+  D.cameras.filter(c=>c.name.toLowerCase().includes(ql)||(c.ct||'').toLowerCase().includes(ql)).forEach(c=>results.push({type:'Camera',icon:'📷',title:c.name,meta:[c.ct,c.loc].filter(Boolean).join(' · '),action:()=>{closeSearch();goTo('brand',document.querySelectorAll('.ni')[8]);swBrand('camera',document.querySelectorAll('.br-tab')[4]);}}));
+  document.getElementById('sr-head').textContent=results.length+' result'+(results.length!==1?'s':'')+ ' for "'+q+'"';
+  document.getElementById('sr-results').innerHTML=results.slice(0,20).map((r,i)=>`<div class="sr-item" onclick="srAct(${i})"><span class="sr-icon">${r.icon}</span><div style="flex:1;min-width:0;"><div class="sr-title">${r.title}</div><div class="sr-meta">${r.meta}</div></div><span class="sr-type">${r.type}</span></div>`).join('')||'<div style="padding:20px;text-align:center;color:var(--mid-gray);font-size:13px;">Nothing found for "'+q+'"</div>';
+  window._srActions=results.map(r=>r.action);
+}
+function srAct(i){if(window._srActions&&window._srActions[i])window._srActions[i]();}
+
+// ── EXPORT / IMPORT (cross-device sync) ──
+function exportData(){
+  const exportObj={_version:3,_exported:new Date().toISOString(),...D};
+  const blob=new Blob([JSON.stringify(exportObj,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='AshaJolies_UGC_HQ_'+new Date().toISOString().slice(0,10)+'.json';a.click();
+  toast('Data exported! Transfer file to other device and use Import ✓');
+}
+function importData(e){
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();r.onload=ev=>{
+    try{
+      const imported=JSON.parse(ev.target.result);
+      if(!imported._version){toast('Invalid backup file');return;}
+      if(!confirm('This will MERGE imported data with your current data. Continue?'))return;
+      // Merge arrays by id (imported wins on conflicts)
+      ['gigs','content','ideas','followups','pitches','rates','colors','niches','platforms','visuals','outfits','locations','cameras'].forEach(k=>{
+        if(Array.isArray(imported[k])){
+          const existing=D[k]||[];
+          if(Array.isArray(existing)&&existing.length&&existing[0]&&existing[0].id){
+            const merged=[...existing];
+            (imported[k]||[]).forEach(item=>{const idx=merged.findIndex(x=>x.id===item.id);if(idx>=0)merged[idx]=item;else merged.push(item);});
+            D[k]=merged;
+          } else {D[k]=imported[k];}
+        }
+      });
+      // Overwrite simple objects
+      ['bio','links','feedIg','feedTt','feedBank','moodboards'].forEach(k=>{if(imported[k]!==undefined)D[k]=imported[k];});
+      save();renderPage(currentPage);toast('Data imported successfully! 🎉');
+    }catch(err){toast('Error reading file: '+err.message);}
+  };r.readAsText(f);e.target.value='';
+}
+
+// ── MOODBOARD ──
+let mbKey='',mbTool2='sel',mbColor='#1E1916',mbBrush=4,mbTS='sm';
+let mbDrawing=false,mbLX,mbLY,mbPaths2=[];
+let mbItems2=[],mbSelId=null,mbDrag2=false;
+const tsSizes={sm:'13px',md:'16px',lg:'22px',xl:'32px'};
+
+function openMB(type,id,name){
+  mbKey=type+'_'+id;
+  setEl('mb-name',name);
+  document.getElementById('moodboard').classList.add('open');
+  setTimeout(initMBCanvas2,60);
+  loadMB2();
+}
+function closeMB(){saveMB();document.getElementById('moodboard').classList.remove('open');}
+function initMBCanvas2(){
+  const cvs=document.getElementById('mb-dc');
+  const area=document.getElementById('mb-area');
+  cvs.width=area.offsetWidth;cvs.height=area.offsetHeight;
+  // restore saved drawing
+  const mb=D.moodboards[mbKey];
+  if(mb&&mb.drawing){const img=new Image();img.onload=()=>cvs.getContext('2d').drawImage(img,0,0);img.src=mb.drawing;}
+  // rebind events fresh each open
+  cvs.onpointerdown=mbPD;cvs.onpointermove=mbPM;cvs.onpointerup=mbPU;cvs.onpointerleave=mbPU;
+  setMBT('sel');
+}
+function setMBT(t){
+  mbTool2=t;
+  ['sel','draw','erase'].forEach(x=>{const b=document.getElementById('mbt-'+x);if(b)b.classList.remove('on');});
+  document.getElementById('mbt-'+t)?.classList.add('on');
+  const cvs=document.getElementById('mb-dc');
+  if(!cvs)return;
+  cvs.style.pointerEvents=(t==='draw'||t==='erase')?'all':'none';
+  cvs.style.zIndex=(t==='draw'||t==='erase')?20:1;
+  cvs.style.cursor=t==='draw'?'crosshair':t==='erase'?'cell':'default';
+}
+function mbPD(e){
+  if(mbTool2!=='draw'&&mbTool2!=='erase')return;
+  mbDrawing=true;e.preventDefault();
+  const r=e.target.getBoundingClientRect();mbLX=e.clientX-r.left;mbLY=e.clientY-r.top;
+}
+function mbPM(e){
+  if(!mbDrawing)return;e.preventDefault();
+  const cvs=document.getElementById('mb-dc');
+  const r=cvs.getBoundingClientRect();const x=e.clientX-r.left;const y=e.clientY-r.top;
+  const ctx=cvs.getContext('2d');
+  ctx.strokeStyle=mbTool2==='erase'?'#FAF6EF':mbColor;
+  ctx.lineWidth=mbTool2==='erase'?24:mbBrush;
+  ctx.lineCap='round';ctx.lineJoin='round';
+  ctx.beginPath();ctx.moveTo(mbLX,mbLY);ctx.lineTo(x,y);ctx.stroke();
+  mbLX=x;mbLY=y;
+}
+function mbPU(){
+  if(!mbDrawing)return;mbDrawing=false;
+  const cvs=document.getElementById('mb-dc');
+  if(!D.moodboards[mbKey])D.moodboards[mbKey]={items:[],drawing:''};
+  D.moodboards[mbKey].drawing=cvs.toDataURL();save();
+}
+// Canvas events bound after open (see initMBCanvas2)
+
+function setMBC(hex,el){mbColor=hex;document.querySelectorAll('#mb-swatches .sw').forEach(s=>s.classList.remove('on'));if(el)el.classList.add('on');document.getElementById('mb-cc').value=hex;}
+function setMBS(sz,el){mbBrush=sz;document.querySelectorAll('.bs').forEach(b=>b.classList.remove('on'));if(el)el.classList.add('on');}
+function setTS(sz,el){mbTS=sz;['sm','md','lg','xl'].forEach(s=>{const b=document.getElementById('ts-'+s);if(b)b.classList.remove('on');});if(el)el.classList.add('on');}
+function clearMBDraw(){const cvs=document.getElementById('mb-dc');const ctx=cvs.getContext('2d');ctx.clearRect(0,0,cvs.width,cvs.height);if(D.moodboards[mbKey])D.moodboards[mbKey].drawing='';save();toast('Drawing cleared');}
+
+function addMBText(){mount({id:'mb'+Date.now(),type:'text',x:100,y:100},`<div contenteditable="true" style="padding:8px 12px;background:#fff;border-radius:8px;box-shadow:0 2px 12px rgba(0,0,0,.1);min-width:100px;outline:none;font-size:${tsSizes[mbTS]};color:${mbColor};">Type here…</div>`);}
+function addMBSticky(){mount({id:'mb'+Date.now(),type:'sticky',x:120,y:120},`<div contenteditable="true" style="padding:13px;background:#fff9c4;border-radius:8px;box-shadow:0 2px 12px rgba(0,0,0,.12);min-width:130px;min-height:70px;outline:none;font-family:'Jost',sans-serif;font-size:13px;color:#333;">Sticky note…</div>`);}
+function trigMBImg(){document.getElementById('mb-img-in').click();}
+function handleMBImg(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{mount({id:'mb'+Date.now(),type:'image',x:80,y:80},`<img src="${ev.target.result}" style="max-width:220px;max-height:220px;border-radius:8px;box-shadow:0 4px 20px rgba(0,0,0,.15);display:block;" draggable="false">`);};r.readAsDataURL(f);e.target.value='';}
+function addMBShot(){mount({id:'mb'+Date.now(),type:'shot',x:140,y:140},`<div style="background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:10px;padding:12px 14px;min-width:190px;box-shadow:0 2px 10px rgba(0,0,0,.07);"><div style="font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--terracotta);font-weight:600;margin-bottom:5px;">🎬 Shot List</div><div contenteditable="true" style="font-size:12px;outline:none;min-height:40px;width:100%;">1. Opening shot\n2. Product close-up\n3. Reaction</div></div>`);}
+
+function mount(item,html){
+  if(!D.moodboards[mbKey])D.moodboards[mbKey]={items:[],drawing:''};
+  D.moodboards[mbKey].items=D.moodboards[mbKey].items||[];
+  D.moodboards[mbKey].items.push({...item,html,savedText:''});
+  renderMBItem(item.id,item.x,item.y,html);
+  updateLayers();save();
+}
+function renderMBItem(id,x,y,html){
+  const cvs2=document.getElementById('mb-cvs');
+  const div=document.createElement('div');div.className='mb-el';div.id='mbi-'+id;
+  div.style.left=x+'px';div.style.top=y+'px';div.style.zIndex=5;
+  div.innerHTML=`<div class="mb-el-ctrl"><button class="mb-ctrl" onclick="delMBItem('${id}')">🗑</button><button class="mb-ctrl" onclick="bringTop('${id}')">↑ Front</button></div>`+html;
+  mkDrag(div,id);cvs2.appendChild(div);
+}
+function loadMB2(){
+  document.getElementById('mb-cvs').innerHTML='';
+  const mb=D.moodboards[mbKey];
+  if(mb&&mb.items)mb.items.forEach(item=>renderMBItem(item.id,item.x,item.y,item.html||''));
+  updateLayers();
+}
+function mkDrag(el,id){
+  let sx,sy,ox,oy,drag=false;
+  el.addEventListener('pointerdown',e=>{
+    if(mbTool2==='draw'||mbTool2==='erase')return;
+    if(e.target.isContentEditable||e.target.tagName==='BUTTON'||e.target.closest('[contenteditable]'))return;
+    e.stopPropagation();el.setPointerCapture(e.pointerId);
+    sx=e.clientX;sy=e.clientY;ox=el.offsetLeft;oy=el.offsetTop;drag=true;
+    document.querySelectorAll('.mb-el').forEach(i=>i.classList.remove('sel'));el.classList.add('sel');mbSelId=id;updateLayers();
+  });
+  el.addEventListener('pointermove',e=>{
+    if(!drag||mbSelId!==id)return;
+    el.style.left=(ox+e.clientX-sx)+'px';el.style.top=(oy+e.clientY-sy)+'px';
+  });
+  el.addEventListener('pointerup',e=>{
+    if(!drag||mbSelId!==id)return;drag=false;
+    const item=D.moodboards[mbKey]?.items?.find(i=>i.id===id);
+    if(item){item.x=el.offsetLeft;item.y=el.offsetTop;}save();
+  });
+}
+function delMBItem(id){document.getElementById('mbi-'+id)?.remove();const mb=D.moodboards[mbKey];if(mb)mb.items=mb.items?.filter(i=>i.id!==id);save();updateLayers();}
+function bringTop(id){const el=document.getElementById('mbi-'+id);if(el)el.style.zIndex=99;const item=D.moodboards[mbKey]?.items?.find(i=>i.id===id);if(item)item.z=99;save();}
+function updateLayers(){
+  const el=document.getElementById('mb-layers');
+  const mb=D.moodboards[mbKey];
+  if(!mb?.items?.length){el.innerHTML='<div style="font-size:11px;color:var(--mid-gray);padding:4px 0;">No elements yet</div>';return;}
+  const icons={text:'T',sticky:'📝',image:'🖼',shot:'🎬'};
+  el.innerHTML=[...mb.items].reverse().map(item=>`<div class="mb-li${mbSelId===item.id?' sel':''}" onclick="selLayer('${item.id}')"><span style="font-size:13px;">${icons[item.type]||'◻'}</span><span style="font-size:11px;">${item.type}</span><button class="mb-ctrl" onclick="delMBItem('${item.id}')" style="margin-left:auto;padding:1px 4px;">×</button></div>`).join('');
+}
+function selLayer(id){mbSelId=id;document.querySelectorAll('.mb-el').forEach(i=>i.classList.remove('sel'));document.getElementById('mbi-'+id)?.classList.add('sel');updateLayers();}
+function saveMB(){
+  const mb=D.moodboards[mbKey];
+  if(mb?.items){mb.items.forEach(item=>{const el=document.getElementById('mbi-'+item.id);if(el){item.x=el.offsetLeft;item.y=el.offsetTop;const ce=el.querySelector('[contenteditable]');if(ce)item.savedText=ce.innerHTML;}});}
+  save();toast('Moodboard saved!');
+}
+function clearMBAll(){if(!confirm('Clear all moodboard elements?'))return;D.moodboards[mbKey]={items:[],drawing:''};document.getElementById('mb-cvs').innerHTML='';clearMBDraw();updateLayers();toast('Moodboard cleared');}
+
+// ── INIT — called at bottom of script after all functions are defined ──
+function init(){
+  const h=new Date().getHours();
+  const g=h<12?'Good morning':h<17?'Good afternoon':'Good evening';
+  document.getElementById('tb-title').innerHTML=`${g}, <em>Asha</em> ✨`;
+  setMBT('sel');
+  rDash();
+  setEl('gig-badge',D.gigs.filter(g=>!['delivered','declined'].includes(g.status)).length||'');
+  setEl('fu-badge',D.followups.filter(f=>!f.done).length||'');
+  // Offline bar state
+  if(!navigator.onLine){const b=document.getElementById('offline-bar');if(b)b.style.display='flex';}
+  // Sync hub is opened at the very end of the script after all functions load
+}
+
+// ── SYNC HUB ──
+const JSONBIN_API = 'https://api.jsonbin.io/v3';
+const JSONBIN_KEY = '$2a$10$placeholder'; // public endpoint, no auth needed for public bins
+
+// Generate or retrieve a persistent 6-char sync code for this device
+function getSyncCode(){
+  let code = localStorage.getItem('ajhq_syncCode');
+  if(!code){
+    const chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    code=Array.from({length:6},()=>chars[Math.floor(Math.random()*chars.length)]).join('');
+    localStorage.setItem('ajhq_syncCode',code);
+  }
+  return code;
+}
+
+// Retrieve the JSONBin bin ID stored for this device's sync code
+function getBinId(){return localStorage.getItem('ajhq_binId')||null;}
+function setBinId(id){localStorage.setItem('ajhq_binId',id);}
+
+function syncLog(msg,color){
+  const el=document.getElementById('sync-log');
+  if(!el)return;
+  const ts=new Date().toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  el.innerHTML=`<span style="color:${color||'var(--warm-gray)'}">[${ts}] ${msg}</span>\n`+(el.innerHTML||'');
+}
+
+function setSyncStatus(online){
+  ['sync-dot','sync-dot2'].forEach(id=>{
+    const d=document.getElementById(id);
+    if(d)d.className='sync-dot'+(online?'':' off');
+  });
+  const lbl=document.getElementById('sync-status-lbl');
+  const lbl2=document.getElementById('sync-status-lbl2');
+  if(lbl)lbl.textContent=online?'Online — live sync available':'Offline — use file backup instead';
+  if(lbl2)lbl2.textContent=online?'Online · file sync also works':'Offline — file sync available';
+}
+
+async function pushSync(){
+  if(!navigator.onLine){syncLog('Offline — cannot push. Use file backup.','#c0392b');return;}
+  syncLog('Pushing data…','var(--gold)');
+  const dot=document.getElementById('sync-dot');
+  if(dot)dot.classList.add('pulse');
+  const payload={_syncCode:getSyncCode(),_pushed:new Date().toISOString(),data:D};
+  try{
+    const binId=getBinId();
+    let res,json;
+    if(binId){
+      // Update existing bin
+      res=await fetch(`${JSONBIN_API}/b/${binId}`,{
+        method:'PUT',
+        headers:{'Content-Type':'application/json','X-Bin-Private':'false'},
+        body:JSON.stringify(payload)
+      });
+    } else {
+      // Create new bin
+      res=await fetch(`${JSONBIN_API}/b`,{
+        method:'POST',
+        headers:{'Content-Type':'application/json','X-Bin-Name':'ajhq-'+getSyncCode(),'X-Bin-Private':'false'},
+        body:JSON.stringify(payload)
+      });
+      if(res.ok){
+        json=await res.json();
+        setBinId(json.metadata?.id||json.record?.metadata?.id||json.id);
+        res={ok:true}; // already consumed
+      }
+    }
+    if(res.ok||(json&&json.metadata)){
+      syncLog('✓ Data pushed successfully! Your sync code: '+getSyncCode(),'var(--forest)');
+      const v=document.getElementById('sync-code-val');
+      if(v)v.textContent=getSyncCode();
+    } else {
+      throw new Error('Server returned '+res.status);
+    }
+  } catch(e){
+    syncLog('Push failed: '+e.message+' — try file backup','#c0392b');
+  }
+  if(dot)dot.classList.remove('pulse');
+}
+
+async function pullSync(){
+  const code=(document.getElementById('sync-code-input')||{}).value?.trim().toUpperCase();
+  if(!code||code.length<6){syncLog('Enter a 6-character sync code','#c0392b');return;}
+  if(!navigator.onLine){syncLog('Offline — cannot pull. Use file import.','#c0392b');return;}
+  syncLog('Searching for code '+code+'…','var(--gold)');
+  const dot=document.getElementById('sync-dot');
+  if(dot)dot.classList.add('pulse');
+  try{
+    // Search public bins by name
+    const res=await fetch(`${JSONBIN_API}/b?queries={"X-Bin-Name":"ajhq-${code}"}`,{
+      headers:{'X-Search':'true'}
+    });
+    // JSONBin free tier doesn't support search — use direct approach: store binId in code
+    // Fallback: ask user to enter the full bin URL or try the bin ID stored
+    // Better approach: encode binId in the sync code display
+    // Since JSONBin free doesn't allow search, we'll use a relay approach:
+    // Store data in a public bin and display the BIN ID as the sync code (shortened)
+    throw new Error('retry');
+  } catch {
+    // Alternative: use a CORS-friendly public key-value store (kvdb.io)
+    try{
+      const kvRes=await fetch(`https://kvdb.io/9DPvdgENPE6xFakQ6fYbbL/${code}`);
+      if(!kvRes.ok)throw new Error('Code not found');
+      const text=await kvRes.text();
+      if(!text||text==='null')throw new Error('No data for this code');
+      const imported=JSON.parse(text);
+      applyImport(imported.data||imported);
+      syncLog('✓ Data pulled from code '+code+' and merged!','var(--forest)');
+      document.getElementById('sync-code-input').value='';
+    } catch(e2){
+      syncLog('Pull failed: code not found or expired. Check the code and try again.','#c0392b');
+    }
+  }
+  if(dot)dot.classList.remove('pulse');
+}
+
+async function pushSyncKV(){
+  if(!navigator.onLine){syncLog('Offline — cannot push. Use file backup.','#c0392b');return;}
+  const code=getSyncCode();
+  syncLog('Pushing to sync cloud…','var(--gold)');
+  const dot=document.getElementById('sync-dot');
+  if(dot)dot.classList.add('pulse');
+  try{
+    const payload=JSON.stringify({_pushed:new Date().toISOString(),data:D});
+    const res=await fetch(`https://kvdb.io/9DPvdgENPE6xFakQ6fYbbL/${code}`,{
+      method:'PUT',
+      headers:{'Content-Type':'application/json'},
+      body:payload
+    });
+    if(res.ok){
+      syncLog('✓ Pushed! Code: '+code+' · Enter this on your laptop to pull','var(--forest)');
+      const v=document.getElementById('sync-code-val');
+      if(v)v.textContent=code;
+      toast('Data pushed! Code: '+code);
+    } else {
+      throw new Error('Status '+res.status);
+    }
+  } catch(e){
+    syncLog('Push failed ('+e.message+'). Check connection or use file backup.','#c0392b');
+  }
+  if(dot)dot.classList.remove('pulse');
+}
+
+async function pullSyncKV(){
+  const code=(document.getElementById('sync-code-input')||{}).value?.trim().toUpperCase();
+  if(!code||code.length<6){syncLog('Enter a 6-character sync code first','#c0392b');return;}
+  if(!navigator.onLine){syncLog('Offline — cannot pull. Use file import.','#c0392b');return;}
+  syncLog('Looking up code '+code+'…','var(--gold)');
+  const dot=document.getElementById('sync-dot');
+  if(dot)dot.classList.add('pulse');
+  try{
+    const res=await fetch(`https://kvdb.io/9DPvdgENPE6xFakQ6fYbbL/${code}`);
+    const text=await res.text();
+    if(!res.ok||!text||text==='null'||text.startsWith('Not found')){
+      throw new Error('Code not found or expired');
+    }
+    const parsed=JSON.parse(text);
+    applyImport(parsed.data||parsed);
+    syncLog('✓ Data from code '+code+' merged successfully!','var(--forest)');
+    document.getElementById('sync-code-input').value='';
+    toast('Sync complete! ✓');
+  } catch(e){
+    syncLog('Pull failed: '+e.message,'#c0392b');
+  }
+  if(dot)dot.classList.remove('pulse');
+}
+
+function applyImport(imported){
+  if(!imported)return;
+  ['gigs','content','ideas','followups','pitches','rates','colors','niches','platforms','visuals','outfits','locations','cameras'].forEach(k=>{
+    if(Array.isArray(imported[k])){
+      const existing=D[k]||[];
+      if(Array.isArray(existing)&&existing.length&&existing[0]?.id){
+        const merged=[...existing];
+        (imported[k]||[]).forEach(item=>{const idx=merged.findIndex(x=>x.id===item.id);if(idx>=0)merged[idx]=item;else merged.push(item);});
+        D[k]=merged;
+      } else {D[k]=imported[k];}
+    }
+  });
+  ['bio','links','feedIg','feedTt','feedBank','moodboards'].forEach(k=>{if(imported[k]!==undefined)D[k]=imported[k];});
+  save();renderPage(currentPage);
+}
+
+// Override pushSync and pullSync to use KV store
+window.pushSync=pushSyncKV;
+window.pullSync=pullSyncKV;
+
+function copySyncCode(){
+  const code=getSyncCode();
+  navigator.clipboard?.writeText(code).then(()=>{toast('Code copied: '+code);syncLog('Code '+code+' copied to clipboard','var(--forest)');});
+}
+
+function syncTab(tab,el){
+  document.querySelectorAll('.sync-tab').forEach(t=>t.classList.remove('on'));
+  document.querySelectorAll('.sync-panel').forEach(p=>p.classList.remove('on'));
+  el.classList.add('on');
+  document.getElementById('sp-'+tab)?.classList.add('on');
+}
+
+function openSync(){
+  const modal=document.getElementById('sync-modal');
+  if(modal)modal.classList.add('open');
+  const online=navigator.onLine;
+  setSyncStatus(online);
+  // Show sync code
+  const v=document.getElementById('sync-code-val');
+  if(v)v.textContent=getSyncCode();
+  const cb=document.getElementById('sync-skip-cb');
+  if(cb)cb.checked=localStorage.getItem('ajhq_skipSync')==='true';
+}
+
+function closeSync(){
+  document.getElementById('sync-modal')?.classList.remove('open');
+}
+
+function syncSkipPref(val){
+  localStorage.setItem('ajhq_skipSync',val?'true':'false');
+}
+
+// Close search on outside click
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeSearch();document.getElementById('moodboard').classList.contains('open')&&closeMB();}});
+
+// ── STARTUP — runs after every function above is fully defined ──
+init();
+// If this is a fresh GitHub Pages visit (no sync code exists yet), always show popup
+const _isFirstVisit = !localStorage.getItem('ajhq_syncCode');
+if(_isFirstVisit || localStorage.getItem('ajhq_skipSync')!=='true'){
+  window.addEventListener('load',()=>setTimeout(openSync,700));
+} else {
+  getSyncCode();
+}
+</script>
+</body>
+</html>
