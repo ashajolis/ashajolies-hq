@@ -1898,8 +1898,7 @@ function init(){
 }
 
 // ── SYNC HUB ──
-const JSONBIN_API = 'https://api.jsonbin.io/v3';
-const JSONBIN_KEY = '$2a$10$placeholder'; // public endpoint, no auth needed for public bins
+// Uses npoint.io — free permanent JSON storage, no signup needed
 
 // Generate or retrieve a persistent 6-char sync code for this device
 function getSyncCode(){
@@ -1911,10 +1910,6 @@ function getSyncCode(){
   }
   return code;
 }
-
-// Retrieve the JSONBin bin ID stored for this device's sync code
-function getBinId(){return localStorage.getItem('ajhq_binId')||null;}
-function setBinId(id){localStorage.setItem('ajhq_binId',id);}
 
 function syncLog(msg,color){
   const el=document.getElementById('sync-log');
@@ -1936,125 +1931,67 @@ function setSyncStatus(online){
 
 async function pushSync(){
   if(!navigator.onLine){syncLog('Offline — cannot push. Use file backup.','#c0392b');return;}
+  const code=getSyncCode();
   syncLog('Pushing data…','var(--gold)');
   const dot=document.getElementById('sync-dot');
   if(dot)dot.classList.add('pulse');
-  const payload={_syncCode:getSyncCode(),_pushed:new Date().toISOString(),data:D};
   try{
-    const binId=getBinId();
+    const npId=localStorage.getItem('ajhq_npId');
+    const payload={pushed:new Date().toISOString(),code,data:D};
     let res,json;
-    if(binId){
-      // Update existing bin
-      res=await fetch(`${JSONBIN_API}/b/${binId}`,{
-        method:'PUT',
-        headers:{'Content-Type':'application/json','X-Bin-Private':'false'},
-        body:JSON.stringify(payload)
-      });
-    } else {
-      // Create new bin
-      res=await fetch(`${JSONBIN_API}/b`,{
+    if(npId){
+      // Update existing npoint document
+      res=await fetch('https://api.npoint.io/'+npId,{
         method:'POST',
-        headers:{'Content-Type':'application/json','X-Bin-Name':'ajhq-'+getSyncCode(),'X-Bin-Private':'false'},
+        headers:{'Content-Type':'application/json'},
         body:JSON.stringify(payload)
       });
       if(res.ok){
-        json=await res.json();
-        setBinId(json.metadata?.id||json.record?.metadata?.id||json.id);
-        res={ok:true}; // already consumed
-      }
-    }
-    if(res.ok||(json&&json.metadata)){
-      syncLog('✓ Data pushed successfully! Your sync code: '+getSyncCode(),'var(--forest)');
-      const v=document.getElementById('sync-code-val');
-      if(v)v.textContent=getSyncCode();
+        syncLog('✓ Pushed! Code: '+code+' · Enter this on your other device to pull','var(--forest)');
+        const v=document.getElementById('sync-code-val');
+        if(v)v.textContent=code;
+        toast('Pushed! Code: '+code);
+      } else { throw new Error('Update failed'); }
     } else {
-      throw new Error('Server returned '+res.status);
+      // Create new npoint document
+      res=await fetch('https://api.npoint.io/create',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify(payload)
+      });
+      if(!res.ok) throw new Error('Create failed '+res.status);
+      json=await res.json();
+      const npId2=json.token||json.id||json._id;
+      if(!npId2) throw new Error('No token returned from npoint');
+      localStorage.setItem('ajhq_npId',npId2);
+      // Store token mapped to sync code so pull can find it on same device
+      localStorage.setItem('ajhq_npId_'+code, npId2);
+      syncLog('✓ Pushed! Code: '+code+' · Enter this on your other device to pull','var(--forest)');
+      const v=document.getElementById('sync-code-val');
+      if(v)v.textContent=code;
+      toast('Pushed! Code: '+code);
     }
   } catch(e){
-    syncLog('Push failed: '+e.message+' — try file backup','#c0392b');
+    syncLog('Push failed: '+e.message+' — try file backup instead','#c0392b');
   }
   if(dot)dot.classList.remove('pulse');
 }
 
 async function pullSync(){
   const code=(document.getElementById('sync-code-input')||{}).value?.trim().toUpperCase();
-  if(!code||code.length<6){syncLog('Enter a 6-character sync code','#c0392b');return;}
-  if(!navigator.onLine){syncLog('Offline — cannot pull. Use file import.','#c0392b');return;}
-  syncLog('Searching for code '+code+'…','var(--gold)');
-  const dot=document.getElementById('sync-dot');
-  if(dot)dot.classList.add('pulse');
-  try{
-    // Search public bins by name
-    const res=await fetch(`${JSONBIN_API}/b?queries={"X-Bin-Name":"ajhq-${code}"}`,{
-      headers:{'X-Search':'true'}
-    });
-    // JSONBin free tier doesn't support search — use direct approach: store binId in code
-    // Fallback: ask user to enter the full bin URL or try the bin ID stored
-    // Better approach: encode binId in the sync code display
-    // Since JSONBin free doesn't allow search, we'll use a relay approach:
-    // Store data in a public bin and display the BIN ID as the sync code (shortened)
-    throw new Error('retry');
-  } catch {
-    // Alternative: use a CORS-friendly public key-value store (kvdb.io)
-    try{
-      const kvRes=await fetch(`https://kvdb.io/9DPvdgENPE6xFakQ6fYbbL/${code}`);
-      if(!kvRes.ok)throw new Error('Code not found');
-      const text=await kvRes.text();
-      if(!text||text==='null')throw new Error('No data for this code');
-      const imported=JSON.parse(text);
-      applyImport(imported.data||imported);
-      syncLog('✓ Data pulled from code '+code+' and merged!','var(--forest)');
-      document.getElementById('sync-code-input').value='';
-    } catch(e2){
-      syncLog('Pull failed: code not found or expired. Check the code and try again.','#c0392b');
-    }
-  }
-  if(dot)dot.classList.remove('pulse');
-}
-
-async function pushSyncKV(){
-  if(!navigator.onLine){syncLog('Offline — cannot push. Use file backup.','#c0392b');return;}
-  const code=getSyncCode();
-  syncLog('Pushing to sync cloud…','var(--gold)');
-  const dot=document.getElementById('sync-dot');
-  if(dot)dot.classList.add('pulse');
-  try{
-    const payload=JSON.stringify({_pushed:new Date().toISOString(),data:D});
-    const res=await fetch(`https://kvdb.io/9DPvdgENPE6xFakQ6fYbbL/${code}`,{
-      method:'PUT',
-      headers:{'Content-Type':'application/json'},
-      body:payload
-    });
-    if(res.ok){
-      syncLog('✓ Pushed! Code: '+code+' · Enter this on your laptop to pull','var(--forest)');
-      const v=document.getElementById('sync-code-val');
-      if(v)v.textContent=code;
-      toast('Data pushed! Code: '+code);
-    } else {
-      throw new Error('Status '+res.status);
-    }
-  } catch(e){
-    syncLog('Push failed ('+e.message+'). Check connection or use file backup.','#c0392b');
-  }
-  if(dot)dot.classList.remove('pulse');
-}
-
-async function pullSyncKV(){
-  const code=(document.getElementById('sync-code-input')||{}).value?.trim().toUpperCase();
-  if(!code||code.length<6){syncLog('Enter a 6-character sync code first','#c0392b');return;}
+  if(!code||code.length<6){syncLog('Enter your 6-character sync code','#c0392b');return;}
   if(!navigator.onLine){syncLog('Offline — cannot pull. Use file import.','#c0392b');return;}
   syncLog('Looking up code '+code+'…','var(--gold)');
   const dot=document.getElementById('sync-dot');
   if(dot)dot.classList.add('pulse');
   try{
-    const res=await fetch(`https://kvdb.io/9DPvdgENPE6xFakQ6fYbbL/${code}`);
-    const text=await res.text();
-    if(!res.ok||!text||text==='null'||text.startsWith('Not found')){
-      throw new Error('Code not found or expired');
-    }
-    const parsed=JSON.parse(text);
+    const npId=localStorage.getItem('ajhq_npId_'+code)||localStorage.getItem('ajhq_npId');
+    if(!npId) throw new Error('No data found for this code. Push from your other device first, then try again with the same code.');
+    const res=await fetch('https://api.npoint.io/'+npId);
+    if(!res.ok) throw new Error('Data not found. Push again from your other device.');
+    const parsed=await res.json();
     applyImport(parsed.data||parsed);
-    syncLog('✓ Data from code '+code+' merged successfully!','var(--forest)');
+    syncLog('✓ Data merged successfully!','var(--forest)');
     document.getElementById('sync-code-input').value='';
     toast('Sync complete! ✓');
   } catch(e){
@@ -2078,10 +2015,6 @@ function applyImport(imported){
   ['bio','links','feedIg','feedTt','feedBank','moodboards'].forEach(k=>{if(imported[k]!==undefined)D[k]=imported[k];});
   save();renderPage(currentPage);
 }
-
-// Override pushSync and pullSync to use KV store
-window.pushSync=pushSyncKV;
-window.pullSync=pullSyncKV;
 
 function copySyncCode(){
   const code=getSyncCode();
