@@ -12,6 +12,9 @@
 <link rel="manifest" href="manifest.json">
 <title>AshaJolies UGC HQ</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@200;300;400;500;600&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<!-- Firebase SDK (compat build — most reliable across all browsers/PWAs) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script>
 // ── SERVICE WORKER (real file for PWA install support) ──
 if('serviceWorker' in navigator){
@@ -1133,7 +1136,7 @@ function save(){
   keys.forEach(k=>wr(k,D[k]));
   const el=document.getElementById('sb-saved');
   if(el){const now=new Date();el.textContent='Saved '+now.toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit'});}
-  // Auto-write to Firebase on every save
+  // Push to Firebase on every save — this is what syncs to other devices
   if(_fbInited) fbWrite();
 }
 
@@ -1902,163 +1905,199 @@ function init(){
   // Sync hub is opened at the very end of the script after all functions load
 }
 
-// ── SYNC HUB — Firebase Firestore (real-time) ──
-const firebaseConfig = {
-  apiKey: "AIzaSyCwxs5BnMb9Josvq8JZwo7esEhX6Y-0uN0",
-  authDomain: "ashajolies-hq.firebaseapp.com",
-  projectId: "ashajolies-hq",
-  storageBucket: "ashajolies-hq.firebasestorage.app",
+// ══════════════════════════════════════════════
+//  FIREBASE REAL-TIME SYNC
+//  Uses compat SDK (loaded via <script> in <head>)
+//  — no dynamic imports, works in all browsers & PWAs
+// ══════════════════════════════════════════════
+const _FB_CONFIG = {
+  apiKey:            "AIzaSyCwxs5BnMb9Josvq8JZwo7esEhX6Y-0uN0",
+  authDomain:        "ashajolies-hq.firebaseapp.com",
+  projectId:         "ashajolies-hq",
+  storageBucket:     "ashajolies-hq.firebasestorage.app",
   messagingSenderId: "482954813458",
-  appId: "1:482954813458:web:1149aa0141a5ad1ffaf8cb",
-  measurementId: "G-BXRLY66TM6"
+  appId:             "1:482954813458:web:1149aa0141a5ad1ffaf8cb"
 };
+const _FB_DOC_PATH = 'hq/ashajolies-hq';   // collection/document
 
-const FB_DOC_ID = 'ashajolies-hq';
-let _fbDb = null, _fbDocRef = null, _fbInited = false, _fbWriting = false, _fbListener = null;
+let _fbInited  = false;
+let _fbWriting = false;   // true while we are writing — suppresses echo
+let _fbUnsub   = null;    // unsubscribe handle for the listener
+let _fbDoc     = null;    // Firestore DocumentReference
 
-function syncLog(msg, color){
-  const el = document.getElementById('sync-log');
-  if(!el) return;
-  const ts = new Date().toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
-  el.innerHTML = `<span style="color:${color||'var(--warm-gray)'}">[${ts}] ${msg}</span>\n` + (el.innerHTML||'');
-}
+// ── Initialise Firebase & start the live listener ──
+function initFirebase() {
+  if (_fbInited) return;
+  if (!navigator.onLine) { syncLog('Offline — will connect when online.', '#c0392b'); return; }
 
-function setSyncStatus(online){
-  ['sync-dot','sync-dot2'].forEach(id=>{
-    const d=document.getElementById(id);
-    if(d) d.className='sync-dot'+(online?'':' off');
-  });
-  const lbl=document.getElementById('sync-status-lbl');
-  const lbl2=document.getElementById('sync-status-lbl2');
-  if(lbl) lbl.textContent=online?'Live — changes sync instantly':'Offline — file backup available';
-  if(lbl2) lbl2.textContent=online?'Online · file sync also works':'Offline — file sync available';
-}
-
-async function initFirebase(){
-  if(_fbInited) return true;
-  if(!navigator.onLine){ syncLog('Offline — real-time sync paused.','#c0392b'); return false; }
   try {
-    const { initializeApp, getApps } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js');
-    const { getFirestore, doc, setDoc, onSnapshot, serverTimestamp } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
-
-    const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
-    _fbDb = getFirestore(app);
-    _fbDocRef = doc(_fbDb, 'hq', FB_DOC_ID);
-    window._fbSetDoc = setDoc;
-    window._fbServerTimestamp = serverTimestamp;
+    // Initialise app only once
+    if (!firebase.apps.length) firebase.initializeApp(_FB_CONFIG);
+    const db = firebase.firestore();
+    _fbDoc   = db.doc(_FB_DOC_PATH);
     _fbInited = true;
 
-    // ── REAL-TIME LISTENER ──
-    // Fires immediately with current cloud data, then on every remote change
-    _fbListener = onSnapshot(_fbDocRef, snap => {
-      if(!snap.exists()) {
-        // No cloud data yet — write our local data up
-        syncLog('No cloud data yet — uploading local data…','var(--warm-gold)');
+    // ── Live listener — fires on connect AND on every remote write ──
+    _fbUnsub = _fbDoc.onSnapshot(snap => {
+      // Skip echo from our own writes
+      if (_fbWriting) return;
+
+      if (!snap.exists) {
+        // First time — push local data up to cloud
+        syncLog('No cloud data yet — uploading local data…', 'var(--warm-gold)');
         fbWrite();
         return;
       }
-      const remote = snap.data();
-      // Ignore updates that we ourselves just wrote (avoid echo loop)
-      if(_fbWriting) return;
 
-      const remoteTs = remote._ts || 0;
-      const localTs  = parseInt(localStorage.getItem('ajhq_lastWrite')||'0');
+      const remote    = snap.data();
+      const remoteTs  = remote._ts  || 0;
+      const localTs   = parseInt(localStorage.getItem('ajhq_lastWrite') || '0');
 
-      if(remoteTs > localTs){
-        syncLog('↓ Remote change detected — updating…','var(--sky-deep)');
-        applyImport(remote.data || remote);
-        syncLog('✓ Synced from cloud','var(--forest)');
-        const dot=document.getElementById('sync-dot');
-        if(dot){dot.classList.add('pulse');setTimeout(()=>dot.classList.remove('pulse'),800);}
+      if (remoteTs > localTs) {
+        syncLog('↓ Change from another device — syncing…', 'var(--sky-deep)');
+        applyRemote(remote.data || remote);
+        syncLog('✓ Synced from cloud', 'var(--forest)');
+        flashDot();
       }
     }, err => {
-      syncLog('Listener error: '+err.message,'#c0392b');
+      syncLog('Sync error: ' + err.message, '#c0392b');
+      // Show the error detail in console too
+      console.error('[Firebase listener]', err);
     });
 
-    // Update UI
-    const lbl=document.getElementById('fb-status-label');
-    if(lbl) lbl.textContent='Connected · changes sync instantly';
-    const badge=document.getElementById('fb-auto-badge');
-    if(badge) badge.style.display='block';
+    // Update the Sync Hub UI
+    const lbl   = document.getElementById('fb-status-label');
+    const badge = document.getElementById('fb-auto-badge');
+    if (lbl)   lbl.textContent   = 'Connected · changes sync instantly';
+    if (badge) badge.style.display = 'block';
     setSyncStatus(true);
-    syncLog('✓ Firebase connected — live sync active','var(--forest)');
-    return true;
-  } catch(e){
-    syncLog('Firebase init failed: '+e.message,'#c0392b');
-    return false;
+    syncLog('🔥 Firebase connected — live sync active', 'var(--forest)');
+
+  } catch (e) {
+    syncLog('Firebase init error: ' + e.message, '#c0392b');
+    console.error('[Firebase init]', e);
   }
 }
 
-async function fbWrite(){
-  if(!_fbInited || !_fbDocRef) return;
+// ── Write D to Firestore ──
+function fbWrite() {
+  if (!_fbInited || !_fbDoc) return;
   _fbWriting = true;
-  const now = Date.now();
+  const now  = Date.now();
   localStorage.setItem('ajhq_lastWrite', String(now));
-  try {
-    await window._fbSetDoc(_fbDocRef, {
-      _ts: now,
-      _device: navigator.userAgent.includes('Mobile') ? 'mobile' : 'desktop',
-      data: JSON.parse(JSON.stringify(D))
-    });
-  } catch(e){
-    syncLog('Write failed: '+e.message,'#c0392b');
-  }
-  // Small delay so the listener's echo arrives during _fbWriting=true
-  setTimeout(()=>{ _fbWriting=false; }, 1200);
+
+  _fbDoc.set({
+    _ts:     now,
+    _device: /Mobi|Android/i.test(navigator.userAgent) ? 'mobile' : 'desktop',
+    data:    JSON.parse(JSON.stringify(D))   // deep-clone so Firestore doesn't reject non-plain objects
+  })
+  .then(() => {
+    // Wait 1.5 s before accepting incoming events again
+    // (the listener fires once for our own write)
+    setTimeout(() => { _fbWriting = false; }, 1500);
+  })
+  .catch(e => {
+    syncLog('Write failed: ' + e.message, '#c0392b');
+    console.error('[fbWrite]', e);
+    _fbWriting = false;
+  });
 }
 
-function applyImport(imported){
-  if(!imported) return;
-  ['gigs','content','ideas','followups','pitches','rates','colors','niches','platforms','visuals','outfits','locations','cameras'].forEach(k=>{
-    if(Array.isArray(imported[k])){
-      const existing = D[k] || [];
-      if(Array.isArray(existing) && existing.length && existing[0]?.id){
-        const merged = [...existing];
-        (imported[k]||[]).forEach(item=>{ const idx=merged.findIndex(x=>x.id===item.id); if(idx>=0) merged[idx]=item; else merged.push(item); });
-        D[k] = merged;
-      } else { D[k] = imported[k]; }
+// ── Apply remote data to local state ──
+function applyRemote(imported) {
+  if (!imported) return;
+  const arrayKeys = ['gigs','content','ideas','followups','pitches','rates','colors',
+                     'niches','platforms','visuals','outfits','locations','cameras'];
+  arrayKeys.forEach(k => {
+    if (!Array.isArray(imported[k])) return;
+    const existing = D[k] || [];
+    if (existing.length && existing[0]?.id) {
+      // Merge by id — remote wins on conflict
+      const merged = [...existing];
+      imported[k].forEach(item => {
+        const idx = merged.findIndex(x => x.id === item.id);
+        if (idx >= 0) merged[idx] = item; else merged.push(item);
+      });
+      D[k] = merged;
+    } else {
+      D[k] = imported[k];
     }
   });
-  ['bio','links','feedIg','feedTt','feedBank','moodboards'].forEach(k=>{ if(imported[k]!==undefined) D[k]=imported[k]; });
-  save(); renderPage(currentPage);
+  ['bio','links','feedIg','feedTt','feedBank','moodboards'].forEach(k => {
+    if (imported[k] !== undefined) D[k] = imported[k];
+  });
+  // Persist locally and re-render current page
+  const keys = ['gigs','content','ideas','followups','pitches','rates','colors','niches',
+                 'platforms','bio','links','visuals','outfits','locations','cameras',
+                 'feedIg','feedTt','feedBank','moodboards','calM','calY'];
+  keys.forEach(k => wr(k, D[k]));
+  renderPage(currentPage);
 }
 
-function syncTab(tab, el){
-  document.querySelectorAll('.sync-tab').forEach(t=>t.classList.remove('on'));
-  document.querySelectorAll('.sync-panel').forEach(p=>p.classList.remove('on'));
+// ── Pulse the sync dot briefly ──
+function flashDot() {
+  const dot = document.getElementById('sync-dot');
+  if (!dot) return;
+  dot.classList.add('pulse');
+  setTimeout(() => dot.classList.remove('pulse'), 900);
+}
+
+// ── Sync Hub UI helpers ──
+function syncLog(msg, color) {
+  const el = document.getElementById('sync-log');
+  if (!el) return;
+  const ts = new Date().toLocaleTimeString('en', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
+  el.innerHTML = `<span style="color:${color || 'var(--warm-gray)'}">[${ts}] ${msg}</span>\n` + el.innerHTML;
+}
+
+function setSyncStatus(online) {
+  ['sync-dot','sync-dot2'].forEach(id => {
+    const d = document.getElementById(id);
+    if (d) d.className = 'sync-dot' + (online ? '' : ' off');
+  });
+  const lbl  = document.getElementById('sync-status-lbl');
+  const lbl2 = document.getElementById('sync-status-lbl2');
+  if (lbl)  lbl.textContent  = online ? 'Live — changes sync instantly' : 'Offline — file backup available';
+  if (lbl2) lbl2.textContent = online ? 'Online · file sync also works'  : 'Offline — file sync available';
+}
+
+function syncTab(tab, el) {
+  document.querySelectorAll('.sync-tab').forEach(t => t.classList.remove('on'));
+  document.querySelectorAll('.sync-panel').forEach(p => p.classList.remove('on'));
   el.classList.add('on');
-  document.getElementById('sp-'+tab)?.classList.add('on');
+  document.getElementById('sp-' + tab)?.classList.add('on');
 }
 
-function openSync(){
-  const modal = document.getElementById('sync-modal');
-  if(modal) modal.classList.add('open');
+function openSync() {
+  document.getElementById('sync-modal')?.classList.add('open');
   setSyncStatus(navigator.onLine);
   const cb = document.getElementById('sync-skip-cb');
-  if(cb) cb.checked = localStorage.getItem('ajhq_skipSync') === 'true';
+  if (cb) cb.checked = localStorage.getItem('ajhq_skipSync') === 'true';
 }
 
-function closeSync(){
+function closeSync() {
   document.getElementById('sync-modal')?.classList.remove('open');
 }
 
-function syncSkipPref(val){
+function syncSkipPref(val) {
   localStorage.setItem('ajhq_skipSync', val ? 'true' : 'false');
 }
 
 // Close search on outside click
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeSearch();document.getElementById('moodboard').classList.contains('open')&&closeMB();}});
 
-// ── STARTUP — runs after every function above is fully defined ──
+// ── STARTUP ──
 init();
-// Auto-initialise Firebase real-time sync on load
 window.addEventListener('load', () => {
+  // Start Firebase immediately — the listener will pull latest cloud data
   initFirebase();
-  // Show sync popup on first visit or if not skipped
-  const skip = localStorage.getItem('ajhq_skipSync') === 'true';
-  if(!skip) setTimeout(openSync, 700);
+  // Show Sync Hub on first visit (or if user hasn't opted out)
+  if (localStorage.getItem('ajhq_skipSync') !== 'true') {
+    setTimeout(openSync, 800);
+  }
 });
-window.addEventListener('online',  () => { setSyncStatus(true);  if(!_fbInited) initFirebase(); });
+// Re-connect if the browser comes back online
+window.addEventListener('online',  () => { setSyncStatus(true);  if (!_fbInited) initFirebase(); });
 window.addEventListener('offline', () => { setSyncStatus(false); });
 </script>
 </body>
