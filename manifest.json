@@ -2,23 +2,40 @@
   "name": "AshaJolies HQ",
   "short_name": "AJ HQ",
   "description": "AshaJolies UGC Creator HQ — Gig tracker, content planner, moodboard, brand hub",
-  "start_url": "./index.html",
+  "start_url": "/ashajolies-hq/",
+  "scope": "/ashajolies-hq/",
   "display": "standalone",
   "orientation": "any",
   "background_color": "#1E1916",
   "theme_color": "#1E1916",
+  "lang": "en",
+  "categories": ["productivity", "business"],
   "icons": [
     {
       "src": "icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
     },
     {
       "src": "icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
-  ]
+  ],
+  "screenshots": [],
+  "shortcuts": []
 }
