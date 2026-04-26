@@ -12,17 +12,24 @@
 <title>AshaJolies UGC HQ</title>
 <!-- ═══ PWA MANIFEST ═══ -->
 <link rel="manifest" href="manifest.json">
+<!-- Instant pre-boot: read localStorage synchronously, before any script loads -->
+<script>
+(function(){
+  try {
+    var ru = localStorage.getItem('ajhq_user_v1');
+    var rd = localStorage.getItem('ajhq_data_v1');
+    if(ru && rd) window._cs = { u: JSON.parse(ru), d: JSON.parse(rd) };
+  } catch(e) {}
+})();
+</script>
+
 <!-- Apple touch icon -->
 <link rel="apple-touch-icon" href="icon-192.png">
-<!-- Fonts: load from Google if online, otherwise fall through to system stack -->
-<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@200;300;400;500;600&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'" onerror="this.remove()">
-<style>
-/* Offline font fallbacks — used immediately, replaced by Google Fonts when online */
-body { font-family: 'Jost', 'Segoe UI', system-ui, -apple-system, sans-serif; }
-.sb-name, .tb-title, .mt, .sc-v, .sb-rate-val, .id-title, .ct { font-family: 'Cormorant Garamond', 'Georgia', 'Times New Roman', serif; }
-.sb-eyebrow, .nl, .ct, .sc-l, .fl, .sp, .tc, .ni-badge, .chip { font-family: 'DM Mono', 'Courier New', 'Consolas', monospace; }
-</style>
+<link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://identitytoolkit.googleapis.com" crossorigin>
+<link rel="preconnect" href="https://securetoken.googleapis.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@200;300;400;500;600&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <style>
 /* ─── TOKENS ─── */
 :root{
@@ -584,6 +591,7 @@ body{background:var(--ivory);font-family:'Jost',sans-serif;font-weight:300;color
     <button class="br-tab" onclick="swBrand('rates',this)">💲 Rates</button>
     <button class="br-tab" onclick="swBrand('niches',this)">🏷 Niches</button>
     <button class="br-tab" onclick="swBrand('bio',this)">📝 Bio</button>
+    <button class="br-tab" onclick="swBrand('account',this)">🔑 Account</button>
   </div>
 
   <div class="br-sec active" id="br-colors">
@@ -640,6 +648,28 @@ body{background:var(--ivory);font-family:'Jost',sans-serif;font-weight:300;color
       <div class="fr"><div class="fg"><label class="fl">TikTok</label><input class="fi" id="l-tt"></div><div class="fg"><label class="fl">Instagram</label><input class="fi" id="l-ig"></div></div>
       <div class="fr"><div class="fg"><label class="fl">YouTube</label><input class="fi" id="l-yt"></div><div class="fg"><label class="fl">Portfolio</label><input class="fi" id="l-port"></div></div>
     </div></div>
+  </div>
+
+  <!-- ─── ACCOUNT ─── -->
+  <div class="br-sec" id="br-account">
+    <div class="card">
+      <div class="ch"><span class="ct">Account</span></div>
+      <div class="cb">
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:18px;">
+          <div id="brand-avatar" style="width:48px;height:48px;border-radius:50%;background:var(--terracotta);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:600;color:#fff;flex-shrink:0;"></div>
+          <div>
+            <div id="brand-name" style="font-size:14px;font-weight:500;color:var(--ink);"></div>
+            <div id="brand-email" style="font-size:11px;color:var(--warm-gray);margin-top:2px;"></div>
+          </div>
+        </div>
+        <div style="border-top:1px solid rgba(0,0,0,.06);padding-top:14px;">
+          <div style="font-size:11px;color:var(--warm-gray);margin-bottom:12px;line-height:1.6;">Signing out will keep your data saved locally. You'll need internet to sign back in.</div>
+          <button onclick="authSignOut()" style="background:rgba(192,57,43,.08);color:#c0392b;border:1px solid rgba(192,57,43,.18);border-radius:100px;padding:9px 22px;font-family:'Jost',sans-serif;font-size:12px;font-weight:600;letter-spacing:.06em;cursor:pointer;display:inline-flex;align-items:center;gap:7px;">
+            <span style="font-size:15px;">&#9211;</span> Sign Out
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -1096,34 +1126,40 @@ self.addEventListener('fetch',e=>{
   <div style="margin-top:20px;font-size:10px;color:rgba(250,246,239,.15);text-align:center;">Secured by Firebase Auth · Your data stays private</div>
 </div>
 
-<!-- Pre-boot: Runs before Firebase loads. Immediately boots from cache if available. -->
+<!-- Instant cache boot: hides login screen and fires fb-ready before Firebase loads -->
 <script>
-// This runs SYNCHRONOUSLY before Firebase module loads.
-// If there's a cached session + data, we boot the app immediately.
-// Firebase will then validate/sync in the background.
-(function preBootFromCache() {
-  const LS_USER = 'ajhq_user_v1';
-  const LS_KEY  = 'ajhq_data_v1';
-  try {
-    const rawUser = localStorage.getItem(LS_USER);
-    const rawData = localStorage.getItem(LS_KEY);
-    if (rawUser && rawData) {
-      window._cachedSession = { user: JSON.parse(rawUser), data: JSON.parse(rawData) };
-    }
-  } catch(e) {}
+(function(){
+  if(!window._cs) return; // no cached session
+  if(window._fbReady) return; // already booted
+  var ls=document.getElementById('login-screen');
+  if(ls) ls.style.display='none';
+  var u=window._cs.u;
+  var av=document.getElementById('sb-avatar');
+  if(av) av.innerHTML=u.photoURL
+    ?'<img src="'+u.photoURL+'" style="width:28px;height:28px;border-radius:50%;object-fit:cover;">'
+    :'<div style="width:28px;height:28px;border-radius:50%;background:var(--terracotta);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:#fff;">'+(u.displayName||u.email||'A')[0].toUpperCase()+'</div>';
+  var em=document.getElementById('sb-user-email');
+  if(em) em.textContent=u.displayName||u.email;
+  if(!window.D) window.D={};
+  var d=window._cs.d;
+  Object.keys(d).forEach(function(k){window.D[k]=d[k];});
+  var el=document.getElementById('sb-saved');
+  if(el) el.textContent=navigator.onLine?'Syncing...':'Offline mode';
+  window._fbReady=true;
+  document.dispatchEvent(new Event('fb-ready'));
 })();
 </script>
 
-<!-- Firebase bootstrap: Auth + Firestore, exposes window.D, window.save, window._fbReady -->
-<script type="module">
-// If this module fails to load (offline, no cache of Firebase SDK),
-// the onerror fallback script below will boot from cache instead.
-import { initializeApp }                                          from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-import { getFirestore, doc, getDoc, setDoc }                     from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
-import { getAuth, onAuthStateChanged,
-         signInWithEmailAndPassword, createUserWithEmailAndPassword,
-         sendPasswordResetEmail, signOut,
-         GoogleAuthProvider, signInWithPopup }                    from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+
+<!-- Firebase SDK: deferred so it never blocks page render -->
+<script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+<!-- Firebase bootstrap runs after deferred scripts finish loading -->
+<script defer>
+(function initFirebase(){
+if(typeof firebase==='undefined'){console.error('Firebase SDK missing');return;}
 
 const firebaseConfig = {
   apiKey: "AIzaSyCwxs5BnMb9Josvq8JZwo7esEhX6Y-0uN0",
@@ -1135,10 +1171,14 @@ const firebaseConfig = {
   measurementId: "G-BXRLY66TM6"
 };
 
-const app  = initializeApp(firebaseConfig);
-const db   = getFirestore(app);
-const auth = getAuth(app);
-const gProvider = new GoogleAuthProvider();
+firebase.initializeApp(firebaseConfig);
+const db   = firebase.firestore();
+const auth = firebase.auth();
+// Enable Firestore offline persistence (instant reads from cache)
+db.enablePersistence({synchronizeTabs:true}).catch(function(e){
+  if(e.code!=='failed-precondition'&&e.code!=='unimplemented') console.warn('Persistence:',e);
+});
+const gProvider = new firebase.auth.GoogleAuthProvider();
 
 const HEAVY      = ['feedIg','feedTt','feedBank','visuals','outfits','moodboards'];
 const LIGHT_KEYS = ['gigs','content','ideas','followups','pitches','rates','colors','niches','platforms','bio','links','locations','cameras','calM','calY'];
@@ -1253,9 +1293,9 @@ window.save = function() {
     try {
       const light = {};
       LIGHT_KEYS.forEach(k => light[k] = window.D[k]);
-      await setDoc(doc(db,'users',uid,'hq','main'), light, {merge:true});
+      await db.collection('users').doc(uid).collection('hq').doc('main').set(light,{merge:true});
       for(const k of HEAVY)
-        await setDoc(doc(db,'users',uid,'hq', k), {[k]: window.D[k]});
+        await db.collection('users').doc(uid).collection('hq').doc(k).set({[k]:window.D[k]});
       lsClearDirty();
       if(el){ const n=new Date(); el.textContent='Synced ✓ '+n.toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit'}); }
     } catch(e){
@@ -1275,9 +1315,9 @@ window.addEventListener('online', async () => {
   try {
     const light = {};
     LIGHT_KEYS.forEach(k => light[k] = window.D[k]);
-    await setDoc(doc(db,'users',uid,'hq','main'), light, {merge:true});
+    await db.collection('users').doc(uid).collection('hq').doc('main').set(light,{merge:true});
     for(const k of HEAVY)
-      await setDoc(doc(db,'users',uid,'hq', k), {[k]: window.D[k]});
+      await db.collection('users').doc(uid).collection('hq').doc(k).set({[k]:window.D[k]});
     lsClearDirty();
     if(el){ const n=new Date(); el.textContent='Synced ✓ '+n.toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit'}); }
     if(typeof toast==='function') toast('Back online — all changes synced ✓');
@@ -1310,11 +1350,11 @@ async function loadUserData(uid) {
 
   // 2. Then fetch from Firebase in the background and merge
   try {
-    const snap = await getDoc(doc(db,'users',uid,'hq','main'));
-    if(snap.exists()){ const d=snap.data(); Object.keys(d).forEach(k=>{ if(k in window.D) window.D[k]=d[k]; }); }
+    const snap = await db.collection('users').doc(uid).collection('hq').doc('main').get();
+    if(snap.exists){ const d=snap.data(); Object.keys(d).forEach(k=>{ if(k in window.D) window.D[k]=d[k]; }); }
     for(const k of HEAVY){
-      const s = await getDoc(doc(db,'users',uid,'hq',k));
-      if(s.exists() && s.data()[k]!==undefined) window.D[k]=s.data()[k];
+      const s = await db.collection('users').doc(uid).collection('hq').doc(k).get();
+      if(s.exists && s.data()[k]!==undefined) window.D[k]=s.data()[k];
     }
     // Update localStorage with latest Firebase data
     lsSave(window.D);
@@ -1343,109 +1383,67 @@ async function loadUserData(uid) {
 // ── Auth state observer ──
 let _appBooted = false;
 
+// Offline boot timeout: if Firebase auth hasn't responded in 4s and we have local data, boot from cache
+setTimeout(() => {
+  if(window._fbReady) return; // already booted
+  const cachedUser = lsLoadUser();
+  const localData  = lsLoad();
+  if(cachedUser && localData) {
+    console.log('AJ HQ: Firebase timeout — booting from local cache');
+    const loginScreen = document.getElementById('login-screen');
+    if(loginScreen && loginScreen.style.display !== 'none') {
+      // Only boot offline if login screen is still showing (not yet authenticated)
+      bootWithUser(cachedUser);
+      Object.keys(localData).forEach(k => { if(k in window.D) window.D[k] = localData[k]; });
+      const el = document.getElementById('sb-saved');
+      if(el) el.textContent = '📴 Offline mode';
+      window._fbReady = true;
+      document.dispatchEvent(new Event('fb-ready'));
+    }
+  }
+}, 1500);
+
 function bootWithUser(user) {
   const av = document.getElementById('sb-avatar');
   if(av) av.innerHTML = user.photoURL
     ? `<img src="${user.photoURL}" style="width:28px;height:28px;border-radius:50%;object-fit:cover;">`
-    : `<div style="width:28px;height:28px;border-radius:50%;background:var(--terracotta);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:#fff;">${(user.displayName||user.email||'A')[0].toUpperCase()}</div>`;
+    : `<div style="width:28px;height:28px;border-radius:50%;background:var(--terracotta);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:#fff;">${(user.displayName||user.displayName||user.email||'A')[0].toUpperCase()}</div>`;
   const em = document.getElementById('sb-user-email');
   if(em) em.textContent = user.displayName || user.email;
   document.getElementById('login-screen').style.display='none';
 }
 
-// ── IMMEDIATE CACHE BOOT ──
-// If we have a saved session + local data, boot the app RIGHT NOW without
-// waiting for Firebase at all. Firebase will silently validate in the background.
-(function immediateOfflineBoot() {
-  const cachedUser = lsLoadUser();
-  const localData  = lsLoad();
-  if (cachedUser && localData && !window._fbReady) {
-    console.log('AJ HQ: Booting from local cache immediately');
-    bootWithUser(cachedUser);
-    Object.keys(localData).forEach(k => { if(k in window.D) window.D[k] = localData[k]; });
-    const el = document.getElementById('sb-saved');
-    if(el) el.textContent = navigator.onLine ? 'Syncing…' : '📴 Offline mode';
-    window._fbReady = true;
-    document.dispatchEvent(new Event('fb-ready'));
-  }
-})();
-
-// ── Firebase auth state (runs after immediate boot, validates session) ──
-onAuthStateChanged(auth, async user => {
+auth.onAuthStateChanged(async user => {
   if(user){
-    // Real Firebase session confirmed
     lsSaveUser(user);
-    if(!window._fbReady) {
-      // Wasn't booted from cache (first ever login) — boot now
-      bootWithUser(user);
-    } else {
-      // Already booted from cache — just update the UI silently
-      bootWithUser(user);
-    }
+    bootWithUser(user);
     await loadUserData(user.uid);
+    // loadUserData fires fb-ready itself; only fire here if it didn't (no local data + offline)
     if(!window._fbReady){
       window._fbReady = true;
       document.dispatchEvent(new Event('fb-ready'));
     }
   } else {
-    // Firebase says no active session
-    if(window._fbReady) {
-      // We already booted from cache — Firebase may be slow or offline.
-      // Do NOT kick the user out. The cached session is still valid.
-      // Only sign out for real if we're online and Firebase explicitly revoked auth.
-      if(navigator.onLine) {
-        // Online + Firebase says no user = truly signed out (manual logout or revoked)
-        // But only do this if we haven't already booted from cache this session
-        const cachedUser = lsLoadUser();
-        if(!cachedUser) {
-          // Genuinely no session
-          document.getElementById('login-screen').style.display='flex';
-          window._fbReady = false;
-        }
-        // If cachedUser exists and Firebase says no user while online,
-        // this is likely a token refresh race — keep the user logged in
-      }
-      // If offline: do nothing, user stays logged in from cache
-    } else {
-      // App hasn't booted yet and Firebase says no user
-      const cachedUser = lsLoadUser();
-      const localData  = lsLoad();
-      if(cachedUser && localData) {
-        // Has a cached session — boot from cache
-        bootWithUser(cachedUser);
-        Object.keys(localData).forEach(k => { if(k in window.D) window.D[k] = localData[k]; });
-        const el = document.getElementById('sb-saved');
-        if(el) el.textContent = navigator.onLine ? 'Syncing…' : '📴 Offline mode';
+    // Firebase says no user — but check if we have a cached session for offline use
+    const cachedUser = lsLoadUser();
+    const localData  = lsLoad();
+    if(cachedUser && localData){
+      // Offline with a previous session — boot with local data, skip login
+      bootWithUser(cachedUser);
+      Object.keys(localData).forEach(k => { if(k in window.D) window.D[k] = localData[k]; });
+      const el = document.getElementById('sb-saved');
+      if(el) el.textContent = '📴 Offline mode';
+      if(!window._fbReady){
         window._fbReady = true;
         document.dispatchEvent(new Event('fb-ready'));
-      } else {
-        // First time user or manually signed out — show login
-        document.getElementById('login-screen').style.display='flex';
-        window._fbReady = false;
       }
+    } else {
+      // Truly signed out or first visit — show login
+      document.getElementById('login-screen').style.display='flex';
+      window._fbReady = false;
     }
   }
 });
-
-// Safety net: if Firebase SDK itself fails to load (no internet, first visit),
-// fire a 2s timeout that checks for a cached session
-setTimeout(() => {
-  if(window._fbReady) return;
-  const cachedUser = lsLoadUser();
-  const localData  = lsLoad();
-  if(cachedUser && localData) {
-    console.log('AJ HQ: Firebase SDK timeout — booting from local cache');
-    bootWithUser(cachedUser);
-    Object.keys(localData).forEach(k => { if(k in window.D) window.D[k] = localData[k]; });
-    const el = document.getElementById('sb-saved');
-    if(el) el.textContent = '📴 Offline mode';
-    window._fbReady = true;
-    document.dispatchEvent(new Event('fb-ready'));
-  } else if(!window._fbReady) {
-    // No cache at all — ensure login screen is visible
-    document.getElementById('login-screen').style.display='flex';
-  }
-}, 2000);
 
 // ── Auth actions exposed to regular script ──
 window.loginEmail = async function(){
@@ -1455,7 +1453,7 @@ window.loginEmail = async function(){
   const btn   = document.getElementById('li-btn');
   err.style.display='none'; btn.textContent='Signing in…'; btn.disabled=true;
   try {
-    await signInWithEmailAndPassword(auth, email, pass);
+    await auth.signInWithEmailAndPassword(email, pass);
   } catch(e){
     err.textContent = friendlyAuthError(e.code);
     err.style.display='block';
@@ -1465,7 +1463,7 @@ window.loginEmail = async function(){
 
 window.loginGoogle = async function(){
   try {
-    await signInWithPopup(auth, gProvider);
+    await auth.signInWithPopup(gProvider);
   } catch(e){
     const err = document.getElementById('login-err');
     err.textContent = friendlyAuthError(e.code);
@@ -1479,7 +1477,7 @@ window.signupEmail = async function(){
   const err   = document.getElementById('su-err');
   err.style.display='none';
   try {
-    await createUserWithEmailAndPassword(auth, email, pass);
+    await auth.createUserWithEmailAndPassword(email, pass);
   } catch(e){
     err.textContent = friendlyAuthError(e.code);
     err.style.display='block';
@@ -1490,7 +1488,7 @@ window.sendReset = async function(){
   const email = document.getElementById('rs-email').value.trim();
   const msg   = document.getElementById('rs-msg');
   try {
-    await sendPasswordResetEmail(auth, email);
+    await auth.sendPasswordResetEmail(email);
     msg.textContent='Reset link sent! Check your inbox.';
     msg.style.display='block';
   } catch(e){
@@ -1502,19 +1500,12 @@ window.sendReset = async function(){
 };
 
 window.authSignOut = async function(){
-  // Clear cached session FIRST so the onAuthStateChanged observer
-  // knows this is an intentional sign-out, not an offline state
-  try {
-    localStorage.removeItem(LS_USER);
-    localStorage.removeItem(LS_KEY);
-    localStorage.removeItem(LS_DIRTY);
-  } catch(e){}
+  await auth.signOut();
+  // Clear cached session so offline mode doesn't re-login automatically
+  try { localStorage.removeItem(LS_USER); localStorage.removeItem(LS_DIRTY); } catch(e){}
   window.D = DEFAULTS();
   window._fbReady = false;
-  // Show login immediately, then sign out from Firebase
-  document.getElementById('login-screen').style.display='flex';
   if(typeof toast==='function') toast('Signed out 👋');
-  try { await signOut(auth); } catch(e) { /* ignore network errors on logout */ }
 };
 
 window.showSignup = ()=>{ document.getElementById('login-box').style.display='none'; document.getElementById('reset-box').style.display='none'; document.getElementById('signup-box').style.display='block'; };
@@ -1536,98 +1527,7 @@ function friendlyAuthError(code){
   return map[code] || 'Something went wrong. Please try again.';
 }
 
-// Mark Firebase as loaded so the fallback below doesn't double-boot
-window._firebaseLoaded = true;
-</script>
-
-<!-- Fallback: if Firebase SDK failed to load (no internet + not in SW cache),
-     boot from localStorage cache so the app still works fully offline -->
-<script>
-(function firebaseFallback() {
-  // Give the module a moment to set _firebaseLoaded
-  setTimeout(function() {
-    if (window._firebaseLoaded) return; // Firebase loaded fine
-
-    console.warn('AJ HQ: Firebase SDK not available — running in pure offline mode');
-
-    // Set up stub functions so the app doesn't crash
-    if (!window.loginEmail) {
-      window.loginEmail = function() {
-        const err = document.getElementById('login-err');
-        if(err) { err.textContent = 'No internet connection. Please connect to sign in for the first time.'; err.style.display = 'block'; }
-      };
-    }
-    if (!window.loginGoogle) {
-      window.loginGoogle = function() {
-        const err = document.getElementById('login-err');
-        if(err) { err.textContent = 'No internet connection. Google sign-in requires connectivity.'; err.style.display = 'block'; }
-      };
-    }
-    if (!window.signupEmail) {
-      window.signupEmail = function() {
-        const err = document.getElementById('su-err');
-        if(err) { err.textContent = 'No internet connection. Account creation requires connectivity.'; err.style.display = 'block'; }
-      };
-    }
-    if (!window.authSignOut) {
-      window.authSignOut = function() {
-        try {
-          localStorage.removeItem('ajhq_user_v1');
-          localStorage.removeItem('ajhq_data_v1');
-          localStorage.removeItem('ajhq_dirty_v1');
-        } catch(e) {}
-        window.location.reload();
-      };
-    }
-    if (!window.save) {
-      window.save = function() {
-        try {
-          const el = document.getElementById('sb-saved');
-          if(el) el.textContent = '💾 Saved locally';
-          // Save D to localStorage
-          const LS_KEY = 'ajhq_data_v1';
-          const LIGHT_KEYS = ['gigs','content','ideas','followups','pitches','rates','colors','niches','platforms','bio','links','locations','cameras','calM','calY'];
-          const HEAVY = ['feedIg','feedTt','feedBank','visuals','outfits','moodboards'];
-          const out = {};
-          [...LIGHT_KEYS, ...HEAVY].forEach(k => { if(k in window.D) out[k] = window.D[k]; });
-          localStorage.setItem(LS_KEY, JSON.stringify(out));
-        } catch(e) { console.warn('save failed', e); }
-      };
-    }
-
-    // Now boot from cache if available
-    const sess = window._cachedSession;
-    if (sess && !window._fbReady) {
-      // Reconstruct bootWithUser locally
-      const user = sess.user;
-      const av = document.getElementById('sb-avatar');
-      if(av) av.innerHTML = user.photoURL
-        ? `<img src="${user.photoURL}" style="width:28px;height:28px;border-radius:50%;object-fit:cover;">`
-        : `<div style="width:28px;height:28px;border-radius:50%;background:var(--terracotta);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:#fff;">${(user.displayName||user.email||'A')[0].toUpperCase()}</div>`;
-      const em = document.getElementById('sb-user-email');
-      if(em) em.textContent = user.displayName || user.email;
-      document.getElementById('login-screen').style.display = 'none';
-
-      if (!window.D) window.D = {};
-      Object.keys(sess.data).forEach(k => { window.D[k] = sess.data[k]; });
-
-      const el = document.getElementById('sb-saved');
-      if(el) el.textContent = '📴 Offline mode';
-
-      window._fbReady = true;
-      document.dispatchEvent(new Event('fb-ready'));
-    } else if (!window._fbReady) {
-      // No cache — show login with offline message
-      const loginScreen = document.getElementById('login-screen');
-      if(loginScreen) loginScreen.style.display = 'flex';
-      const err = document.getElementById('login-err');
-      if(err) {
-        err.textContent = '📴 No internet — please connect to sign in for the first time.';
-        err.style.display = 'block';
-      }
-    }
-  }, 1500);
-})();
+})(); // end initFirebase
 </script>
 
 <script>
@@ -2395,6 +2295,24 @@ function init(){
   rDash();
   setEl('gig-badge',D.gigs.filter(g=>!['delivered','declined'].includes(g.status)).length||'');
   setEl('fu-badge',D.followups.filter(f=>!f.done).length||'');
+  populateBrandAccount();
+}
+
+function populateBrandAccount(){
+  const cached = (function(){ try{ const r=localStorage.getItem('ajhq_user_v1'); return r?JSON.parse(r):null; }catch(e){ return null; } })();
+  if(!cached) return;
+  const av = document.getElementById('brand-avatar');
+  const nm = document.getElementById('brand-name');
+  const em = document.getElementById('brand-email');
+  if(av){
+    if(cached.photoURL){
+      av.innerHTML='<img src="'+cached.photoURL+'" style="width:48px;height:48px;border-radius:50%;object-fit:cover;">';
+    } else {
+      av.textContent=(cached.displayName||cached.email||'A')[0].toUpperCase();
+    }
+  }
+  if(nm) nm.textContent=cached.displayName||'';
+  if(em) em.textContent=cached.email||'';
 }
 
 // Close search on outside click
