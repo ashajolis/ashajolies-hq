@@ -1033,14 +1033,14 @@ self.addEventListener('fetch',e=>{
         onkeydown="if(event.key==='Enter')loginEmail()">
     </div>
 
-    <button onclick="loginEmail()" id="li-btn"
+    <button id="li-btn"
       style="width:100%;background:var(--terracotta);color:#fff;border:none;border-radius:100px;padding:11px;font-family:'Jost',sans-serif;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;margin-bottom:10px;">
       Sign In
     </button>
 
     <div style="text-align:center;font-size:11px;color:rgba(250,246,239,.3);margin-bottom:10px;">or</div>
 
-    <button onclick="loginGoogle()"
+    <button id="li-google-btn"
       style="width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);color:var(--ivory);border-radius:100px;padding:10px;font-family:'Jost',sans-serif;font-size:12px;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">
       <svg width="16" height="16" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.35-8.16 2.35-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
       Continue with Google
@@ -1072,7 +1072,7 @@ self.addEventListener('fetch',e=>{
         style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:10px 13px;font-family:'Jost',sans-serif;font-size:13px;color:var(--ivory);outline:none;"
         onkeydown="if(event.key==='Enter')signupEmail()">
     </div>
-    <button onclick="signupEmail()"
+    <button id="su-btn"
       style="width:100%;background:var(--terracotta);color:#fff;border:none;border-radius:100px;padding:11px;font-family:'Jost',sans-serif;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;margin-bottom:12px;">
       Create Account
     </button>
@@ -1093,7 +1093,7 @@ self.addEventListener('fetch',e=>{
         style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:10px 13px;font-family:'Jost',sans-serif;font-size:13px;color:var(--ivory);outline:none;"
         onkeydown="if(event.key==='Enter')sendReset()">
     </div>
-    <button onclick="sendReset()"
+    <button id="rs-btn"
       style="width:100%;background:var(--terracotta);color:#fff;border:none;border-radius:100px;padding:11px;font-family:'Jost',sans-serif;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;margin-bottom:12px;">
       Send Reset Link
     </button>
@@ -1412,42 +1412,8 @@ onAuthStateChanged(auth, async user => {
 });
 
 // ── Auth actions exposed to regular script ──
-window.forceSyncPull = async function(){
-  const uid = auth.currentUser?.uid;
-  const el = document.getElementById('sb-saved');
-  const btn = document.getElementById('sb-sync-btn');
-  if(!uid){ if(typeof toast==='function') toast('Not signed in'); return; }
-  if(!navigator.onLine){ if(typeof toast==='function') toast('You are offline'); return; }
-  if(btn) btn.style.opacity='0.4';
-  if(el) el.textContent = 'Pulling…';
-  try {
-    const snap = await getDoc(doc(db,'users',uid,'hq','main'));
-    if(snap.exists()){ const d=snap.data(); Object.keys(d).forEach(k=>{ if(k in window.D) window.D[k]=d[k]; }); }
-    for(const k of HEAVY){
-      const s = await getDoc(doc(db,'users',uid,'hq',k));
-      if(s.exists() && s.data()[k]!==undefined) window.D[k]=s.data()[k];
-    }
-    lsSave(window.D);
-    lsClearDirty();
-    if(el){ const n=new Date(); el.textContent='Synced ✓ '+n.toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit'}); }
-    if(typeof toast==='function') toast('Data refreshed ✓');
-    if(typeof rDash==='function') rDash();
-    if(typeof rIdeas==='function') rIdeas();
-    if(typeof rContent==='function') rContent();
-    if(typeof rGigs==='function') rGigs();
-    if(typeof rFollowups==='function') rFollowups();
-    if(typeof rBrand==='function') rBrand();
-    if(typeof rPitches==='function') rPitches();
-    if(typeof rCal==='function') rCal();
-  } catch(e){
-    console.error('forceSyncPull error',e);
-    if(el) el.textContent='⚠ Pull failed';
-    if(typeof toast==='function') toast('Sync failed — try again');
-  }
-  if(btn) btn.style.opacity='1';
-};
-
-window.loginEmail = async function(){
+// ── Wire up all auth buttons inside the module so Firebase auth is in scope ──
+document.getElementById('li-btn')?.addEventListener('click', async () => {
   const email = document.getElementById('li-email').value.trim();
   const pass  = document.getElementById('li-pass').value;
   const err   = document.getElementById('login-err');
@@ -1460,19 +1426,20 @@ window.loginEmail = async function(){
     err.style.display='block';
   }
   btn.textContent='Sign In'; btn.disabled=false;
-};
+});
 
-window.loginGoogle = async function(){
+document.getElementById('li-google-btn')?.addEventListener('click', async () => {
+  const err = document.getElementById('login-err');
+  err.style.display='none';
   try {
     await signInWithPopup(auth, gProvider);
   } catch(e){
-    const err = document.getElementById('login-err');
     err.textContent = friendlyAuthError(e.code);
     err.style.display='block';
   }
-};
+});
 
-window.signupEmail = async function(){
+document.getElementById('su-btn')?.addEventListener('click', async () => {
   const email = document.getElementById('su-email').value.trim();
   const pass  = document.getElementById('su-pass').value;
   const err   = document.getElementById('su-err');
@@ -1483,35 +1450,63 @@ window.signupEmail = async function(){
     err.textContent = friendlyAuthError(e.code);
     err.style.display='block';
   }
-};
+});
 
-window.sendReset = async function(){
+document.getElementById('rs-btn')?.addEventListener('click', async () => {
   const email = document.getElementById('rs-email').value.trim();
   const msg   = document.getElementById('rs-msg');
   try {
     await sendPasswordResetEmail(auth, email);
+    msg.style.background='rgba(74,107,80,.15)'; msg.style.color='#8ecf96';
     msg.textContent='Reset link sent! Check your inbox.';
     msg.style.display='block';
   } catch(e){
-    msg.style.background='rgba(192,57,43,.15)';
-    msg.style.color='#e87c6a';
+    msg.style.background='rgba(192,57,43,.15)'; msg.style.color='#e87c6a';
     msg.textContent = friendlyAuthError(e.code);
     msg.style.display='block';
   }
-};
+});
+
+// Also wire keyboard Enter on password fields
+document.getElementById('li-pass')?.addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('li-btn')?.click(); });
+document.getElementById('li-email')?.addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('li-pass')?.focus(); });
+document.getElementById('su-pass')?.addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('su-btn')?.click(); });
+document.getElementById('rs-email')?.addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('rs-btn')?.click(); });
 
 window.authSignOut = async function(){
   await signOut(auth);
-  // Clear cached session so offline mode doesn't re-login automatically
   try { localStorage.removeItem(LS_USER); localStorage.removeItem(LS_DIRTY); } catch(e){}
   window.D = DEFAULTS();
   window._fbReady = false;
   if(typeof toast==='function') toast('Signed out 👋');
 };
 
-window.showSignup = ()=>{ document.getElementById('login-box').style.display='none'; document.getElementById('reset-box').style.display='none'; document.getElementById('signup-box').style.display='block'; };
-window.showLogin  = ()=>{ document.getElementById('signup-box').style.display='none'; document.getElementById('reset-box').style.display='none'; document.getElementById('login-box').style.display='block'; };
-window.showReset  = ()=>{ document.getElementById('login-box').style.display='none'; document.getElementById('signup-box').style.display='none'; document.getElementById('reset-box').style.display='block'; };
+window.forceSyncPull = async function(){
+  const uid = auth.currentUser?.uid;
+  const el  = document.getElementById('sb-saved');
+  const btn = document.getElementById('sb-sync-btn');
+  if(!uid){ if(typeof toast==='function') toast('Not signed in'); return; }
+  if(!navigator.onLine){ if(typeof toast==='function') toast('You are offline'); return; }
+  if(btn) btn.style.opacity='0.4';
+  if(el) el.textContent='Pulling…';
+  try {
+    const snap = await getDoc(doc(db,'users',uid,'hq','main'));
+    if(snap.exists()){ const d=snap.data(); Object.keys(d).forEach(k=>{ if(k in window.D) window.D[k]=d[k]; }); }
+    for(const k of HEAVY){
+      const s = await getDoc(doc(db,'users',uid,'hq',k));
+      if(s.exists() && s.data()[k]!==undefined) window.D[k]=s.data()[k];
+    }
+    lsSave(window.D); lsClearDirty();
+    if(el){ const n=new Date(); el.textContent='Synced ✓ '+n.toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit'}); }
+    if(typeof toast==='function') toast('Data refreshed ✓');
+    ['rDash','rIdeas','rContent','rGigs','rFollowups','rBrand','rPitches','rCal'].forEach(fn=>{ if(typeof window[fn]==='function') window[fn](); });
+  } catch(e){
+    console.error('forceSyncPull error',e);
+    if(el) el.textContent='⚠ Pull failed';
+    if(typeof toast==='function') toast('Sync failed — try again');
+  }
+  if(btn) btn.style.opacity='1';
+};
 
 function friendlyAuthError(code){
   const map = {
