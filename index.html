@@ -401,6 +401,7 @@ body{background:var(--ivory);font-family:'Jost',sans-serif;font-weight:300;color
         <div id="sb-saved" style="font-size:9px;color:rgba(250,246,239,.22);font-family:'DM Mono',monospace;">Connecting…</div>
       </div>
       <button onclick="authSignOut()" title="Sign out" style="background:none;border:1px solid rgba(255,255,255,.1);border-radius:7px;padding:4px 7px;cursor:pointer;font-size:12px;color:rgba(250,246,239,.35);flex-shrink:0;" onmouseover="this.style.color='var(--ivory)'" onmouseout="this.style.color='rgba(250,246,239,.35)'">⏻</button>
+      <button onclick="forceSyncPull()" title="Pull latest data from cloud" id="sb-sync-btn" style="background:none;border:1px solid rgba(255,255,255,.1);border-radius:7px;padding:4px 7px;cursor:pointer;font-size:12px;color:rgba(250,246,239,.35);flex-shrink:0;" onmouseover="this.style.color='var(--ivory)'" onmouseout="this.style.color='rgba(250,246,239,.35)'">↻</button>
     </div>
   </div>
 </aside>
@@ -1271,6 +1272,14 @@ window.addEventListener('online', async () => {
     lsClearDirty();
     if(el){ const n=new Date(); el.textContent='Synced ✓ '+n.toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit'}); }
     if(typeof toast==='function') toast('Back online — all changes synced ✓');
+    if(typeof rDash==='function') rDash();
+    if(typeof rIdeas==='function') rIdeas();
+    if(typeof rContent==='function') rContent();
+    if(typeof rGigs==='function') rGigs();
+    if(typeof rFollowups==='function') rFollowups();
+    if(typeof rBrand==='function') rBrand();
+    if(typeof rPitches==='function') rPitches();
+    if(typeof rCal==='function') rCal();
   } catch(e){
     console.error('Online sync error', e);
     if(el) el.textContent='⚠ Sync failed';
@@ -1318,6 +1327,13 @@ async function loadUserData(uid) {
       // Already booted from local data — re-render with fresh Firebase data
       if(typeof renderPage==='function' && typeof currentPage!=='undefined') renderPage(currentPage);
       if(typeof rDash==='function') rDash();
+      if(typeof rIdeas==='function') rIdeas();
+      if(typeof rContent==='function') rContent();
+      if(typeof rGigs==='function') rGigs();
+      if(typeof rFollowups==='function') rFollowups();
+      if(typeof rBrand==='function') rBrand();
+      if(typeof rPitches==='function') rPitches();
+      if(typeof rCal==='function') rCal();
     }
   } catch(e){
     console.error('Load error',e);
@@ -1396,7 +1412,40 @@ onAuthStateChanged(auth, async user => {
 });
 
 // ── Auth actions exposed to regular script ──
-window.loginEmail = async function(){
+window.forceSyncPull = async function(){
+  const uid = auth.currentUser?.uid;
+  const el = document.getElementById('sb-saved');
+  const btn = document.getElementById('sb-sync-btn');
+  if(!uid){ if(typeof toast==='function') toast('Not signed in'); return; }
+  if(!navigator.onLine){ if(typeof toast==='function') toast('You are offline'); return; }
+  if(btn) btn.style.opacity='0.4';
+  if(el) el.textContent = 'Pulling…';
+  try {
+    const snap = await getDoc(doc(db,'users',uid,'hq','main'));
+    if(snap.exists()){ const d=snap.data(); Object.keys(d).forEach(k=>{ if(k in window.D) window.D[k]=d[k]; }); }
+    for(const k of HEAVY){
+      const s = await getDoc(doc(db,'users',uid,'hq',k));
+      if(s.exists() && s.data()[k]!==undefined) window.D[k]=s.data()[k];
+    }
+    lsSave(window.D);
+    lsClearDirty();
+    if(el){ const n=new Date(); el.textContent='Synced ✓ '+n.toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit'}); }
+    if(typeof toast==='function') toast('Data refreshed ✓');
+    if(typeof rDash==='function') rDash();
+    if(typeof rIdeas==='function') rIdeas();
+    if(typeof rContent==='function') rContent();
+    if(typeof rGigs==='function') rGigs();
+    if(typeof rFollowups==='function') rFollowups();
+    if(typeof rBrand==='function') rBrand();
+    if(typeof rPitches==='function') rPitches();
+    if(typeof rCal==='function') rCal();
+  } catch(e){
+    console.error('forceSyncPull error',e);
+    if(el) el.textContent='⚠ Pull failed';
+    if(typeof toast==='function') toast('Sync failed — try again');
+  }
+  if(btn) btn.style.opacity='1';
+};
   const email = document.getElementById('li-email').value.trim();
   const pass  = document.getElementById('li-pass').value;
   const err   = document.getElementById('login-err');
