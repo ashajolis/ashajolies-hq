@@ -576,6 +576,7 @@ body{background:var(--ivory);font-family:'Jost',sans-serif;font-weight:300;color
     <button class="br-tab" onclick="swBrand('rates',this)">💲 Rates</button>
     <button class="br-tab" onclick="swBrand('niches',this)">🏷 Niches</button>
     <button class="br-tab" onclick="swBrand('bio',this)">📝 Bio</button>
+    <button class="br-tab" onclick="swBrand('account',this)">👤 Account</button>
   </div>
 
   <div class="br-sec active" id="br-colors">
@@ -633,9 +634,26 @@ body{background:var(--ivory);font-family:'Jost',sans-serif;font-weight:300;color
       <div class="fr"><div class="fg"><label class="fl">YouTube</label><input class="fi" id="l-yt"></div><div class="fg"><label class="fl">Portfolio</label><input class="fi" id="l-port"></div></div>
     </div></div>
   </div>
+  <div class="br-sec" id="br-account">
+    <div class="card" style="max-width:480px;">
+      <div class="ch"><span class="ct">Your Account</span></div>
+      <div class="cb">
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:18px;padding-bottom:18px;border-bottom:1px solid rgba(0,0,0,.06);">
+          <div id="brand-avatar" style="width:54px;height:54px;border-radius:50%;background:var(--terracotta);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:600;color:#fff;flex-shrink:0;overflow:hidden;"></div>
+          <div>
+            <div id="brand-name" style="font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:400;line-height:1.2;"></div>
+            <div id="brand-email" style="font-size:11px;color:var(--warm-gray);margin-top:2px;font-family:'DM Mono',monospace;"></div>
+          </div>
+        </div>
+        <div style="background:rgba(74,107,80,.07);border:1px solid rgba(74,107,80,.15);border-radius:10px;padding:11px 14px;margin-bottom:16px;">
+          <div style="font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--forest);font-weight:600;margin-bottom:3px;">Sync Status</div>
+          <div style="font-size:12px;color:var(--ink);">Your data syncs automatically across all your devices via Firebase. Log in on any device with the same account to access everything.</div>
+        </div>
+        <button class="btn btn-d btn-s" onclick="authSignOut()" style="width:100%;justify-content:center;display:flex;">⏻ Sign Out</button>
+      </div>
+    </div>
+  </div>
 </div>
-
-  </div><!-- ca -->
 </div><!-- main -->
 
 <!-- ═══ SEARCH OVERLAY ═══ -->
@@ -1922,8 +1940,26 @@ function swBrand(tab,el){
   document.querySelectorAll('.br-tab').forEach(b=>b.classList.remove('active'));
   document.querySelectorAll('.br-sec').forEach(s=>s.classList.remove('active'));
   el.classList.add('active');document.getElementById('br-'+tab)?.classList.add('active');
+  if(tab==='account') populateBrandAccount();
 }
 function rBrand(){rColors();rVisuals();rOutfits();rLocs();rCams();rRates();rNiches();rBio();}
+
+function populateBrandAccount(){
+  const cached=(function(){try{const r=localStorage.getItem('ajhq_user_v1');return r?JSON.parse(r):null;}catch(e){return null;}})();
+  if(!cached)return;
+  const av=document.getElementById('brand-avatar');
+  const nm=document.getElementById('brand-name');
+  const em=document.getElementById('brand-email');
+  if(av){
+    if(cached.photoURL){
+      av.innerHTML='<img src="'+cached.photoURL+'" style="width:54px;height:54px;border-radius:50%;object-fit:cover;">';
+    } else {
+      av.textContent=(cached.displayName||cached.email||'A')[0].toUpperCase();
+    }
+  }
+  if(nm)nm.textContent=cached.displayName||'';
+  if(em)em.textContent=cached.email||'';
+}
 
 function rColors(){
   const el=document.getElementById('color-grid');
