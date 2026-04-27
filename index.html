@@ -1131,8 +1131,8 @@ const db   = getFirestore(app);
 const auth = getAuth(app);
 const gProvider = new GoogleAuthProvider();
 
-const HEAVY      = ['feedIg','feedTt','feedBank','visuals','outfits','moodboards'];
-const LIGHT_KEYS = ['gigs','content','ideas','followups','pitches','rates','colors','niches','platforms','bio','links','locations','cameras','calM','calY'];
+const HEAVY      = ['feedIg','feedTt','feedBank','visuals','outfits','moodboards','locations','cameras'];
+const LIGHT_KEYS = ['gigs','content','ideas','followups','pitches','rates','colors','niches','platforms','bio','links','calM','calY'];
 const LS_KEY     = 'ajhq_data_v1';
 const LS_USER    = 'ajhq_user_v1';
 const LS_DIRTY   = 'ajhq_dirty_v1';
@@ -1222,12 +1222,33 @@ const DEFAULTS = () => ({
 
 window.D = DEFAULTS();
 
+// ── Base64 stripping helpers (prevent Firestore 1MB limit errors) ──
+const BASE64_RE = /^data:[^;]+;base64,/;
+function isBase64(v){ return typeof v === 'string' && BASE64_RE.test(v); }
+
+// Recursively strip base64 strings from a value (replace with placeholder)
+function stripBase64(val){
+  if(isBase64(val)) return '__b64__';
+  if(Array.isArray(val)) return val.map(stripBase64);
+  if(val && typeof val === 'object'){
+    const out = {};
+    for(const k in val) out[k] = stripBase64(val[k]);
+    return out;
+  }
+  return val;
+}
+
+// Build a Firestore-safe copy of a HEAVY field value
+function heavyForFirestore(val){
+  return stripBase64(val);
+}
+
 // ── Save (local-first, then Firebase) ──
 let _saveTimer = null;
 window.save = function() {
   const el = document.getElementById('sb-saved');
   if(el) el.textContent = 'Saving…';
-  // Always save to localStorage immediately
+  // Always save to localStorage immediately (full data including base64)
   lsSave(window.D);
   lsMarkDirty();
   clearTimeout(_saveTimer);
@@ -1246,7 +1267,7 @@ window.save = function() {
       LIGHT_KEYS.forEach(k => light[k] = window.D[k]);
       await setDoc(doc(db,'users',uid,'hq','main'), light, {merge:true});
       for(const k of HEAVY)
-        await setDoc(doc(db,'users',uid,'hq', k), {[k]: window.D[k]});
+        await setDoc(doc(db,'users',uid,'hq', k), {[k]: heavyForFirestore(window.D[k])});
       lsClearDirty();
       if(el){ const n=new Date(); el.textContent='Synced ✓ '+n.toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit'}); }
     } catch(e){
@@ -1268,7 +1289,7 @@ window.addEventListener('online', async () => {
     LIGHT_KEYS.forEach(k => light[k] = window.D[k]);
     await setDoc(doc(db,'users',uid,'hq','main'), light, {merge:true});
     for(const k of HEAVY)
-      await setDoc(doc(db,'users',uid,'hq', k), {[k]: window.D[k]});
+      await setDoc(doc(db,'users',uid,'hq', k), {[k]: heavyForFirestore(window.D[k])});
     lsClearDirty();
     if(el){ const n=new Date(); el.textContent='Synced ✓ '+n.toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit'}); }
     if(typeof toast==='function') toast('Back online — all changes synced ✓');
@@ -1276,7 +1297,7 @@ window.addEventListener('online', async () => {
     if(typeof rIdeas==='function') rIdeas();
     if(typeof rContent==='function') rContent();
     if(typeof rGigs==='function') rGigs();
-    if(typeof rFollowups==='function') rFollowups();
+    if(typeof rFU==='function') rFU();
     if(typeof rBrand==='function') rBrand();
     if(typeof rPitches==='function') rPitches();
     if(typeof rCal==='function') rCal();
@@ -1330,7 +1351,7 @@ async function loadUserData(uid) {
       if(typeof rIdeas==='function') rIdeas();
       if(typeof rContent==='function') rContent();
       if(typeof rGigs==='function') rGigs();
-      if(typeof rFollowups==='function') rFollowups();
+      if(typeof rFU==='function') rFU();
       if(typeof rBrand==='function') rBrand();
       if(typeof rPitches==='function') rPitches();
       if(typeof rCal==='function') rCal();
@@ -1347,8 +1368,6 @@ async function loadUserData(uid) {
 }
 
 // ── Auth state observer ──
-let _appBooted = false;
-
 // Offline boot timeout: if Firebase auth hasn't responded in 4s and we have local data, boot from cache
 setTimeout(() => {
   if(window._fbReady) return; // already booted
@@ -1357,8 +1376,8 @@ setTimeout(() => {
   if(cachedUser && localData) {
     console.log('AJ HQ: Firebase timeout — booting from local cache');
     const loginScreen = document.getElementById('login-screen');
-    if(loginScreen && loginScreen.style.display !== 'none') {
-      // Only boot offline if login screen is still showing (not yet authenticated)
+    // Guard: only boot if login screen is still visible AND app hasn't already booted
+    if(loginScreen && loginScreen.style.display !== 'none' && !window._appBooted) {
       bootWithUser(cachedUser);
       Object.keys(localData).forEach(k => { if(k in window.D) window.D[k] = localData[k]; });
       const el = document.getElementById('sb-saved');
@@ -1499,7 +1518,7 @@ window.forceSyncPull = async function(){
     lsSave(window.D); lsClearDirty();
     if(el){ const n=new Date(); el.textContent='Synced ✓ '+n.toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit'}); }
     if(typeof toast==='function') toast('Data refreshed ✓');
-    ['rDash','rIdeas','rContent','rGigs','rFollowups','rBrand','rPitches','rCal'].forEach(fn=>{ if(typeof window[fn]==='function') window[fn](); });
+    ['rDash','rIdeas','rContent','rGigs','rFU','rBrand','rPitches','rCal'].forEach(fn=>{ if(typeof window[fn]==='function') window[fn](); });
   } catch(e){
     console.error('forceSyncPull error',e);
     if(el) el.textContent='⚠ Pull failed';
@@ -2323,7 +2342,11 @@ function saveMB(){
 function clearMBAll(){if(!confirm('Clear all moodboard elements?'))return;D.moodboards[mbKey]={items:[],drawing:''};document.getElementById('mb-cvs').innerHTML='';clearMBDraw();updateLayers();toast('Moodboard cleared');}
 
 // ── INIT ──
+let _appBooted = false;
 function init(){
+  if(_appBooted) return;
+  _appBooted = true;
+  window._appBooted = true;
   const h=new Date().getHours();
   const g=h<12?'Good morning':h<17?'Good afternoon':'Good evening';
   document.getElementById('tb-title').innerHTML=`${g}, <em>Asha</em> ✨`;
