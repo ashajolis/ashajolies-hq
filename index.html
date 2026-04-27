@@ -415,8 +415,8 @@ body{background:var(--ivory);font-family:'Jost',sans-serif;font-weight:300;color
     </div>
     <div class="tb-actions">
       <button class="btn btn-g btn-s" onclick="openGigModal()">+ Gig</button>
-      <button class="btn btn-g btn-s" onclick="openModal('content-modal')">+ Content</button>
-      <button class="btn btn-p btn-s" onclick="openModal('idea-modal')">+ Idea</button>
+      <button class="btn btn-g btn-s" onclick="openContentModal()">+ Content</button>
+      <button class="btn btn-p btn-s" onclick="openIdeaModal()">+ Idea</button>
     </div>
   </div>
   <div class="ca">
@@ -515,7 +515,7 @@ body{background:var(--ivory);font-family:'Jost',sans-serif;font-weight:300;color
 <div class="pg" id="pg-ideas">
   <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:14px;gap:10px;">
     <div><div style="font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:var(--terracotta);font-weight:500;margin-bottom:3px;">Content Concepts</div><div style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:300;">Ideas <em style="font-style:italic;color:var(--terracotta);">Library</em></div></div>
-    <button class="btn btn-p btn-s" onclick="openModal('idea-modal')">+ New Idea</button>
+    <button class="btn btn-p btn-s" onclick="openIdeaModal()">+ New Idea</button>
   </div>
   <div class="tr" id="idea-tabs">
     <button class="tb active" onclick="filterIdeas('all',this)">All</button>
@@ -1548,6 +1548,25 @@ function openGigModal(){
   populateLinks();
   openModal('gig-modal');
 }
+function openIdeaModal(){
+  resetTP('i');
+  setV('i-id','');
+  ['i-title','i-hook','i-audio','i-notes'].forEach(i=>setV(i,''));
+  setV('i-img-data','');
+  document.getElementById('i-img-pre').innerHTML='';
+  populateLinks();
+  setV('i-lgig','');
+  openModal('idea-modal');
+}
+function openContentModal(){
+  resetTP('ct');
+  setV('ct-id','');
+  ['ct-title','ct-date','ct-hook','ct-audio','ct-notes'].forEach(i=>setV(i,''));
+  setV('ct-img-data','');
+  document.getElementById('ct-img-pre').innerHTML='';
+  populateLinks();
+  openModal('content-modal');
+}
 document.querySelectorAll('.mo').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open');}));
 function populateLinks(){
   ['g-lidea','ct-lgig','ct-lidea','i-lgig'].forEach(id=>{
@@ -1760,14 +1779,14 @@ function rCal(){
     <button class="ib" onclick="delContent('${c.id}')">🗑</button>
   </div>`).join('')+'</div>';
 }
-function openCtDate(ds){setV('ct-date',ds);openModal('content-modal');}
+function openCtDate(ds){setV('ct-id','');resetTP('ct');setV('ct-date',ds);openModal('content-modal');}
 function updCtStatus(id,val){const c=D.content.find(x=>x.id===id);if(c){c.status=val;save();}toast('Status → '+val);}
 function saveContent(){
   const title=v('ct-title').trim();if(!title){toast('Title required');return;}
   const id=v('ct-id');
   const ct={id:id||'c'+Date.now(),title,niche:v('ct-niche'),platform:v('ct-plat'),date:v('ct-date'),types:TP.ct||[],status:v('ct-status'),linkedGig:v('ct-lgig'),linkedIdea:v('ct-lidea'),hook:v('ct-hook'),audio:v('ct-audio'),notes:v('ct-notes'),img:v('ct-img-data')};
   if(id)D.content=D.content.map(c=>c.id===id?ct:c);else D.content.push(ct);
-  save();closeModal('content-modal');resetTP('ct');['ct-title','ct-date','ct-hook','ct-audio','ct-notes'].forEach(i=>setV(i,''));setV('ct-img-data','');document.getElementById('ct-img-pre').innerHTML='';
+  save();closeModal('content-modal');resetTP('ct');['ct-title','ct-date','ct-hook','ct-audio','ct-notes','ct-lgig','ct-lidea','ct-id'].forEach(i=>setV(i,''));setV('ct-img-data','');document.getElementById('ct-img-pre').innerHTML='';
   rCal();rDash();toast('Content saved!');
 }
 function delContent(id){D.content=D.content.filter(c=>c.id!==id);save();rCal();rDash();}
@@ -1817,14 +1836,17 @@ function saveIdea(){
   const id=v('i-id');
   const idea={id:id||'i'+Date.now(),title,niche:v('i-niche'),platform:v('i-plat'),status:v('i-status'),types:TP.i||[],linkedGig:v('i-lgig'),hook:v('i-hook'),audio:v('i-audio'),notes:v('i-notes'),img:v('i-img-data'),added:Date.now()};
   if(id)D.ideas=D.ideas.map(x=>x.id===id?idea:x);else D.ideas.push(idea);
-  save();closeModal('idea-modal');resetTP('i');['i-title','i-hook','i-audio','i-notes'].forEach(i=>setV(i,''));setV('i-img-data','');document.getElementById('i-img-pre').innerHTML='';
+  save();closeModal('idea-modal');resetTP('i');['i-title','i-hook','i-audio','i-notes','i-lgig','i-id'].forEach(i=>setV(i,''));setV('i-img-data','');document.getElementById('i-img-pre').innerHTML='';
   rIdeas(ideaFilt);rDash();toast('Idea saved!');
 }
 function delIdea(id){if(!confirm('Delete idea?'))return;D.ideas=D.ideas.filter(x=>x.id!==id);save();rIdeas(ideaFilt);}
 function schedIdeaToContent(id){
   const idea=D.ideas.find(x=>x.id===id);if(!idea)return;
+  setV('ct-id','');
   setV('ct-title',idea.title);setV('ct-hook',idea.hook||'');setV('ct-audio',idea.audio||'');setV('ct-notes',idea.notes||'');setV('ct-plat',idea.platform);setV('ct-niche',idea.niche.includes('Beauty')?'Beauty & Skincare':idea.niche.includes('Hair')?'Hair Care':idea.niche.includes('Lifestyle')?'Lifestyle & Home':idea.niche.includes('Tech')?'Tech & Apps':idea.niche);
   setTP('ct',idea.types||[]);
+  setV('ct-img-data','');document.getElementById('ct-img-pre').innerHTML='';
+  populateLinks();setV('ct-lidea',idea.id);
   openModal('content-modal');
 }
 
@@ -1884,8 +1906,10 @@ function renderPitches(q=''){
   </div>`).join('');
 }
 function togglePitch(id){document.getElementById('pi-'+id)?.classList.toggle('open');}
-function cpPitch(id){const p=D.pitches.find(x=>x.id===id);if(!p)return;navigator.clipboard?.writeText(p.body).then(()=>toast('Pitch copied! ✓'));}
-function cpTxt(txt,msg){navigator.clipboard?.writeText(txt).then(()=>toast(msg||'Copied!'));}
+function cpPitch(id){const p=D.pitches.find(x=>x.id===id);if(!p)return;navigator.clipboard?.writeText(p.body).then(()=>{const btn=document.getElementById('cpb-'+id);if(btn){btn.textContent='Copied! ✓';setTimeout(()=>btn.textContent='Copy Pitch',1800);}toast('Pitch copied! ✓');});}
+function cpTxt(txt,msg){// txt may be escaped; decode before copying
+  const d=document.createElement('textarea');d.innerHTML=txt;const raw=d.value;
+  navigator.clipboard?.writeText(raw).then(()=>toast(msg||'Copied!'));}
 function savePitch(){
   const name=v('p-name').trim();const body=v('p-body').trim();if(!name||!body){toast('Name and body required');return;}
   D.pitches.push({id:'p'+Date.now(),name,niche:v('p-niche'),type:v('p-type'),platform:v('p-plat'),subject:v('p-subj'),body});
@@ -2223,6 +2247,9 @@ function init(){
   document.getElementById('tb-title').innerHTML=`${g}, <em>Asha</em> ✨`;
   setMBT('sel');
   rDash();
+  // Pre-render calendar label so it's correct before user navigates there
+  const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  setEl('cal-label',MONTHS[D.calM]+' '+D.calY);
   setEl('gig-badge',D.gigs.filter(g=>!['delivered','declined'].includes(g.status)).length||'');
   setEl('fu-badge',D.followups.filter(f=>!f.done).length||'');
 }
