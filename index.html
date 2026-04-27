@@ -1108,13 +1108,30 @@ self.addEventListener('fetch',e=>{
 </div>
 
 <!-- Firebase bootstrap: Auth + Firestore, exposes window.D, window.save, window._fbReady -->
-<script type="module">
-import { initializeApp }                                          from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-import { getFirestore, doc, getDoc, setDoc }                     from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
-import { getAuth, onAuthStateChanged,
-         signInWithEmailAndPassword, createUserWithEmailAndPassword,
-         sendPasswordResetEmail, signOut,
-         GoogleAuthProvider, signInWithPopup }                    from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+<!-- Uses compat SDK so it works on all mobile browsers, WebViews, and PWAs -->
+<script>
+// ── Compat SDK loader ────────────────────────────────────────────
+(function _loadFbCompat() {
+  const B = 'https://www.gstatic.com/firebasejs/9.23.0';
+  ['firebase-app-compat.js','firebase-auth-compat.js','firebase-firestore-compat.js'].forEach(function(f){
+    var s = document.createElement('script');
+    s.src = B + '/' + f;
+    s.async = false;
+    document.head.appendChild(s);
+  });
+})();
+</script>
+<script>
+// wait for compat SDKs then run Firebase init
+(function waitForFirebase() {
+  if (typeof firebase !== 'undefined' && firebase.auth && firebase.firestore) {
+    _initFirebase();
+  } else {
+    setTimeout(waitForFirebase, 50);
+  }
+})();
+
+function _initFirebase() {
 
 const firebaseConfig = {
   apiKey: "AIzaSyCwxs5BnMb9Josvq8JZwo7esEhX6Y-0uN0",
@@ -1126,10 +1143,14 @@ const firebaseConfig = {
   measurementId: "G-BXRLY66TM6"
 };
 
-const app  = initializeApp(firebaseConfig);
-const db   = getFirestore(app);
-const auth = getAuth(app);
-const gProvider = new GoogleAuthProvider();
+if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+const db   = firebase.firestore();
+const auth = firebase.auth();
+const gProvider = new firebase.auth.GoogleAuthProvider();
+
+// Enable offline persistence for cross-device reliability
+db.enablePersistence({synchronizeTabs: true}).catch(function(){});
+
 
 const HEAVY      = ['feedIg','feedTt','feedBank','visuals','outfits','moodboards','locations','cameras'];
 const LIGHT_KEYS = ['gigs','content','ideas','followups','pitches','rates','colors','niches','platforms','bio','links','calM','calY'];
@@ -1252,8 +1273,8 @@ window.save = function() {
   lsSave(window.D);
   lsMarkDirty();
   clearTimeout(_saveTimer);
-  _saveTimer = setTimeout(async () => {
-    const uid = auth.currentUser?.uid;
+  _saveTimer = setTimeout(function() {
+    const uid = auth.currentUser && auth.currentUser.uid;
     if(!uid){
       if(el) el.textContent = '💾 Saved locally';
       return;
@@ -1262,63 +1283,95 @@ window.save = function() {
       if(el) el.textContent = '📴 Offline — saved locally';
       return;
     }
-    try {
-      const light = {};
-      LIGHT_KEYS.forEach(k => light[k] = window.D[k]);
-      await setDoc(doc(db,'users',uid,'hq','main'), light, {merge:true});
-      for(const k of HEAVY)
-        await setDoc(doc(db,'users',uid,'hq', k), {[k]: heavyForFirestore(window.D[k])});
-      lsClearDirty();
-      if(el){ const n=new Date(); el.textContent='Synced ✓ '+n.toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit'}); }
-    } catch(e){
-      console.error('Save error',e);
-      if(el) el.textContent='💾 Saved locally (sync pending)';
-    }
+    const light = {};
+    LIGHT_KEYS.forEach(function(k){ light[k] = window.D[k]; });
+    db.collection('users').doc(uid).collection('hq').doc('main').set(light, {merge:true})
+      .then(function(){
+        const heavyPromises = HEAVY.map(function(k){
+          const v = {}; v[k] = heavyForFirestore(window.D[k]);
+          return db.collection('users').doc(uid).collection('hq').doc(k).set(v);
+        });
+        return Promise.all(heavyPromises);
+      })
+      .then(function(){
+        lsClearDirty();
+        if(el){ const n=new Date(); el.textContent='Synced ✓ '+n.toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit'}); }
+      })
+      .catch(function(e){
+        console.error('Save error',e);
+        if(el) el.textContent='💾 Saved locally (sync pending)';
+      });
   }, 800);
 };
 
+// ── Real-time listener: push changes from other devices immediately ──
+let _unsubMain = null;
+function _startRealtimeSync(uid) {
+  if(_unsubMain) { _unsubMain(); _unsubMain = null; }
+  _unsubMain = db.collection('users').doc(uid).collection('hq').doc('main').onSnapshot(function(snap){
+    if(!snap || !snap.exists) return;
+    const remote = snap.data();
+    // Only apply if this is a change from another device (not our own write)
+    if(lsIsDirty()) return; // we have unsaved local changes — don't overwrite
+    Object.keys(remote).forEach(function(k){ if(k in window.D) window.D[k] = remote[k]; });
+    lsSave(window.D);
+    const el = document.getElementById('sb-saved');
+    if(el){ const n=new Date(); el.textContent='Synced ✓ '+n.toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit'}); }
+    _refreshAllPages();
+  }, function(){ /* ignore snapshot errors silently */ });
+}
+
+function _refreshAllPages(){
+  if(typeof rDash==='function') rDash();
+  if(typeof rIdeas==='function') rIdeas();
+  if(typeof rContent==='function') rContent();
+  if(typeof rGigs==='function') rGigs();
+  if(typeof rFU==='function') rFU();
+  if(typeof rBrand==='function') rBrand();
+  if(typeof renderPitches==='function') renderPitches('');
+  if(typeof rCal==='function') rCal();
+}
+
 // ── Sync dirty local data to Firebase when coming back online ──
-window.addEventListener('online', async () => {
+window.addEventListener('online', function() {
   const el = document.getElementById('sb-saved');
   if(!lsIsDirty()) return;
-  const uid = auth.currentUser?.uid;
+  const uid = auth.currentUser && auth.currentUser.uid;
   if(!uid) return;
   if(el) el.textContent = '🔄 Syncing…';
-  try {
-    const light = {};
-    LIGHT_KEYS.forEach(k => light[k] = window.D[k]);
-    await setDoc(doc(db,'users',uid,'hq','main'), light, {merge:true});
-    for(const k of HEAVY)
-      await setDoc(doc(db,'users',uid,'hq', k), {[k]: heavyForFirestore(window.D[k])});
-    lsClearDirty();
-    if(el){ const n=new Date(); el.textContent='Synced ✓ '+n.toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit'}); }
-    if(typeof toast==='function') toast('Back online — all changes synced ✓');
-    if(typeof rDash==='function') rDash();
-    if(typeof rIdeas==='function') rIdeas();
-    if(typeof rContent==='function') rContent();
-    if(typeof rGigs==='function') rGigs();
-    if(typeof rFU==='function') rFU();
-    if(typeof rBrand==='function') rBrand();
-    if(typeof rPitches==='function') rPitches();
-    if(typeof rCal==='function') rCal();
-  } catch(e){
-    console.error('Online sync error', e);
-    if(el) el.textContent='⚠ Sync failed';
-  }
+  const light = {};
+  LIGHT_KEYS.forEach(function(k){ light[k] = window.D[k]; });
+  db.collection('users').doc(uid).collection('hq').doc('main').set(light, {merge:true})
+    .then(function(){
+      const heavyPromises = HEAVY.map(function(k){
+        const v = {}; v[k] = heavyForFirestore(window.D[k]);
+        return db.collection('users').doc(uid).collection('hq').doc(k).set(v);
+      });
+      return Promise.all(heavyPromises);
+    })
+    .then(function(){
+      lsClearDirty();
+      if(el){ const n=new Date(); el.textContent='Synced ✓ '+n.toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit'}); }
+      if(typeof toast==='function') toast('Back online — all changes synced ✓');
+      _refreshAllPages();
+    })
+    .catch(function(e){
+      console.error('Online sync error', e);
+      if(el) el.textContent='⚠ Sync failed';
+    });
 });
 
 // ── Load user data (local-first, then Firebase) ──
-async function loadUserData(uid) {
+function loadUserData(uid) {
   const el = document.getElementById('sb-saved');
   if(el) el.textContent = 'Loading…';
   window.D = DEFAULTS();
 
-  // 1. Load from localStorage immediately so app is usable at once
-  const local = lsLoad();
+  // 1. Load from localStorage immediately — app is usable at once
+  var local = lsLoad();
   if(local) {
-    Object.keys(local).forEach(k => { if(k in window.D) window.D[k] = local[k]; });
+    Object.keys(local).forEach(function(k){ if(k in window.D) window.D[k] = local[k]; });
     if(el) el.textContent = navigator.onLine ? 'Syncing…' : '📴 Offline — local data';
-    // Boot the app with local data right away
     window._fbReady = true;
     document.dispatchEvent(new Event('fb-ready'));
   }
@@ -1328,59 +1381,57 @@ async function loadUserData(uid) {
     return;
   }
 
-  // 2. Then fetch from Firebase in the background and merge
-  try {
-    const snap = await getDoc(doc(db,'users',uid,'hq','main'));
-    if(snap.exists()){ const d=snap.data(); Object.keys(d).forEach(k=>{ if(k in window.D) window.D[k]=d[k]; }); }
-    for(const k of HEAVY){
-      const s = await getDoc(doc(db,'users',uid,'hq',k));
-      if(s.exists() && s.data()[k]!==undefined) window.D[k]=s.data()[k];
-    }
-    // Update localStorage with latest Firebase data
-    lsSave(window.D);
-    lsClearDirty();
-    if(el){ const n=new Date(); el.textContent='Synced ✓ '+n.toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit'}); }
-    // If no local data existed, fire fb-ready now that Firebase has loaded
-    if(!window._fbReady){
-      window._fbReady = true;
-      document.dispatchEvent(new Event('fb-ready'));
-    } else {
-      // Already booted from local data — re-render with fresh Firebase data
-      if(typeof renderPage==='function' && typeof currentPage!=='undefined') renderPage(currentPage);
-      if(typeof rDash==='function') rDash();
-      if(typeof rIdeas==='function') rIdeas();
-      if(typeof rContent==='function') rContent();
-      if(typeof rGigs==='function') rGigs();
-      if(typeof rFU==='function') rFU();
-      if(typeof rBrand==='function') rBrand();
-      if(typeof rPitches==='function') rPitches();
-      if(typeof rCal==='function') rCal();
-    }
-  } catch(e){
-    console.error('Load error',e);
-    if(el) el.textContent = local ? '💾 Using local data' : '⚠ Load failed';
-    // Still need to fire fb-ready if we haven't yet, so the app doesn't hang
-    if(!window._fbReady){
-      window._fbReady = true;
-      document.dispatchEvent(new Event('fb-ready'));
-    }
-  }
+  // 2. Fetch from Firebase in background and merge
+  db.collection('users').doc(uid).collection('hq').doc('main').get()
+    .then(function(snap){
+      if(snap && snap.exists) {
+        var d = snap.data();
+        Object.keys(d).forEach(function(k){ if(k in window.D) window.D[k]=d[k]; });
+      }
+      // Fetch heavy fields
+      var heavyFetches = HEAVY.map(function(k){
+        return db.collection('users').doc(uid).collection('hq').doc(k).get()
+          .then(function(s){ if(s && s.exists && s.data()[k]!==undefined) window.D[k]=s.data()[k]; });
+      });
+      return Promise.all(heavyFetches);
+    })
+    .then(function(){
+      lsSave(window.D);
+      lsClearDirty();
+      if(el){ var n=new Date(); el.textContent='Synced ✓ '+n.toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit'}); }
+      if(!window._fbReady){
+        window._fbReady = true;
+        document.dispatchEvent(new Event('fb-ready'));
+      } else {
+        if(typeof renderPage==='function' && typeof currentPage!=='undefined') renderPage(currentPage);
+        _refreshAllPages();
+      }
+      // Start real-time listener now that initial load is complete
+      _startRealtimeSync(uid);
+    })
+    .catch(function(e){
+      console.error('Load error',e);
+      if(el) el.textContent = local ? '💾 Using local data' : '⚠ Load failed';
+      if(!window._fbReady){
+        window._fbReady = true;
+        document.dispatchEvent(new Event('fb-ready'));
+      }
+    });
 }
 
 // ── Auth state observer ──
 // Offline boot timeout: if Firebase auth hasn't responded in 4s and we have local data, boot from cache
-setTimeout(() => {
-  if(window._fbReady) return; // already booted
-  const cachedUser = lsLoadUser();
-  const localData  = lsLoad();
+setTimeout(function() {
+  if(window._fbReady) return;
+  var cachedUser = lsLoadUser();
+  var localData  = lsLoad();
   if(cachedUser && localData) {
     console.log('AJ HQ: Firebase timeout — booting from local cache');
-    const loginScreen = document.getElementById('login-screen');
-    // Guard: only boot if login screen is still visible AND app hasn't already booted
+    var loginScreen = document.getElementById('login-screen');
     if(loginScreen && loginScreen.style.display !== 'none' && !window._appBooted) {
       bootWithUser(cachedUser);
-      Object.keys(localData).forEach(k => { if(k in window.D) window.D[k] = localData[k]; });
-      const el = document.getElementById('sb-saved');
+      Object.keys(localData).forEach(function(k){ if(k in window.D) window.D[k] = localData[k]; });
+      var el = document.getElementById('sb-saved');
       if(el) el.textContent = '📴 Offline mode';
       window._fbReady = true;
       document.dispatchEvent(new Event('fb-ready'));
@@ -1389,146 +1440,143 @@ setTimeout(() => {
 }, 4000);
 
 function bootWithUser(user) {
-  const av = document.getElementById('sb-avatar');
+  var av = document.getElementById('sb-avatar');
   if(av) av.innerHTML = user.photoURL
-    ? `<img src="${user.photoURL}" style="width:28px;height:28px;border-radius:50%;object-fit:cover;">`
-    : `<div style="width:28px;height:28px;border-radius:50%;background:var(--terracotta);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:#fff;">${(user.displayName||user.displayName||user.email||'A')[0].toUpperCase()}</div>`;
-  const em = document.getElementById('sb-user-email');
+    ? '<img src="'+user.photoURL+'" style="width:28px;height:28px;border-radius:50%;object-fit:cover;">'
+    : '<div style="width:28px;height:28px;border-radius:50%;background:var(--terracotta);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:#fff;">'+(user.displayName||user.email||'A')[0].toUpperCase()+'</div>';
+  var em = document.getElementById('sb-user-email');
   if(em) em.textContent = user.displayName || user.email;
   document.getElementById('login-screen').style.display='none';
 }
 
-onAuthStateChanged(auth, async user => {
+auth.onAuthStateChanged(function(user) {
   if(user){
     lsSaveUser(user);
     bootWithUser(user);
-    await loadUserData(user.uid);
-    // loadUserData fires fb-ready itself; only fire here if it didn't (no local data + offline)
+    loadUserData(user.uid);
     if(!window._fbReady){
       window._fbReady = true;
       document.dispatchEvent(new Event('fb-ready'));
     }
   } else {
-    // Firebase says no user — but check if we have a cached session for offline use
-    const cachedUser = lsLoadUser();
-    const localData  = lsLoad();
+    var cachedUser = lsLoadUser();
+    var localData  = lsLoad();
     if(cachedUser && localData && !navigator.onLine){
-      // Offline with a previous session — boot with local data, skip login
       bootWithUser(cachedUser);
-      Object.keys(localData).forEach(k => { if(k in window.D) window.D[k] = localData[k]; });
-      const el = document.getElementById('sb-saved');
+      Object.keys(localData).forEach(function(k){ if(k in window.D) window.D[k] = localData[k]; });
+      var el = document.getElementById('sb-saved');
       if(el) el.textContent = '📴 Offline mode';
       if(!window._fbReady){
         window._fbReady = true;
         document.dispatchEvent(new Event('fb-ready'));
       }
     } else {
-      // Truly signed out or first visit — show login
       document.getElementById('login-screen').style.display='flex';
       window._fbReady = false;
     }
   }
 });
 
-// ── Auth actions exposed to regular script ──
-// ── Wire up all auth buttons inside the module so Firebase auth is in scope ──
-document.getElementById('li-btn')?.addEventListener('click', async () => {
-  const email = document.getElementById('li-email').value.trim();
-  const pass  = document.getElementById('li-pass').value;
-  const err   = document.getElementById('login-err');
-  const btn   = document.getElementById('li-btn');
+// ── Auth actions ──
+document.getElementById('li-btn') && document.getElementById('li-btn').addEventListener('click', function() {
+  var email = document.getElementById('li-email').value.trim();
+  var pass  = document.getElementById('li-pass').value;
+  var err   = document.getElementById('login-err');
+  var btn   = document.getElementById('li-btn');
   err.style.display='none'; btn.textContent='Signing in…'; btn.disabled=true;
-  try {
-    await signInWithEmailAndPassword(auth, email, pass);
-  } catch(e){
-    err.textContent = friendlyAuthError(e.code);
-    err.style.display='block';
-  }
-  btn.textContent='Sign In'; btn.disabled=false;
+  auth.signInWithEmailAndPassword(email, pass)
+    .catch(function(e){
+      err.textContent = friendlyAuthError(e.code);
+      err.style.display='block';
+    })
+    .finally(function(){ btn.textContent='Sign In'; btn.disabled=false; });
 });
 
-document.getElementById('li-google-btn')?.addEventListener('click', async () => {
-  const err = document.getElementById('login-err');
+document.getElementById('li-google-btn') && document.getElementById('li-google-btn').addEventListener('click', function() {
+  var err = document.getElementById('login-err');
   err.style.display='none';
-  try {
-    await signInWithPopup(auth, gProvider);
-  } catch(e){
+  auth.signInWithPopup(gProvider).catch(function(e){
     err.textContent = friendlyAuthError(e.code);
     err.style.display='block';
-  }
+  });
 });
 
-document.getElementById('su-btn')?.addEventListener('click', async () => {
-  const email = document.getElementById('su-email').value.trim();
-  const pass  = document.getElementById('su-pass').value;
-  const err   = document.getElementById('su-err');
+document.getElementById('su-btn') && document.getElementById('su-btn').addEventListener('click', function() {
+  var email = document.getElementById('su-email').value.trim();
+  var pass  = document.getElementById('su-pass').value;
+  var err   = document.getElementById('su-err');
   err.style.display='none';
-  try {
-    await createUserWithEmailAndPassword(auth, email, pass);
-  } catch(e){
+  auth.createUserWithEmailAndPassword(email, pass).catch(function(e){
     err.textContent = friendlyAuthError(e.code);
     err.style.display='block';
-  }
+  });
 });
 
-document.getElementById('rs-btn')?.addEventListener('click', async () => {
-  const email = document.getElementById('rs-email').value.trim();
-  const msg   = document.getElementById('rs-msg');
-  try {
-    await sendPasswordResetEmail(auth, email);
-    msg.style.background='rgba(74,107,80,.15)'; msg.style.color='#8ecf96';
-    msg.textContent='Reset link sent! Check your inbox.';
-    msg.style.display='block';
-  } catch(e){
-    msg.style.background='rgba(192,57,43,.15)'; msg.style.color='#e87c6a';
-    msg.textContent = friendlyAuthError(e.code);
-    msg.style.display='block';
-  }
+document.getElementById('rs-btn') && document.getElementById('rs-btn').addEventListener('click', function() {
+  var email = document.getElementById('rs-email').value.trim();
+  var msg   = document.getElementById('rs-msg');
+  auth.sendPasswordResetEmail(email)
+    .then(function(){
+      msg.style.background='rgba(74,107,80,.15)'; msg.style.color='#8ecf96';
+      msg.textContent='Reset link sent! Check your inbox.';
+      msg.style.display='block';
+    })
+    .catch(function(e){
+      msg.style.background='rgba(192,57,43,.15)'; msg.style.color='#e87c6a';
+      msg.textContent = friendlyAuthError(e.code);
+      msg.style.display='block';
+    });
 });
 
 // Also wire keyboard Enter on password fields
-document.getElementById('li-pass')?.addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('li-btn')?.click(); });
-document.getElementById('li-email')?.addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('li-pass')?.focus(); });
-document.getElementById('su-pass')?.addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('su-btn')?.click(); });
-document.getElementById('rs-email')?.addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('rs-btn')?.click(); });
+document.getElementById('li-pass') && document.getElementById('li-pass').addEventListener('keydown', function(e){ if(e.key==='Enter') document.getElementById('li-btn') && document.getElementById('li-btn').click(); });
+document.getElementById('li-email') && document.getElementById('li-email').addEventListener('keydown', function(e){ if(e.key==='Enter') document.getElementById('li-pass') && document.getElementById('li-pass').focus(); });
+document.getElementById('su-pass') && document.getElementById('su-pass').addEventListener('keydown', function(e){ if(e.key==='Enter') document.getElementById('su-btn') && document.getElementById('su-btn').click(); });
+document.getElementById('rs-email') && document.getElementById('rs-email').addEventListener('keydown', function(e){ if(e.key==='Enter') document.getElementById('rs-btn') && document.getElementById('rs-btn').click(); });
 
-window.authSignOut = async function(){
-  await signOut(auth);
-  try { localStorage.removeItem(LS_USER); localStorage.removeItem(LS_DIRTY); } catch(e){}
-  window.D = DEFAULTS();
-  window._fbReady = false;
-  if(typeof toast==='function') toast('Signed out 👋');
+window.authSignOut = function(){
+  if(_unsubMain){ _unsubMain(); _unsubMain=null; }
+  auth.signOut().then(function(){
+    try { localStorage.removeItem(LS_USER); localStorage.removeItem(LS_DIRTY); } catch(e){}
+    window.D = DEFAULTS();
+    window._fbReady = false;
+    if(typeof toast==='function') toast('Signed out 👋');
+  });
 };
 
-window.forceSyncPull = async function(){
-  const uid = auth.currentUser?.uid;
-  const el  = document.getElementById('sb-saved');
-  const btn = document.getElementById('sb-sync-btn');
+window.forceSyncPull = function(){
+  var uid = auth.currentUser && auth.currentUser.uid;
+  var el  = document.getElementById('sb-saved');
+  var btn = document.getElementById('sb-sync-btn');
   if(!uid){ if(typeof toast==='function') toast('Not signed in'); return; }
   if(!navigator.onLine){ if(typeof toast==='function') toast('You are offline'); return; }
   if(btn) btn.style.opacity='0.4';
   if(el) el.textContent='Pulling…';
-  try {
-    const snap = await getDoc(doc(db,'users',uid,'hq','main'));
-    if(snap.exists()){ const d=snap.data(); Object.keys(d).forEach(k=>{ if(k in window.D) window.D[k]=d[k]; }); }
-    for(const k of HEAVY){
-      const s = await getDoc(doc(db,'users',uid,'hq',k));
-      if(s.exists() && s.data()[k]!==undefined) window.D[k]=s.data()[k];
-    }
-    lsSave(window.D); lsClearDirty();
-    if(el){ const n=new Date(); el.textContent='Synced ✓ '+n.toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit'}); }
-    if(typeof toast==='function') toast('Data refreshed ✓');
-    ['rDash','rIdeas','rContent','rGigs','rFU','rBrand','rPitches','rCal'].forEach(fn=>{ if(typeof window[fn]==='function') window[fn](); });
-  } catch(e){
-    console.error('forceSyncPull error',e);
-    if(el) el.textContent='⚠ Pull failed';
-    if(typeof toast==='function') toast('Sync failed — try again');
-  }
-  if(btn) btn.style.opacity='1';
+  db.collection('users').doc(uid).collection('hq').doc('main').get()
+    .then(function(snap){
+      if(snap && snap.exists){ var d=snap.data(); Object.keys(d).forEach(function(k){ if(k in window.D) window.D[k]=d[k]; }); }
+      var heavyFetches = HEAVY.map(function(k){
+        return db.collection('users').doc(uid).collection('hq').doc(k).get()
+          .then(function(s){ if(s && s.exists && s.data()[k]!==undefined) window.D[k]=s.data()[k]; });
+      });
+      return Promise.all(heavyFetches);
+    })
+    .then(function(){
+      lsSave(window.D); lsClearDirty();
+      if(el){ var n=new Date(); el.textContent='Synced ✓ '+n.toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit'}); }
+      if(typeof toast==='function') toast('Data refreshed ✓');
+      _refreshAllPages();
+    })
+    .catch(function(e){
+      console.error('forceSyncPull error',e);
+      if(el) el.textContent='⚠ Pull failed';
+      if(typeof toast==='function') toast('Sync failed — try again');
+    })
+    .finally(function(){ if(btn) btn.style.opacity='1'; });
 };
 
 function friendlyAuthError(code){
-  const map = {
+  var map = {
     'auth/invalid-email':'Invalid email address.',
     'auth/user-not-found':'No account with that email.',
     'auth/wrong-password':'Incorrect password.',
@@ -1541,6 +1589,8 @@ function friendlyAuthError(code){
   };
   return map[code] || 'Something went wrong. Please try again.';
 }
+
+} // end _initFirebase
 </script>
 
 <script>
