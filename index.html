@@ -1124,16 +1124,23 @@ self.addEventListener('fetch',e=>{
 <script>
 // wait for compat SDKs then run Firebase init
 (function waitForFirebase() {
-  if (typeof firebase !== 'undefined' && firebase.auth && firebase.firestore) {
+  if (typeof firebase !== 'undefined' && 
+      typeof firebase.initializeApp === 'function' &&
+      typeof firebase.auth === 'function' && 
+      typeof firebase.firestore === 'function' &&
+      typeof firebase.auth.GoogleAuthProvider === 'function') {
     _initFirebase();
   } else {
     setTimeout(waitForFirebase, 50);
   }
 })();
 
+// globals so all functions can access them regardless of init timing
+var db, auth, gProvider, HEAVY, LIGHT_KEYS, LS_KEY, LS_USER, LS_DIRTY;
+
 function _initFirebase() {
 
-const firebaseConfig = {
+var firebaseConfig = {
   apiKey: "AIzaSyCwxs5BnMb9Josvq8JZwo7esEhX6Y-0uN0",
   authDomain: "ashajolies-hq.firebaseapp.com",
   projectId: "ashajolies-hq",
@@ -1144,19 +1151,18 @@ const firebaseConfig = {
 };
 
 if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-const db   = firebase.firestore();
-const auth = firebase.auth();
-const gProvider = new firebase.auth.GoogleAuthProvider();
+db   = firebase.firestore();
+auth = firebase.auth();
+gProvider = new firebase.auth.GoogleAuthProvider();
 
-// Enable offline persistence for cross-device reliability
-db.enablePersistence({synchronizeTabs: true}).catch(function(){});
+// Note: persistence skipped — compat SDK offline caching can conflict on mobile PWAs
 
 
-const HEAVY      = ['feedIg','feedTt','feedBank','visuals','outfits','moodboards','locations','cameras'];
-const LIGHT_KEYS = ['gigs','content','ideas','followups','pitches','rates','colors','niches','platforms','bio','links','calM','calY'];
-const LS_KEY     = 'ajhq_data_v1';
-const LS_USER    = 'ajhq_user_v1';
-const LS_DIRTY   = 'ajhq_dirty_v1';
+HEAVY      = ['feedIg','feedTt','feedBank','visuals','outfits','moodboards','locations','cameras'];
+LIGHT_KEYS = ['gigs','content','ideas','followups','pitches','rates','colors','niches','platforms','bio','links','calM','calY'];
+LS_KEY     = 'ajhq_data_v1';
+LS_USER    = 'ajhq_user_v1';
+LS_DIRTY   = 'ajhq_dirty_v1';
 
 // ── localStorage helpers ──
 function lsSave(data) {
@@ -1410,8 +1416,8 @@ function loadUserData(uid) {
       _startRealtimeSync(uid);
     })
     .catch(function(e){
-      console.error('Load error',e);
-      if(el) el.textContent = local ? '💾 Using local data' : '⚠ Load failed';
+      console.error('Load error', e.code, e.message, e);
+      if(el) el.textContent = local ? '💾 Using local data' : ('⚠ Load failed: '+(e.code||e.message||'unknown'));
       if(!window._fbReady){
         window._fbReady = true;
         document.dispatchEvent(new Event('fb-ready'));
@@ -1568,9 +1574,9 @@ window.forceSyncPull = function(){
       _refreshAllPages();
     })
     .catch(function(e){
-      console.error('forceSyncPull error',e);
-      if(el) el.textContent='⚠ Pull failed';
-      if(typeof toast==='function') toast('Sync failed — try again');
+      console.error('forceSyncPull error', e.code, e.message, e);
+      if(el) el.textContent='⚠ Pull failed: '+(e.code||e.message||'unknown');
+      if(typeof toast==='function') toast('Sync failed: '+(e.code||e.message||'unknown'));
     })
     .finally(function(){ if(btn) btn.style.opacity='1'; });
 };
