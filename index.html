@@ -1030,7 +1030,7 @@ self.addEventListener('fetch',e=>{
       <label style="font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:rgba(250,246,239,.4);display:block;margin-bottom:5px;">Password</label>
       <input id="li-pass" type="password" placeholder="••••••••" autocomplete="current-password"
         style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:10px 13px;font-family:'Jost',sans-serif;font-size:13px;color:var(--ivory);outline:none;"
-        onkeydown="if(event.key==='Enter')loginEmail()">
+        onkeydown="if(event.key==='Enter')document.getElementById('li-btn').click()">
     </div>
 
     <button id="li-btn"
@@ -1070,7 +1070,7 @@ self.addEventListener('fetch',e=>{
       <label style="font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:rgba(250,246,239,.4);display:block;margin-bottom:5px;">Password (min 6 chars)</label>
       <input id="su-pass" type="password" placeholder="••••••••"
         style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:10px 13px;font-family:'Jost',sans-serif;font-size:13px;color:var(--ivory);outline:none;"
-        onkeydown="if(event.key==='Enter')signupEmail()">
+        onkeydown="if(event.key==='Enter')document.getElementById('su-btn').click()">
     </div>
     <button id="su-btn"
       style="width:100%;background:var(--terracotta);color:#fff;border:none;border-radius:100px;padding:11px;font-family:'Jost',sans-serif;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;margin-bottom:12px;">
@@ -1091,7 +1091,7 @@ self.addEventListener('fetch',e=>{
     <div style="margin-bottom:20px;">
       <input id="rs-email" type="email" placeholder="you@email.com"
         style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:10px 13px;font-family:'Jost',sans-serif;font-size:13px;color:var(--ivory);outline:none;"
-        onkeydown="if(event.key==='Enter')sendReset()">
+        onkeydown="if(event.key==='Enter')document.getElementById('rs-btn').click()">
     </div>
     <button id="rs-btn"
       style="width:100%;background:var(--terracotta);color:#fff;border:none;border-radius:100px;padding:11px;font-family:'Jost',sans-serif;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;margin-bottom:12px;">
@@ -1483,6 +1483,23 @@ auth.onAuthStateChanged(function(user) {
   }
 });
 
+// ── Auth panel switchers (called from onclick in HTML) ──
+window.showLogin = function(){
+  document.getElementById('login-box').style.display='';
+  document.getElementById('signup-box').style.display='none';
+  document.getElementById('reset-box').style.display='none';
+};
+window.showSignup = function(){
+  document.getElementById('login-box').style.display='none';
+  document.getElementById('signup-box').style.display='';
+  document.getElementById('reset-box').style.display='none';
+};
+window.showReset = function(){
+  document.getElementById('login-box').style.display='none';
+  document.getElementById('signup-box').style.display='none';
+  document.getElementById('reset-box').style.display='';
+};
+
 // ── Auth actions ──
 document.getElementById('li-btn') && document.getElementById('li-btn').addEventListener('click', function() {
   var email = document.getElementById('li-email').value.trim();
@@ -1535,10 +1552,6 @@ document.getElementById('rs-btn') && document.getElementById('rs-btn').addEventL
 });
 
 // Also wire keyboard Enter on password fields
-document.getElementById('li-pass') && document.getElementById('li-pass').addEventListener('keydown', function(e){ if(e.key==='Enter') document.getElementById('li-btn') && document.getElementById('li-btn').click(); });
-document.getElementById('li-email') && document.getElementById('li-email').addEventListener('keydown', function(e){ if(e.key==='Enter') document.getElementById('li-pass') && document.getElementById('li-pass').focus(); });
-document.getElementById('su-pass') && document.getElementById('su-pass').addEventListener('keydown', function(e){ if(e.key==='Enter') document.getElementById('su-btn') && document.getElementById('su-btn').click(); });
-document.getElementById('rs-email') && document.getElementById('rs-email').addEventListener('keydown', function(e){ if(e.key==='Enter') document.getElementById('rs-btn') && document.getElementById('rs-btn').click(); });
 
 window.authSignOut = function(){
   if(_unsubMain){ _unsubMain(); _unsubMain=null; }
