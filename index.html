@@ -243,6 +243,28 @@ body{background:var(--ivory);font-family:'Jost',sans-serif;font-weight:300;color
 .pitch-item.open .pi-body{display:block;}
 .pi-pre{font-size:12px;color:var(--warm-gray);line-height:1.8;white-space:pre-wrap;}
 
+/* ─── SCRIPT SECTION ─── */
+.scr-tabs{display:flex;border-bottom:1px solid rgba(0,0,0,.07);margin:14px 0 12px;gap:0;}
+.scr-tab{padding:7px 14px;font-size:10px;font-weight:500;color:var(--warm-gray);cursor:pointer;border:none;background:transparent;border-bottom:2px solid transparent;font-family:'Jost',sans-serif;letter-spacing:.05em;text-transform:uppercase;transition:all .14s;white-space:nowrap;}
+.scr-tab.active{color:var(--terracotta);border-bottom-color:var(--terracotta);}
+.scr-panel{display:none;}.scr-panel.active{display:block;}
+.scr-textarea{width:100%;background:var(--warm-white);border:1px solid rgba(0,0,0,.09);border-radius:9px;padding:11px 13px;font-family:'Jost',sans-serif;font-size:12px;font-weight:300;color:var(--ink);outline:none;transition:border .14s;resize:vertical;min-height:130px;line-height:1.7;}
+.scr-textarea:focus{border-color:var(--terracotta);}
+.scr-hint{font-size:10px;color:var(--mid-gray);font-style:italic;margin-top:5px;}
+.scr-shot-hdr{display:grid;grid-template-columns:28px 1fr 1fr 100px 26px;gap:6px;padding:6px 0;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--warm-gray);font-weight:500;}
+.scr-shot-row{display:grid;grid-template-columns:28px 1fr 1fr 100px 26px;gap:6px;align-items:start;padding:5px 0;border-bottom:1px solid rgba(0,0,0,.04);}
+.scr-shot-row textarea{width:100%;background:var(--warm-white);border:1px solid rgba(0,0,0,.09);border-radius:7px;padding:6px 9px;font-family:'Jost',sans-serif;font-size:11px;font-weight:300;color:var(--ink);outline:none;resize:none;min-height:52px;transition:border .14s;}
+.scr-shot-row textarea:focus{border-color:var(--terracotta);}
+.scr-shot-row select{width:100%;background:var(--warm-white);border:1px solid rgba(0,0,0,.09);border-radius:7px;padding:6px 7px;font-family:'Jost',sans-serif;font-size:11px;color:var(--ink);outline:none;}
+.scr-shot-num{font-size:11px;color:var(--mid-gray);padding-top:8px;text-align:center;font-family:'DM Mono',monospace;}
+.scr-del-btn{background:none;border:1px solid rgba(0,0,0,.1);border-radius:5px;width:24px;height:24px;cursor:pointer;font-size:12px;color:var(--warm-gray);display:flex;align-items:center;justify-content:center;margin-top:6px;transition:all .14s;}
+.scr-del-btn:hover{background:rgba(192,57,43,.08);color:#c0392b;border-color:rgba(192,57,43,.2);}
+.scr-add-btn{font-size:11px;color:var(--terracotta);background:rgba(196,113,79,.07);border:1px dashed rgba(196,113,79,.3);border-radius:7px;padding:7px 14px;cursor:pointer;font-family:'Jost',sans-serif;font-weight:500;margin-top:8px;width:100%;transition:all .14s;}
+.scr-add-btn:hover{background:rgba(196,113,79,.12);}
+.scr-section-divider{display:flex;align-items:center;gap:10px;margin:18px 0 12px;}
+.scr-section-divider::before,.scr-section-divider::after{content:'';flex:1;height:1px;background:rgba(0,0,0,.07);}
+.scr-section-label{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--terracotta);font-weight:600;font-family:'DM Mono',monospace;white-space:nowrap;}
+
 /* ─── MOODBOARD ─── */
 .mb-full{position:fixed;inset:0;background:var(--warm-white);z-index:2000;display:none;flex-direction:column;}
 .mb-full.open{display:flex;}
@@ -361,37 +383,6 @@ body{background:var(--ivory);font-family:'Jost',sans-serif;font-weight:300;color
 #ios-tip.show{display:block;}
 #ios-tip strong{display:block;font-size:13px;font-weight:600;margin-bottom:6px;color:var(--blush);}
 .ios-close{margin-top:12px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);color:var(--ivory);border-radius:100px;padding:6px 18px;cursor:pointer;font-family:'Jost',sans-serif;font-size:11px;}
-
-/* ─── SCRIPTS ─── */
-.sc-item{padding:11px 14px;cursor:pointer;border-left:3px solid transparent;transition:all .12s;border-bottom:1px solid rgba(0,0,0,.04);}
-.sc-item:hover{background:rgba(196,113,79,.06);}
-.sc-item.active{border-left-color:var(--terracotta);background:rgba(196,113,79,.07);}
-.sc-item-brand{font-family:'Cormorant Garamond',serif;font-size:14px;color:var(--ink);margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.sc-item-type{font-size:9px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;color:var(--warm-gray);font-family:'DM Mono',monospace;}
-.sc-brand-input{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:300;color:var(--ink);border:none;background:transparent;outline:none;width:100%;padding:4px 0;border-bottom:2px solid transparent;transition:border-color .15s;}
-.sc-brand-input:hover{border-bottom-color:rgba(0,0,0,.1);}
-.sc-brand-input:focus{border-bottom-color:var(--terracotta);}
-.sc-tabs{display:flex;gap:0;border-bottom:1px solid rgba(0,0,0,.07);margin-bottom:16px;}
-.sc-tab{font-size:11px;font-weight:500;letter-spacing:.05em;text-transform:uppercase;padding:8px 15px;border:none;background:transparent;color:var(--warm-gray);cursor:pointer;border-bottom:2px solid transparent;font-family:'Jost',sans-serif;transition:all .13s;margin-bottom:-1px;}
-.sc-tab:hover{color:var(--terracotta);}
-.sc-tab.active{color:var(--terracotta);border-bottom-color:var(--terracotta);}
-.sc-panel{display:none;}.sc-panel.active{display:block;}
-.sc-textarea{font-family:'Jost',sans-serif;font-size:13px;line-height:1.85;color:var(--ink);border:1px solid rgba(0,0,0,.09);border-radius:9px;background:var(--warm-white);width:100%;min-height:380px;padding:16px;resize:vertical;outline:none;transition:border .14s;white-space:pre-wrap;}
-.sc-textarea:focus{border-color:var(--terracotta);}
-.sc-type-badge{font-size:9px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;padding:3px 10px;border-radius:20px;font-family:'DM Mono',monospace;display:inline-block;margin-bottom:10px;}
-.sc-shot-hdr{display:grid;grid-template-columns:36px 1fr 1fr 90px 36px;gap:0;background:var(--warm-white);border-bottom:1px solid rgba(0,0,0,.06);padding:8px 12px;}
-.sc-shot-row{display:grid;grid-template-columns:36px 1fr 1fr 90px 36px;gap:0;border-bottom:1px solid rgba(0,0,0,.04);align-items:start;}
-.sc-shot-row:last-child{border-bottom:none;}
-.sc-shot-row:hover{background:rgba(196,113,79,.04);}
-.sc-shot-num{font-size:11px;font-weight:600;color:var(--mid-gray);padding:12px 8px;align-self:center;text-align:center;}
-.sc-shot-cell textarea,.sc-shot-cell select{font-family:'Jost',sans-serif;font-size:12px;color:var(--ink);border:none;background:transparent;width:100%;padding:10px 8px;outline:none;resize:none;line-height:1.5;}
-.sc-shot-cell textarea{min-height:40px;}
-.sc-shot-cell:not(:last-child){border-right:1px solid rgba(0,0,0,.05);}
-.sc-shot-del{background:transparent;border:none;color:var(--mid-gray);cursor:pointer;font-size:14px;padding:10px;text-align:center;transition:color .12s;}
-.sc-shot-del:hover{color:#c0392b;}
-.sc-add-shot{display:flex;align-items:center;gap:6px;padding:10px 14px;font-size:11px;font-weight:500;color:var(--terracotta);cursor:pointer;background:none;border:none;letter-spacing:.05em;font-family:'Jost',sans-serif;transition:background .12s;}
-.sc-add-shot:hover{background:rgba(196,113,79,.06);}
-@media(max-width:768px){#scripts-layout{grid-template-columns:1fr!important;}}
 </style>
 </head>
 <body>
@@ -416,7 +407,6 @@ body{background:var(--ivory);font-family:'Jost',sans-serif;font-weight:300;color
     <div class="ni" onclick="goTo('feed',this)"><span class="ni-icon">🖼</span>Feed Planner</div>
     <div class="nl">Resources</div>
     <div class="ni" onclick="goTo('pitches',this)"><span class="ni-icon">✉️</span>Pitches</div>
-    <div class="ni" onclick="goTo('scripts',this)"><span class="ni-icon">🎬</span>Scripts</div>
     <div class="ni" onclick="goTo('brand',this)"><span class="ni-icon">🎨</span>Brand Hub</div>
   </nav>
   <div class="sb-foot">
@@ -594,42 +584,6 @@ body{background:var(--ivory);font-family:'Jost',sans-serif;font-weight:300;color
   </div>
   <input class="fi" style="margin-bottom:12px;" placeholder="Search pitches…" oninput="renderPitches(this.value)">
   <div id="pitch-list" style="display:flex;flex-direction:column;gap:10px;"></div>
-</div>
-
-<!-- ─── SCRIPTS ─── -->
-<div class="pg" id="pg-scripts">
-  <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:14px;gap:10px;">
-    <div><div style="font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:var(--terracotta);font-weight:500;margin-bottom:3px;">Content Scripts</div><div style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:300;">Script <em style="font-style:italic;color:var(--terracotta);">Library</em></div></div>
-    <div style="display:flex;gap:7px;">
-      <button class="btn btn-g btn-s" onclick="exportScripts()">⬇ Export</button>
-      <button class="btn btn-p btn-s" onclick="addNewScript()">+ New Script</button>
-    </div>
-  </div>
-  <div style="display:grid;grid-template-columns:220px 1fr;gap:0;background:#fff;border-radius:var(--r);border:1px solid rgba(0,0,0,.06);overflow:hidden;min-height:520px;" id="scripts-layout">
-    <!-- Sidebar -->
-    <div style="border-right:1px solid rgba(0,0,0,.06);display:flex;flex-direction:column;overflow:hidden;">
-      <div style="padding:10px 12px;border-bottom:1px solid rgba(0,0,0,.06);background:var(--warm-white);">
-        <input class="fi" id="sc-search" placeholder="Search scripts…" style="font-size:12px;padding:6px 10px;" oninput="renderScriptList()">
-      </div>
-      <div style="padding:8px 10px;border-bottom:1px solid rgba(0,0,0,.06);display:flex;flex-wrap:wrap;gap:4px;background:var(--warm-white);">
-        <button class="btn btn-g btn-s active" id="scf-all" onclick="setScriptFilter('all',this)" style="font-size:9px;padding:3px 8px;">All</button>
-        <button class="btn btn-g btn-s" id="scf-demo" onclick="setScriptFilter('Product Demo',this)" style="font-size:9px;padding:3px 8px;">Demo</button>
-        <button class="btn btn-g btn-s" id="scf-ditl" onclick="setScriptFilter('Day in the Life',this)" style="font-size:9px;padding:3px 8px;">DITL</button>
-        <button class="btn btn-g btn-s" id="scf-talk" onclick="setScriptFilter('Talking to Camera',this)" style="font-size:9px;padding:3px 8px;">Talk</button>
-        <button class="btn btn-g btn-s" id="scf-story" onclick="setScriptFilter('Storytime',this)" style="font-size:9px;padding:3px 8px;">Story</button>
-        <button class="btn btn-g btn-s" id="scf-routine" onclick="setScriptFilter('Routine',this)" style="font-size:9px;padding:3px 8px;">Routine</button>
-      </div>
-      <div id="sc-list" style="flex:1;overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(0,0,0,.1) transparent;"></div>
-    </div>
-    <!-- Editor -->
-    <div id="sc-editor" style="overflow-y:auto;padding:22px 26px;">
-      <div style="text-align:center;padding:60px 20px;color:var(--mid-gray);">
-        <div style="font-size:32px;margin-bottom:10px;opacity:.3;">🎬</div>
-        <div style="font-family:'Cormorant Garamond',serif;font-size:1.1rem;color:var(--warm-gray);">Select a script to edit</div>
-        <div style="font-size:11px;margin-top:4px;">or click <strong>+ New Script</strong> to create one</div>
-      </div>
-    </div>
-  </div>
 </div>
 
 <!-- ─── BRAND HUB ─── -->
@@ -818,6 +772,24 @@ body{background:var(--ivory);font-family:'Jost',sans-serif;font-weight:300;color
     <div class="fr"><div class="fg"><label class="fl">Linked Idea</label><select class="fs" id="g-lidea"><option value="">— none —</option></select></div><div class="fg"><label class="fl">Linked Content</label><select class="fs" id="g-lct"><option value="">— none —</option></select></div></div>
     <div class="fr f1"><div class="fg"><label class="fl">Notes / Deliverables</label><textarea class="ft" id="g-notes" placeholder="Deliverables, agreements…"></textarea></div></div>
     <div class="fr f1"><div class="fg"><label class="fl">Product Image</label><div class="uz" onclick="document.getElementById('g-img-in').click()"><input type="file" id="g-img-in" accept="image/*" onchange="handleImg(event,'g-img-pre','g-img-data')"><div style="font-size:12px;color:var(--warm-gray);">📦 Click to upload product photo</div></div><div id="g-img-pre" style="margin-top:7px;"></div><input type="hidden" id="g-img-data"></div></div>
+    <div class="scr-section-divider"><span class="scr-section-label">✍️ Script</span></div>
+    <div class="scr-tabs">
+      <button class="scr-tab active" onclick="scrTab('g','script',this)">Script</button>
+      <button class="scr-tab" onclick="scrTab('g','shots',this)">Shot List</button>
+      <button class="scr-tab" onclick="scrTab('g','scrnotes',this)">Production Notes</button>
+    </div>
+    <div class="scr-panel active" id="g-scr-script">
+      <textarea class="scr-textarea" id="g-script" placeholder="Write your script here. Use [brackets] for stage directions and cues…"></textarea>
+      <div class="scr-hint">Stage directions in [brackets] are cues for you — not spoken aloud.</div>
+    </div>
+    <div class="scr-panel" id="g-scr-shots">
+      <div class="scr-shot-hdr"><span>#</span><span>Shot Description</span><span>Direction / Notes</span><span>Type</span><span></span></div>
+      <div id="g-shot-rows"></div>
+      <button class="scr-add-btn" onclick="addScrShot('g')">+ Add shot</button>
+    </div>
+    <div class="scr-panel" id="g-scr-scrnotes">
+      <textarea class="scr-textarea" id="g-scrnotes" placeholder="Location, props, lighting notes, brand requirements, posting schedule…" style="min-height:90px;"></textarea>
+    </div>
     <div class="fa"><button class="btn btn-g" onclick="closeModal('gig-modal')">Cancel</button><button class="btn btn-p" onclick="saveGig()">Save Gig</button></div>
   </div>
 </div>
@@ -838,6 +810,24 @@ body{background:var(--ivory);font-family:'Jost',sans-serif;font-weight:300;color
     <div class="fr f1"><div class="fg"><label class="fl">Audio / Sound 🎵</label><input class="fi" id="ct-audio" placeholder="Trending sound name, original, voiceover…"></div></div>
     <div class="fr f1"><div class="fg"><label class="fl">Notes / Script</label><textarea class="ft" id="ct-notes" placeholder="Key points, products, CTA…"></textarea></div></div>
     <div class="fr f1"><div class="fg"><label class="fl">Product Image</label><div class="uz" onclick="document.getElementById('ct-img-in').click()"><input type="file" id="ct-img-in" accept="image/*" onchange="handleImg(event,'ct-img-pre','ct-img-data')"><div style="font-size:12px;color:var(--warm-gray);">📦 Click to upload product image</div></div><div id="ct-img-pre" style="margin-top:7px;"></div><input type="hidden" id="ct-img-data"></div></div>
+    <div class="scr-section-divider"><span class="scr-section-label">✍️ Script</span></div>
+    <div class="scr-tabs">
+      <button class="scr-tab active" onclick="scrTab('ct','script',this)">Script</button>
+      <button class="scr-tab" onclick="scrTab('ct','shots',this)">Shot List</button>
+      <button class="scr-tab" onclick="scrTab('ct','scrnotes',this)">Production Notes</button>
+    </div>
+    <div class="scr-panel active" id="ct-scr-script">
+      <textarea class="scr-textarea" id="ct-script" placeholder="Write your script here. Use [brackets] for stage directions and cues…"></textarea>
+      <div class="scr-hint">Stage directions in [brackets] are cues for you — not spoken aloud.</div>
+    </div>
+    <div class="scr-panel" id="ct-scr-shots">
+      <div class="scr-shot-hdr"><span>#</span><span>Shot Description</span><span>Direction / Notes</span><span>Type</span><span></span></div>
+      <div id="ct-shot-rows"></div>
+      <button class="scr-add-btn" onclick="addScrShot('ct')">+ Add shot</button>
+    </div>
+    <div class="scr-panel" id="ct-scr-scrnotes">
+      <textarea class="scr-textarea" id="ct-scrnotes" placeholder="Location, props, lighting notes, brand requirements, posting schedule…" style="min-height:90px;"></textarea>
+    </div>
     <div class="fa"><button class="btn btn-g" onclick="closeModal('content-modal')">Cancel</button><button class="btn btn-p" onclick="saveContent()">Save</button></div>
   </div>
 </div>
@@ -857,6 +847,24 @@ body{background:var(--ivory);font-family:'Jost',sans-serif;font-weight:300;color
     <div class="fr f1"><div class="fg"><label class="fl">Audio / Sound 🎵</label><input class="fi" id="i-audio" placeholder="Trending sound, original audio, voiceover…"></div></div>
     <div class="fr f1"><div class="fg"><label class="fl">Notes</label><textarea class="ft" id="i-notes" placeholder="Shot list ideas, products, references…"></textarea></div></div>
     <div class="fr f1"><div class="fg"><label class="fl">Reference Image</label><div class="uz" onclick="document.getElementById('i-img-in').click()"><input type="file" id="i-img-in" accept="image/*" onchange="handleImg(event,'i-img-pre','i-img-data')"><div style="font-size:12px;color:var(--warm-gray);">🖼 Click to upload reference image</div></div><div id="i-img-pre" style="margin-top:7px;"></div><input type="hidden" id="i-img-data"></div></div>
+    <div class="scr-section-divider"><span class="scr-section-label">✍️ Script</span></div>
+    <div class="scr-tabs">
+      <button class="scr-tab active" onclick="scrTab('i','script',this)">Script</button>
+      <button class="scr-tab" onclick="scrTab('i','shots',this)">Shot List</button>
+      <button class="scr-tab" onclick="scrTab('i','scrnotes',this)">Production Notes</button>
+    </div>
+    <div class="scr-panel active" id="i-scr-script">
+      <textarea class="scr-textarea" id="i-script" placeholder="Write your script here. Use [brackets] for stage directions and cues…"></textarea>
+      <div class="scr-hint">Stage directions in [brackets] are cues for you — not spoken aloud.</div>
+    </div>
+    <div class="scr-panel" id="i-scr-shots">
+      <div class="scr-shot-hdr"><span>#</span><span>Shot Description</span><span>Direction / Notes</span><span>Type</span><span></span></div>
+      <div id="i-shot-rows"></div>
+      <button class="scr-add-btn" onclick="addScrShot('i')">+ Add shot</button>
+    </div>
+    <div class="scr-panel" id="i-scr-scrnotes">
+      <textarea class="scr-textarea" id="i-scrnotes" placeholder="Location, props, lighting notes, brand requirements, posting schedule…" style="min-height:90px;"></textarea>
+    </div>
     <div class="fa"><button class="btn btn-g" onclick="closeModal('idea-modal')">Cancel</button><button class="btn btn-p" onclick="saveIdea()">Save Idea</button></div>
   </div>
 </div>
@@ -1227,7 +1235,7 @@ gProvider = new firebase.auth.GoogleAuthProvider();
 
 
 HEAVY      = ['feedIg','feedTt','feedBank','visuals','outfits','moodboards','locations','cameras'];
-LIGHT_KEYS = ['gigs','content','ideas','followups','pitches','scripts','rates','colors','niches','platforms','bio','links','calM','calY'];
+LIGHT_KEYS = ['gigs','content','ideas','followups','pitches','rates','colors','niches','platforms','bio','links','calM','calY'];
 LS_KEY     = 'ajhq_data_v1';
 LS_USER    = 'ajhq_user_v1';
 LS_DIRTY   = 'ajhq_dirty_v1';
@@ -1276,12 +1284,6 @@ function lsIsDirty() {
 // ── Default data ──
 const DEFAULTS = () => ({
   gigs:[],content:[],
-  scripts:[
-    {id:1,brand:"Neutrogena Hydro Boost",type:"Product Demo",script:"[Opening — hold product to camera]\n\"Okay, let me show you what Neutrogena Hydro Boost actually does on my skin. Because I've been using it for [time] and I want to give you the real review.\"\n\n[Apply to face — natural]\n\"This goes on after cleansing. [Apply.] Feel that? It absorbs fast — no sticky residue, which is the first thing I check.\"\n\n[Close-up of skin]\n\"On my skin tone — on my skin tone, specifically — it sits like [honest description]. No white cast.\"\n\n[Final look at camera]\n\"Would I repurchase? [Yes/No and why]. That's the only question that matters.\"",shots:[],notes:""},
-    {id:2,brand:"Imperial Body Care",type:"Routine",script:"[Bathroom or bedroom — post-shower energy]\n\"Body care. Let me show you how I actually do this — because body care is the step most people rush through.\"\n\n[Show Imperial products]\n\"I've been using Imperial for [time]. It works on my skin tone, doesn't leave an ashy finish, and the scent isn't fighting with everything else I'm wearing.\"\n\n[Apply — let camera see texture]\n\"I apply while my skin is still slightly damp — [show] — because it absorbs better and you use less product.\"\n\n[Finished — to camera]\n\"That's it. Less than five minutes. Imperial does the heavy lifting — I just have to show up and apply it.\"",shots:[],notes:""},
-    {id:3,brand:"Claude AI",type:"Storytime",script:"[Settle in — talking-to-camera, comfortable energy]\n\"Okay. So I want to tell you about the time I used Claude — the AI — for something I genuinely didn't expect it to help with.\"\n\n[Build just a little]\n\"I was [describe the situation — something real and relatable]. And I was stuck.\"\n\n[Gesture naturally]\n\"I'd been going back and forth on it for longer than I want to admit. And then I thought — let me just try this properly.\"\n\n[Beat]\n\"And it worked. Not in a magic way. In a 'oh, I can just think through this clearly now' way.\"\n\n[Wrap up naturally]\n\"I'm not saying replace your brain. I'm saying — if there's something sitting on your mental list that you keep avoiding, try talking it through with Claude. It's actually useful.\"",shots:[],notes:""},
-    {id:4,brand:"Oats Recipe",type:"Recipe",script:"[Kitchen — early morning feel]\n\"Breakfast. Real breakfast. Ten minutes, actually keeps you going.\"\n\n[Show oats cooking]\n\"I start with [oat type]. I cook them in [water or milk] with a pinch of salt. Salt in oats is not optional. It is the difference.\"\n\n[Add toppings while talking]\n\"Same base, different finish for each person. That's how you cook for a house with different tastes.\"\n\n[Show final bowls]\n\"Warm, filling, fast. Under ten minutes. I'll put the proper recipe in the caption. Go make it.\"",shots:[],notes:""},
-  ],
   ideas:[
     {id:'i1',title:'My honest skincare routine for melanin skin',niche:'Beauty',platform:'TikTok',status:'idea',types:['Talking to Camera','Review'],hook:'POV: you finally found a routine that works 🙌',audio:'',notes:'Feature 3–4 products. 30–45s.',img:'',linkedGig:'',added:Date.now()},
     {id:'i2',title:"Braiding my daughter's hair — full tutorial",niche:'Hair',platform:'YouTube',status:'idea',types:['Tutorial'],hook:'Come braid with me 🧡',audio:'Original audio — voiceover',notes:'Film full session. Natural light.',img:'',linkedGig:'',added:Date.now()},
@@ -1409,7 +1411,6 @@ function _refreshAllPages(){
   if(typeof rFU==='function') rFU();
   if(typeof rBrand==='function') rBrand();
   if(typeof renderPitches==='function') renderPitches('');
-  if(typeof renderScriptList==='function') renderScriptList();
   if(typeof rCal==='function') rCal();
 }
 
@@ -1733,7 +1734,7 @@ function resetTP(ns){TP[ns]=[];renderTPTags(ns);}
 function setTP(ns,arr){TP[ns]=[...(arr||[])];renderTPTags(ns);}
 
 // ── NAVIGATION ──
-const PAGES={dashboard:'Good morning, <em>Asha</em> ✨',earnings:'Earnings',gigs:'Gig Tracker',followup:'Follow-Ups',planner:'Content Planner',ideas:'Ideas Library',feed:'Feed Planner',pitches:'Pitch Templates',scripts:'Script Library',brand:'Brand Hub'};
+const PAGES={dashboard:'Good morning, <em>Asha</em> ✨',earnings:'Earnings',gigs:'Gig Tracker',followup:'Follow-Ups',planner:'Content Planner',ideas:'Ideas Library',feed:'Feed Planner',pitches:'Pitch Templates',brand:'Brand Hub'};
 let currentPage='dashboard';
 function goTo(page,el){
   document.querySelectorAll('.pg').forEach(p=>p.classList.remove('active'));
@@ -1753,7 +1754,6 @@ function renderPage(p){
   if(p==='ideas')rIdeas('all');
   if(p==='feed')rFeed();
   if(p==='pitches')renderPitches('');
-  if(p==='scripts')renderScriptList();
   if(p==='brand')rBrand();
 }
 
@@ -1774,6 +1774,7 @@ function openGigModal(){
   setV('g-img-data','');
   togGR();
   populateLinks();
+  resetScrData('g');
   openModal('gig-modal');
 }
 function openIdeaModal(){
@@ -1784,6 +1785,7 @@ function openIdeaModal(){
   document.getElementById('i-img-pre').innerHTML='';
   populateLinks();
   setV('i-lgig','');
+  resetScrData('i');
   openModal('idea-modal');
 }
 function openContentModal(){
@@ -1793,6 +1795,7 @@ function openContentModal(){
   setV('ct-img-data','');
   document.getElementById('ct-img-pre').innerHTML='';
   populateLinks();
+  resetScrData('ct');
   openModal('content-modal');
 }
 document.querySelectorAll('.mo').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open');}));
@@ -1938,14 +1941,16 @@ function editGig(id){
   document.getElementById('g-img-pre').innerHTML=g.img?`<img src="${g.img}" style="max-height:80px;border-radius:8px;">`:'';
   togGR();populateLinks();
   setV('g-lidea',g.linkedIdea||'');setV('g-lct',g.linkedContent||'');
+  loadScrData('g',{script:g.script||'',scrnotes:g.scrnotes||'',shots:g.shots||[]});
   openModal('gig-modal');
 }
 function saveGig(){
   const brand=v('g-brand').trim();if(!brand){toast('Brand name required');return;}
   const id=v('g-id');
-  const gig={id:id||'g'+Date.now(),brand,niche:v('g-niche'),types:TP.g||[],platform:v('g-plat'),rateType:v('g-rtype'),rate:v('g-rate'),gift:v('g-gift'),status:v('g-status'),due:v('g-due'),contact:v('g-contact'),notes:v('g-notes'),img:v('g-img-data'),linkedIdea:v('g-lidea'),linkedContent:v('g-lct'),added:id?(D.gigs.find(g=>g.id===id)||{}).added||Date.now():Date.now()};
+  const scrData=readScrData('g');
+  const gig={id:id||'g'+Date.now(),brand,niche:v('g-niche'),types:TP.g||[],platform:v('g-plat'),rateType:v('g-rtype'),rate:v('g-rate'),gift:v('g-gift'),status:v('g-status'),due:v('g-due'),contact:v('g-contact'),notes:v('g-notes'),img:v('g-img-data'),linkedIdea:v('g-lidea'),linkedContent:v('g-lct'),script:scrData.script,scrnotes:scrData.scrnotes,shots:scrData.shots,added:id?(D.gigs.find(g=>g.id===id)||{}).added||Date.now():Date.now()};
   if(id)D.gigs=D.gigs.map(g=>g.id===id?gig:g);else D.gigs.push(gig);
-  save();closeModal('gig-modal');resetTP('g');rGigs();rDash();toast(id?'Gig updated!':'Gig saved! 🎉');
+  save();closeModal('gig-modal');resetTP('g');resetScrData('g');rGigs();rDash();toast(id?'Gig updated!':'Gig saved! 🎉');
 }
 function delGig(id){if(!confirm('Delete this gig?'))return;D.gigs=D.gigs.filter(g=>g.id!==id);save();rGigs();rDash();toast('Deleted');}
 
@@ -2007,14 +2012,15 @@ function rCal(){
     <button class="ib" onclick="delContent('${c.id}')">🗑</button>
   </div>`).join('')+'</div>';
 }
-function openCtDate(ds){setV('ct-id','');resetTP('ct');setV('ct-date',ds);openModal('content-modal');}
+function openCtDate(ds){setV('ct-id','');resetTP('ct');setV('ct-date',ds);resetScrData('ct');openModal('content-modal');}
 function updCtStatus(id,val){const c=D.content.find(x=>x.id===id);if(c){c.status=val;save();}toast('Status → '+val);}
 function saveContent(){
   const title=v('ct-title').trim();if(!title){toast('Title required');return;}
   const id=v('ct-id');
-  const ct={id:id||'c'+Date.now(),title,niche:v('ct-niche'),platform:v('ct-plat'),date:v('ct-date'),types:TP.ct||[],status:v('ct-status'),linkedGig:v('ct-lgig'),linkedIdea:v('ct-lidea'),hook:v('ct-hook'),audio:v('ct-audio'),notes:v('ct-notes'),img:v('ct-img-data')};
+  const scrData=readScrData('ct');
+  const ct={id:id||'c'+Date.now(),title,niche:v('ct-niche'),platform:v('ct-plat'),date:v('ct-date'),types:TP.ct||[],status:v('ct-status'),linkedGig:v('ct-lgig'),linkedIdea:v('ct-lidea'),hook:v('ct-hook'),audio:v('ct-audio'),notes:v('ct-notes'),img:v('ct-img-data'),script:scrData.script,scrnotes:scrData.scrnotes,shots:scrData.shots};
   if(id)D.content=D.content.map(c=>c.id===id?ct:c);else D.content.push(ct);
-  save();closeModal('content-modal');resetTP('ct');['ct-title','ct-date','ct-hook','ct-audio','ct-notes','ct-lgig','ct-lidea','ct-id'].forEach(i=>setV(i,''));setV('ct-img-data','');document.getElementById('ct-img-pre').innerHTML='';
+  save();closeModal('content-modal');resetTP('ct');['ct-title','ct-date','ct-hook','ct-audio','ct-notes','ct-lgig','ct-lidea','ct-id'].forEach(i=>setV(i,''));setV('ct-img-data','');document.getElementById('ct-img-pre').innerHTML='';resetScrData('ct');
   rCal();rDash();toast('Content saved!');
 }
 function delContent(id){D.content=D.content.filter(c=>c.id!==id);save();rCal();rDash();}
@@ -2039,6 +2045,7 @@ function rIdeas(filt){
       ${typeHtml?`<div style="display:flex;flex-wrap:wrap;gap:3px;">${typeHtml}</div>`:''}
       ${i.hook?`<div style="font-size:11px;color:var(--warm-gray);font-style:italic;">"${i.hook}"</div>`:''}
       ${i.audio?`<div class="au-chip">🎵 ${i.audio.slice(0,35)}</div>`:''}
+      ${i.script?`<div style="font-size:9px;font-family:'DM Mono',monospace;padding:2px 8px;border-radius:20px;background:rgba(196,113,79,.08);color:var(--terracotta);display:inline-block;margin-top:2px;">✍️ Script ready</div>`:''}
       ${lg?`<div class="lb2">🔗 ${lg.brand}</div>`:''}
       ${i.notes?`<div style="font-size:11px;color:var(--warm-gray);">${i.notes.slice(0,80)}${i.notes.length>80?'…':''}</div>`:''}
       <div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:3px;">
@@ -2057,14 +2064,16 @@ function editIdea(id){
   setTP('i',idea.types||[]);
   document.getElementById('i-img-pre').innerHTML=idea.img?`<img src="${idea.img}" style="width:100%;border-radius:8px;max-height:140px;object-fit:cover;">`:'';
   populateLinks();setV('i-lgig',idea.linkedGig||'');
+  loadScrData('i',{script:idea.script||'',scrnotes:idea.scrnotes||'',shots:idea.shots||[]});
   openModal('idea-modal');
 }
 function saveIdea(){
   const title=v('i-title').trim();if(!title){toast('Title required');return;}
   const id=v('i-id');
-  const idea={id:id||'i'+Date.now(),title,niche:v('i-niche'),platform:v('i-plat'),status:v('i-status'),types:TP.i||[],linkedGig:v('i-lgig'),hook:v('i-hook'),audio:v('i-audio'),notes:v('i-notes'),img:v('i-img-data'),added:Date.now()};
+  const scrData=readScrData('i');
+  const idea={id:id||'i'+Date.now(),title,niche:v('i-niche'),platform:v('i-plat'),status:v('i-status'),types:TP.i||[],linkedGig:v('i-lgig'),hook:v('i-hook'),audio:v('i-audio'),notes:v('i-notes'),img:v('i-img-data'),script:scrData.script,scrnotes:scrData.scrnotes,shots:scrData.shots,added:Date.now()};
   if(id)D.ideas=D.ideas.map(x=>x.id===id?idea:x);else D.ideas.push(idea);
-  save();closeModal('idea-modal');resetTP('i');['i-title','i-hook','i-audio','i-notes','i-lgig','i-id'].forEach(i=>setV(i,''));setV('i-img-data','');document.getElementById('i-img-pre').innerHTML='';
+  save();closeModal('idea-modal');resetTP('i');['i-title','i-hook','i-audio','i-notes','i-lgig','i-id'].forEach(i=>setV(i,''));setV('i-img-data','');document.getElementById('i-img-pre').innerHTML='';resetScrData('i');
   rIdeas(ideaFilt);rDash();toast('Idea saved!');
 }
 function delIdea(id){if(!confirm('Delete idea?'))return;D.ideas=D.ideas.filter(x=>x.id!==id);save();rIdeas(ideaFilt);}
@@ -2075,6 +2084,7 @@ function schedIdeaToContent(id){
   setTP('ct',idea.types||[]);
   setV('ct-img-data','');document.getElementById('ct-img-pre').innerHTML='';
   populateLinks();setV('ct-lidea',idea.id);
+  loadScrData('ct',{script:idea.script||'',scrnotes:idea.scrnotes||'',shots:(idea.shots||[]).map(s=>({...s,id:++scrShotCtr}))});
   openModal('content-modal');
 }
 
@@ -2328,194 +2338,6 @@ function globalSearch(q){
 }
 function srAct(i){if(window._srActions&&window._srActions[i])window._srActions[i]();}
 
-// ── SCRIPTS ──
-const SC_TYPE_COLORS={
-  'Product Demo':{bg:'rgba(196,113,79,.12)',color:'var(--terracotta)'},
-  'Day in the Life':{bg:'rgba(196,150,58,.1)',color:'var(--gold)'},
-  'Talking to Camera':{bg:'rgba(122,174,204,.15)',color:'var(--sky-deep)'},
-  'Routine':{bg:'rgba(74,107,80,.12)',color:'var(--forest)'},
-  'GRWM':{bg:'rgba(201,137,122,.15)',color:'var(--dusty-rose)'},
-  'Tutorial':{bg:'rgba(194,174,206,.2)',color:'#7a5a8a'},
-  'Storytime':{bg:'rgba(232,192,106,.15)',color:'#8a6a00'},
-  'Unboxing':{bg:'rgba(74,107,80,.15)',color:'var(--forest)'},
-  'Recipe':{bg:'rgba(196,150,58,.12)',color:'var(--gold)'},
-  'Review':{bg:'rgba(122,174,204,.12)',color:'var(--sky-deep)'},
-};
-let scCurrentId=null;
-let scFilter='all';
-let scShotCounter=Date.now();
-
-function getScripts(){return D.scripts||(D.scripts=[]);}
-
-function renderScriptList(){
-  if(!D.scripts)D.scripts=[];
-  const q=(document.getElementById('sc-search')?.value||'').toLowerCase();
-  const list=document.getElementById('sc-list');
-  if(!list)return;
-  const filtered=D.scripts.filter(s=>{
-    const matchFilter=scFilter==='all'||s.type===scFilter;
-    const matchSearch=!q||s.brand.toLowerCase().includes(q)||(s.type||'').toLowerCase().includes(q)||(s.script||'').toLowerCase().includes(q);
-    return matchFilter&&matchSearch;
-  });
-  if(!filtered.length){
-    list.innerHTML='<div style="padding:20px;text-align:center;font-size:12px;color:var(--mid-gray);">No scripts found.<br><span style="color:var(--terracotta);cursor:pointer;" onclick="addNewScript()">+ Create one</span></div>';
-    return;
-  }
-  list.innerHTML=filtered.map(s=>`
-    <div class="sc-item${s.id===scCurrentId?' active':''}" onclick="openScriptEditor(${s.id})">
-      <div class="sc-item-brand">${escStr(s.brand)}</div>
-      <div class="sc-item-type">${escStr(s.type)}</div>
-    </div>`).join('');
-}
-
-function setScriptFilter(f,el){
-  scFilter=f;
-  document.querySelectorAll('#pg-scripts .btn').forEach(b=>b.classList.remove('active'));
-  if(el)el.classList.add('active');
-  renderScriptList();
-}
-
-function openScriptEditor(id){
-  scCurrentId=id;
-  const s=getScripts().find(x=>x.id===id);
-  if(!s)return;
-  renderScriptList();
-  const tc=SC_TYPE_COLORS[s.type]||{bg:'rgba(0,0,0,.06)',color:'var(--warm-gray)'};
-  const editor=document.getElementById('sc-editor');
-  editor.innerHTML=`
-    <div style="margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid rgba(0,0,0,.06);">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap;">
-        <span class="sc-type-badge" style="background:${tc.bg};color:${tc.color}">${escStr(s.type)}</span>
-        <select class="fs" style="font-size:11px;padding:3px 8px;max-width:160px;" onchange="scUpdField('type',this.value);renderScriptList();">
-          ${['Product Demo','Day in the Life','Talking to Camera','Routine','GRWM','Tutorial','Storytime','Unboxing','Recipe','Review'].map(t=>`<option value="${t}"${s.type===t?' selected':''}>${t}</option>`).join('')}
-        </select>
-        <button class="btn btn-d btn-s" onclick="deleteScript(${s.id})" style="margin-left:auto;">🗑 Delete</button>
-      </div>
-      <input class="sc-brand-input" value="${escStr(s.brand)}" placeholder="Brand / Script title…" oninput="scUpdField('brand',this.value);renderScriptList();">
-    </div>
-    <div class="sc-tabs">
-      <button class="sc-tab active" onclick="scSwitchTab('script',this)">✍️ Script</button>
-      <button class="sc-tab" onclick="scSwitchTab('shots',this)">🎬 Shot List</button>
-      <button class="sc-tab" onclick="scSwitchTab('notes',this)">📝 Notes</button>
-    </div>
-    <div class="sc-panel active" id="scp-script">
-      <div style="font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--warm-gray);font-weight:500;margin-bottom:8px;">Script</div>
-      <textarea class="sc-textarea" id="sc-textarea" oninput="scUpdField('script',this.value)">${escStr(s.script||'')}</textarea>
-      <div style="font-size:11px;color:var(--mid-gray);margin-top:6px;font-style:italic;">Stage directions in [brackets] are cues — not spoken. Edit freely.</div>
-    </div>
-    <div class="sc-panel" id="scp-shots">
-      <div style="font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--warm-gray);font-weight:500;margin-bottom:10px;">Shot List</div>
-      <div style="background:#fff;border:1px solid rgba(0,0,0,.06);border-radius:9px;overflow:hidden;">
-        <div class="sc-shot-hdr">
-          <span style="font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--warm-gray);font-weight:600;">#</span>
-          <span style="font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--warm-gray);font-weight:600;padding-left:8px;">Shot Description</span>
-          <span style="font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--warm-gray);font-weight:600;padding-left:8px;">Direction / Notes</span>
-          <span style="font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--warm-gray);font-weight:600;padding-left:8px;">Type</span>
-          <span></span>
-        </div>
-        <div id="sc-shot-rows"></div>
-        <button class="sc-add-shot" onclick="scAddShot()">+ Add shot</button>
-      </div>
-    </div>
-    <div class="sc-panel" id="scp-notes">
-      <div style="font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--warm-gray);font-weight:500;margin-bottom:8px;">Production Notes</div>
-      <textarea class="sc-textarea" id="sc-notes-ta" style="min-height:200px;" placeholder="Location, props, lighting, brand requirements, posting schedule…" oninput="scUpdField('notes',this.value)">${escStr(s.notes||'')}</textarea>
-    </div>`;
-  scRenderShots(s);
-}
-
-function scSwitchTab(name,el){
-  document.querySelectorAll('.sc-tab').forEach(t=>t.classList.remove('active'));
-  document.querySelectorAll('.sc-panel').forEach(p=>p.classList.remove('active'));
-  if(el)el.classList.add('active');
-  document.getElementById('scp-'+name)?.classList.add('active');
-}
-
-function scUpdField(field,value){
-  const s=getScripts().find(x=>x.id===scCurrentId);
-  if(!s)return;
-  s[field]=value;
-  save();
-}
-
-function scRenderShots(s){
-  const container=document.getElementById('sc-shot-rows');
-  if(!container)return;
-  container.innerHTML='';
-  (s.shots||[]).forEach((shot,i)=>{
-    const row=document.createElement('div');
-    row.className='sc-shot-row';
-    row.innerHTML=`
-      <div class="sc-shot-num">${i+1}</div>
-      <div class="sc-shot-cell" style="border-right:1px solid rgba(0,0,0,.05);"><textarea rows="2" placeholder="e.g. Close-up on product, hero shot…" oninput="scUpdShot(${shot.id},'desc',this.value)">${escStr(shot.desc||'')}</textarea></div>
-      <div class="sc-shot-cell" style="border-right:1px solid rgba(0,0,0,.05);"><textarea rows="2" placeholder="Angle, movement, lighting…" oninput="scUpdShot(${shot.id},'direction',this.value)">${escStr(shot.direction||'')}</textarea></div>
-      <div class="sc-shot-cell" style="border-right:1px solid rgba(0,0,0,.05);">
-        <select onchange="scUpdShot(${shot.id},'type',this.value)">
-          ${['B-Roll','Talking Head','Product Close','Reaction','Voiceover','Transition','Lifestyle'].map(t=>`<option value="${t}"${shot.type===t?' selected':''}>${t}</option>`).join('')}
-        </select>
-      </div>
-      <button class="sc-shot-del" onclick="scDelShot(${shot.id})" title="Remove">×</button>`;
-    container.appendChild(row);
-  });
-}
-
-function scAddShot(){
-  const s=getScripts().find(x=>x.id===scCurrentId);
-  if(!s)return;
-  if(!s.shots)s.shots=[];
-  s.shots.push({id:++scShotCounter,desc:'',direction:'',type:'B-Roll'});
-  save();scRenderShots(s);
-}
-
-function scUpdShot(shotId,field,value){
-  const s=getScripts().find(x=>x.id===scCurrentId);
-  const shot=(s?.shots||[]).find(sh=>sh.id===shotId);
-  if(shot){shot[field]=value;save();}
-}
-
-function scDelShot(shotId){
-  const s=getScripts().find(x=>x.id===scCurrentId);
-  if(!s)return;
-  s.shots=(s.shots||[]).filter(sh=>sh.id!==shotId);
-  save();scRenderShots(s);
-}
-
-function addNewScript(){
-  if(!D.scripts)D.scripts=[];
-  const newId=Date.now();
-  D.scripts.push({id:newId,brand:'New Script',type:'Product Demo',script:'',shots:[],notes:''});
-  save();
-  renderScriptList();
-  openScriptEditor(newId);
-  // Switch to scripts page if not already there
-  if(currentPage!=='scripts'){
-    goTo('scripts',Array.from(document.querySelectorAll('.ni')).find(n=>n.textContent.includes('Scripts')));
-  }
-}
-
-function deleteScript(id){
-  if(!confirm('Delete this script?'))return;
-  D.scripts=D.scripts.filter(s=>s.id!==id);
-  scCurrentId=null;
-  save();
-  renderScriptList();
-  const editor=document.getElementById('sc-editor');
-  if(editor)editor.innerHTML='<div style="text-align:center;padding:60px 20px;color:var(--mid-gray);"><div style="font-size:32px;margin-bottom:10px;opacity:.3;">🎬</div><div style="font-family:\'Cormorant Garamond\',serif;font-size:1.1rem;color:var(--warm-gray);">Select a script to edit</div></div>';
-  toast('Script deleted');
-}
-
-function exportScripts(){
-  const data=JSON.stringify(D.scripts||[],null,2);
-  const blob=new Blob([data],{type:'application/json'});
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(blob);
-  a.download='asha_scripts_'+new Date().toISOString().slice(0,10)+'.json';
-  a.click();
-  toast('Scripts exported!');
-}
-
-function escStr(str){return (str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-
 // ── EXPORT / IMPORT (cross-device sync) ──
 function exportData(){
   const exportObj={_version:3,_exported:new Date().toISOString(),...D};
@@ -2531,7 +2353,7 @@ function importData(e){
       if(!imported._version){toast('Invalid backup file');return;}
       if(!confirm('This will MERGE imported data with your current data. Continue?'))return;
       // Merge arrays by id (imported wins on conflicts)
-      ['gigs','content','ideas','followups','pitches','scripts','rates','colors','niches','platforms','visuals','outfits','locations','cameras'].forEach(k=>{
+      ['gigs','content','ideas','followups','pitches','rates','colors','niches','platforms','visuals','outfits','locations','cameras'].forEach(k=>{
         if(Array.isArray(imported[k])){
           const existing=D[k]||[];
           if(Array.isArray(existing)&&existing.length&&existing[0]&&existing[0].id){
@@ -2673,6 +2495,84 @@ function saveMB(){
   save();toast('Moodboard saved!');
 }
 function clearMBAll(){if(!confirm('Clear all moodboard elements?'))return;D.moodboards[mbKey]={items:[],drawing:''};document.getElementById('mb-cvs').innerHTML='';clearMBDraw();updateLayers();toast('Moodboard cleared');}
+
+// ── SCRIPT SECTION ──
+const SCR_SHOTS = { i: [], ct: [], g: [] };
+let scrShotCtr = Date.now();
+
+function scrTab(prefix, panel, el) {
+  const modal = el.closest('.mo');
+  modal.querySelectorAll('.scr-tab').forEach(t => t.classList.remove('active'));
+  modal.querySelectorAll('.scr-panel').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  const panelEl = document.getElementById(prefix + '-scr-' + panel);
+  if (panelEl) panelEl.classList.add('active');
+}
+
+function renderScrShots(prefix) {
+  const container = document.getElementById(prefix + '-shot-rows');
+  if (!container) return;
+  const shots = SCR_SHOTS[prefix] || [];
+  container.innerHTML = shots.map((sh, i) => `
+    <div class="scr-shot-row">
+      <div class="scr-shot-num">${i + 1}</div>
+      <div><textarea rows="2" placeholder="e.g. Close-up on bottle…" oninput="updScrShot('${prefix}',${sh.id},'desc',this.value)">${escScrHtml(sh.desc)}</textarea></div>
+      <div><textarea rows="2" placeholder="Angle, movement…" oninput="updScrShot('${prefix}',${sh.id},'direction',this.value)">${escScrHtml(sh.direction)}</textarea></div>
+      <div><select onchange="updScrShot('${prefix}',${sh.id},'type',this.value)">
+        ${['B-Roll','Talking Head','Product Close','Reaction','Voiceover','Transition','Lifestyle'].map(t =>
+          `<option value="${t}"${sh.type === t ? ' selected' : ''}>${t}</option>`
+        ).join('')}
+      </select></div>
+      <button class="scr-del-btn" onclick="delScrShot('${prefix}',${sh.id})">×</button>
+    </div>`).join('');
+}
+
+function addScrShot(prefix) {
+  if (!SCR_SHOTS[prefix]) SCR_SHOTS[prefix] = [];
+  SCR_SHOTS[prefix].push({ id: ++scrShotCtr, desc: '', direction: '', type: 'B-Roll' });
+  renderScrShots(prefix);
+}
+
+function updScrShot(prefix, shotId, field, value) {
+  const sh = (SCR_SHOTS[prefix] || []).find(s => s.id === shotId);
+  if (sh) sh[field] = value;
+}
+
+function delScrShot(prefix, shotId) {
+  SCR_SHOTS[prefix] = (SCR_SHOTS[prefix] || []).filter(s => s.id !== shotId);
+  renderScrShots(prefix);
+}
+
+function escScrHtml(str) {
+  return (str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function loadScrData(prefix, obj) {
+  const ta = document.getElementById(prefix + '-script');
+  if (ta) ta.value = obj.script || '';
+  const tn = document.getElementById(prefix + '-scrnotes');
+  if (tn) tn.value = obj.scrnotes || '';
+  SCR_SHOTS[prefix] = (obj.shots || []).map(s => ({ ...s }));
+  renderScrShots(prefix);
+  const modalId = prefix === 'i' ? 'idea-modal' : prefix === 'ct' ? 'content-modal' : 'gig-modal';
+  const modal = document.getElementById(modalId);
+  if (modal) {
+    modal.querySelectorAll('.scr-tab').forEach((t, idx) => t.classList.toggle('active', idx === 0));
+    modal.querySelectorAll('.scr-panel').forEach((p, idx) => p.classList.toggle('active', idx === 0));
+  }
+}
+
+function readScrData(prefix) {
+  return {
+    script: (document.getElementById(prefix + '-script') || {}).value || '',
+    scrnotes: (document.getElementById(prefix + '-scrnotes') || {}).value || '',
+    shots: (SCR_SHOTS[prefix] || []).map(s => ({ ...s }))
+  };
+}
+
+function resetScrData(prefix) {
+  loadScrData(prefix, { script: '', scrnotes: '', shots: [] });
+}
 
 // ── INIT ──
 let _appBooted = false;
