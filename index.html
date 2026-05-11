@@ -408,6 +408,12 @@ body{background:var(--ivory);font-family:'Jost',sans-serif;font-weight:300;color
     <div class="nl">Resources</div>
     <div class="ni" onclick="goTo('pitches',this)"><span class="ni-icon">✉️</span>Pitches</div>
     <div class="ni" onclick="goTo('brand',this)"><span class="ni-icon">🎨</span>Brand Hub</div>
+    <div class="nl">Studio</div>
+    <div class="ni" onclick="goTo('scripts',this)"><span class="ni-icon">🎬</span>Scripts</div>
+    <div class="ni" onclick="goTo('portfolio',this)"><span class="ni-icon">🎥</span>Portfolio Videos</div>
+    <div class="ni" onclick="goTo('igplan',this)"><span class="ni-icon">📸</span>30-Post IG Plan</div>
+    <div class="ni" onclick="goTo('ratecard',this)"><span class="ni-icon">💼</span>Rate Card</div>
+    <div class="ni" onclick="goTo('incomeplan',this)"><span class="ni-icon">💰</span>$200 Plan</div>
   </nav>
   <div class="sb-foot">
     <div class="sb-rate">
@@ -674,6 +680,144 @@ body{background:var(--ivory);font-family:'Jost',sans-serif;font-weight:300;color
         </div>
         <button class="btn btn-d btn-s" onclick="authSignOut()" style="width:100%;justify-content:center;display:flex;">⏻ Sign Out</button>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ STUDIO: SCRIPTS ═══ -->
+<div class="pg" id="pg-scripts">
+  <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:14px;">
+    <div><div style="font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:var(--terracotta);font-weight:500;margin-bottom:3px;">Portfolio · Section 01 &amp; 02</div><div style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:300;">Intro &amp; Outro <em style="font-style:italic;color:var(--terracotta);">Scripts</em></div></div>
+  </div>
+  <div style="background:rgba(143,175,138,0.08);border-left:3px solid #8FAF8A;border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:12px;color:var(--warm-gray);">
+    <strong style="color:var(--ink);">Filming tip:</strong> Intro — PP1 recipe · f/1.8 · morning window light · lavalier Level 7 · film the walk-past 3 times. Outro — PP4 recipe · 5–5:45pm golden hour.
+  </div>
+
+  <!-- INTRO -->
+  <div class="card" style="margin-bottom:14px;">
+    <div class="ch"><span class="ct">🎬 Intro Script</span><button class="btn btn-p btn-s" onclick="saveScripts()">Save Changes</button></div>
+    <div class="cb">
+      <div style="margin-bottom:14px;"><label class="fl" style="margin-bottom:5px;display:block;">Stage Direction 1</label><textarea class="ft" id="sc-idir1" style="min-height:60px;font-style:italic;color:var(--warm-gray);"></textarea></div>
+      <div style="margin-bottom:14px;"><label class="fl" style="margin-bottom:5px;display:block;">Opening Line</label><textarea class="ft" id="sc-il1" style="min-height:60px;font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:300;"></textarea></div>
+      <div style="margin-bottom:14px;"><label class="fl" style="margin-bottom:5px;display:block;">The Hats Speech</label><textarea class="ft" id="sc-il2" style="min-height:100px;font-family:'Cormorant Garamond',serif;font-size:1.05rem;font-weight:300;"></textarea></div>
+      <div style="margin-bottom:14px;"><label class="fl" style="margin-bottom:5px;display:block;">The Credential (Four People Line)</label><textarea class="ft" id="sc-il3" style="min-height:100px;font-family:'Cormorant Garamond',serif;font-size:1.05rem;font-weight:300;"></textarea></div>
+      <div style="margin-bottom:14px;"><label class="fl" style="margin-bottom:5px;display:block;">The Two Ways Speech</label><textarea class="ft" id="sc-il4" style="min-height:120px;font-family:'Cormorant Garamond',serif;font-size:1.05rem;font-weight:300;"></textarea></div>
+      <div style="margin-bottom:14px;"><label class="fl" style="margin-bottom:5px;display:block;">Hand-Off Line</label><textarea class="ft" id="sc-il5" style="font-family:'Cormorant Garamond',serif;font-size:1.05rem;font-weight:300;"></textarea></div>
+      <div><label class="fl" style="margin-bottom:5px;display:block;">Filming Notes</label><textarea class="ft" id="sc-fnintro" style="min-height:50px;color:var(--warm-gray);"></textarea></div>
+    </div>
+  </div>
+
+  <!-- OUTRO -->
+  <div class="card">
+    <div class="ch"><span class="ct">🌅 Outro Script</span></div>
+    <div class="cb">
+      <div style="margin-bottom:14px;"><label class="fl" style="margin-bottom:5px;display:block;">Stage Direction</label><textarea class="ft" id="sc-odir" style="min-height:60px;font-style:italic;color:var(--warm-gray);"></textarea></div>
+      <div style="margin-bottom:14px;"><label class="fl" style="margin-bottom:5px;display:block;">Opening Line</label><textarea class="ft" id="sc-ol1" style="font-family:'Cormorant Garamond',serif;font-size:1.05rem;font-weight:300;"></textarea></div>
+      <div style="margin-bottom:14px;"><label class="fl" style="margin-bottom:5px;display:block;">The Main Offer</label><textarea class="ft" id="sc-ol2" style="min-height:80px;font-family:'Cormorant Garamond',serif;font-size:1.05rem;font-weight:300;"></textarea></div>
+      <div style="margin-bottom:14px;"><label class="fl" style="margin-bottom:5px;display:block;">Tagline</label><textarea class="ft" id="sc-ol3" style="font-family:'Cormorant Garamond',serif;font-size:1.05rem;font-weight:300;"></textarea></div>
+      <div style="margin-bottom:14px;"><label class="fl" style="margin-bottom:5px;display:block;">Closing Line</label><textarea class="ft" id="sc-ol4" style="font-family:'Cormorant Garamond',serif;font-size:1.05rem;font-weight:300;"></textarea></div>
+      <div><label class="fl" style="margin-bottom:5px;display:block;">Filming Notes</label><textarea class="ft" id="sc-fnoutro" style="min-height:50px;color:var(--warm-gray);"></textarea></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ STUDIO: PORTFOLIO VIDEOS ═══ -->
+<div class="pg" id="pg-portfolio">
+  <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:14px;">
+    <div><div style="font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:var(--terracotta);font-weight:500;margin-bottom:3px;">Portfolio · 15 Videos</div><div style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:300;">Portfolio <em style="font-style:italic;color:var(--terracotta);">Videos</em></div></div>
+    <button class="btn btn-p btn-s" onclick="addPortfolioVideo()">+ Add Video</button>
+  </div>
+  <div id="pv-list"></div>
+</div>
+
+<!-- ═══ STUDIO: 30-POST IG PLAN ═══ -->
+<div class="pg" id="pg-igplan">
+  <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:14px;">
+    <div><div style="font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:var(--terracotta);font-weight:500;margin-bottom:3px;">Instagram · 30 Posts</div><div style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:300;">30-Post <em style="font-style:italic;color:var(--terracotta);">IG Plan</em></div></div>
+    <button class="btn btn-p btn-s" onclick="addIgPost()">+ Add Post</button>
+  </div>
+  <div style="background:rgba(196,113,79,0.06);border-left:3px solid var(--terracotta);border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:12px;color:var(--warm-gray);">
+    <strong style="color:var(--ink);">Strategy:</strong> 18 Reels · 7 Carousels · 5 Story series · Post Tue–Sat · Best times 7–9am, 12–2pm, 7–9pm EAT · Every caption ends with a question or CTA.
+  </div>
+  <div id="igp-list"></div>
+</div>
+
+<!-- ═══ STUDIO: RATE CARD ═══ -->
+<div class="pg" id="pg-ratecard">
+  <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:14px;">
+    <div><div style="font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:var(--terracotta);font-weight:500;margin-bottom:3px;">Rate Card · Services</div><div style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:300;">Services &amp; <em style="font-style:italic;color:var(--terracotta);">Pricing</em></div></div>
+    <button class="btn btn-p btn-s" onclick="addService()">+ Add Service</button>
+  </div>
+  <div style="background:rgba(196,150,58,0.08);border-left:3px solid var(--gold);border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:12px;color:var(--warm-gray);">
+    <strong style="color:var(--ink);">Rate Rule:</strong> Always quote in USD. Raise rates by $10 after every 5 completed collabs. Never discount without adding value. Start at gifting, transition to paid.
+  </div>
+
+  <!-- Services -->
+  <div class="card" style="margin-bottom:14px;">
+    <div class="ch"><span class="ct">Individual Services</span></div>
+    <div id="sv-list" class="cb"></div>
+  </div>
+
+  <!-- Packages -->
+  <div class="card" style="margin-bottom:14px;">
+    <div class="ch"><span class="ct">Bundle Packages</span><button class="btn btn-g btn-s" onclick="addPackage()">+ Add Package</button></div>
+    <div id="pk-list" class="cb"></div>
+  </div>
+
+  <!-- Add-ons -->
+  <div class="card">
+    <div class="ch"><span class="ct">Add-Ons</span><button class="btn btn-g btn-s" onclick="addAddon()">+ Add On</button></div>
+    <div id="ao-list" class="cb" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;"></div>
+  </div>
+</div>
+
+<!-- ═══ STUDIO: $200 INCOME PLAN ═══ -->
+<div class="pg" id="pg-incomeplan">
+  <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:14px;">
+    <div><div style="font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:var(--terracotta);font-weight:500;margin-bottom:3px;">Income · Month 1</div><div style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:300;">$200 in <em style="font-style:italic;color:var(--terracotta);">Month One</em></div></div>
+    <button class="btn btn-p btn-s" onclick="saveIncomePlan()">Save Changes</button>
+  </div>
+  <div style="background:rgba(192,57,43,0.08);border-left:3px solid #c0392b;border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:12px;color:var(--warm-gray);">
+    <strong style="color:var(--ink);">Critical rule:</strong> Post content AND pitch brands simultaneously from day one. The 30 Instagram posts are not prerequisites — they run in parallel with outreach.
+  </div>
+
+  <!-- 4-week grid -->
+  <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:14px;">
+    <div class="card"><div class="ch"><span class="ct">Week 1</span></div><div class="cb">
+      <div style="margin-bottom:8px;"><label class="fl">Target</label><input class="fi" id="ip-w1t"></div>
+      <div style="margin-bottom:8px;"><label class="fl">Context</label><textarea class="ft" id="ip-w1n" style="min-height:60px;"></textarea></div>
+      <div><label class="fl">Actions</label><textarea class="ft" id="ip-w1a" style="min-height:100px;"></textarea></div>
+    </div></div>
+    <div class="card"><div class="ch"><span class="ct">Week 2</span></div><div class="cb">
+      <div style="margin-bottom:8px;"><label class="fl">Target</label><input class="fi" id="ip-w2t"></div>
+      <div style="margin-bottom:8px;"><label class="fl">Context</label><textarea class="ft" id="ip-w2n" style="min-height:60px;"></textarea></div>
+      <div><label class="fl">Actions</label><textarea class="ft" id="ip-w2a" style="min-height:100px;"></textarea></div>
+    </div></div>
+    <div class="card"><div class="ch"><span class="ct">Week 3</span></div><div class="cb">
+      <div style="margin-bottom:8px;"><label class="fl">Target</label><input class="fi" id="ip-w3t"></div>
+      <div style="margin-bottom:8px;"><label class="fl">Context</label><textarea class="ft" id="ip-w3n" style="min-height:60px;"></textarea></div>
+      <div><label class="fl">Actions</label><textarea class="ft" id="ip-w3a" style="min-height:100px;"></textarea></div>
+    </div></div>
+    <div class="card"><div class="ch"><span class="ct">Week 4</span></div><div class="cb">
+      <div style="margin-bottom:8px;"><label class="fl">Target</label><input class="fi" id="ip-w4t"></div>
+      <div style="margin-bottom:8px;"><label class="fl">Context</label><textarea class="ft" id="ip-w4n" style="min-height:60px;"></textarea></div>
+      <div><label class="fl">Actions</label><textarea class="ft" id="ip-w4a" style="min-height:100px;"></textarea></div>
+    </div></div>
+  </div>
+
+  <div class="card">
+    <div class="ch"><span class="ct">How $200 Is Built</span></div>
+    <div class="cb"><textarea class="ft" id="ip-breakdown" style="min-height:100px;"></textarea></div>
+  </div>
+
+  <!-- Brand targets -->
+  <div class="card" style="margin-top:14px;">
+    <div class="ch"><span class="ct">Brand Targets — Who to Pitch &amp; When</span><button class="btn btn-p btn-s" onclick="addBrandTarget()">+ Add Target</button></div>
+    <div class="cb" style="overflow-x:auto;">
+      <table class="dt" id="bt-table">
+        <thead><tr><th>Priority</th><th>Brand Type</th><th>Why They'll Say Yes</th><th>Your Angle</th><th>Rate to Quote</th><th>Specific Brands</th><th></th></tr></thead>
+        <tbody id="bt-body"></tbody>
+      </table>
     </div>
   </div>
 </div>
@@ -1235,7 +1379,7 @@ gProvider = new firebase.auth.GoogleAuthProvider();
 
 
 HEAVY      = ['feedIg','feedTt','feedBank','visuals','outfits','moodboards','locations','cameras'];
-LIGHT_KEYS = ['gigs','content','ideas','followups','pitches','rates','colors','niches','platforms','bio','links','calM','calY'];
+LIGHT_KEYS = ['gigs','content','ideas','followups','pitches','rates','colors','niches','platforms','bio','links','calM','calY','studioScripts','studioPortfolio','studioIgPosts','studioServices','studioPackages','studioAddons','studioBrands','studioIncome'];
 LS_KEY     = 'ajhq_data_v1';
 LS_USER    = 'ajhq_user_v1';
 LS_DIRTY   = 'ajhq_dirty_v1';
@@ -1321,6 +1465,131 @@ const DEFAULTS = () => ({
   feedIg:Array(9).fill(null),feedTt:Array(6).fill(null),feedBank:[],
   moodboards:{},
   calM:new Date().getMonth(),calY:new Date().getFullYear(),
+  studioScripts:{
+    introDir1:'[Wide shot. You walk past the camera frame not noticing it — genuine movement, maybe carrying something. Then you stop just outside frame, double-take, walk back into frame, slight grin]',
+    introLine1:'"Oh hey — did you just get here? Okay, hi!"',
+    introLine2:'"I'm Asha. In this house I wear quite a few hats — I'm the manicurist, the hairstylist, the chef, the cleaner, the house manager, the tutor, the photographer, the videographer, the creative director, and the content strategist. All under one roof, here in Tharaka Nithi, Kenya."',
+    introLine3:'"My life is genuinely diverse. I take care of four people — myself included — and we all have different skin types, different skin tones, and different hair types. Four different hair textures on wash day. Four different skin tones in one frame. That's just a Tuesday. So when I say I understand your product? I mean it."',
+    introLine4:'"And I work in two ways. Sometimes your product lives inside our real daily life — the morning routine, the kitchen, the hair sessions, the school day. And sometimes I put your product front and centre — just the product, the light, the detail, and the story it tells on its own. Either way, the goal is the same: content that makes someone stop scrolling and actually want what you're selling."',
+    introLine5:'"I've put some of that work below — scroll down, take a look, and I'll meet you at the bottom."',
+    outroDir:'[You're visible from chest up. Relaxed. Maybe holding a mug. Golden hour or morning window light. The green garden or hills softly visible behind you.]',
+    outroLine1:'"You made it — thank you for scrolling."',
+    outroLine2:'"Whether you're looking for lifestyle-integrated content or a clean product-focused video, I'd love to bring your brand into this home and show it the way it deserves to be seen."',
+    outroLine3:'"Real people, real light, real results."',
+    outroLine4:'"My contact details are right below. I respond within 24 hours, and I always start with a conversation — not a contract. Let's talk."',
+    filmingNoteIntro:'Sony ZV-E10 · PP1 recipe · f/1.8 · ISO 200 · 1/50s · morning window light · lavalier at Level 7 · film walk-past 3 times',
+    filmingNoteOutro:'PP4 recipe · 5–5:45pm golden hour · hold mug · garden or hills visible behind you',
+  },
+  studioPortfolio:[
+    {id:'pv1',niche:'beauty',nicheLabel:'💄 Beauty',format:'Lifestyle-Integrated',title:'Morning Routine — Camera Watches, You Don't',desc:'Your real morning skincare routine filmed as if the camera is observing. No script. Just sounds, textures, light on your mixed skin.',shots:['Wide — you at window cleansing. Camera watches from side.','Close — product poured or scooped. Hands only.','Close — serum pressed into cheek. Side light shows absorption.','Wide — you in robe at window. Product on shelf beside you.','Skin close-up — side profile facing window. The glow is the final shot.'],duration:'30–45 sec',recipe:'PP2',notes:'ASMR sounds only. No voiceover. No music.'},
+    {id:'pv2',niche:'beauty',nicheLabel:'💄 Beauty',format:'Product-Forward',title:'One Product. Extreme Close-Up. No Distractions.',desc:'One cream, one forearm, full daylight. Texture scooped, swirled, absorbed. No talking. No music. Proves you can let a product speak for itself.',shots:['Extreme close-up — product jar/tube. Label visible. 3 seconds.','Finger scoops cream — slow, deliberate.','Cream swirled in palm — sound and visual both.','Applied to forearm. Watch it absorb on your mixed skin.','Forearm to window light — natural sheen is the payoff.'],duration:'20–30 sec',recipe:'PP2',notes:'Product Showcase mode on ZV-E10 for extreme close focus.'},
+    {id:'pv3',niche:'beauty',nicheLabel:'💄 Beauty',format:'Multi-Tone Family',title:'You + Daughters. Same Product. Three Skin Tones.',desc:'You and both daughters applying the same product. Wide then close-ups of each face in window light. The video no other creator can make.',shots:['Wide — all three of you visible, applying product together.','Close — your hands and face. Your mixed-light tone.','Close — eldest daughter. Her warm medium tone.','Close — youngest daughter. Her tone.','All three faces toward window. Glowing. 3 seconds.'],duration:'35–45 sec',recipe:'PP2',notes:'Let daughters move naturally. Do not over-direct.'},
+    {id:'pv4',niche:'hair',nicheLabel:'✂️ Hair',format:'Lifestyle-Integrated',title:'Real Wash Day — You're Just Doing Your Hair',desc:'Wash day, real time. 4C hair sectioned, product applied. Narrate naturally — not to camera. The slip through your hair is the money shot.',shots:['Your hair before — density and texture visible.','Product applied to section. Sound of squirt/scoop.','Wide-tooth comb sliding through — slip visible and audible.','Defined curl forming as section releases.','You done, facing window. Hair defined. Confident.'],duration:'45–60 sec',recipe:'PP2',notes:'Maximum window light. Natural sounds — do not mute. Film at actual wash day.'},
+    {id:'pv5',niche:'hair',nicheLabel:'✂️ Hair',format:'Product-Forward',title:'Braiding Your Daughter — Overhead. Close. Beautiful.',desc:'Camera overhead, tight on the parting and hands. Clean parts, deliberate technique, product applied between sections. No talking.',shots:['Her hair before — natural state. Camera overhead.','Your hands parting the hair. Clean, precise.','Product applied to scalp between sections.','Braiding close-up — the weave forming.','Hand-over-lens transition. Then: fresh braids in window light.','Her face. Confident. Smiling. Done.'],duration:'35–45 sec',recipe:'PP2',notes:'Set phone stand at maximum height for overhead shots. ZV-E10 for close detail.'},
+    {id:'pv6',niche:'hair',nicheLabel:'✂️ Hair',format:'Split Screen',title:'Your 4C + Her Curl. One Product. Side by Side.',desc:'Your 4C section left, daughter's looser curl right. Same product. Four seconds of split screen. Your single most irreplaceable piece of content.',shots:['Film your 4C — product applied, comb through. Same angle and light.','Film daughter's section — same product, technique, angle.','CapCut: Split Screen → 2-column → your hair left, hers right.','Hold the split screen 4 full seconds.','Product close-up. Label visible. 2 seconds. End.'],duration:'30 sec',recipe:'PP2',notes:'Film separately — same lighting, same angle both times.'},
+    {id:'pv7',niche:'lifestyle',nicheLabel:'🏡 Lifestyle',format:'Lifestyle-Integrated',title:'The 1pm Kitchen — Cooking Sounds as Content',desc:'Chopping, spice hitting oil, wooden spoon stirring, steam rising, plate set on table. Fully ASMR — no talking. Works for food, oil, cleaning, and kitchen brands simultaneously.',shots:['Overhead — hands chopping. Rhythmic, clean.','Side — spice hitting hot oil. The visual pop.','Close — wooden spoon stirring. Steam in window light.','Overhead — beautiful plating. Green garnish.','Natural — daughters' faces receiving food. Pure joy.'],duration:'30–45 sec',recipe:'PP1',notes:'ASMR audio essential. Keep kitchen quiet. Overhead phone + ZV-E10 side angle.'},
+    {id:'pv8',niche:'lifestyle',nicheLabel:'🏡 Lifestyle',format:'Product-Forward',title:'Clean Counter. Real Kitchen. Mitheru View Behind.',desc:'One cleaning product. Spray, wipe, counter goes from messy to spotless. Ten seconds. The Mitheru hillside visible through the window.',shots:['Wide — messy counter post-cooking. Window and view visible.','Product spray — the mist catching the light.','Wipe — from messy to clean. One confident stroke.','Product on clean counter. Hills visible behind. 3 seconds.'],duration:'15–25 sec',recipe:'PP1',notes:'Make sure the window and Mitheru view are visible in background.'},
+    {id:'pv9',niche:'lifestyle',nicheLabel:'🏡 Lifestyle',format:'Family Warmth',title:'The 4pm Cocoa Ritual — Makes Brands Feel Something',desc:'Milk warming, whisk creating froth, steam rising, daughters' faces as they receive mugs. Slow montage. No hard cuts.',shots:['Product packaging on counter. Close-up. Afternoon light.','Milk pouring into pot. White against dark.','Whisk creating froth. ASMR. Film 8 seconds minimum.','Steam rising from mug on windowsill. Hills behind.','You handing daughters mugs. Unscripted faces.','All three on sofa, mugs held. Quiet happiness.'],duration:'40–55 sec',recipe:'PP1',notes:'4pm light. Use neutral mugs. Soft voiceover optional over the montage.'},
+    {id:'pv10',niche:'tech',nicheLabel:'📱 Tech',format:'Lifestyle-Integrated',title:'Morning App Check Before the School Day Starts',desc:'You at desk, morning light, checking Roots app while daughters settle in background. Natural narration — not performing.',shots:['Wide — you at desk. Daughters visible in background.','Screen recording — your phone showing the app opening.','Your face as you scroll — natural, comfortable.','Screen — showing a specific section.','Look up from phone. Window light behind you.'],duration:'40–50 sec',recipe:'PP1',notes:'Screen record on phone, overlay in CapCut. Natural narration, not scripted.'},
+    {id:'pv11',niche:'tech',nicheLabel:'📱 Tech',format:'Product-Forward',title:'App Walkthrough — Clean, Deliberate, Every Feature Visible',desc:'Screen recording of a walkthrough — clean narration, every feature visible, spoken slowly. Your face in corner reacting naturally.',shots:['Screen record start — app opening animation.','Navigate to first key feature — pause. Name it aloud.','Navigate to second feature. Show in use.','Your face reaction in corner — genuine, not performed.','Return to home screen. App name visible. CTA.'],duration:'45–60 sec',recipe:'PP1',notes:'Screen record + CapCut picture-in-picture for face. Speak slower than feels natural.'},
+    {id:'pv12',niche:'tech',nicheLabel:'📱 Tech',format:'Origin Story',title:'"I Built My Own App. From Rural Kenya. No Code."',desc:'You to camera. White wall. A story, not a demo. This is the one brands put in ads.',shots:['You, white wall behind, window light. Look at the lens. Say the hook.','Screen recording insert — Claude or app briefly. 5 seconds.','Back to you. Continue the story.','App scrolled through on screen — proof it exists.','Back to you. Direct to camera.'],duration:'50–60 sec',recipe:'PP1',notes:'Memorise key lines — do not read them. Your most viral-capable tech video.'},
+    {id:'pv13',niche:'fashion',nicheLabel:'👗 Fashion',format:'Lifestyle-Integrated',title:'GRWM With Your Daughters — The Chaos and the Joy',desc:'Getting all three of you ready. Help with a button, add a hair clip, then all three stand and a daughter twirls. Completely unscripted.',shots:['Hook — you at camera. Girls getting dressed behind you.','Your hands doing up a daughter's top button. Tender.','Hair clip placed in one daughter's hair.','All three together — one twirls or jumps. Natural.','Outdoor: all three walk toward camera. Mitheru hills behind.'],duration:'40–55 sec',recipe:'PP3 outdoor, PP1 indoor',notes:'Do not over-direct daughters. PP3 for outdoor shot.'},
+    {id:'pv14',niche:'fashion',nicheLabel:'👗 Fashion',format:'Product-Forward',title:'One Jewellery Piece. Your Collarbone. Morning Light.',desc:'Clasp being fastened at your neck. Gold against your collarbone. Then same piece on daughter's wrist. Close, slow, deliberate.',shots:['Clasp being fastened — close-up at back of neck. 3 seconds.','Necklace against your collarbone. Side window light. 5 seconds.','Ring stacking — each ring sliding on slowly.','Same piece on your daughter's smaller wrist.','You — head and shoulders, full jewellery look. 3 seconds.'],duration:'25–35 sec',recipe:'PP2',notes:'Morning window light ONLY — no ring light for jewellery. Macro/close focus. f/1.8'},
+    {id:'pv15',niche:'fashion',nicheLabel:'👗 Fashion',format:'Outdoor Editorial',title:'Three of You. Golden Hour. The Hills Behind.',desc:'All three walking toward the camera on your garden path. Red-bloom trees and green hills behind. Golden hour. Looks like a campaign.',shots:['Wide establishing — all three with full landscape behind.','Walking toward camera — slow, natural. Film three times.','Slow-motion: daughters' dresses in the breeze.','Look-back shot — all three over shoulders at camera.','Wide final hold — all three in golden Mitheru light. 4 seconds.'],duration:'25–40 sec',recipe:'PP4',notes:'5–5:45pm ONLY. Ask your partner to hold camera for wide shots.'},
+  ],
+  studioIgPosts:[
+    {id:'ig1',week:1,type:'reel',title:'The Double-Take Intro',hook:'"Oh hey, did you just get here? Okay, hi!"',desc:'Your portfolio intro video trimmed to 45 sec. Walk-past, double-take, warm intro. Double-take must happen in first 2 seconds.',goal:'Profile visits, follows, brand curiosity.',hashtags:'#UGCCreator #KenyanCreator #UGCKenya #ContentCreator #AfricanCreator #MomCreator'},
+    {id:'ig2',week:1,type:'carousel',title:'Meet the Family — Four Skin Tones',hook:'"One product can look completely different on four different people."',desc:'Slides: four skin tones in family photo. One close-up per person with skin undertone and hair type labelled. Slide 6: "This is why brands come to me."',goal:'Saves from brands and creators. Makes your multi-tone value visual.',hashtags:'#MelaninSkin #MixedSkin #FamilyContent #BlackHair #NaturalHair #SkinCare'},
+    {id:'ig3',week:1,type:'reel',title:'The View From Here — Mitheru in 30 Seconds',hook:'"My filming location. You cannot rent this."',desc:'Pure landscape Reel. Red-bloom trees, green hills, mist. Voiceover: "Mitheru. Tharaka Nithi. Kenya." Then you in that landscape with a product.',goal:'Visual brand-building. Brands see your location is an asset.',hashtags:'#Kenya #TharakaNithi #KenyanCreator #RuralKenya #AfricanBeauty'},
+    {id:'ig4',week:1,type:'story',title:'Behind the Camera — My Filming Setup in 5 Slides',hook:'"You don't need a studio. Here's mine."',desc:'5 story slides: ZV-E10 on tripod · white wall filming corner · outdoor spot · lavalier clipped · poll: "Would you like to work with this setup?"',goal:'Brand trust and first interaction. Poll responses are warm leads.',hashtags:'Use location tag: Mitheru'},
+    {id:'ig5',week:1,type:'reel',title:'Hair Wash Day — All Four of Us, One Product',hook:'"We have four different hair types in this house."',desc:'Montage of wash day for everyone. Same product throughout. End with all four freshly done.',goal:'Hair brand attention. Your strongest hair credential in Reel form.',hashtags:'#NaturalHair #4CHair #WashDay #NaturalHairKenya #BlackHairCare'},
+    {id:'ig6',week:2,type:'reel',title:'Skincare — My Morning Routine on Mixed Skin',hook:'"What does a 3-step routine look like on light mixed skin in Kenyan morning light?"',desc:'Lifestyle-integrated beauty video. You at window doing your routine. Camera watches. Caption names every product and ends with: "Beauty brands — let's work. 📩"',goal:'Direct brand outreach bait. Make a beauty brand DM you.',hashtags:'#SkinCareRoutine #MelaninSkincare #MixedSkin #NaturalGlow #AfricanSkincare #UGCBeauty'},
+    {id:'ig7',week:2,type:'carousel',title:'"I Work in Two Ways" — A Brand Guide',hook:'"Before you DM me, read this."',desc:'Slide 1: "I work in two ways." · Slide 2: Lifestyle Integrated example · Slide 3: Product Forward example · Slide 4: "Which does your brand need?" · Slide 5: Rates + contact.',goal:'Direct brand conversion. Your media kit in Instagram form.',hashtags:'#UGCCreator #BrandCollab #ContentCreator #UGCKenya #BrandPartnership'},
+    {id:'ig8',week:2,type:'reel',title:'Kitchen ASMR — Cooking Is Content',hook:'"No studio. Just my kitchen at 1pm."',desc:'Lifestyle kitchen video — chopping, spice, steam, plating, daughters' faces. Pure ASMR. Caption tags 3 relevant Kenyan food brands by name.',goal:'Lifestyle and food brand attention. High save rate content.',hashtags:'#CookingASMR #KenyanFood #LifestyleContent #KitchenLife #AfricanCooking'},
+    {id:'ig9',week:2,type:'reel',title:'Braiding My Daughter — Overhead. The Reveal.',hook:'"Sunday braiding. She sat still for exactly 45 minutes."',desc:'Overhead camera, clean parting, product applied, hand-over-lens transition to reveal. Her smile is the final shot. Caption invites hair brand DMs.',goal:'Hair brand DMs. Reveal transition is highly shareable.',hashtags:'#BraidingHair #KidsBraids #ProtectiveStyle #HairBraiding #NaturalHairCommunity'},
+    {id:'ig10',week:2,type:'story',title:'A Day in My Life — Homeschool to Golden Hour',hook:'"6am to 6pm. This is what my day actually looks like."',desc:'8 story slides across the day: 6am · 8am homeschool · 10am skincare · 12pm cooking · 2pm hair · 4pm cocoa · 5pm filming · 7pm editing.',goal:'Show brands every moment as a content opportunity.',hashtags:'Stories: use location sticker — Mitheru, Kenya'},
+    {id:'ig11',week:2,type:'reel',title:'I Built My Own App. From Rural Kenya. No Code.',hook:'"A stay-at-home mum in rural Kenya who builds apps using AI."',desc:'Origin story tech video. You to camera. Screen recording of Roots app as proof. Tech brands will share this internally before they DM you.',goal:'Tech brand visibility and share-worthiness.',hashtags:'#NoCode #AITools #AppBuilder #TechMom #TechAfrica #WomenInTech'},
+    {id:'ig12',week:2,type:'carousel',title:'My Filming Setup — Everything You See in My Videos',hook:'"Brands always ask what camera I use."',desc:'Slide 1: Kit flat lay · Slide 2: ZV-E10 with specs · Slide 3: Indoor corner with settings · Slide 4: Outdoor location · Slide 5: Phone vs ZV-E10 quality side-by-side.',goal:'Professional credibility. Removes doubt about your deliverable quality.',hashtags:'#SonyZVE10 #ContentCreator #UGCCreator #CreatorSetup #FilmingSetup'},
+    {id:'ig13',week:2,type:'reel',title:'Golden Hour With My Girls — This Is The Light Brands Pay For',hook:'"Every evening at 5pm, the Mitheru light does something extraordinary."',desc:'Outdoor editorial fashion video — all three of you, the hills, golden hour. No product. Caption: "Brands — imagine your product in this light."',goal:'Pure visual brand attraction. Beautiful bait.',hashtags:'#GoldenHour #KenyaBeautiful #AfricanFashion #FamilyStyle #EditorialContent'},
+    {id:'ig14',week:3,type:'carousel',title:'What Makes Good UGC — A Carousel Every Brand Should Read',hook:'"The difference between UGC that converts and content that gets ignored."',desc:'Slide 1: Hook · Slide 2: "Real environments beat studios" · Slide 3: "Specific skin tones matter" · Slide 4: "ASMR sells texture" · Slide 5: "Family moment = most trusted testimonial"',goal:'Saves and shares from brand marketing teams. Gets circulated internally.',hashtags:'#UGCTips #ContentMarketing #BrandContent #ContentStrategy #CreatorEconomy'},
+    {id:'ig15',week:3,type:'reel',title:'Product ASMR — One Cream. Your Skin. Nothing Else.',hook:'"No script. No music. Just this texture."',desc:'Product-forward beauty ASMR — cream scooped, swirled, absorbed, glowing forearm. Caption: "This is Format 2 — product-forward. Which format does your brand need? Tell me below."',goal:'Demonstrate product-forward mastery. Drive comments from brand followers.',hashtags:'#SkincareASMR #ProductDemo #BeautyASMR #TextureASMR #UGCBeauty'},
+    {id:'ig16',week:3,type:'reel',title:'The 4pm Cocoa Ritual',hook:'"Every day at 4pm we stop everything."',desc:'Cocoa ritual family video. Warm montage. Caption targets Nestlé Milo, Cadbury, Cowbell by name.',goal:'Food/beverage brand attention.',hashtags:'#AfternoonRitual #FamilyMoment #KenyanHome #MomLife #FoodContent'},
+    {id:'ig17',week:3,type:'carousel',title:'4 Hair Types in One House — The Breakdown',hook:'"Four completely different hair types. One household."',desc:'Slide 1: "Four people. Four textures." · Slides 2–5: One per person with texture characteristics · Slide 6: "Products tested across all four. Ask me anything."',goal:'Hair brand saves and DMs. Your credential made fully explicit.',hashtags:'#HairTypes #4CHair #NaturalHairTypes #KinkyHair #CurlyHair #HairCommunity'},
+    {id:'ig18',week:3,type:'story',title:'My Gifting Policy + Rate Card — Pinned in Highlights',hook:'"For the brands who've been watching."',desc:'5 story slides: Gifting overview · $35 rate · $85 bundle · "What you always get" · Contact. Save as "Work With Me" highlight.',goal:'Convert profile visitors into brand enquiries.',hashtags:'Stories: use link sticker pointing to email'},
+    {id:'ig19',week:3,type:'reel',title:'Matching Outfits — Three Girls, One Morning, The Hills',hook:'"She insisted we all match."',desc:'Outdoor editorial — all three in coordinated outfits, golden hour, landscape behind. Caption tags 3 Kenyan children's clothing or fashion brands.',goal:'Fashion and kids' brand visibility. High share potential.',hashtags:'#MatchingOutfits #MotherDaughter #AfricanFashion #KenyanFashion #FamilyStyle'},
+    {id:'ig20',week:3,type:'reel',title:'Split Screen — Her Curl. My 4C. One Product.',hook:'"Same product. Two textures. No trick — just one household."',desc:'Multi-texture split screen hair video. Caption: "Hair brands — one video, two demos. I deliver in 48 hours."',goal:'Your most commercially powerful hair post. Should trigger DMs.',hashtags:'#HairTexture #NaturalHair #4CHair #CurlyHair #HairComparison #HairCare'},
+    {id:'ig21',week:3,type:'carousel',title:'Why Rural Kenya Is Underrepresented in African UGC',hook:'"Every brand wants authentic Africa. Most are getting Nairobi studios."',desc:'Slide 1: Hook · Slide 2: Landscape labelled "My backyard" · Slide 3: Mitheru description · Slide 4: Product in that environment · Slide 5: "No other creator is filming here."',goal:'Designed for brand marketing teams. Makes them feel they're missing out.',hashtags:'#KenyaBeautiful #TharakaNithi #AfricanContent #UGCAfrica #AuthenticContent'},
+    {id:'ig22',week:4,type:'reel',title:'Jewellery — The Clasp, The Collarbone, Gold on Skin',hook:'"Small detail. Everything changes."',desc:'Jewellery product-forward — clasp, collarbone, ring stacking, daughter's wrist. Slow, macro. Caption targets Kenyan artisan jewellery brands.',goal:'Jewellery brand attention. Brands see exactly what their product would look like.',hashtags:'#JewelleryContent #GoldJewellery #AfricanJewellery #KenyanJewellery'},
+    {id:'ig23',week:4,type:'carousel',title:'Real Results — What Brands Get When They Work With Me',hook:'"Before you DM me, here's what your deliverable actually looks like."',desc:'Slide 1: Hook · Slide 2: Best Reel still "Final edited video, 48hrs" · Slide 3: ASMR still "Raw footage included" · Slide 4: Family shot "Lifestyle option" · Slide 5: Rate summary.',goal:'Final conversion. Ready-to-hire brands find this and DM you.',hashtags:'#UGCCreator #BrandCollab #ContentDelivery #UGCPortfolio #HireMe'},
+    {id:'ig24',week:4,type:'reel',title:'Homeschool Morning — The App That Runs It',hook:'"We start school at 8am. Before that, I check this."',desc:'Lifestyle-integrated tech video. Desk, daughters in background, Roots app open. Caption targets education apps and productivity tools.',goal:'EdTech and productivity brand attention.',hashtags:'#HomeschoolMom #EdTech #ProductivityApp #HomeschoolKenya #TechMom'},
+    {id:'ig25',week:4,type:'story',title:'Q&A — Brands Ask, I Answer',hook:'"Everything brands want to know before they hire a UGC creator."',desc:'6 story slides answering: followers? · delivery time? · paid ads? · gifting? · file formats? · how to start? Save as "FAQ" highlight.',goal:'Remove every friction point between a brand and hiring you.',hashtags:'Stories: use DM link sticker and email sticker on final slide'},
+    {id:'ig26',week:4,type:'reel',title:'Perfume in Slow Motion — Mist, Light, Hills',hook:'"Three seconds. That is all this shot takes."',desc:'Perfume slow-motion — mist catching golden hour light. Then you spraying at your neck, hills behind. Caption targets fragrance brands.',goal:'Fragrance brand attraction. Campaign-level visual quality.',hashtags:'#FragranceContent #PerfumeVideo #SlowMotion #GoldenHourKenya #ScentContent'},
+    {id:'ig27',week:4,type:'reel',title:'Cleaning Hack — 5-Minute Counter Reset',hook:'"The counter before lunch versus after. Five minutes."',desc:'Cleaning product video sped up 4× in CapCut. Mitheru view visible through window. Caption tags Jik Kenya, Mama Lemon, Dettol Kenya by name.',goal:'Cleaning brand DMs. The view elevates a functional video into lifestyle content.',hashtags:'#CleaningMotivation #CleaningASMR #KitchenClean #CleanHome #SAHMLife'},
+    {id:'ig28',week:4,type:'carousel',title:'My Rate Card — Exactly What I Charge',hook:'"Transparency is part of professionalism."',desc:'Slides: Single video rate · Bundle of 3 · Monthly retainer · Add-on list · "Every package: edited MP4, raw footage, commercial rights, 48hr delivery." Pin this post.',goal:'Saved constantly. Pinning means brands see rates immediately on profile visit.',hashtags:'#UGCRates #UGCCreator #ContentCreatorRates #HireACreator'},
+    {id:'ig29',week:4,type:'reel',title:'Body Care ASMR — Texture Study. No Talking.',hook:'"The texture made me put the phone down. Then I picked it up to film it."',desc:'Body care ASMR — lotion scooped, swirled, absorbed on forearm. Caption: "I have a slot available next week. DM me."',goal:'Body care brand conversion. "Slot available" creates urgency.',hashtags:'#BodyCareASMR #LotionASMR #TextureASMR #BodyCare #GlowySkin #UGCSkincare'},
+    {id:'ig30',week:4,type:'reel',title:'Post 30 — "You've Seen My World. Let Me Show Your Brand In It."',hook:'"30 posts. Five niches. One house in Kenya. Two daughters."',desc:'Montage of best clips from all 30 posts. 45 seconds. Closes with you to camera: "If you're a brand who's been watching — thank you. Let's work." Pin alongside rate card.',goal:'The most important post on your grid. Should make brands feel they've been waiting to hire you.',hashtags:'#UGCPortfolio #ContentCreator #UGCCreator #BrandCollab #AfricanCreator #KenyanContent'},
+  ],
+  studioServices:[
+    {id:'sv1',name:'💄 Beauty & Skincare UGC',price:35,priceNote:'per video · gifting welcome',desc:'Product demos, skincare routines, ASMR texture videos, before & after — filmed across multiple skin tones in your family. Most in-demand UGC niche globally.',includes:['1 × edited vertical video (30–60 sec, 9:16)','Format: lifestyle, product-forward, or multi-tone family','Natural Kenyan morning light OR ring light','ASMR audio — natural product sounds included','Raw footage + final MP4 + commercial rights','1 revision round within 48 hours'],turnaround:'48 hours after product received'},
+    {id:'sv2',name:'✂️ Hair Care UGC',price:35,priceNote:'single texture · multi-texture $50',desc:'Multi-texture demonstrations across four hair types in one household. Wash day routines, protective styling, ASMR slip tests. No other creator can offer this.',includes:['1 × edited vertical video (30–60 sec)','Single texture OR multi-texture split screen (+$15)','My 4C natural hair, daughters' curl patterns, or all three','Overhead camera setup for braiding content available','ASMR audio — real wash day sounds','Raw + final MP4 + commercial rights'],turnaround:'48 hours after product received'},
+    {id:'sv3',name:'🏡 Lifestyle & Home UGC',price:35,priceNote:'family inclusion +$20',desc:'ASMR cooking, cleaning demos, family moments, day-in-life integration. Your real Kenyan home as the brand backdrop — white walls, wooden surfaces, the hills outside.',includes:['1 × edited vertical video (30–60 sec)','Format: ASMR, day-in-life, product demo, or family','Filmed in real home — kitchen, living room, or outdoor','Family members available on request (+$20)','Full ambient audio — cooking, cleaning, family sounds','Raw + final MP4 + commercial rights'],turnaround:'48 hours'},
+    {id:'sv4',name:'📱 Tech & Apps UGC',price:40,priceNote:'per video · no shipping needed',desc:'App demos, screen walkthroughs, no-code story content. Told from the perspective of a self-taught rural Kenyan mum who builds AI apps — the audience tech brands can't otherwise reach.',includes:['1 × edited vertical video (45–60 sec)','Screen recording overlay (picture-in-picture in CapCut)','Format: walkthrough, story/origin, or lifestyle integration','Scripted narration reviewed before filming','Raw + final MP4 + commercial rights','Digital products: no shipping required'],turnaround:'24–48 hours after brief confirmed'},
+    {id:'sv5',name:'👗 Fashion & Style UGC',price:35,priceNote:'family/golden hour +$20',desc:'GRWM, outfit reveals, jewellery close-ups, outdoor editorial. Filmed against the Mitheru countryside — a backdrop no other creator has.',includes:['1 × edited vertical video (20–50 sec)','Indoor (white wall + window) OR outdoor (Mitheru hills)','Solo OR family coordination (all four members)','Macro jewellery close-ups available (PP2 recipe)','Golden hour filming available (PP4, 5–5:45pm)','Raw + final MP4 + commercial rights'],turnaround:'48 hours after product received'},
+    {id:'sv6',name:'👨‍👩‍👧‍👧 Full Family Package',price:60,priceNote:'full family · most unique offering',desc:'All four on camera — husband, two daughters, and you. Four skin tones, four hair types, genuine family moments. The most rare and commercially valuable format you deliver.',includes:['1 × edited vertical video (45–60 sec)','All four family members on screen','Multi-skin-tone product demonstration','Multi-hair-type demonstration','Genuine reactions — no scripted child performances','Raw + final MP4 + commercial rights'],turnaround:'48–72 hours · coordination required'},
+  ],
+  studioPackages:[
+    {id:'pk1',name:'Starter',title:'The First Look Package',price:85,priceNote:'3 videos · saves $20 vs individual',items:['3 × edited vertical videos (30–60 sec each)','Mix of formats: lifestyle + product-forward + family','3 niche categories covered','All raw footage included','Full commercial rights on all 3','Delivered over 7 days','1 revision round per video'],savings:'You save $20 vs 3 individual videos'},
+    {id:'pk2',name:'Signature',title:'The Full Story Package',price:165,priceNote:'5 videos + 3 still images · best value',items:['5 × edited vertical videos across 2–3 niches','3 × high-resolution still photos (flat lays)','Both formats: lifestyle + product-forward','Multi-tone family content (minimum 1 video)','Golden hour outdoor shoot (1 video)','All raw footage + final MP4s','Full commercial rights, all platforms + paid ads','Delivered over 10 days','2 revision rounds per video'],savings:'You save $45 vs individual rates'},
+    {id:'pk3',name:'Retainer',title:'The Monthly Partner',price:280,priceNote:'8 videos/month · priority delivery',items:['8 × edited vertical videos per month','4 × still photos per month','All formats and niches each month','Dedicated filming day each week','Priority 24-hour delivery','Monthly content strategy call (30 min)','Exclusivity in your niche','Unlimited revisions'],savings:'You save $100+ vs individual rates'},
+  ],
+  studioAddons:[
+    {id:'ao1',price:'+$15',name:'Multi-Texture Split Screen',desc:'Add the split-screen format showing your hair and your daughter's curl side by side.'},
+    {id:'ao2',price:'+$20',name:'Full Family on Camera',desc:'Add your husband and both daughters. Four skin tones, four hair types in one frame.'},
+    {id:'ao3',price:'+$20',name:'Golden Hour Outdoor Shoot',desc:'Dedicated filming in your Mitheru garden during the golden hour window (5–5:45pm).'},
+    {id:'ao4',price:'+$25',name:'6-Month Paid Ad Rights',desc:'Extended commercial rights for paid advertising across all platforms for 6 months.'},
+    {id:'ao5',price:'+$15',name:'Horizontal Format',desc:'Same video re-edited in 16:9 landscape format for YouTube ads or website use.'},
+    {id:'ao6',price:'+$20',name:'Rush Delivery (24 hours)',desc:'Priority filming and editing. Delivered within 24 hours of product receipt or brief.'},
+    {id:'ao7',price:'+$15',name:'Still Photography (3 images)',desc:'3 × high-resolution product flat lay or lifestyle photographs.'},
+    {id:'ao8',price:'+$10',name:'Extra Revision Round',desc:'One additional revision round beyond the included allowance.'},
+  ],
+  studioBrands:[
+    {id:'br1',priority:'🔴 Week 1',type:'Kenyan natural hair brands (IG)',why:'Need authentic 4C content desperately',angle:'"I care for four different hair types daily"',rate:'$35 or gifting',specific:''},
+    {id:'br2',priority:'🔴 Week 1',type:'Kenyan skincare/natural soap brands',why:'Small brands, fast decisions, product-ready',angle:'Multi-tone family demonstration',rate:'$35 or gifting',specific:''},
+    {id:'br3',priority:'🔴 Week 1',type:'Cantu, SheaMoisture (East Africa DMs)',why:'Actively seek African UGC creators',angle:'4C multi-texture household credential',rate:'$50–85',specific:''},
+    {id:'br4',priority:'🟡 Week 2',type:'Kenyan cooking oil/food brands',why:'Kitchen ASMR is exactly what they need',angle:'Real Kenyan home kitchen, daily cook',rate:'$35 or gifting',specific:''},
+    {id:'br5',priority:'🟡 Week 2',type:'Kenyan cleaning product brands',why:'Authentic home cleaning content is rare',angle:'Real house, real mess, real clean',rate:'$35 or gifting',specific:''},
+    {id:'br6',priority:'🟡 Week 2',type:'Productivity/to-do apps (global)',why:'Your AI app story is a perfect hook',angle:'"SAHM who builds apps in rural Kenya"',rate:'$40',specific:''},
+    {id:'br7',priority:'🟢 Week 3',type:'African fashion designers (IG Kenya)',why:'Your outdoor editorial location is unique',angle:'Mitheru hills as fashion backdrop',rate:'$35–55',specific:''},
+    {id:'br8',priority:'🟢 Week 3',type:"Kids' clothing brands (KE + global)",why:'Daughters are natural, joyful, real',angle:'Matching outfits + countryside backdrop',rate:'$55–85',specific:''},
+    {id:'br9',priority:'🟢 Week 4',type:'Canva, CapCut, Notion (global UGC DMs)',why:'They run creator programmes actively',angle:'Your full creator toolkit usage story',rate:'$40–85',specific:''},
+    {id:'br10',priority:'🟢 Week 4',type:'Any brand from weeks 1–2 who gifted',why:'Already have your content. Trust built.',angle:'Pitch the Starter Bundle ($85) for month 2',rate:'$85 bundle',specific:''},
+  ],
+  studioIncome:{
+    w1target:'$0',w1note:'Building and pitching simultaneously. No money in yet — normal and expected.',w1actions:'• Post first 5 Instagram posts (Tue–Sat)
+• Film intro + outro video
+• Send 10 pitches — DM, WhatsApp, email
+• Set up "Work With Me" story highlight
+• Film 2 portfolio spec videos with products you own',
+    w2target:'$35–70',w2note:'First replies arrive. Accept 1–2 gifting collabs. Quote paid rates to all others. One paid deal closes.',w2actions:'• Post Instagram posts 6–13
+• Send 10 more pitches (new brands)
+• Send follow-up 1 to week 1 pitches
+• Film and deliver 1 paid video ($35)
+• Set up Fiverr profile as secondary income',
+    w3target:'$70–105',w3note:'Portfolio growing. Second and third paid deals close. Follow-ups begin converting.',w3actions:'• Post Instagram posts 14–21
+• Deliver 2 paid videos ($35 × 2 = $70)
+• Pitch your first bundle ($85) to interested brands
+• Send follow-up 2 to earliest pitches (final close)
+• After gifting delivery: pitch paid rate to same brand',
+    w4target:'$200+',w4note:'Close week. At least one bundle or 4 single videos paid or confirmed.',w4actions:'• Post Instagram posts 22–30
+• Close 1 × $85 bundle (week 4 target)
+• OR close 4 × $35 singles = $140 + week 3
+• Pin your rate card carousel post
+• Quote month 2 retainer to best brand',
+    breakdown:'3 × single videos ($35 each) = $105
+1 × Starter Bundle ($85) = $85
+Gifting value received ≈ $40–80 in products
+Total cash: $190 + product value',
+  },
 });
 
 window.D = DEFAULTS();
@@ -1412,6 +1681,11 @@ function _refreshAllPages(){
   if(typeof rBrand==='function') rBrand();
   if(typeof renderPitches==='function') renderPitches('');
   if(typeof rCal==='function') rCal();
+  if(typeof rScripts==='function' && currentPage==='scripts') rScripts();
+  if(typeof rPortfolio==='function' && currentPage==='portfolio') rPortfolio();
+  if(typeof rIgPlan==='function' && currentPage==='igplan') rIgPlan();
+  if(typeof rRateCard==='function' && currentPage==='ratecard') rRateCard();
+  if(typeof rIncomePlan==='function' && currentPage==='incomeplan') rIncomePlan();
 }
 
 // ── Sync dirty local data to Firebase when coming back online ──
@@ -1734,7 +2008,7 @@ function resetTP(ns){TP[ns]=[];renderTPTags(ns);}
 function setTP(ns,arr){TP[ns]=[...(arr||[])];renderTPTags(ns);}
 
 // ── NAVIGATION ──
-const PAGES={dashboard:'Good morning, <em>Asha</em> ✨',earnings:'Earnings',gigs:'Gig Tracker',followup:'Follow-Ups',planner:'Content Planner',ideas:'Ideas Library',feed:'Feed Planner',pitches:'Pitch Templates',brand:'Brand Hub'};
+const PAGES={dashboard:'Good morning, <em>Asha</em> ✨',earnings:'Earnings',gigs:'Gig Tracker',followup:'Follow-Ups',planner:'Content Planner',ideas:'Ideas Library',feed:'Feed Planner',pitches:'Pitch Templates',brand:'Brand Hub',scripts:'Scripts',portfolio:'Portfolio Videos',igplan:'30-Post IG Plan',ratecard:'Rate Card',incomeplan:'$200 Month 1 Plan'};
 let currentPage='dashboard';
 function goTo(page,el){
   document.querySelectorAll('.pg').forEach(p=>p.classList.remove('active'));
@@ -1755,6 +2029,11 @@ function renderPage(p){
   if(p==='feed')rFeed();
   if(p==='pitches')renderPitches('');
   if(p==='brand')rBrand();
+  if(p==='scripts')rScripts();
+  if(p==='portfolio')rPortfolio();
+  if(p==='igplan')rIgPlan();
+  if(p==='ratecard')rRateCard();
+  if(p==='incomeplan')rIncomePlan();
 }
 
 // ── MODAL ──
@@ -2591,6 +2870,434 @@ function init(){
   setEl('gig-badge',D.gigs.filter(g=>!['delivered','declined'].includes(g.status)).length||'');
   setEl('fu-badge',D.followups.filter(f=>!f.done).length||'');
 }
+
+
+// ══════════════════════════════════════════════
+// STUDIO — SCRIPTS PAGE
+// ══════════════════════════════════════════════
+
+function rScripts(){
+  const s = D.studioScripts;
+  const fields = {
+    'sc-idir1':'introDir1','sc-il1':'introLine1','sc-il2':'introLine2',
+    'sc-il3':'introLine3','sc-il4':'introLine4','sc-il5':'introLine5',
+    'sc-fnintro':'filmingNoteIntro',
+    'sc-odir':'outroDir','sc-ol1':'outroLine1','sc-ol2':'outroLine2',
+    'sc-ol3':'outroLine3','sc-ol4':'outroLine4','sc-fnoutro':'filmingNoteOutro',
+  };
+  Object.entries(fields).forEach(([elId, key]) => {
+    const el = document.getElementById(elId);
+    if(el) el.value = s[key] || '';
+  });
+}
+
+function saveScripts(){
+  const s = D.studioScripts;
+  const fields = {
+    'sc-idir1':'introDir1','sc-il1':'introLine1','sc-il2':'introLine2',
+    'sc-il3':'introLine3','sc-il4':'introLine4','sc-il5':'introLine5',
+    'sc-fnintro':'filmingNoteIntro',
+    'sc-odir':'outroDir','sc-ol1':'outroLine1','sc-ol2':'outroLine2',
+    'sc-ol3':'outroLine3','sc-ol4':'outroLine4','sc-fnoutro':'filmingNoteOutro',
+  };
+  Object.entries(fields).forEach(([elId, key]) => {
+    const el = document.getElementById(elId);
+    if(el) s[key] = el.value;
+  });
+  save(); toast('Scripts saved ✓');
+}
+
+// ══════════════════════════════════════════════
+// STUDIO — PORTFOLIO VIDEOS PAGE
+// ══════════════════════════════════════════════
+
+const PV_NICHE_COLORS = {
+  beauty:'rgba(232,196,176,0.25)',hair:'rgba(201,137,122,0.15)',
+  lifestyle:'rgba(143,175,138,0.15)',tech:'rgba(196,150,58,0.12)',fashion:'rgba(194,174,206,0.2)'
+};
+const PV_NICHE_ACCENT = {
+  beauty:'#C9897A',hair:'#C9897A',lifestyle:'#8FAF8A',tech:'#C4963A',fashion:'#C2AECE'
+};
+
+function rPortfolio(){
+  const container = document.getElementById('pv-list');
+  if(!container) return;
+  const niches = ['beauty','hair','lifestyle','tech','fashion'];
+  const nicheLabels = {beauty:'💄 Beauty & Skincare',hair:'✂️ Hair Care',lifestyle:'🏡 Lifestyle & Home',tech:'📱 Tech & Apps',fashion:'👗 Fashion & Style'};
+  const recipeNote = {beauty:'PP2 · window + ring light',hair:'PP2 · maximum window light',lifestyle:'PP1 · ASMR audio essential',tech:'PP1 · screen recording overlay',fashion:'PP3+PP4 · outdoor editorial'};
+
+  let html = '';
+  niches.forEach(niche => {
+    const vids = D.studioPortfolio.filter(v => v.niche === niche);
+    if(!vids.length) return;
+    const accent = PV_NICHE_ACCENT[niche] || 'var(--terracotta)';
+    html += `<div style="margin-bottom:8px;padding:10px 0 6px;border-bottom:1px solid rgba(0,0,0,0.06);display:flex;align-items:center;gap:12px;">
+      <span style="font-family:'Cormorant Garamond',serif;font-size:1.15rem;font-weight:300;color:${accent};">${nicheLabels[niche]}</span>
+      <span style="font-size:9px;color:var(--mid-gray);font-family:'DM Mono',monospace;">${recipeNote[niche]}</span>
+    </div>`;
+    vids.forEach(v => {
+      const shotsHtml = (v.shots||[]).map((s,i) => `
+        <div style="display:flex;gap:8px;margin-bottom:6px;align-items:flex-start;">
+          <span style="background:rgba(196,113,79,0.12);color:var(--terracotta);min-width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;font-family:'DM Mono',monospace;flex-shrink:0;margin-top:9px;">${i+1}</span>
+          <input class="fi" style="flex:1;height:36px;font-size:11px;" value="${esc(s)}" onchange="updatePVShot('${v.id}',${i},this.value)" placeholder="Shot description">
+          <button class="ib" onclick="removePVShot('${v.id}',${i})" style="flex-shrink:0;margin-top:2px;">✕</button>
+        </div>`).join('');
+
+      html += `<div class="card" style="margin-bottom:12px;border-left:3px solid ${accent};">
+        <div class="ch">
+          <div>
+            <span class="sp" style="background:${PV_NICHE_COLORS[niche]||'rgba(196,113,79,0.1)'};color:${accent};">${esc(v.format)}</span>
+            <input class="fi" style="display:inline-block;width:320px;margin-left:10px;height:32px;font-size:13px;" value="${esc(v.title)}" onchange="updatePV('${v.id}','title',this.value)">
+          </div>
+          <div style="display:flex;gap:6px;">
+            <button class="btn btn-g btn-s" onclick="addPVShot('${v.id}')">+ Shot</button>
+            <button class="btn btn-d btn-s" onclick="delPortfolioVideo('${v.id}')">Delete</button>
+          </div>
+        </div>
+        <div class="cb">
+          <div class="fr">
+            <div class="fg"><label class="fl">Description</label><textarea class="ft" style="min-height:70px;" onchange="updatePV('${v.id}','desc',this.value)">${esc(v.desc)}</textarea></div>
+            <div>
+              <div class="fg" style="margin-bottom:8px;"><label class="fl">Format</label><input class="fi" value="${esc(v.format)}" onchange="updatePV('${v.id}','format',this.value)"></div>
+              <div class="fg" style="margin-bottom:8px;"><label class="fl">Duration</label><input class="fi" value="${esc(v.duration)}" onchange="updatePV('${v.id}','duration',this.value)"></div>
+              <div class="fg"><label class="fl">Camera Recipe</label><input class="fi" value="${esc(v.recipe||'')}" onchange="updatePV('${v.id}','recipe',this.value)"></div>
+            </div>
+          </div>
+          <div class="fg" style="margin-top:8px;"><label class="fl">Filming Notes</label><textarea class="ft" style="min-height:50px;" onchange="updatePV('${v.id}','notes',this.value)">${esc(v.notes||'')}</textarea></div>
+          <div style="margin-top:12px;"><div style="font-size:9px;letter-spacing:.15em;text-transform:uppercase;font-weight:500;color:var(--warm-gray);margin-bottom:8px;">Shot List</div>
+          ${shotsHtml}
+          </div>
+        </div>
+      </div>`;
+    });
+  });
+  container.innerHTML = html;
+}
+
+function updatePV(id, field, val){
+  const v = D.studioPortfolio.find(x=>x.id===id);
+  if(v){ v[field]=val; save(); }
+}
+function updatePVShot(id, idx, val){
+  const v = D.studioPortfolio.find(x=>x.id===id);
+  if(v && v.shots){ v.shots[idx]=val; save(); }
+}
+function addPVShot(id){
+  const v = D.studioPortfolio.find(x=>x.id===id);
+  if(v){ if(!v.shots) v.shots=[]; v.shots.push('New shot description'); rPortfolio(); save(); }
+}
+function removePVShot(id, idx){
+  const v = D.studioPortfolio.find(x=>x.id===id);
+  if(v && v.shots){ v.shots.splice(idx,1); rPortfolio(); save(); }
+}
+function addPortfolioVideo(){
+  const niches = ['beauty','hair','lifestyle','tech','fashion'];
+  const id = 'pv_' + Date.now();
+  D.studioPortfolio.push({
+    id, niche:'beauty', nicheLabel:'💄 Beauty', format:'Lifestyle-Integrated',
+    title:'New Portfolio Video',
+    desc:'Describe what this video shows and why brands will want it.',
+    shots:['Shot 1','Shot 2','Shot 3'],
+    duration:'30–45 sec', recipe:'PP2', notes:'Camera and lighting notes here.'
+  });
+  rPortfolio(); save(); toast('Video added ✓');
+}
+function delPortfolioVideo(id){
+  if(!confirm('Delete this portfolio video?')) return;
+  D.studioPortfolio = D.studioPortfolio.filter(v=>v.id!==id);
+  rPortfolio(); save(); toast('Video deleted');
+}
+
+// ══════════════════════════════════════════════
+// STUDIO — 30-POST IG PLAN
+// ══════════════════════════════════════════════
+
+const IG_TYPE_COLORS = {
+  reel:'rgba(196,113,79,0.1)',carousel:'rgba(196,150,58,0.1)',
+  story:'rgba(194,174,206,0.15)',static:'rgba(143,175,138,0.12)'
+};
+const IG_TYPE_LABELS = {reel:'🎬 Reel',carousel:'📲 Carousel',story:'📖 Story Series',static:'🖼 Static Image'};
+
+function rIgPlan(){
+  const container = document.getElementById('igp-list');
+  if(!container) return;
+  const weekLabel = {1:'Week 1 — Foundation',2:'Week 2 — Depth',3:'Week 3 — Trust',4:'Week 4 — Pitch'};
+  const posts = [...D.studioIgPosts].sort((a,b)=>(a.week-b.week)||(a.id.localeCompare(b.id)));
+
+  let html = '';
+  let curWeek = 0;
+  let wkCount = {};
+  posts.forEach(p => { wkCount[p.week] = (wkCount[p.week]||0)+1; });
+
+  posts.forEach((p, idx) => {
+    if(p.week !== curWeek){
+      if(curWeek > 0) html += '</div>';
+      curWeek = p.week;
+      const wc = wkCount[p.week] || 0;
+      html += `<div style="display:flex;align-items:center;gap:14px;margin:18px 0 10px;padding-bottom:8px;border-bottom:1px solid rgba(0,0,0,0.06);">
+        <span style="font-family:'Cormorant Garamond',serif;font-size:3rem;font-weight:300;line-height:1;color:rgba(181,173,168,0.2);">0${curWeek}</span>
+        <div><div style="font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:300;">${weekLabel[curWeek]||'Week '+curWeek}</div>
+        <div style="font-size:10px;color:var(--mid-gray);">${wc} post${wc!==1?'s':''} this week</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;margin-bottom:4px;">`;
+    }
+    const postNum = idx + 1;
+    const tcol = IG_TYPE_COLORS[p.type]||IG_TYPE_COLORS.reel;
+    const tlbl = IG_TYPE_LABELS[p.type]||'🎬 Reel';
+    html += `<div class="card" style="position:relative;border-top:2px solid ${p.type==='reel'?'var(--terracotta)':p.type==='carousel'?'var(--gold)':p.type==='story'?'var(--lavender)':'var(--sage)'};">
+      <div style="position:absolute;top:12px;right:14px;font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:300;color:rgba(181,173,168,0.2);line-height:1;">${postNum}</div>
+      <div class="ch" style="padding-right:50px;">
+        <div>
+          <span class="sp" style="background:${tcol};">${tlbl}</span>
+          <span style="font-size:9px;color:var(--mid-gray);margin-left:6px;font-family:'DM Mono',monospace;">Week ${p.week}</span>
+        </div>
+      </div>
+      <div class="cb" style="padding-top:8px;">
+        <div class="fg" style="margin-bottom:8px;"><label class="fl">Title</label>
+          <input class="fi" style="font-family:'Cormorant Garamond',serif;font-size:1rem;" value="${esc(p.title)}" onchange="updateIG('${p.id}','title',this.value)"></div>
+        <div class="fg" style="margin-bottom:8px;"><label class="fl">Hook / Opening Line</label>
+          <textarea class="ft" style="min-height:50px;font-style:italic;" onchange="updateIG('${p.id}','hook',this.value)">${esc(p.hook)}</textarea></div>
+        <div class="fg" style="margin-bottom:8px;"><label class="fl">Content Brief</label>
+          <textarea class="ft" style="min-height:80px;" onchange="updateIG('${p.id}','desc',this.value)">${esc(p.desc)}</textarea></div>
+        <div class="fg" style="margin-bottom:8px;"><label class="fl">Goal</label>
+          <textarea class="ft" style="min-height:50px;" onchange="updateIG('${p.id}','goal',this.value)">${esc(p.goal)}</textarea></div>
+        <div class="fg" style="margin-bottom:10px;"><label class="fl">Hashtags</label>
+          <textarea class="ft" style="min-height:50px;" onchange="updateIG('${p.id}','hashtags',this.value)">${esc(p.hashtags)}</textarea></div>
+        <div style="display:flex;gap:8px;">
+          <select class="fs" style="flex:1;height:34px;font-size:11px;" onchange="updateIG('${p.id}','type',this.value)">
+            <option value="reel" ${p.type==='reel'?'selected':''}>🎬 Reel</option>
+            <option value="carousel" ${p.type==='carousel'?'selected':''}>📲 Carousel</option>
+            <option value="story" ${p.type==='story'?'selected':''}>📖 Story Series</option>
+            <option value="static" ${p.type==='static'?'selected':''}>🖼 Static Image</option>
+          </select>
+          <select class="fs" style="flex:1;height:34px;font-size:11px;" onchange="updateIG('${p.id}','week',parseInt(this.value))">
+            <option value="1" ${p.week===1?'selected':''}>Week 1 — Foundation</option>
+            <option value="2" ${p.week===2?'selected':''}>Week 2 — Depth</option>
+            <option value="3" ${p.week===3?'selected':''}>Week 3 — Trust</option>
+            <option value="4" ${p.week===4?'selected':''}>Week 4 — Pitch</option>
+          </select>
+          <button class="btn btn-d btn-s" onclick="delIgPost('${p.id}')">✕</button>
+        </div>
+      </div>
+    </div>`;
+  });
+  if(curWeek > 0) html += '</div>';
+  container.innerHTML = html;
+}
+
+function updateIG(id, field, val){
+  const p = D.studioIgPosts.find(x=>x.id===id);
+  if(p){ p[field] = (field==='week') ? parseInt(val) : val; save(); }
+}
+function addIgPost(){
+  D.studioIgPosts.push({
+    id:'ig_'+Date.now(), week:4, type:'reel',
+    title:'New Instagram Post',
+    hook:'"Your opening hook goes here."',
+    desc:'Describe what to film and what the caption should say.',
+    goal:'What do you want this post to achieve?',
+    hashtags:'#UGCCreator #KenyanCreator'
+  });
+  rIgPlan(); save(); toast('Post added ✓');
+}
+function delIgPost(id){
+  if(!confirm('Delete this post?')) return;
+  D.studioIgPosts = D.studioIgPosts.filter(p=>p.id!==id);
+  rIgPlan(); save(); toast('Post deleted');
+}
+
+// ══════════════════════════════════════════════
+// STUDIO — RATE CARD
+// ══════════════════════════════════════════════
+
+function rRateCard(){
+  rServices(); rPackages(); rAddons();
+}
+
+function rServices(){
+  const container = document.getElementById('sv-list');
+  if(!container) return;
+  if(!D.studioServices.length){ container.innerHTML='<div class="es"><div class="es-icon">💼</div><div class="es-title">No services yet</div></div>'; return; }
+  container.innerHTML = D.studioServices.map(sv => `
+    <div style="padding:14px 0;border-bottom:1px solid rgba(0,0,0,0.05);">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px;">
+        <div style="flex:1;">
+          <input class="fi" style="font-weight:500;margin-bottom:6px;" value="${esc(sv.name)}" onchange="updateSV('${sv.id}','name',this.value)">
+          <textarea class="ft" style="min-height:60px;font-size:12px;" onchange="updateSV('${sv.id}','desc',this.value)">${esc(sv.desc)}</textarea>
+        </div>
+        <div style="min-width:130px;text-align:right;">
+          <div style="display:flex;align-items:center;gap:4px;justify-content:flex-end;margin-bottom:4px;">
+            <span style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;color:var(--terracotta);">$</span>
+            <input type="number" class="fi" style="width:80px;font-family:'Cormorant Garamond',serif;font-size:1.5rem;color:var(--terracotta);text-align:right;" value="${sv.price}" onchange="updateSV('${sv.id}','price',parseFloat(this.value))">
+          </div>
+          <input class="fi" style="font-size:10px;text-align:right;color:var(--mid-gray);" value="${esc(sv.priceNote)}" onchange="updateSV('${sv.id}','priceNote',this.value)">
+          <div style="margin-top:6px;"><input class="fi" style="font-size:10px;" placeholder="Turnaround time" value="${esc(sv.turnaround||'')}" onchange="updateSV('${sv.id}','turnaround',this.value)"></div>
+        </div>
+      </div>
+      <div style="margin-bottom:6px;font-size:9px;letter-spacing:.15em;text-transform:uppercase;font-weight:500;color:var(--warm-gray);">What's Included</div>
+      ${(sv.includes||[]).map((item,i) => `
+        <div style="display:flex;gap:6px;margin-bottom:5px;align-items:center;">
+          <span style="color:var(--sage);font-size:11px;flex-shrink:0;">→</span>
+          <input class="fi" style="flex:1;height:32px;font-size:11px;" value="${esc(item)}" onchange="updateSVInc('${sv.id}',${i},this.value)">
+          <button class="ib" onclick="removeSVInc('${sv.id}',${i})" style="flex-shrink:0;">✕</button>
+        </div>`).join('')}
+      <div style="display:flex;gap:8px;margin-top:8px;">
+        <button class="btn btn-g btn-s" onclick="addSVInc('${sv.id}')">+ Add Item</button>
+        <button class="btn btn-d btn-s" onclick="delService('${sv.id}')">Delete Service</button>
+      </div>
+    </div>`).join('');
+}
+
+function updateSV(id, f, v){ const s=D.studioServices.find(x=>x.id===id); if(s){s[f]=v;save();} }
+function updateSVInc(id,i,v){ const s=D.studioServices.find(x=>x.id===id); if(s&&s.includes){s.includes[i]=v;save();} }
+function addSVInc(id){ const s=D.studioServices.find(x=>x.id===id); if(s){if(!s.includes)s.includes=[];s.includes.push('New deliverable');rServices();save();} }
+function removeSVInc(id,i){ const s=D.studioServices.find(x=>x.id===id); if(s&&s.includes){s.includes.splice(i,1);rServices();save();} }
+function addService(){
+  D.studioServices.push({id:'sv_'+Date.now(),name:'New Service',price:35,priceNote:'per video',desc:'Describe this service.',includes:['1 × edited vertical video','Raw footage + final MP4 + commercial rights'],turnaround:'48 hours'});
+  rServices(); save(); toast('Service added ✓');
+}
+function delService(id){
+  if(!confirm('Delete this service?')) return;
+  D.studioServices=D.studioServices.filter(s=>s.id!==id);
+  rServices(); save(); toast('Service deleted');
+}
+
+function rPackages(){
+  const container = document.getElementById('pk-list');
+  if(!container) return;
+  container.innerHTML = D.studioPackages.map(pk => `
+    <div style="padding:14px 0;border-bottom:1px solid rgba(0,0,0,0.05);">
+      <div style="display:flex;gap:12px;margin-bottom:10px;align-items:flex-start;">
+        <div style="flex:1;">
+          <div style="display:flex;gap:8px;margin-bottom:6px;">
+            <input class="fi" style="width:120px;font-weight:500;font-size:11px;" value="${esc(pk.name)}" onchange="updatePK('${pk.id}','name',this.value)" placeholder="Package name">
+            <input class="fi" style="flex:1;font-family:'Cormorant Garamond',serif;font-size:1rem;" value="${esc(pk.title)}" onchange="updatePK('${pk.id}','title',this.value)" placeholder="Package title">
+          </div>
+          <div style="margin-bottom:8px;font-size:9px;letter-spacing:.15em;text-transform:uppercase;font-weight:500;color:var(--warm-gray);">Includes</div>
+          ${(pk.items||[]).map((item,i) => `
+            <div style="display:flex;gap:6px;margin-bottom:5px;align-items:center;">
+              <span style="color:var(--sage);font-size:11px;flex-shrink:0;">✓</span>
+              <input class="fi" style="flex:1;height:32px;font-size:11px;" value="${esc(item)}" onchange="updatePKItem('${pk.id}',${i},this.value)">
+              <button class="ib" onclick="removePKItem('${pk.id}',${i})">✕</button>
+            </div>`).join('')}
+          <button class="btn btn-g btn-s" style="margin-top:6px;" onclick="addPKItem('${pk.id}')">+ Add Item</button>
+        </div>
+        <div style="min-width:140px;text-align:right;">
+          <div style="display:flex;align-items:center;gap:4px;justify-content:flex-end;margin-bottom:4px;">
+            <span style="font-family:'Cormorant Garamond',serif;font-size:2rem;color:var(--terracotta);">$</span>
+            <input type="number" class="fi" style="width:90px;font-family:'Cormorant Garamond',serif;font-size:2rem;color:var(--terracotta);text-align:right;" value="${pk.price}" onchange="updatePK('${pk.id}','price',parseFloat(this.value))">
+          </div>
+          <input class="fi" style="font-size:10px;text-align:right;color:var(--mid-gray);" value="${esc(pk.priceNote||'')}" onchange="updatePK('${pk.id}','priceNote',this.value)">
+          <input class="fi" style="font-size:10px;margin-top:4px;color:var(--forest);text-align:right;" value="${esc(pk.savings||'')}" onchange="updatePK('${pk.id}','savings',this.value)" placeholder="Savings note">
+          <div style="margin-top:8px;"><button class="btn btn-d btn-s" onclick="delPackage('${pk.id}')">Delete</button></div>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function updatePK(id,f,v){ const p=D.studioPackages.find(x=>x.id===id); if(p){p[f]=v;save();} }
+function updatePKItem(id,i,v){ const p=D.studioPackages.find(x=>x.id===id); if(p&&p.items){p.items[i]=v;save();} }
+function addPKItem(id){ const p=D.studioPackages.find(x=>x.id===id); if(p){if(!p.items)p.items=[];p.items.push('New included item');rPackages();save();} }
+function removePKItem(id,i){ const p=D.studioPackages.find(x=>x.id===id); if(p&&p.items){p.items.splice(i,1);rPackages();save();} }
+function addPackage(){
+  D.studioPackages.push({id:'pk_'+Date.now(),name:'New Package',title:'Package Title',price:100,priceNote:'per package',items:['Item 1','Item 2','Item 3'],savings:'You save $X'});
+  rPackages(); save(); toast('Package added ✓');
+}
+function delPackage(id){
+  if(!confirm('Delete this package?')) return;
+  D.studioPackages=D.studioPackages.filter(p=>p.id!==id);
+  rPackages(); save(); toast('Package deleted');
+}
+
+function rAddons(){
+  const container = document.getElementById('ao-list');
+  if(!container) return;
+  container.innerHTML = D.studioAddons.map(ao => `
+    <div class="card" style="padding:14px;">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">
+        <input class="fi" style="width:80px;font-family:'Cormorant Garamond',serif;font-size:1.2rem;color:var(--terracotta);" value="${esc(ao.price)}" onchange="updateAO('${ao.id}','price',this.value)">
+        <button class="ib" onclick="delAddon('${ao.id}')">✕</button>
+      </div>
+      <input class="fi" style="margin-bottom:6px;font-weight:500;font-size:12px;" value="${esc(ao.name)}" onchange="updateAO('${ao.id}','name',this.value)">
+      <textarea class="ft" style="min-height:60px;font-size:11px;" onchange="updateAO('${ao.id}','desc',this.value)">${esc(ao.desc)}</textarea>
+    </div>`).join('');
+}
+
+function updateAO(id,f,v){ const a=D.studioAddons.find(x=>x.id===id); if(a){a[f]=v;save();} }
+function addAddon(){
+  D.studioAddons.push({id:'ao_'+Date.now(),price:'+$15',name:'New Add-On',desc:'Description of what this add-on includes.'});
+  rAddons(); save(); toast('Add-on added ✓');
+}
+function delAddon(id){
+  if(!confirm('Delete this add-on?')) return;
+  D.studioAddons=D.studioAddons.filter(a=>a.id!==id);
+  rAddons(); save(); toast('Add-on deleted');
+}
+
+// ══════════════════════════════════════════════
+// STUDIO — $200 INCOME PLAN
+// ══════════════════════════════════════════════
+
+function rIncomePlan(){
+  const ip = D.studioIncome;
+  const fields = {
+    'ip-w1t':'w1target','ip-w1n':'w1note','ip-w1a':'w1actions',
+    'ip-w2t':'w2target','ip-w2n':'w2note','ip-w2a':'w2actions',
+    'ip-w3t':'w3target','ip-w3n':'w3note','ip-w3a':'w3actions',
+    'ip-w4t':'w4target','ip-w4n':'w4note','ip-w4a':'w4actions',
+    'ip-breakdown':'breakdown',
+  };
+  Object.entries(fields).forEach(([elId,key]) => {
+    const el = document.getElementById(elId);
+    if(el) el.value = ip[key] || '';
+  });
+  rBrandTargets();
+}
+
+function saveIncomePlan(){
+  const ip = D.studioIncome;
+  const fields = {
+    'ip-w1t':'w1target','ip-w1n':'w1note','ip-w1a':'w1actions',
+    'ip-w2t':'w2target','ip-w2n':'w2note','ip-w2a':'w2actions',
+    'ip-w3t':'w3target','ip-w3n':'w3note','ip-w3a':'w3actions',
+    'ip-w4t':'w4target','ip-w4n':'w4note','ip-w4a':'w4actions',
+    'ip-breakdown':'breakdown',
+  };
+  Object.entries(fields).forEach(([elId,key]) => {
+    const el = document.getElementById(elId);
+    if(el) ip[key] = el.value;
+  });
+  save(); toast('Income plan saved ✓');
+}
+
+function rBrandTargets(){
+  const tbody = document.getElementById('bt-body');
+  if(!tbody) return;
+  tbody.innerHTML = (D.studioBrands||[]).map(br => `
+    <tr>
+      <td><input class="fi" style="width:110px;font-size:11px;" value="${esc(br.priority)}" onchange="updateBT('${br.id}','priority',this.value)"></td>
+      <td><input class="fi" style="min-width:160px;font-size:11px;" value="${esc(br.type)}" onchange="updateBT('${br.id}','type',this.value)"></td>
+      <td><input class="fi" style="min-width:160px;font-size:11px;" value="${esc(br.why)}" onchange="updateBT('${br.id}','why',this.value)"></td>
+      <td><input class="fi" style="min-width:160px;font-size:11px;" value="${esc(br.angle)}" onchange="updateBT('${br.id}','angle',this.value)"></td>
+      <td><input class="fi" style="width:90px;font-family:'Cormorant Garamond',serif;font-size:1rem;color:var(--terracotta);" value="${esc(br.rate)}" onchange="updateBT('${br.id}','rate',this.value)"></td>
+      <td><input class="fi" style="min-width:180px;font-size:11px;" value="${esc(br.specific||'')}" placeholder="Specific brand names…" onchange="updateBT('${br.id}','specific',this.value)"></td>
+      <td><button class="ib" onclick="delBrandTarget('${br.id}')">✕</button></td>
+    </tr>`).join('');
+}
+
+function updateBT(id,f,v){ const b=D.studioBrands.find(x=>x.id===id); if(b){b[f]=v;save();} }
+function addBrandTarget(){
+  D.studioBrands.push({id:'br_'+Date.now(),priority:'🟡 Week 2',type:'Brand type',why:'Why they'll say yes',angle:'Your pitch angle',rate:'$35',specific:''});
+  rBrandTargets(); save(); toast('Brand target added ✓');
+}
+function delBrandTarget(id){
+  if(!confirm('Delete this brand target?')) return;
+  D.studioBrands=D.studioBrands.filter(b=>b.id!==id);
+  rBrandTargets(); save(); toast('Target deleted');
+}
+
+// ── Also hook Studio into _refreshAllPages ──
+const _origRefresh = typeof _refreshAllPages === 'function' ? _refreshAllPages : null;
 
 // Close search on outside click
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeSearch();document.getElementById('moodboard').classList.contains('open')&&closeMB();}});
