@@ -1330,30 +1330,35 @@ self.addEventListener('fetch',e=>{
 <!-- Firebase bootstrap: Auth + Firestore, exposes window.D, window.save, window._fbReady -->
 <!-- Uses compat SDK so it works on all mobile browsers, WebViews, and PWAs -->
 <script>
-// ── Compat SDK loader ────────────────────────────────────────────
+// ── Compat SDK loader — onload-chained to guarantee correct order ──
 (function _loadFbCompat() {
-  const B = 'https://www.gstatic.com/firebasejs/9.23.0';
-  ['firebase-app-compat.js','firebase-auth-compat.js','firebase-firestore-compat.js'].forEach(function(f){
+  var B = 'https://www.gstatic.com/firebasejs/9.23.0';
+  var scripts = [
+    B + '/firebase-app-compat.js',
+    B + '/firebase-auth-compat.js',
+    B + '/firebase-firestore-compat.js'
+  ];
+  function loadNext(i) {
+    if (i >= scripts.length) {
+      // All three loaded — now safe to init
+      _initFirebase();
+      return;
+    }
     var s = document.createElement('script');
-    s.src = B + '/' + f;
-    s.async = false;
+    s.src = scripts[i];
+    s.onload = function() { loadNext(i + 1); };
+    s.onerror = function() {
+      console.error('Failed to load Firebase script:', scripts[i]);
+      // Still try next — partial load may still work
+      loadNext(i + 1);
+    };
     document.head.appendChild(s);
-  });
+  }
+  loadNext(0);
 })();
 </script>
 <script>
-// wait for compat SDKs then run Firebase init
-(function waitForFirebase() {
-  if (typeof firebase !== 'undefined' && 
-      typeof firebase.initializeApp === 'function' &&
-      typeof firebase.auth === 'function' && 
-      typeof firebase.firestore === 'function' &&
-      typeof firebase.auth.GoogleAuthProvider === 'function') {
-    _initFirebase();
-  } else {
-    setTimeout(waitForFirebase, 50);
-  }
-})();
+// waitForFirebase no longer needed — _initFirebase is called directly from onload chain above
 
 // globals so all functions can access them regardless of init timing
 var db, auth, gProvider, HEAVY, LIGHT_KEYS, LS_KEY, LS_USER, LS_DIRTY;
@@ -1856,7 +1861,13 @@ document.getElementById('li-btn') && document.getElementById('li-btn').addEventL
   var pass  = document.getElementById('li-pass').value;
   var err   = document.getElementById('login-err');
   var btn   = document.getElementById('li-btn');
-  err.style.display='none'; btn.textContent='Signing in…'; btn.disabled=true;
+  err.style.display='none';
+  if (typeof auth === 'undefined' || !auth) {
+    err.textContent = 'Still loading — please wait a moment and try again.';
+    err.style.display='block';
+    return;
+  }
+  btn.textContent='Signing in…'; btn.disabled=true;
   auth.signInWithEmailAndPassword(email, pass)
     .catch(function(e){
       err.textContent = friendlyAuthError(e.code);
@@ -1866,12 +1877,29 @@ document.getElementById('li-btn') && document.getElementById('li-btn').addEventL
 });
 
 document.getElementById('li-google-btn') && document.getElementById('li-google-btn').addEventListener('click', function() {
+  var btn = document.getElementById('li-google-btn');
   var err = document.getElementById('login-err');
   err.style.display='none';
-  auth.signInWithPopup(gProvider).catch(function(e){
-    err.textContent = friendlyAuthError(e.code);
+  // Guard: auth may not be ready yet if Firebase scripts are still loading
+  if (typeof auth === 'undefined' || !auth) {
+    err.textContent = 'Still loading — please wait a moment and try again.';
     err.style.display='block';
-  });
+    return;
+  }
+  btn.disabled = true;
+  btn.style.opacity = '0.6';
+  var origHTML = btn.innerHTML;
+  btn.innerHTML = '<span style="font-size:13px;letter-spacing:.05em;">Signing in…</span>';
+  auth.signInWithPopup(gProvider)
+    .catch(function(e){
+      err.textContent = friendlyAuthError(e.code);
+      err.style.display='block';
+    })
+    .finally(function(){
+      btn.disabled = false;
+      btn.style.opacity = '1';
+      btn.innerHTML = origHTML;
+    });
 });
 
 document.getElementById('su-btn') && document.getElementById('su-btn').addEventListener('click', function() {
