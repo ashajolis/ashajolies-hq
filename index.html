@@ -1939,7 +1939,7 @@ function resetTP(ns){TP[ns]=[];renderTPTags(ns);}
 function setTP(ns,arr){TP[ns]=[...(arr||[])];renderTPTags(ns);}
 
 // ── NAVIGATION ──
-const PAGES={dashboard:'Good morning, <em>Asha</em> ✨',earnings:'Earnings',gigs:'Gig Tracker',followup:'Follow-Ups',planner:'Content Planner',ideas:'Ideas Library',feed:'Feed Planner',pitches:'Pitch Templates',brand:'Brand Hub'};
+const PAGES={dashboard:'Good morning, <em>Asha</em> ✨',earnings:'Earnings',gigs:'Gig Tracker',followup:'Follow-Ups',planner:'Content Planner',ideas:'Ideas Library',feed:'Feed Planner',pitches:'Pitch Templates',brand:'Brand Hub','studio-ig':'IG Post Planner','studio-rates':'Services & Rates','studio-packages':'Packages & Add-Ons','studio-portfolio':'Portfolio Videos','studio-gifting':'Gifting Policy','studio-income':'Income Plan','studio-brands':'Brand Targets'};
 let currentPage='dashboard';
 function goTo(page,el){
   document.querySelectorAll('.pg').forEach(p=>p.classList.remove('active'));
@@ -1960,6 +1960,12 @@ function renderPage(p){
   if(p==='feed')rFeed();
   if(p==='pitches')renderPitches('');
   if(p==='brand')rBrand();
+  if(p==='studio-ig'){if(!stData.igPosts)stLoad();stRenderIGPosts();}
+  if(p==='studio-rates'){if(!stData.services)stLoad();stRenderRates();}
+  if(p==='studio-packages'){if(!stData.packages)stLoad();stRenderPackages();}
+  if(p==='studio-portfolio'){if(!stData.portfolioVideos)stLoad();stRenderPortfolio();}
+  if(p==='studio-income'){if(!stData.income)stLoad();stRenderIncome();}
+  if(p==='studio-brands'){if(!stData.brands)stLoad();stRenderBrands();}
 }
 
 // ── MODAL ──
@@ -2016,7 +2022,7 @@ function populateLinks(){
 // ── UTILS ──
 const v=id=>(document.getElementById(id)||{}).value||'';
 const setV=(id,val)=>{const el=document.getElementById(id);if(el)el.value=val;};
-const esc=s=>(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const esc=s=>(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2400);}
 function sLabel(s){return{pending:'Pending',negotiating:'Negotiating',waitingapproval:'Awaiting Approval',paid:'Paid',gifted:'Gifted',delivered:'Delivered',declined:'Declined',idea:'Idea',scripting:'Scripting',filming:'Filming',editing:'Editing',done:'Done ✓',published:'Published 🚀'}[s]||s;}
 function fmtRate(g){return g.rateType==='paid'?'$'+g.rate:(g.gift||'Gifted');}
@@ -3125,8 +3131,6 @@ function stUpdBr(id,f,v){const b=stData.brands.find(x=>x.id===id);if(b){b[f]=v;s
 function stDelBr(id){if(!confirm('Delete brand target?'))return;stData.brands=stData.brands.filter(x=>x.id!==id);stSave();stRenderBrands();toast('Brand target deleted');}
 function stAddBrand(){const id='br_'+Date.now();stData.brands.push({id,priority:'🟡 Week 2',type:'New brand type',why:"Why they'll work with you",angle:'Your pitch angle',rate:'$35',specific:''});stSave();stRenderBrands();toast('Brand target added');}
 
-function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-
 function stRenderAll() {
   stLoad();
   stRenderIGPosts();
@@ -3136,16 +3140,6 @@ function stRenderAll() {
   stRenderIncome();
   stRenderBrands();
 }
-
-// hook into goTo to trigger studio renders lazily
-const _origGoTo = window.goTo;
-window.goTo = function(id, el) {
-  if (id && id.startsWith('studio-')) {
-    // trigger studio data load if not yet done
-    if (!stData.igPosts) stLoad();
-  }
-  if (typeof _origGoTo === 'function') _origGoTo(id, el);
-};
 
 document.addEventListener('DOMContentLoaded', ()=>{
   stRenderAll();
