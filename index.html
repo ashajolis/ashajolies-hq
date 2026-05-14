@@ -331,8 +331,67 @@ body{background:var(--ivory);font-family:'Jost',sans-serif;font-weight:300;color
 .ot-empty{width:100%;aspect-ratio:3/4;background:var(--warm-white);display:flex;align-items:center;justify-content:center;font-size:32px;opacity:.3;}
 .loc-img{width:100%;aspect-ratio:16/9;object-fit:cover;}
 
-/* ─── EXPORT BAR ─── */
-.ex-bar{background:rgba(74,107,80,.08);border:1px solid rgba(74,107,80,.2);border-radius:12px;padding:12px 16px;display:flex;align-items:center;gap:12px;margin-bottom:18px;flex-wrap:wrap;}
+/* ─── STUDIO ─── */
+.st-eyebrow{font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:var(--terracotta);font-weight:500;margin-bottom:3px;}
+.st-title{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:300;margin-bottom:4px;}
+.st-title em{font-style:italic;color:var(--terracotta);}
+.st-desc{font-size:12px;color:var(--warm-gray);margin-bottom:16px;line-height:1.65;}
+.st-hdr{padding-bottom:16px;border-bottom:1px solid rgba(0,0,0,.07);margin-bottom:18px;}
+.st-info{padding:11px 15px;border-radius:10px;font-size:12px;line-height:1.65;margin-bottom:14px;}
+.st-info.tip{background:rgba(74,107,80,.07);border-left:3px solid var(--sage);color:var(--ink);}
+.st-info.warn{background:rgba(196,113,79,.07);border-left:3px solid var(--terracotta);color:var(--ink);}
+.st-info.gold{background:rgba(196,150,58,.07);border-left:3px solid var(--gold);color:var(--ink);}
+.st-info strong{font-weight:600;}
+.st-section{display:flex;align-items:center;gap:12px;margin:22px 0 14px;}
+.st-section h3{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.15rem;font-weight:300;color:var(--gold);white-space:nowrap;}
+.st-section-line{flex:1;height:1px;background:rgba(0,0,0,.07);}
+.st-add{display:flex;align-items:center;gap:8px;padding:11px 16px;border:1.5px dashed rgba(196,113,79,.3);background:transparent;color:rgba(196,113,79,.7);font-family:'Jost',sans-serif;font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:all .18s;width:100%;border-radius:10px;margin-bottom:18px;}
+.st-add:hover{border-color:var(--terracotta);color:var(--terracotta);background:rgba(196,113,79,.04);}
+.st-editable{width:100%;background:var(--warm-white);border:1px solid rgba(0,0,0,.09);border-radius:8px;padding:9px 12px;font-family:'Jost',sans-serif;font-size:13px;font-weight:300;color:var(--ink);outline:none;transition:border .14s;resize:vertical;min-height:44px;line-height:1.65;}
+.st-editable:focus{border-color:var(--terracotta);}
+.st-editable.lg{min-height:100px;}
+.st-editable.xl{min-height:160px;}
+.st-field-lbl{font-size:9px;letter-spacing:.15em;text-transform:uppercase;font-weight:500;color:var(--warm-gray);margin-bottom:4px;}
+.st-field{display:flex;flex-direction:column;gap:4px;margin-bottom:12px;}
+.st-card{background:#fff;border-radius:var(--r);border:1px solid rgba(0,0,0,.06);overflow:hidden;margin-bottom:12px;}
+.st-card-hdr{padding:12px 16px;border-bottom:1px solid rgba(0,0,0,.05);display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.st-card-title{font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:400;}
+.st-card-body{padding:15px 16px;}
+.st-g2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.st-g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+.st-gauto{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;}
+.st-money-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px;}
+.st-money-card{background:#fff;border-radius:var(--r);border:1px solid rgba(0,0,0,.06);padding:16px;border-top:2px solid rgba(196,150,58,.3);}
+.st-money-week{font-size:9px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:6px;}
+.st-money-amount{font-family:'Cormorant Garamond',serif;font-size:1.7rem;font-weight:300;line-height:1;margin-bottom:8px;}
+.st-niche-badge{display:inline-block;padding:2px 9px;border-radius:100px;font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px;font-family:'DM Mono',monospace;}
+.nb-beauty{background:rgba(201,137,122,.12);color:var(--dusty-rose);}
+.nb-hair{background:rgba(74,107,80,.1);color:var(--forest);}
+.nb-lifestyle{background:rgba(194,174,206,.15);color:#7a5a8a;}
+.nb-tech{background:rgba(232,192,106,.12);color:var(--gold);}
+.nb-fashion{background:rgba(122,174,204,.12);color:var(--sky-deep);}
+.nb-family{background:rgba(196,113,79,.1);color:var(--terracotta);}
+.nb-reel{background:rgba(196,113,79,.12);color:var(--terracotta);}
+.nb-carousel{background:rgba(196,150,58,.1);color:var(--gold);}
+.nb-story{background:rgba(194,174,206,.15);color:#7a5a8a;}
+.nb-static{background:rgba(74,107,80,.1);color:var(--forest);}
+.st-pkg{background:#fff;border-radius:var(--r);border:1px solid rgba(0,0,0,.06);padding:16px;position:relative;margin-bottom:12px;}
+.st-pkg.featured-pkg{border-color:var(--terracotta);border-top:3px solid var(--terracotta);}
+.st-pkg-name{font-size:9px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--terracotta);margin-bottom:3px;font-family:'DM Mono',monospace;}
+.st-pkg-price{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:300;color:var(--ink);line-height:1;margin-bottom:3px;}
+.st-ao-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;margin-bottom:16px;}
+.st-ao-card{background:#fff;border-radius:var(--r);border:1px solid rgba(0,0,0,.06);padding:14px;}
+.st-ao-price{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:300;color:var(--terracotta);}
+.st-shot-row{display:flex;gap:9px;align-items:flex-start;margin-bottom:6px;}
+.st-shot-num{background:rgba(196,113,79,.12);color:var(--terracotta);width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;flex-shrink:0;margin-top:10px;font-family:'DM Mono',monospace;}
+.st-ig-card{background:#fff;border-radius:var(--r);border:1px solid rgba(0,0,0,.06);padding:15px;margin-bottom:10px;}
+.st-ig-week{font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:var(--warm-gray);font-family:'DM Mono',monospace;margin-bottom:4px;font-weight:500;}
+.st-ig-title{font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:400;margin-bottom:4px;line-height:1.3;}
+@media(max-width:768px){
+  .st-g2,.st-g3{grid-template-columns:1fr;}
+  .st-money-grid{grid-template-columns:1fr 1fr;}
+}
+{background:rgba(74,107,80,.08);border:1px solid rgba(74,107,80,.2);border-radius:12px;padding:12px 16px;display:flex;align-items:center;gap:12px;margin-bottom:18px;flex-wrap:wrap;}
 .ex-bar-icon{font-size:20px;flex-shrink:0;}
 .ex-bar-text{flex:1;font-size:12px;color:var(--forest);}
 .ex-bar-text strong{font-weight:600;}
@@ -408,6 +467,14 @@ body{background:var(--ivory);font-family:'Jost',sans-serif;font-weight:300;color
     <div class="nl">Resources</div>
     <div class="ni" onclick="goTo('pitches',this)"><span class="ni-icon">✉️</span>Pitches</div>
     <div class="ni" onclick="goTo('brand',this)"><span class="ni-icon">🎨</span>Brand Hub</div>
+    <div class="nl">Studio</div>
+    <div class="ni" onclick="goTo('studio-ig',this)"><span class="ni-icon">📸</span>IG Post Planner</div>
+    <div class="ni" onclick="goTo('studio-rates',this)"><span class="ni-icon">💼</span>Services & Rates</div>
+    <div class="ni" onclick="goTo('studio-packages',this)"><span class="ni-icon">📦</span>Packages & Add-Ons</div>
+    <div class="ni" onclick="goTo('studio-portfolio',this)"><span class="ni-icon">🎥</span>Portfolio Videos</div>
+    <div class="ni" onclick="goTo('studio-gifting',this)"><span class="ni-icon">🎁</span>Gifting Policy</div>
+    <div class="ni" onclick="goTo('studio-income',this)"><span class="ni-icon">💰</span>Income Plan</div>
+    <div class="ni" onclick="goTo('studio-brands',this)"><span class="ni-icon">🎯</span>Brand Targets</div>
   </nav>
   <div class="sb-foot">
     <div class="sb-rate">
@@ -677,6 +744,144 @@ body{background:var(--ivory);font-family:'Jost',sans-serif;font-weight:300;color
     </div>
   </div>
 </div>
+<!-- ─── STUDIO: IG POST PLANNER ─── -->
+<div class="pg" id="pg-studio-ig">
+  <div class="st-hdr">
+    <div class="st-eyebrow">Studio · Instagram</div>
+    <div class="st-title">IG Post <em>Planner</em></div>
+    <div class="st-desc">Plan every Instagram post — hook, content brief, goal, and hashtags. All 30 posts pre-loaded and fully editable. Add new posts anytime.</div>
+  </div>
+  <div class="st-info tip"><strong>The four-week arc:</strong> Week 1 builds identity, Week 2 demonstrates range, Week 3 builds trust, Week 4 converts followers into brand clients.</div>
+  <div id="studio-ig-container"></div>
+  <button class="st-add" onclick="stAddIGPost()">+ Add New Post</button>
+</div>
+
+<!-- ─── STUDIO: SERVICES & RATES ─── -->
+<div class="pg" id="pg-studio-rates">
+  <div class="st-hdr">
+    <div class="st-eyebrow">Studio · Rate Card</div>
+    <div class="st-title">Services & <em>Pricing</em></div>
+    <div class="st-desc">Edit every rate, service description, and deliverable. These are your starting rates — raise by $10 after every 5 completed collabs.</div>
+  </div>
+  <div class="st-info gold"><strong>Rate Rule:</strong> Always quote in USD — even to Kenyan brands. It signals global professionalism. Raise rates every 60 days as your portfolio grows.</div>
+  <div id="studio-rates-container"></div>
+  <button class="st-add" onclick="stAddService()">+ Add New Service</button>
+</div>
+
+<!-- ─── STUDIO: PACKAGES & ADD-ONS ─── -->
+<div class="pg" id="pg-studio-packages">
+  <div class="st-hdr">
+    <div class="st-eyebrow">Studio · Packages</div>
+    <div class="st-title">Packages & <em>Add-Ons</em></div>
+    <div class="st-desc">Edit your bundle deals and add-on pricing. Always pitch the bundle when a brand enquires — most will upgrade.</div>
+  </div>
+  <div class="st-section"><h3>Bundle Packages</h3><div class="st-section-line"></div></div>
+  <div id="studio-packages-container"></div>
+  <button class="st-add" onclick="stAddPackage()">+ Add Package</button>
+  <div class="st-section"><h3>Add-Ons</h3><div class="st-section-line"></div></div>
+  <div class="st-ao-grid" id="studio-addons-container"></div>
+  <button class="st-add" onclick="stAddAddon()">+ Add Add-On</button>
+</div>
+
+<!-- ─── STUDIO: PORTFOLIO VIDEOS ─── -->
+<div class="pg" id="pg-studio-portfolio">
+  <div class="st-hdr">
+    <div class="st-eyebrow">Studio · Portfolio</div>
+    <div class="st-title">Portfolio <em>Videos</em></div>
+    <div class="st-desc">15 videos across 5 niches — shot lists, formats, and filming notes for every one. Film with products you already own.</div>
+  </div>
+  <div id="studio-portfolio-container"></div>
+  <button class="st-add" onclick="stAddPortfolioVideo()">+ Add Portfolio Video</button>
+</div>
+
+<!-- ─── STUDIO: GIFTING POLICY ─── -->
+<div class="pg" id="pg-studio-gifting">
+  <div class="st-hdr">
+    <div class="st-eyebrow">Studio · Policy</div>
+    <div class="st-title">Gifting <em>Policy</em></div>
+    <div class="st-desc">Your rules around gifting collaborations — accept strategically, always transition to paid.</div>
+  </div>
+  <div class="st-card">
+    <div class="st-card-hdr"><span class="st-card-title">The Gifting Rule</span></div>
+    <div class="st-card-body">
+      <div class="st-field"><div class="st-field-lbl">Maximum Gifting Collabs</div><input type="number" class="st-editable" id="st-gifting-max" value="5" style="max-width:120px;" onchange="stSave()"></div>
+      <div class="st-field"><div class="st-field-lbl">Gifting Policy Statement</div><textarea class="st-editable xl" id="st-gifting-policy" onchange="stSave()">Accept gifting collabs from brands whose products fit genuinely into your life and content. Do not accept gifting for products you would never use. Every gifting collab must produce content that adds to your portfolio.
+
+Never do more than 5 gifting collabs in total. After that, every brand pays. Gifting exists to build your portfolio, not to be your business model.</textarea></div>
+    </div>
+  </div>
+  <div class="st-card">
+    <div class="st-card-hdr"><span class="st-card-title">The Gifting Pitch Line</span></div>
+    <div class="st-card-body">
+      <div class="st-field"><div class="st-field-lbl">What to Say When Proposing Gifting</div><textarea class="st-editable xl" id="st-gifting-pitch" onchange="stSave()">"I'm currently accepting gifting collaborations for [specific niche]. You send me your [specific product], I create one fully edited video and deliver it within 7 days. You receive the final MP4 and raw footage with full commercial rights. No payment required for this first collaboration."</textarea></div>
+    </div>
+  </div>
+  <div class="st-card">
+    <div class="st-card-hdr"><span class="st-card-title">Transitioning to Paid</span></div>
+    <div class="st-card-body">
+      <div class="st-field"><div class="st-field-lbl">Message to Send After Every Gifting Delivery</div><textarea class="st-editable xl" id="st-gifting-transition" onchange="stSave()">"I hope you've been happy with the content. For future collaborations, I'd love to move to a paid arrangement. My rate for a single video is $35, and I offer a bundle of 3 for $85. Would you be open to continuing?"</textarea></div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── STUDIO: INCOME PLAN ─── -->
+<div class="pg" id="pg-studio-income">
+  <div class="st-hdr">
+    <div class="st-eyebrow">Studio · Income</div>
+    <div class="st-title">$200 in <em>Month One</em></div>
+    <div class="st-desc">Your week-by-week income targets and the actions to hit $200 in month one.</div>
+  </div>
+  <div class="st-info warn"><strong>The critical rule:</strong> Post content AND pitch brands simultaneously from day one. The Instagram posts and portfolio videos run in parallel with outreach.</div>
+  <div class="st-money-grid" id="studio-money-grid"></div>
+  <div class="st-card">
+    <div class="st-card-hdr"><span class="st-card-title">Weekly Actions</span></div>
+    <div class="st-card-body">
+      <div class="st-g2">
+        <div class="st-field"><div class="st-field-lbl">Week 1 Actions</div><textarea class="st-editable lg" id="st-income-w1-actions" onchange="stSave()">• Post your first 5 Instagram posts (Tue–Sat)
+• Film your intro + outro video
+• Send 10 pitches — DM, WhatsApp, email
+• Set up your "Work With Me" story highlight
+• Film 2 portfolio spec videos with products you own</textarea></div>
+        <div class="st-field"><div class="st-field-lbl">Week 2 Actions</div><textarea class="st-editable lg" id="st-income-w2-actions" onchange="stSave()">• Post Instagram posts 6–13
+• Send 10 more pitches (new brands)
+• Send follow-up 1 to week 1 pitches
+• Film and deliver 1 paid video ($35)
+• Set up Fiverr profile as secondary income</textarea></div>
+        <div class="st-field"><div class="st-field-lbl">Week 3 Actions</div><textarea class="st-editable lg" id="st-income-w3-actions" onchange="stSave()">• Post Instagram posts 14–21
+• Deliver 2 paid videos ($35 × 2 = $70)
+• Pitch your first bundle ($85) to interested brands
+• Send follow-up 2 to earliest pitches (final close)</textarea></div>
+        <div class="st-field"><div class="st-field-lbl">Week 4 Actions</div><textarea class="st-editable lg" id="st-income-w4-actions" onchange="stSave()">• Post Instagram posts 22–30
+• Close 1 × $85 bundle (week 4 target)
+• OR close 4 × $35 singles = $140 + week 3
+• Pin your rate card carousel post
+• Quote month 2 retainer to best brand</textarea></div>
+      </div>
+    </div>
+  </div>
+  <div class="st-card">
+    <div class="st-card-hdr"><span class="st-card-title">Conservative Month 1 Breakdown</span></div>
+    <div class="st-card-body">
+      <div class="st-field"><div class="st-field-lbl">How $200 Is Built</div><textarea class="st-editable" id="st-income-breakdown" onchange="stSave()">3 × single videos ($35 each) = $105
+1 × Starter Bundle ($85) = $85
+Gifting value received ≈ $40–80 in products
+Total cash: $190 + product value</textarea></div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── STUDIO: BRAND TARGETS ─── -->
+<div class="pg" id="pg-studio-brands">
+  <div class="st-hdr">
+    <div class="st-eyebrow">Studio · Outreach</div>
+    <div class="st-title">Brand <em>Targets</em></div>
+    <div class="st-desc">Which types to pitch first, your angle for each, and the rate to quote. Add specific brand names as you research them.</div>
+  </div>
+  <div class="st-info tip"><strong>The 10-per-week rule:</strong> Send 10 personalised messages per week. Each one researched — one genuine detail about the brand. At 15% reply rate: 1–2 replies per week.</div>
+  <div id="studio-brands-container"></div>
+  <button class="st-add" onclick="stAddBrand()">+ Add Brand Target</button>
+</div>
+
 </div><!-- main -->
 
 <!-- ═══ SEARCH OVERLAY ═══ -->
@@ -2574,8 +2779,378 @@ function resetScrData(prefix) {
   loadScrData(prefix, { script: '', scrnotes: '', shots: [] });
 }
 
-// ── INIT ──
-let _appBooted = false;
+
+// ════════════════════════════════════════════
+// STUDIO — DATA & STATE
+// ════════════════════════════════════════════
+
+const ST_PORTFOLIO_VIDEOS = [
+  { id:'pv1', niche:'beauty', format:'Lifestyle-Integrated', title:"Morning Routine — You're Not Watching the Camera", desc:'Your real morning skincare routine filmed as if the camera is observing. No script.', shots:["Wide shot — you at window, cleansing your face. Camera watches from the side.","Close-up — product being poured or scooped. Your hands only.","Close-up — serum pressed into cheek. Side light shows absorption.","Wide — you in robe at window. Product on shelf beside you.","Skin close-up — side profile facing window. The glow is the final shot."], duration:'30–45 sec', filmingNotes:'PP2 recipe · Window light · f/1.8 · ISO 200 · ASMR sounds only' },
+  { id:'pv2', niche:'beauty', format:'Product-Forward', title:'One Product. Extreme Close-Up. No Distractions.', desc:'One cream, one forearm, full daylight. Texture scooped, swirled, absorbed.', shots:["Extreme close-up — product jar/tube. Label visible. 3 seconds.","Finger scoops cream — slow, deliberate.","Cream swirled in palm — both sound and visual.","Applied to forearm. Watch it absorb on your mixed skin tone.","Forearm tilted to window light — natural sheen is the final payoff."], duration:'20–30 sec', filmingNotes:'PP2 recipe · Window light only · Product Showcase mode on ZV-E10' },
+  { id:'pv3', niche:'beauty', format:'Multi-Tone Family', title:'You + Daughters. Same Product. Three Skin Tones.', desc:'You and both daughters applying the same moisturiser or lip balm.', shots:["Wide shot — all three of you visible, applying product together.","Close-up — your hands and face first.","Close-up — eldest daughter.","Close-up — youngest daughter.","All three faces toward window. Glowing. Hold 3 seconds."], duration:'35–45 sec', filmingNotes:'PP2 recipe · Let daughters move naturally' },
+  { id:'pv4', niche:'hair', format:'Lifestyle-Integrated', title:"Real Wash Day — You're Just Doing Your Hair", desc:'Wash day, real time. 4C hair sectioned, product applied, conditioner worked through.', shots:["Your hair before — density and texture visible.","Product applied to a section. Sound of the squirt/scoop.","Wide-tooth comb sliding through — the slip is visible and audible.","Defined curl forming as section releases.","You, done, facing window. Hair defined. Natural and confident."], duration:'45–60 sec', filmingNotes:'PP2 recipe · Maximum window light · Natural sounds — do not mute' },
+  { id:'pv5', niche:'hair', format:'Product-Forward', title:'Braiding Your Daughter — Overhead. Close. Beautiful.', desc:'Camera overhead, tight on the parting and hands.', shots:["Her hair before — natural state. Camera overhead.","Your hands parting the hair. Close-up.","Product applied to scalp between sections.","Braiding close-up — the weave forming.","Hand-over-lens transition. Then: fresh braids in window light.","Her face. Confident. Smiling. Done."], duration:'35–45 sec', filmingNotes:'Set phone stand at maximum height overhead' },
+  { id:'pv6', niche:'hair', format:'Multi-Texture Split Screen', title:"Your 4C + Her Curl. One Product. Split Screen.", desc:"Your 4C section left, daughter's looser curl right. Same product on both.", shots:["Film your 4C section — product applied, comb through.","Film daughter's section — same product, same technique, same angle.","CapCut: Split Screen → 2-column.","Hold the split screen for 4 full seconds.","Product close-up. Label visible. 2 seconds. End."], duration:'30 sec', filmingNotes:'Film separately — same lighting, same angle both times' },
+  { id:'pv7', niche:'lifestyle', format:'Lifestyle-Integrated', title:'The 1pm Kitchen — Cooking Sounds as Content', desc:'Chopping, spice hitting oil, wooden spoon stirring, steam rising, plate set on table. Fully ASMR.', shots:["Overhead — hands chopping vegetables. Rhythmic, clean.","Side — colourful spice hitting hot oil.","Close — wooden spoon stirring. Steam rising.","Overhead — beautiful plating. Green garnish.","Natural — daughters' faces receiving their food. Pure joy."], duration:'30–45 sec', filmingNotes:'PP1 recipe · ASMR audio essential' },
+  { id:'pv8', niche:'lifestyle', format:'Product-Forward', title:'Clean Counter. Real Kitchen. Mitheru View Behind.', desc:'One cleaning product. Spray, wipe, counter goes from messy to spotless. Ten seconds.', shots:["Wide — messy counter post-cooking. Window and view visible behind.","Product spray — the mist catching the light.","Wipe — from messy to clean. One confident stroke.","Product sits on clean counter. Hills visible behind. 3 seconds."], duration:'15–25 sec', filmingNotes:'Short and satisfying · PP1 recipe · Make sure the window and view are visible' },
+  { id:'pv9', niche:'lifestyle', format:'Family Warmth', title:'The 4pm Cocoa Ritual', desc:'Milk warming, whisk creating froth, steam rising, daughters faces as they receive mugs.', shots:["Product packaging on counter. Close-up. Afternoon light.","Milk pouring into pot. White against dark. Slow.","Whisk in mug creating froth. ASMR.","Steam rising from mug on windowsill. Hills behind.","You handing daughters their mugs. Their faces lighting up.","All three of you on sofa, mugs held. Quiet happiness."], duration:'40–55 sec', filmingNotes:'PP1 recipe · 4pm light · Use your most neutral mugs' },
+  { id:'pv10', niche:'tech', format:'Lifestyle-Integrated', title:'Morning App Check Before the School Day Starts', desc:'You at desk, morning light, checking Roots app while daughters settle into their school day.', shots:["Wide — you at desk. Daughters visible in background.","Screen recording — your phone showing the app opening.","Your face as you scroll — natural, comfortable.","Screen — showing a specific section.","Look up from phone. The window light behind you."], duration:'40–50 sec', filmingNotes:'PP1 recipe · Screen record on phone, overlay in CapCut' },
+  { id:'pv11', niche:'tech', format:'Product-Forward', title:'App Walkthrough — Clean, Deliberate, Every Feature Visible', desc:'Screen recording of a walkthrough — clean narration, every feature visible.', shots:["Screen record start — app opening animation.","Navigate to first key feature — pause on it. Name it aloud.","Navigate to second feature. Show it in use.","Your face reaction in corner — genuine, not performed.","Return to home screen. App name visible. CTA."], duration:'45–60 sec', filmingNotes:'Screen record + CapCut picture-in-picture for face' },
+  { id:'pv12', niche:'tech', format:'Origin Story', title:'"I Built My Own App. From Rural Kenya. No Code."', desc:"You to camera. White wall. Your most powerful tech video — it's a story, not a demo.", shots:["You, white wall behind, window light. Look at the lens. Say the hook.","Screen recording insert — Claude or app briefly.","Back to you. Continue the story.","App scrolled through on screen — the proof it exists.","Back to you. Direct to camera. \"If I can build this — so can you.\""], duration:'50–60 sec', filmingNotes:'PP1 recipe · Memorise key lines — do not read them' },
+  { id:'pv13', niche:'fashion', format:'Lifestyle-Integrated', title:'GRWM With Your Daughters — The Chaos and the Joy', desc:'Getting all three of you ready. Completely unscripted.', shots:["Hook shot — you looking at camera. Girls getting dressed behind.","Your hands doing up a daughter's top button.","Hair clip or accessory placed in one daughter's hair.","All three together — one twirls or jumps.","Outdoor: all three walk toward camera. Mitheru hills behind."], duration:'40–55 sec', filmingNotes:'Do not over-direct daughters · PP3 for outdoor shot · PP1 for indoor' },
+  { id:'pv14', niche:'fashion', format:'Product-Forward', title:'One Jewellery Piece. Your Collarbone. Morning Window Light.', desc:'Clasp being fastened at your neck. Gold against your collarbone in window light.', shots:["Clasp being fastened — close-up at back of neck.","Necklace against your collarbone. Side window light. 5 seconds.","Ring stacking — each ring sliding on slowly.","Same piece on your daughter's smaller wrist or hand.","You — head and shoulders, full jewellery look. Hold 3 seconds."], duration:'25–35 sec', filmingNotes:'Morning window light ONLY · PP2 recipe · Macro/close focus · f/1.8' },
+  { id:'pv15', niche:'fashion', format:'Outdoor Editorial', title:'Three of You. Golden Hour. The Hills Behind.', desc:'All three of you walking toward the camera on your garden path. Golden hour.', shots:["Wide establishing — all three visible with the full landscape behind.","Walking toward camera — slow, natural movement. Film three times.","Slow-motion: daughters' dresses in the breeze. PP4 recipe.","Look-back shot — all three look over their shoulders.","Wide final hold — the three of you in the golden Mitheru light."], duration:'25–40 sec', filmingNotes:'PP4 recipe · 5–5:45pm ONLY · Someone else holds camera for wide shots' },
+];
+
+const ST_IG_POSTS = [
+  { id:'ig1', week:1, type:'reel', title:'The Double-Take Intro', hook:'"Oh hey, did you just get here? Okay, hi!"', desc:'Your portfolio intro video, trimmed to 45 seconds for Instagram. The walk-past, the double-take, the warm intro. End with a clear "follow along" CTA. The double-take must happen in the first 2 seconds.', goal:'Profile visits, follows, and brand curiosity. Makes anyone who sees it want to scroll your grid.', hashtags:'#UGCCreator #KenyanCreator #UGCKenya #ContentCreator #AuthenticContent #AfricanCreator #MomCreator' },
+  { id:'ig2', week:1, type:'carousel', title:'Meet the Family — Four People. Four Skin Tones.', hook:'"One product can look completely different on four different people. That\'s why my house is the best testing ground you\'ll find."', desc:'Slide 1: The four skin tones shown in a beautiful photo. Slides 2–5: One close-up per person, labelled with skin undertone and hair type. Slide 6: "This is why brands come to me."', goal:'Saves. This carousel will be saved by brands and creators alike.', hashtags:'#MelaninSkin #MixedSkin #FamilyContent #BlackHair #NaturalHair #SkinCare #MultiTone' },
+  { id:'ig3', week:1, type:'reel', title:'The View From Here — Mitheru in 30 Seconds', hook:'"My filming location. You cannot rent this. You cannot fake this. This is just where we live."', desc:'Pure landscape Reel. Your outdoor view — the red-bloom trees, the green hills, the mist. No talking. Voiceover simply names the place: "Mitheru. Tharaka Nithi. Kenya."', goal:'Visual brand-building. Makes brands understand your location is an asset, not a limitation.', hashtags:'#Kenya #TharakaNithi #MountKenya #KenyanCreator #RuralKenya #AfricanBeauty' },
+  { id:'ig4', week:1, type:'story', title:'Behind the Camera — My Filming Setup in 5 Slides', hook:'"You don\'t need a studio. Here\'s mine."', desc:'5 story slides: Sony ZV-E10 on tripod · white wall filming corner · outdoor filming spot · lavalier mic clipped · poll: "Would you like to work with this setup?"', goal:'Brand trust. Shows professional equipment and intentional spaces.', hashtags:'Use location tag: Mitheru · Tag @sonyalpha for camera visibility' },
+  { id:'ig5', week:1, type:'reel', title:'Hair Wash Day — All Four of Us, One Product', hook:'"We have four different hair types in this house. Every single one of them got washed today."', desc:'Montage of wash day for everyone. Same product featured throughout. End with all four freshly done.', goal:'Hair brand attention. Your strongest hair credential in Reel form.', hashtags:'#NaturalHair #4CHair #WashDay #NaturalHairKenya #BlackHairCare #HairCare' },
+  { id:'ig6', week:2, type:'reel', title:'Skincare — My Actual Morning Routine on Mixed Skin', hook:'"What does a 3-step routine look like on light mixed skin in actual Kenyan morning light? Here."', desc:'Your lifestyle-integrated beauty video. Film naturally — you at the window, doing your routine. Caption names every product and ends with: "Beauty brands — this is what authentic looks like."', goal:'Direct brand outreach bait. This post should make a beauty brand DM you.', hashtags:'#SkinCareRoutine #MelaninSkincare #MixedSkin #NaturalGlow #AfricanSkincare #UGCBeauty' },
+  { id:'ig7', week:2, type:'carousel', title:'"I Work in Two Ways" — A Brand Guide to Working With Me', hook:'"Before you DM me, read this. It\'ll save us both time and get you better content."', desc:'Slide 1: "I work in two ways." · Slide 2: "01 — Lifestyle Integrated" · Slide 3: "02 — Product Forward" · Slide 4: "Which one does your brand need?" · Slide 5: Rates + link · Slide 6: Contact.', goal:'Direct brand conversion. This carousel is your media kit in Instagram form.', hashtags:'#UGCCreator #BrandCollab #ContentCreator #UGCKenya #BrandPartnership' },
+  { id:'ig8', week:2, type:'reel', title:'Kitchen ASMR — Cooking Is Content', hook:'"No studio. Just my kitchen at 1pm, the way it always sounds."', desc:'Your lifestyle kitchen video — chopping, spice, steam, plating, daughters\' faces. Pure ASMR. No voiceover. Caption: "Lifestyle brands, food brands, cleaning brands — your product lives here."', goal:'Lifestyle and food brand attention. ASMR content has high save rates.', hashtags:'#CookingASMR #KenyanFood #LifestyleContent #HomeCooked #KitchenLife #AfricanCooking' },
+  { id:'ig9', week:2, type:'reel', title:'Braiding My Daughter — Overhead. Clean Parts. The Reveal.', hook:'"Sunday braiding. She sat still for exactly 45 minutes and not one second more."', desc:'Your product-forward hair video — overhead camera, clean parting, product applied, braids formed, then hand-over-lens transition to the reveal.', goal:'Hair brand DMs. The reveal transition is highly shareable.', hashtags:'#BraidingHair #KidsBraids #NaturalKidHair #ProtectiveStyle #HairBraiding #BlackGirlMagic' },
+  { id:'ig10', week:2, type:'story', title:'A Day in My Life — From Homeschool to Golden Hour Filming', hook:'"6am to 6pm. This is what my day actually looks like."', desc:'8 story slides across the day: 6am wake-up · 8am homeschool · 10am skincare · 12pm cooking · 2pm daughters\' hair · 4pm cocoa ritual · 5pm filming · 7pm editing.', goal:'Show brands every moment of your day as a content opportunity.', hashtags:'No hashtags in Stories — use location sticker: Mitheru, Kenya' },
+  { id:'ig11', week:2, type:'reel', title:'I Built My Own App. From Rural Kenya. With No Code.', hook:'"A stay-at-home mum in rural Kenya who builds her own household management apps using AI. That\'s me."', desc:'Your origin story tech video. You to camera — confident, specific, remarkable. Screen recording of the Roots app as proof.', goal:'Tech brand visibility and share-worthiness.', hashtags:'#NoCode #AITools #AppBuilder #TechMom #ProductivityApp #ClaudeAI #TechAfrica #WomenInTech' },
+  { id:'ig12', week:2, type:'carousel', title:'My Filming Setup — Everything You See in My Videos', hook:'"Brands always ask what camera I use. Here\'s the full answer."', desc:'Slide 1: Complete filming kit flat lay · Slide 2: Sony ZV-E10 with specs · Slide 3: Indoor filming corner · Slide 4: Outdoor filming location · Slide 5: Quality comparison · Slide 6: "Ready?"', goal:'Professional credibility. Brands need to know your deliverable quality.', hashtags:'#SonyZVE10 #ContentCreator #UGCCreator #CreatorSetup #FilmingSetup #UGCTips' },
+  { id:'ig13', week:2, type:'reel', title:'Golden Hour With My Girls — This Is The Light Brands Pay For', hook:'"Every evening at 5pm, the Mitheru light does something extraordinary. I film it every time."', desc:'Your outdoor editorial fashion video — all three of you, the hills, golden hour. Pure cinematics. No product. Just your world in its most beautiful state.', goal:'Pure visual brand attraction.', hashtags:'#GoldenHour #KenyaBeautiful #AfricanFashion #FamilyStyle #EditorialContent' },
+  { id:'ig14', week:3, type:'carousel', title:'What Makes Good UGC — A Carousel Every Brand Should Read', hook:'"The difference between UGC that converts and content that gets ignored. 6 slides."', desc:'Slide 1: Hook · Slide 2: "Real environments beat studio sets" · Slide 3: "Specific skin tones matter" · Slide 4: "ASMR sells texture" · Slide 5: "Family moments are the most trusted testimonial" · Slide 6: "This is what I deliver."', goal:'Saves and shares from brand marketing teams.', hashtags:'#UGCTips #ContentMarketing #BrandContent #UGCCreator #ContentStrategy' },
+  { id:'ig15', week:3, type:'reel', title:'Product ASMR — One Cream. Your Skin. Nothing Else.', hook:'"No script. No music. Just this texture and what happens when it meets skin."', desc:'Your product-forward beauty ASMR video — cream scooped, swirled, absorbed, glowing forearm in light. Completely silent except natural sounds.', goal:'Demonstrate product-forward mastery.', hashtags:'#SkincareASMR #ProductDemo #BeautyASMR #SkinCare #TextureASMR #CleanBeauty' },
+  { id:'ig16', week:3, type:'reel', title:"The 4pm Cocoa Ritual — Steam, Daughters' Faces, and a View of the Hills", hook:'"Every day at 4pm we stop everything. This is why."', desc:'Your cocoa ritual family lifestyle video. Warm montage — milk, whisk, steam, mugs, daughters\' faces, the view. Caption targets hot drinks brands specifically.', goal:'Food/beverage brand attention.', hashtags:'#AfternoonRitual #FamilyMoment #KenyanHome #MomLife #LifestyleContent' },
+  { id:'ig17', week:3, type:'carousel', title:'4 Hair Types in One House — The Breakdown', hook:'"Four completely different hair types. One household. One wash day. Here\'s what I learned."', desc:'Slide 1: "Four people. Four textures." · Slide 2–5: Each person\'s hair type and what works · Slide 6: "Products tested across all four. Ask me anything."', goal:'Hair brand saves and DMs.', hashtags:'#HairTypes #4CHair #NaturalHairTypes #KinkyHair #CurlyHair #HairCommunity' },
+  { id:'ig18', week:3, type:'story', title:'My Gifting Policy + Rate Card — Pinned in Highlights', hook:'"For the brands who\'ve been watching — here\'s how we can work together."', desc:'5 story slides: Gifting collab overview · Single video rate ($35) · Bundle overview ($85 for 3) · What you always get · Contact details. Save as "Work With Me" highlight.', goal:'Convert profile visitors into brand enquiries.', hashtags:'No hashtags in Stories — use link sticker pointing to your email' },
+  { id:'ig19', week:3, type:'reel', title:'Matching Outfits — Three Girls, One Morning, The Mitheru Hills', hook:'"She insisted we all match. As if I needed convincing."', desc:'Your outdoor editorial fashion video — all three in coordinated outfits, walking in the garden path, golden hour, the landscape behind.', goal:'Fashion and kids\' brand visibility. High share potential.', hashtags:'#MatchingOutfits #MotherDaughter #AfricanFashion #KenyanFashion #FamilyStyle #KidsFashion' },
+  { id:'ig20', week:3, type:'reel', title:"Split Screen — Her Curl. My 4C. One Product. Watch.", hook:'"Same product. Two textures. Side by side. No editing trick — this is just one household."', desc:'Your multi-texture split screen hair video. Four seconds of split screen is the entire hook.', goal:'Your most commercially powerful hair post.', hashtags:'#HairTexture #NaturalHair #4CHair #CurlyHair #HairComparison #HairCare' },
+  { id:'ig21', week:3, type:'carousel', title:'Why Rural Kenya Is Underrepresented in African UGC', hook:'"Every brand wants authentic Africa. Most are still getting Nairobi studios. Here\'s what they\'re missing."', desc:'Slide 1: Hook · Slide 2: Your outdoor landscape labelled "My backyard" · Slide 3: The Mitheru hills · Slide 4: A product placed in that environment · Slide 5: "No other creator is filming here." · Slide 6: Contact information.', goal:'Designed to be seen by brand marketing teams.', hashtags:'#KenyaBeautiful #TharakaNithi #AfricanContent #UGCAfrica #AuthenticContent' },
+  { id:'ig22', week:4, type:'reel', title:'Jewellery — The Clasp, The Collarbone, The Gold on Dark Skin', hook:'"Small detail. Everything changes."', desc:'Your jewellery product-forward video — clasp, collarbone, ring stacking, daughter\'s wrist. Slow, macro, beautiful.', goal:'Jewellery brand attention.', hashtags:'#JewelleryContent #GoldJewellery #AfricanJewellery #KenyanJewellery' },
+  { id:'ig23', week:4, type:'carousel', title:'Real Results — What Brands Get When They Work With Me', hook:'"Before you DM me, here\'s what your deliverable actually looks like."', desc:'Slide 1: Hook · Slide 2: Still from your best Reel labelled "Final edited video, 48hrs" · Slide 3: Raw close-up footage · Slide 4: Lifestyle integration option · Slide 5: Rate card summary · Slide 6: "I deliver what I promise."', goal:'Final conversion. Brands who are ready to hire will find this and DM you.', hashtags:'#UGCCreator #BrandCollab #ContentDelivery #UGCPortfolio #HireMe' },
+  { id:'ig24', week:4, type:'reel', title:'Homeschool Morning — Our Daily Rhythm and the App That Runs It', hook:'"We start school at 8am. Before that, I check this."', desc:'Your lifestyle-integrated tech video — you at desk, daughters in background, Roots app open, morning light. Natural narration.', goal:'EdTech and productivity brand attention.', hashtags:'#HomeschoolMom #EdTech #ProductivityApp #HomeschoolKenya #MomLife #TechMom' },
+  { id:'ig25', week:4, type:'story', title:'Q&A — Brands Ask, I Answer', hook:'"Everything brands want to know before they hire a UGC creator — answered."', desc:'6 story slides answering: Do you need lots of followers? · How fast do you deliver? · Can we use in paid ads? · Do you do gifting? · What formats? · How do we start?', goal:'Remove every friction point between a brand and hiring you.', hashtags:'No hashtags — use DM link sticker and email sticker on final slide' },
+  { id:'ig26', week:4, type:'reel', title:'Perfume in Slow Motion — The Mist, The Light, The Hills', hook:'"Three seconds. That is all this shot takes. That is all it needs."', desc:'Your perfume slow-motion video — mist catching golden hour light. Then you spraying it at your neck, hills visible behind you.', goal:'Fragrance brand attraction. One of the most visually striking posts on your entire grid.', hashtags:'#FragranceContent #PerfumeVideo #SlowMotion #GoldenHourKenya #UGCFragrance' },
+  { id:'ig27', week:4, type:'reel', title:'Cleaning Hack — 5-Minute Counter Reset After Lunch', hook:'"The counter before lunch versus after. Five minutes. One product."', desc:'Your product-forward cleaning video — messy counter to clean in real time, sped up 4× in CapCut. The Mitheru view visible through the window.', goal:'Cleaning brand DMs.', hashtags:'#CleaningMotivation #CleaningASMR #KitchenClean #CleanHome #SAHMLife' },
+  { id:'ig28', week:4, type:'carousel', title:'My Rate Card — Exactly What I Charge and What You Get', hook:'"Transparency is part of professionalism. Here are my rates."', desc:'Slide 1: "My UGC Rates — @ashajoliesUgc" · Slide 2: Single video rate · Slide 3: Bundle of 3 · Slide 4: Monthly retainer · Slide 5: Add-on list · Slide 6: Every package includes edited MP4, raw footage, commercial rights, 48hr delivery. Pin this post.', goal:'Saved constantly. Pinning it means every brand who visits your profile sees your rates immediately.', hashtags:'#UGCRates #UGCCreator #ContentCreatorRates #UGCPricing #HireACreator' },
+  { id:'ig29', week:4, type:'reel', title:'Body Care ASMR — Texture Study. No Talking. Just This.', hook:'"The texture of this made me put the phone down. Then I picked it up to film it."', desc:'Your body care product-forward ASMR video — lotion scooped, swirled, absorbed on forearm in window light. Purely sensory.', goal:'Body care brand conversion.', hashtags:'#BodyCareASMR #LotionASMR #SkinCareASMR #TextureASMR #BodyCare #GlowySkin' },
+  { id:'ig30', week:4, type:'reel', title:"Post 30 — You've Seen My World. Let Me Show Your Brand In It.", hook:'"30 posts. Five niches. One house in Kenya. Two daughters. One goal: to make content that makes people want things."', desc:'A montage — your best clips from all 30 posts, cut together. 45 seconds of your best moments. Closes with you to camera: "If you\'re a brand who\'s been watching — thank you. Let\'s work."', goal:'The most important post on your grid. A showreel and direct pitch to every brand who has watched for four weeks.', hashtags:'#UGCPortfolio #ContentCreator #UGCCreator #BrandCollab #AfricanCreator #KenyanContent' },
+];
+
+const ST_SERVICES = [
+  { id:'sv1', niche:'beauty', nicheLabel:'💄 Beauty & Skincare', price:35, priceNote:'per video · gifting welcome', desc:'Product demos, skincare routines, ASMR texture videos — all filmed across multiple skin tones.', includes:['1 × edited vertical video (30–60 sec, 9:16)','Choice of format: lifestyle, product-forward, or multi-tone family','Natural Kenyan morning light OR ring light setup','ASMR audio included','Raw footage + final MP4 + commercial use rights','1 revision round within 48 hours'], turnaround:'48 hours after product received' },
+  { id:'sv2', niche:'hair', nicheLabel:'✂️ Hair Care', price:35, priceNote:'single texture · multi-texture $50', desc:'Multi-texture demonstrations across four different hair types in one household.', includes:['1 × edited vertical video (30–60 sec)','Option: single texture OR multi-texture split screen (+$15)','My 4C natural hair, daughters\' curl patterns, or all three','ASMR audio — real wash day sounds included','Raw + final MP4 + commercial rights'], turnaround:'48 hours after product received' },
+  { id:'sv3', niche:'lifestyle', nicheLabel:'🏡 Lifestyle & Home', price:35, priceNote:'family inclusion +$20', desc:'ASMR cooking content, cleaning demos, family moments, day-in-life product integration.', includes:['1 × edited vertical video (30–60 sec)','Format: ASMR, day-in-life, product demo, or family integration','Filmed in real home — kitchen, living room, or outdoor garden','Family members available on request (+$20)','Raw + final MP4 + commercial rights'], turnaround:'48 hours' },
+  { id:'sv4', niche:'tech', nicheLabel:'📱 Tech & Apps', price:40, priceNote:'per video · no shipping needed', desc:'App demos, screen walkthroughs, no-code story content, productivity tool reviews.', includes:['1 × edited vertical video (45–60 sec)','Screen recording overlay (picture-in-picture in CapCut)','Format: walkthrough, story/origin, or lifestyle integration','Raw + final MP4 + commercial rights','Digital products: no product shipping required'], turnaround:'24–48 hours after brief confirmed' },
+  { id:'sv5', niche:'fashion', nicheLabel:'👗 Fashion & Style', price:35, priceNote:'family/golden hour +$20', desc:'GRWM, outfit reveals, jewellery close-ups, outdoor editorial content.', includes:['1 × edited vertical video (20–50 sec)','Indoor (white wall + window) OR outdoor (Mitheru hills)','Solo styling OR family coordination','Macro jewellery close-ups available','Golden hour filming available (5–5:45pm)','Raw + final MP4 + commercial rights'], turnaround:'48 hours after product received' },
+  { id:'sv6', niche:'family', nicheLabel:'👨‍👩‍👧‍👧 Full Family', price:60, priceNote:'full family · most unique offering', desc:'The full family on camera — husband, two daughters, and you. Four skin tones, four hair types.', includes:['1 × edited vertical video (45–60 sec)','All four family members on screen','Multi-skin-tone product demonstration','Genuine reactions — no scripted child performances','Raw + final MP4 + commercial rights'], turnaround:'48–72 hours · coordination required' },
+];
+
+const ST_PACKAGES = [
+  { id:'pk1', name:'Starter', title:'The First Look Package', price:85, priceNote:'3 videos · saves you $20 vs individual rate', items:['3 × edited vertical videos (30–60 sec each)','Mix of formats: 1 lifestyle + 1 product-forward + 1 family','All raw footage included','Full commercial rights on all 3','Delivered over 7 days','1 revision round per video'], savings:'You save $20 vs 3 individual videos', featured:false },
+  { id:'pk2', name:'Signature', title:'The Full Story Package', price:165, priceNote:'5 videos + 3 still images · best value', items:['5 × edited vertical videos across 2–3 niches','3 × high-resolution still photos','Both content formats: lifestyle + product-forward','Multi-tone family content (minimum 1 video)','Golden hour outdoor shoot (1 video)','All raw footage + final MP4s','Full commercial rights, all platforms + paid ads','Delivered over 10 days','2 revision rounds per video'], savings:'You save $45 vs individual rates', featured:true },
+  { id:'pk3', name:'Retainer', title:'The Monthly Partner', price:280, priceNote:'8 videos/month · priority delivery', items:['8 × edited vertical videos per month','4 × still photos per month','Dedicated filming day each week','Priority 24-hour delivery','Monthly content strategy call (30 min)','Exclusivity in your niche (no competitor brands)','Unlimited revisions'], savings:'You save $100+ vs individual rates', featured:false },
+];
+
+const ST_ADDONS = [
+  { id:'ao1', price:'+$15', name:'Multi-Texture Split Screen', desc:'Add the split-screen format showing your hair and your daughter\'s curl side by side.' },
+  { id:'ao2', price:'+$20', name:'Full Family on Camera', desc:'Add your husband and both daughters to any video. Four skin tones, four hair types in one frame.' },
+  { id:'ao3', price:'+$20', name:'Golden Hour Outdoor Shoot', desc:'Dedicated filming in your Mitheru garden during the golden hour window (5–5:45pm).' },
+  { id:'ao4', price:'+$25', name:'6-Month Paid Ad Rights', desc:'Extended commercial rights for use in paid advertising campaigns across all platforms.' },
+  { id:'ao5', price:'+$15', name:'Horizontal Format', desc:'Same video re-edited in 16:9 landscape format for YouTube ads, website use, or email campaigns.' },
+  { id:'ao6', price:'+$20', name:'Rush Delivery (24 hours)', desc:'Priority filming and editing. Your video delivered within 24 hours of product receipt.' },
+  { id:'ao7', price:'+$15', name:'Still Photography (3 images)', desc:'3 × high-resolution product flat lay or lifestyle photographs.' },
+  { id:'ao8', price:'+$10', name:'Extra Revision Round', desc:'One additional revision round beyond the included allowance.' },
+];
+
+const ST_BRANDS = [
+  { id:'br1', priority:'🔴 Week 1', type:'Kenyan natural hair brands (IG)', why:'They need authentic 4C content desperately', angle:'"I care for four different hair types daily"', rate:'$35 or gifting', specific:'' },
+  { id:'br2', priority:'🔴 Week 1', type:'Kenyan skincare / natural soap brands', why:'Small brands, fast decisions, product-ready', angle:'Multi-tone family demonstration', rate:'$35 or gifting', specific:'' },
+  { id:'br3', priority:'🔴 Week 1', type:'Cantu, SheaMoisture (East Africa DMs)', why:'Actively seek African UGC creators', angle:'4C multi-texture household credential', rate:'$50–85', specific:'' },
+  { id:'br4', priority:'🟡 Week 2', type:'Kenyan cooking oil / food brands', why:'Your kitchen ASMR is exactly what they need', angle:'Real Kenyan home kitchen, daily cook', rate:'$35 or gifting', specific:'' },
+  { id:'br5', priority:'🟡 Week 2', type:'Kenyan cleaning product brands', why:'Authentic home cleaning content is rare', angle:'Real house, real mess, real clean', rate:'$35 or gifting', specific:'' },
+  { id:'br6', priority:'🟡 Week 2', type:'Productivity / to-do apps (global)', why:'Your AI app story is a perfect hook', angle:'"SAHM who builds apps in rural Kenya"', rate:'$40', specific:'' },
+  { id:'br7', priority:'🟢 Week 3', type:'African fashion designers (IG Kenya)', why:'Your outdoor editorial location is unique', angle:'Mitheru hills as fashion backdrop', rate:'$35–55', specific:'' },
+  { id:'br8', priority:'🟢 Week 3', type:"Kids' clothing brands (KE + global)", why:'Daughters are natural, joyful, real', angle:'Matching outfits + countryside backdrop', rate:'$55–85', specific:'' },
+  { id:'br9', priority:'🟢 Week 4', type:'Canva, CapCut, Notion (global UGC DMs)', why:'They run creator programmes actively', angle:'Your full creator toolkit usage story', rate:'$40–85', specific:'' },
+  { id:'br10', priority:'🟢 Week 4', type:'Any brand from weeks 1–2 who gifted', why:'Already have your content. Trust built.', angle:'Pitch the Starter Bundle ($85) for month 2', rate:'$85 bundle', specific:'' },
+];
+
+let stData = {};
+
+function stLoad() {
+  try {
+    const saved = localStorage.getItem('ashajolies-studio-hq-v1');
+    if (saved) {
+      stData = JSON.parse(saved);
+    } else {
+      stReset();
+    }
+  } catch(e) { stReset(); }
+}
+
+function stReset() {
+  stData = {
+    igPosts: JSON.parse(JSON.stringify(ST_IG_POSTS)),
+    services: JSON.parse(JSON.stringify(ST_SERVICES)),
+    packages: JSON.parse(JSON.stringify(ST_PACKAGES)),
+    addons: JSON.parse(JSON.stringify(ST_ADDONS)),
+    brands: JSON.parse(JSON.stringify(ST_BRANDS)),
+    portfolioVideos: JSON.parse(JSON.stringify(ST_PORTFOLIO_VIDEOS)),
+    income: { w1:{ target:'$0', note:'Building and pitching simultaneously. No money in yet — that is normal. The pitches you send this week close in weeks 2 and 3.' }, w2:{ target:'$35–70', note:'First replies arrive. Accept 1–2 gifting collabs and quote paid rates to all others. One paid deal closes this week.' }, w3:{ target:'$70–105', note:'Portfolio growing. Second and third paid deals close. Follow-ups from weeks 1 and 2 begin converting.' }, w4:{ target:'$200+', note:'Close week. At least one bundle or 4 single videos paid or confirmed.' } },
+  };
+}
+
+function stSave() {
+  localStorage.setItem('ashajolies-studio-hq-v1', JSON.stringify(stData));
+}
+
+// ═══ IG POSTS ═══
+function stRenderIGPosts() {
+  const c = document.getElementById('studio-ig-container');
+  if (!c) return;
+  const typeColor = { reel:'nb-reel', carousel:'nb-carousel', story:'nb-story', static:'nb-static' };
+  const typeLabel = { reel:'🎬 Reel', carousel:'📲 Carousel', story:'📖 Story', static:'🖼 Static' };
+  const weekLabel = { 1:'Week 1 · Foundation', 2:'Week 2 · Depth', 3:'Week 3 · Trust', 4:'Week 4 · Pitch' };
+  let html = '';
+  let curWeek = 0;
+  stData.igPosts.forEach(p => {
+    if (p.week !== curWeek) {
+      curWeek = p.week;
+      html += `<div class="st-section"><h3>${weekLabel[curWeek]||'Week '+curWeek}</h3><div class="st-section-line"></div></div>`;
+    }
+    html += `<div class="st-ig-card" id="ig-card-${p.id}">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:8px;">
+        <div style="flex:1;">
+          <div class="st-ig-week">Week ${p.week}</div>
+          <span class="st-niche-badge ${typeColor[p.type]||'nb-reel'}">${typeLabel[p.type]||p.type}</span>
+        </div>
+        <div style="display:flex;gap:5px;flex-shrink:0;">
+          <select class="fi" style="font-size:10px;padding:3px 6px;width:auto;" onchange="stUpdIG('${p.id}','type',this.value)">
+            ${['reel','carousel','story','static'].map(t=>`<option value="${t}"${p.type===t?' selected':''}>${typeLabel[t]}</option>`).join('')}
+          </select>
+          <input type="number" class="fi" style="width:64px;font-size:10px;padding:3px 6px;" value="${p.week}" min="1" max="8" onchange="stUpdIG('${p.id}','week',+this.value)">
+          <button class="ib" onclick="stDelIG('${p.id}')" title="Delete post" style="color:#c0392b;">✕</button>
+        </div>
+      </div>
+      <div class="st-field"><div class="st-field-lbl">Post Title</div><input class="st-editable" value="${esc(p.title)}" oninput="stUpdIG('${p.id}','title',this.value)"></div>
+      <div class="st-field"><div class="st-field-lbl">Hook (opening line or caption hook)</div><input class="st-editable" value="${esc(p.hook)}" oninput="stUpdIG('${p.id}','hook',this.value)"></div>
+      <div class="st-g2">
+        <div class="st-field"><div class="st-field-lbl">Content Brief</div><textarea class="st-editable lg" oninput="stUpdIG('${p.id}','desc',this.value)">${esc(p.desc)}</textarea></div>
+        <div>
+          <div class="st-field"><div class="st-field-lbl">Goal</div><textarea class="st-editable" oninput="stUpdIG('${p.id}','goal',this.value)">${esc(p.goal)}</textarea></div>
+          <div class="st-field"><div class="st-field-lbl">Hashtags</div><textarea class="st-editable" oninput="stUpdIG('${p.id}','hashtags',this.value)">${esc(p.hashtags)}</textarea></div>
+        </div>
+      </div>
+    </div>`;
+  });
+  c.innerHTML = html;
+}
+
+function stUpdIG(id, field, value) {
+  const p = stData.igPosts.find(x=>x.id===id);
+  if (p) { p[field]=value; stSave(); }
+}
+
+function stDelIG(id) {
+  if (!confirm('Delete this post?')) return;
+  stData.igPosts = stData.igPosts.filter(x=>x.id!==id);
+  stSave(); stRenderIGPosts(); toast('Post deleted');
+}
+
+function stAddIGPost() {
+  const id = 'ig_'+Date.now();
+  stData.igPosts.push({ id, week:1, type:'reel', title:'New Post', hook:'Your hook here…', desc:'Content brief…', goal:'Goal for this post…', hashtags:'#UGCCreator' });
+  stSave(); stRenderIGPosts(); toast('Post added');
+}
+
+// ═══ SERVICES ═══
+function stRenderRates() {
+  const c = document.getElementById('studio-rates-container');
+  if (!c) return;
+  const nbMap = {beauty:'nb-beauty',hair:'nb-hair',lifestyle:'nb-lifestyle',tech:'nb-tech',fashion:'nb-fashion',family:'nb-family'};
+  let html = stData.services.map(s=>`
+    <div class="st-card" id="sv-card-${s.id}">
+      <div class="st-card-hdr">
+        <div><span class="st-niche-badge ${nbMap[s.niche]||''}">${s.nicheLabel}</span></div>
+        <button class="ib" onclick="stDelService('${s.id}')" style="color:#c0392b;">✕</button>
+      </div>
+      <div class="st-card-body">
+        <div class="st-g2">
+          <div>
+            <div class="st-field"><div class="st-field-lbl">Niche Label</div><input class="st-editable" value="${esc(s.nicheLabel)}" oninput="stUpdSv('${s.id}','nicheLabel',this.value)"></div>
+            <div class="st-field"><div class="st-field-lbl">Price (USD)</div><input type="number" class="st-editable" value="${s.price}" oninput="stUpdSv('${s.id}','price',+this.value)"></div>
+            <div class="st-field"><div class="st-field-lbl">Price Note</div><input class="st-editable" value="${esc(s.priceNote)}" oninput="stUpdSv('${s.id}','priceNote',this.value)"></div>
+            <div class="st-field"><div class="st-field-lbl">Turnaround</div><input class="st-editable" value="${esc(s.turnaround)}" oninput="stUpdSv('${s.id}','turnaround',this.value)"></div>
+          </div>
+          <div>
+            <div class="st-field"><div class="st-field-lbl">Description</div><textarea class="st-editable lg" oninput="stUpdSv('${s.id}','desc',this.value)">${esc(s.desc)}</textarea></div>
+            <div class="st-field"><div class="st-field-lbl">Includes (one per line)</div><textarea class="st-editable lg" oninput="stUpdSvItems('${s.id}',this.value)">${s.includes.join('\n')}</textarea></div>
+          </div>
+        </div>
+      </div>
+    </div>`).join('');
+  c.innerHTML = html;
+}
+
+function stUpdSv(id,field,value) { const s=stData.services.find(x=>x.id===id);if(s){s[field]=value;stSave();} }
+function stUpdSvItems(id,val) { const s=stData.services.find(x=>x.id===id);if(s){s.includes=val.split('\n').filter(Boolean);stSave();} }
+function stDelService(id) { if(!confirm('Delete service?'))return; stData.services=stData.services.filter(x=>x.id!==id); stSave(); stRenderRates(); toast('Service deleted'); }
+function stAddService() {
+  const id='sv_'+Date.now();
+  stData.services.push({id,niche:'beauty',nicheLabel:'💄 New Service',price:35,priceNote:'per video',desc:'Service description.',includes:['1 × edited video','Raw + final MP4','Commercial rights'],turnaround:'48 hours'});
+  stSave(); stRenderRates(); toast('Service added');
+}
+
+// ═══ PACKAGES ═══
+function stRenderPackages() {
+  const pc = document.getElementById('studio-packages-container');
+  const ac = document.getElementById('studio-addons-container');
+  if (!pc||!ac) return;
+  pc.innerHTML = stData.packages.map(p=>`
+    <div class="st-pkg${p.featured?' featured-pkg':''}">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">
+        <div style="flex:1;">
+          <div class="st-pkg-name"><input class="st-editable" value="${esc(p.name)}" style="background:transparent;border:none;padding:0;font-size:inherit;font-weight:inherit;letter-spacing:inherit;text-transform:inherit;color:inherit;width:auto;max-width:200px;" oninput="stUpdPk('${p.id}','name',this.value)"></div>
+          <div class="st-pkg-price">$<input type="number" class="st-editable" value="${p.price}" style="background:transparent;border:none;padding:0;font-size:inherit;font-weight:inherit;color:inherit;width:80px;" oninput="stUpdPk('${p.id}','price',+this.value)"></div>
+          <div style="font-size:11px;color:var(--warm-gray);margin-top:2px;"><input class="st-editable" value="${esc(p.priceNote)}" style="background:transparent;border:none;padding:0;font-size:11px;color:inherit;width:100%;max-width:280px;" oninput="stUpdPk('${p.id}','priceNote',this.value)"></div>
+        </div>
+        <div style="display:flex;gap:5px;">
+          <label style="font-size:10px;color:var(--warm-gray);display:flex;align-items:center;gap:4px;cursor:pointer;"><input type="checkbox" ${p.featured?'checked':''} onchange="stUpdPk('${p.id}','featured',this.checked)"> Featured</label>
+          <button class="ib" onclick="stDelPkg('${p.id}')" style="color:#c0392b;">✕</button>
+        </div>
+      </div>
+      <div class="st-field"><div class="st-field-lbl">Title</div><input class="st-editable" value="${esc(p.title)}" oninput="stUpdPk('${p.id}','title',this.value)"></div>
+      <div class="st-field"><div class="st-field-lbl">What's included (one per line)</div><textarea class="st-editable lg" oninput="stUpdPkItems('${p.id}',this.value)">${p.items.join('\n')}</textarea></div>
+      <div class="st-field"><div class="st-field-lbl">Savings note</div><input class="st-editable" value="${esc(p.savings)}" oninput="stUpdPk('${p.id}','savings',this.value)"></div>
+    </div>`).join('');
+  ac.innerHTML = stData.addons.map(a=>`
+    <div class="st-ao-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+        <div class="st-ao-price"><input class="st-editable" value="${esc(a.price)}" style="background:transparent;border:none;padding:0;font-size:inherit;font-weight:inherit;color:inherit;width:80px;" oninput="stUpdAo('${a.id}','price',this.value)"></div>
+        <button class="ib" onclick="stDelAddon('${a.id}')" style="color:#c0392b;font-size:11px;">✕</button>
+      </div>
+      <div class="st-field"><div class="st-field-lbl">Name</div><input class="st-editable" value="${esc(a.name)}" oninput="stUpdAo('${a.id}','name',this.value)"></div>
+      <div class="st-field"><div class="st-field-lbl">Description</div><textarea class="st-editable" oninput="stUpdAo('${a.id}','desc',this.value)">${esc(a.desc)}</textarea></div>
+    </div>`).join('');
+}
+
+function stUpdPk(id,f,v){const p=stData.packages.find(x=>x.id===id);if(p){p[f]=v;stSave();}}
+function stUpdPkItems(id,val){const p=stData.packages.find(x=>x.id===id);if(p){p.items=val.split('\n').filter(Boolean);stSave();}}
+function stDelPkg(id){if(!confirm('Delete package?'))return;stData.packages=stData.packages.filter(x=>x.id!==id);stSave();stRenderPackages();toast('Package deleted');}
+function stAddPackage(){const id='pk_'+Date.now();stData.packages.push({id,name:'New Package',title:'Package Title',price:100,priceNote:'per package',items:['Item 1','Item 2'],savings:'You save $X',featured:false});stSave();stRenderPackages();toast('Package added');}
+function stUpdAo(id,f,v){const a=stData.addons.find(x=>x.id===id);if(a){a[f]=v;stSave();}}
+function stDelAddon(id){if(!confirm('Delete add-on?'))return;stData.addons=stData.addons.filter(x=>x.id!==id);stSave();stRenderPackages();toast('Add-on deleted');}
+function stAddAddon(){const id='ao_'+Date.now();stData.addons.push({id,price:'+$15',name:'New Add-On',desc:'Description of this add-on.'});stSave();stRenderPackages();toast('Add-on added');}
+
+// ═══ PORTFOLIO VIDEOS ═══
+function stRenderPortfolio() {
+  const c = document.getElementById('studio-portfolio-container');
+  if (!c) return;
+  const nicheOrder=['beauty','hair','lifestyle','tech','fashion'];
+  const nicheLabel={beauty:'💄 Beauty & Skincare',hair:'✂️ Hair Care',lifestyle:'🏡 Lifestyle & Home',tech:'📱 Tech & Apps',fashion:'👗 Fashion & Style'};
+  const nicheBadge={beauty:'nb-beauty',hair:'nb-hair',lifestyle:'nb-lifestyle',tech:'nb-tech',fashion:'nb-fashion'};
+  let html='';
+  nicheOrder.forEach(niche=>{
+    const videos=stData.portfolioVideos.filter(v=>v.niche===niche);
+    if(!videos.length)return;
+    html+=`<div class="st-section"><h3>${nicheLabel[niche]}</h3><div class="st-section-line"></div></div>`;
+    videos.forEach(v=>{
+      const shotsHtml=v.shots.map((s,i)=>`<div class="st-shot-row"><div class="st-shot-num">${i+1}</div><textarea class="st-editable" style="flex:1;" oninput="stUpdShot('${v.id}',${i},this.value)">${esc(s)}</textarea><button class="ib" onclick="stDelShot('${v.id}',${i})" style="margin-top:8px;font-size:11px;">✕</button></div>`).join('');
+      html+=`<div class="st-card">
+        <div class="st-card-hdr">
+          <div><span class="st-niche-badge ${nicheBadge[niche]}">${esc(v.format)}</span><div class="st-card-title">${esc(v.title)}</div></div>
+          <button class="ib" onclick="stDelPV('${v.id}')" style="color:#c0392b;">✕</button>
+        </div>
+        <div class="st-card-body">
+          <div class="st-g2">
+            <div class="st-field"><div class="st-field-lbl">Description</div><textarea class="st-editable lg" oninput="stUpdPV('${v.id}','desc',this.value)">${esc(v.desc)}</textarea></div>
+            <div>
+              <div class="st-field"><div class="st-field-lbl">Title</div><input class="st-editable" value="${esc(v.title)}" oninput="stUpdPV('${v.id}','title',this.value)"></div>
+              <div class="st-field"><div class="st-field-lbl">Format</div><input class="st-editable" value="${esc(v.format)}" oninput="stUpdPV('${v.id}','format',this.value)"></div>
+              <div class="st-field"><div class="st-field-lbl">Duration</div><input class="st-editable" value="${esc(v.duration)}" oninput="stUpdPV('${v.id}','duration',this.value)"></div>
+              <div class="st-field"><div class="st-field-lbl">Filming Notes</div><textarea class="st-editable" oninput="stUpdPV('${v.id}','filmingNotes',this.value)">${esc(v.filmingNotes||'')}</textarea></div>
+            </div>
+          </div>
+          <div class="st-field"><div class="st-field-lbl">Shot List</div>${shotsHtml}<button class="ib" style="margin-top:6px;" onclick="stAddShot('${v.id}')">+ Add Shot</button></div>
+        </div>
+      </div>`;
+    });
+  });
+  c.innerHTML=html;
+}
+
+function stUpdPV(id,f,v){const x=stData.portfolioVideos.find(p=>p.id===id);if(x){x[f]=v;stSave();}}
+function stUpdShot(vid,idx,val){const v=stData.portfolioVideos.find(p=>p.id===vid);if(v){v.shots[idx]=val;stSave();}}
+function stDelShot(vid,idx){const v=stData.portfolioVideos.find(p=>p.id===vid);if(v){v.shots.splice(idx,1);stSave();stRenderPortfolio();}}
+function stAddShot(vid){const v=stData.portfolioVideos.find(p=>p.id===vid);if(v){v.shots.push('New shot description');stSave();stRenderPortfolio();}}
+function stDelPV(id){if(!confirm('Delete this video?'))return;stData.portfolioVideos=stData.portfolioVideos.filter(x=>x.id!==id);stSave();stRenderPortfolio();toast('Video deleted');}
+function stAddPortfolioVideo(){const id='pv_'+Date.now();stData.portfolioVideos.push({id,niche:'lifestyle',format:'Lifestyle-Integrated',title:'New Portfolio Video',desc:'Describe what this video shows.',shots:['First shot','Second shot','Third shot'],duration:'30–45 sec',filmingNotes:'Camera recipe · Light setup · Audio notes'});stSave();stRenderPortfolio();toast('Video added');}
+
+// ═══ INCOME PLAN ═══
+function stRenderIncome() {
+  const g = document.getElementById('studio-money-grid');
+  if (!g) return;
+  const weeks = ['w1','w2','w3','w4'];
+  const weekLabels = ['Week 1','Week 2','Week 3','Week 4'];
+  g.innerHTML = weeks.map((w,i)=>{
+    const wd = stData.income[w]||{target:'',note:''};
+    return `<div class="st-money-card">
+      <div class="st-money-week">${weekLabels[i]}</div>
+      <div class="st-money-amount"><input style="background:transparent;border:none;font-family:'Cormorant Garamond',serif;font-size:1.7rem;font-weight:300;color:var(--ink);width:100%;outline:none;" value="${esc(wd.target)}" oninput="stData.income.${w}.target=this.value;stSave()"></div>
+      <div class="st-field" style="margin-top:8px;"><div class="st-field-lbl">Week Context</div><textarea class="st-editable" oninput="stData.income.${w}.note=this.value;stSave()">${esc(wd.note)}</textarea></div>
+    </div>`;
+  }).join('');
+}
+
+// ═══ BRANDS ═══
+function stRenderBrands() {
+  const c = document.getElementById('studio-brands-container');
+  if (!c) return;
+  c.innerHTML = stData.brands.map(b=>`
+    <div class="st-card" style="margin-bottom:10px;">
+      <div class="st-card-body">
+        <div style="display:grid;grid-template-columns:100px 1fr 1fr 1fr 90px auto;gap:8px;align-items:center;margin-bottom:8px;">
+          <input class="st-editable" value="${esc(b.priority)}" placeholder="Priority" style="font-size:11px;" oninput="stUpdBr('${b.id}','priority',this.value)">
+          <input class="st-editable" value="${esc(b.type)}" placeholder="Brand type" style="font-size:11px;" oninput="stUpdBr('${b.id}','type',this.value)">
+          <input class="st-editable" value="${esc(b.why)}" placeholder="Why they'll say yes" style="font-size:11px;" oninput="stUpdBr('${b.id}','why',this.value)">
+          <input class="st-editable" value="${esc(b.angle)}" placeholder="Your pitch angle" style="font-size:11px;" oninput="stUpdBr('${b.id}','angle',this.value)">
+          <input class="st-editable" value="${esc(b.rate)}" placeholder="Rate" style="font-size:11px;color:var(--terracotta);" oninput="stUpdBr('${b.id}','rate',this.value)">
+          <button class="ib" onclick="stDelBr('${b.id}')" style="color:#c0392b;">✕</button>
+        </div>
+        <div class="st-field" style="margin-bottom:0;"><div class="st-field-lbl">Specific Brand Names to Target</div><input class="st-editable" value="${esc(b.specific||'')}" placeholder="E.g. Brand A (IG: @brandA)…" oninput="stUpdBr('${b.id}','specific',this.value)"></div>
+      </div>
+    </div>`).join('');
+}
+
+function stUpdBr(id,f,v){const b=stData.brands.find(x=>x.id===id);if(b){b[f]=v;stSave();}}
+function stDelBr(id){if(!confirm('Delete brand target?'))return;stData.brands=stData.brands.filter(x=>x.id!==id);stSave();stRenderBrands();toast('Brand target deleted');}
+function stAddBrand(){const id='br_'+Date.now();stData.brands.push({id,priority:'🟡 Week 2',type:'New brand type',why:"Why they'll work with you",angle:'Your pitch angle',rate:'$35',specific:''});stSave();stRenderBrands();toast('Brand target added');}
+
+function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+function stRenderAll() {
+  stLoad();
+  stRenderIGPosts();
+  stRenderRates();
+  stRenderPackages();
+  stRenderPortfolio();
+  stRenderIncome();
+  stRenderBrands();
+}
+
+// hook into goTo to trigger studio renders lazily
+const _origGoTo = window.goTo;
+window.goTo = function(id, el) {
+  if (id && id.startsWith('studio-')) {
+    // trigger studio data load if not yet done
+    if (!stData.igPosts) stLoad();
+  }
+  if (typeof _origGoTo === 'function') _origGoTo(id, el);
+};
+
+document.addEventListener('DOMContentLoaded', ()=>{
+  stRenderAll();
+});
+
 function init(){
   if(_appBooted) return;
   _appBooted = true;
