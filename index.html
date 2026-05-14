@@ -629,6 +629,7 @@ body{background:var(--ivory);font-family:'Jost',sans-serif;font-weight:300;color
     <button class="btn btn-g btn-s active" id="feed-ig-btn" onclick="switchFeed('ig',this)">📸 Instagram</button>
     <button class="btn btn-g btn-s" id="feed-tt-btn" onclick="switchFeed('tt',this)">🎵 TikTok</button>
   </div>
+  <div id="feed-post-legend" style="margin-bottom:14px;"></div>
   <div style="display:grid;grid-template-columns:auto 1fr;gap:22px;align-items:start;" id="feed-layout">
     <div>
       <div style="font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--warm-gray);margin-bottom:7px;font-family:'DM Mono',monospace;" id="feed-plat-label">Instagram Grid</div>
@@ -975,6 +976,7 @@ Total cash: $190 + product value</textarea></div>
     <div class="fr"><div class="fg"><label class="fl">Status</label><select class="fs" id="g-status"><option value="pending">Pending</option><option value="negotiating">Negotiating</option><option value="waitingapproval">Waiting Approval</option><option value="paid">Paid — In Progress</option><option value="gifted">Gifted — In Progress</option><option value="delivered">Delivered ✓</option><option value="declined">Declined</option></select></div><div class="fg"><label class="fl">Due Date</label><input class="fi" id="g-due" type="date"></div></div>
     <div class="fr"><div class="fg"><label class="fl">Contact</label><input class="fi" id="g-contact" placeholder="email or DM handle"></div><div class="fg"></div></div>
     <div class="fr"><div class="fg"><label class="fl">Linked Idea</label><select class="fs" id="g-lidea"><option value="">— none —</option></select></div><div class="fg"><label class="fl">Linked Content</label><select class="fs" id="g-lct"><option value="">— none —</option></select></div></div>
+    <div class="fr f1"><div class="fg"><label class="fl">📸 Linked IG Post</label><select class="fs" id="g-ligpost"><option value="">— none —</option></select></div></div>
     <div class="fr f1"><div class="fg"><label class="fl">Notes / Deliverables</label><textarea class="ft" id="g-notes" placeholder="Deliverables, agreements…"></textarea></div></div>
     <div class="fr f1"><div class="fg"><label class="fl">Product Image</label><div class="uz" onclick="document.getElementById('g-img-in').click()"><input type="file" id="g-img-in" accept="image/*" onchange="handleImg(event,'g-img-pre','g-img-data')"><div style="font-size:12px;color:var(--warm-gray);">📦 Click to upload product photo</div></div><div id="g-img-pre" style="margin-top:7px;"></div><input type="hidden" id="g-img-data"></div></div>
     <div class="scr-section-divider"><span class="scr-section-label">✍️ Script</span></div>
@@ -1011,6 +1013,7 @@ Total cash: $190 + product value</textarea></div>
     <div class="fr"><div class="fg"><label class="fl">Niche</label><select class="fs" id="ct-niche"><option>Beauty & Skincare</option><option>Hair Care</option><option>Lifestyle & Home</option><option>Tech & Apps</option><option>Fashion</option><option>Food</option></select></div><div class="fg"><label class="fl">Platform</label><select class="fs" id="ct-plat"><option>TikTok</option><option>Instagram</option><option>Instagram Reels</option><option>YouTube</option><option>YouTube Shorts</option><option>Multiple</option></select></div></div>
     <div class="fr"><div class="fg"><label class="fl">Date</label><input class="fi" id="ct-date" type="date"></div><div class="fg"><label class="fl">Status</label><select class="fs" id="ct-status"><option value="idea">Idea</option><option value="scripting">Scripting</option><option value="filming">Filming</option><option value="editing">Editing</option><option value="done">Done ✓</option><option value="published">Published 🚀</option></select></div></div>
     <div class="fr"><div class="fg"><label class="fl">Linked Gig</label><select class="fs" id="ct-lgig"><option value="">— none —</option></select></div><div class="fg"><label class="fl">Linked Idea</label><select class="fs" id="ct-lidea"><option value="">— none —</option></select></div></div>
+    <div class="fr f1"><div class="fg"><label class="fl">📸 Linked IG Post</label><select class="fs" id="ct-ligpost"><option value="">— none —</option></select></div></div>
     <div class="fr f1"><div class="fg"><label class="fl">Hook / Opening</label><input class="fi" id="ct-hook" placeholder="First 3 seconds…"></div></div>
     <div class="fr f1"><div class="fg"><label class="fl">Audio / Sound 🎵</label><input class="fi" id="ct-audio" placeholder="Trending sound name, original, voiceover…"></div></div>
     <div class="fr f1"><div class="fg"><label class="fl">Notes / Script</label><textarea class="ft" id="ct-notes" placeholder="Key points, products, CTA…"></textarea></div></div>
@@ -1048,6 +1051,7 @@ Total cash: $190 + product value</textarea></div>
     <div class="fr f1"><div class="fg"><label class="fl">Content Types</label><div class="tp-wrap"><div class="tp" id="i-types-tp" onclick="focusTP('i-types-inp')"><div id="i-types-tags"></div><input class="tp-input" id="i-types-inp" placeholder="Search or type…" oninput="filterDD('i')" onfocus="showDD('i')" onblur="setTimeout(()=>hideDD('i'),200)" onkeydown="tpKey(event,'i')"></div><div class="tp-dd" id="i-dd"></div></div></div></div>
     <div class="fr"><div class="fg"><label class="fl">Niche</label><select class="fs" id="i-niche"><option>Beauty</option><option>Hair</option><option>Lifestyle</option><option>Tech</option><option>Fashion</option><option>Food</option></select></div><div class="fg"><label class="fl">Platform</label><select class="fs" id="i-plat"><option>TikTok</option><option>Instagram</option><option>YouTube</option><option>Multiple</option></select></div></div>
     <div class="fr"><div class="fg"><label class="fl">Status</label><select class="fs" id="i-status"><option value="idea">Idea 💡</option><option value="scripting">Scripting ✍️</option><option value="filming">Filming 🎬</option><option value="editing">Editing ✂️</option><option value="done">Done ✓</option><option value="published">Published 🚀</option></select></div><div class="fg"><label class="fl">Linked Gig</label><select class="fs" id="i-lgig"><option value="">— none —</option></select></div></div>
+    <div class="fr f1"><div class="fg"><label class="fl">📸 Linked IG Post</label><select class="fs" id="i-ligpost"><option value="">— none —</option></select></div></div>
     <div class="fr f1"><div class="fg"><label class="fl">Hook</label><input class="fi" id="i-hook" placeholder="Opening line or concept hook"></div></div>
     <div class="fr f1"><div class="fg"><label class="fl">Audio / Sound 🎵</label><input class="fi" id="i-audio" placeholder="Trending sound, original audio, voiceover…"></div></div>
     <div class="fr f1"><div class="fg"><label class="fl">Notes</label><textarea class="ft" id="i-notes" placeholder="Shot list ideas, products, references…"></textarea></div></div>
@@ -2017,6 +2021,11 @@ function populateLinks(){
     const items=type==='gig'?D.gigs:D.ideas;
     el.innerHTML='<option value="">— none —</option>'+items.map(x=>`<option value="${x.id}">${(x.brand||x.title||'').slice(0,40)}</option>`).join('');
   });
+  // Populate IG post dropdowns
+  if(typeof stData!=='undefined'&&stData.igPosts){
+    const igOpts='<option value="">— none —</option>'+stData.igPosts.map(p=>`<option value="${p.id}">W${p.week} · ${(p.title||'').slice(0,36)}</option>`).join('');
+    ['g-ligpost','ct-ligpost','i-ligpost'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=igOpts;});
+  }
 }
 
 // ── UTILS ──
@@ -2120,13 +2129,14 @@ function rGigs(){
     const typeHtml=(g.types||[]).map(t=>`<span style="font-size:9px;font-family:'DM Mono',monospace;padding:1px 6px;border-radius:20px;background:rgba(196,113,79,.1);color:var(--terracotta);margin:1px;display:inline-block;">${t}</span>`).join('');
     const li=D.ideas.find(x=>x.id===g.linkedIdea);
     const lc=D.content.find(x=>x.id===g.linkedContent);
+    const lip=(g.linkedIGPost&&typeof stData!=='undefined'&&stData.igPosts)?stData.igPosts.find(x=>x.id===g.linkedIGPost):null;
     return `<tr>
       <td><div style="font-weight:500;">${g.brand}</div>${g.img?`<img src="${g.img}" style="width:34px;height:34px;border-radius:6px;object-fit:cover;margin-top:4px;cursor:pointer;" onclick="lightbox('${g.img}')">`:''}${g.contact?`<div style="font-size:10px;color:var(--warm-gray);">${g.contact}</div>`:''}</td>
       <td>${typeHtml||'<span style="color:var(--mid-gray);font-size:11px;">—</span>'}</td>
       <td style="font-family:'DM Mono',monospace;font-size:12px;font-weight:500;color:${g.rateType==='paid'?'var(--forest)':'var(--terracotta)'};">${fmtRate(g)}</td>
       <td><select class="fs" style="padding:3px 7px;font-size:10px;width:auto;border-radius:20px;" onchange="updGigStatus('${g.id}',this.value)">${['pending','negotiating','waitingapproval','paid','gifted','delivered','declined'].map(s=>`<option value="${s}"${g.status===s?' selected':''}>${sLabel(s)}</option>`).join('')}</select></td>
       <td style="font-family:'DM Mono',monospace;font-size:10px;color:var(--warm-gray);">${g.due||'—'}</td>
-      <td>${li?`<div class="lb2" style="margin-bottom:3px;">💡 ${li.title.slice(0,18)}</div>`:''}${lc?`<div class="lb2">📅 ${lc.title.slice(0,18)}</div>`:''}</td>
+      <td>${li?`<div class="lb2" style="margin-bottom:3px;">💡 ${li.title.slice(0,18)}</div>`:''}${lc?`<div class="lb2" style="margin-bottom:3px;">📅 ${lc.title.slice(0,18)}</div>`:''}${lip?`<div class="lb2" style="background:rgba(225,48,108,.07);border-color:rgba(225,48,108,.2);color:#c13584;">📸 W${lip.week} · ${lip.title.slice(0,14)}</div>`:''}</td>
       <td><div style="display:flex;gap:4px;">
         <button class="ib" onclick="openMB('gig','${g.id}','${esc(g.brand)}')">🎨</button>
         <button class="ib" onclick="editGig('${g.id}')">✏️</button>
@@ -2151,7 +2161,7 @@ function editGig(id){
   setTP('g',g.types||[]);
   document.getElementById('g-img-pre').innerHTML=g.img?`<img src="${g.img}" style="max-height:80px;border-radius:8px;">`:'';
   togGR();populateLinks();
-  setV('g-lidea',g.linkedIdea||'');setV('g-lct',g.linkedContent||'');
+  setV('g-lidea',g.linkedIdea||'');setV('g-lct',g.linkedContent||'');setV('g-ligpost',g.linkedIGPost||'');
   loadScrData('g',{script:g.script||'',scrnotes:g.scrnotes||'',shots:g.shots||[]});
   openModal('gig-modal');
 }
@@ -2159,7 +2169,7 @@ function saveGig(){
   const brand=v('g-brand').trim();if(!brand){toast('Brand name required');return;}
   const id=v('g-id');
   const scrData=readScrData('g');
-  const gig={id:id||'g'+Date.now(),brand,niche:v('g-niche'),types:TP.g||[],platform:v('g-plat'),rateType:v('g-rtype'),rate:v('g-rate'),gift:v('g-gift'),status:v('g-status'),due:v('g-due'),contact:v('g-contact'),notes:v('g-notes'),img:v('g-img-data'),linkedIdea:v('g-lidea'),linkedContent:v('g-lct'),script:scrData.script,scrnotes:scrData.scrnotes,shots:scrData.shots,added:id?(D.gigs.find(g=>g.id===id)||{}).added||Date.now():Date.now()};
+  const gig={id:id||'g'+Date.now(),brand,niche:v('g-niche'),types:TP.g||[],platform:v('g-plat'),rateType:v('g-rtype'),rate:v('g-rate'),gift:v('g-gift'),status:v('g-status'),due:v('g-due'),contact:v('g-contact'),notes:v('g-notes'),img:v('g-img-data'),linkedIdea:v('g-lidea'),linkedContent:v('g-lct'),linkedIGPost:v('g-ligpost'),script:scrData.script,scrnotes:scrData.scrnotes,shots:scrData.shots,added:id?(D.gigs.find(g=>g.id===id)||{}).added||Date.now():Date.now()};
   if(id)D.gigs=D.gigs.map(g=>g.id===id?gig:g);else D.gigs.push(gig);
   save();closeModal('gig-modal');resetTP('g');resetScrData('g');rGigs();rDash();toast(id?'Gig updated!':'Gig saved! 🎉');
 }
@@ -2214,14 +2224,17 @@ function rCal(){
   const mc=D.content.filter(c=>{if(!c.date)return false;const d=new Date(c.date);return d.getMonth()===D.calM&&d.getFullYear()===D.calY;});
   const pl=document.getElementById('plan-list');
   if(!mc.length){pl.innerHTML='<div style="font-size:13px;color:var(--mid-gray);padding:10px 0;">No content planned. Click a date to add.</div>';return;}
-  pl.innerHTML='<div class="card"><div class="ch"><span class="ct">This Month</span></div>'+mc.sort((a,b)=>new Date(a.date)-new Date(b.date)).map(c=>`<div style="display:flex;align-items:center;gap:10px;padding:9px 16px;border-bottom:1px solid rgba(0,0,0,.04);">
+  pl.innerHTML='<div class="card"><div class="ch"><span class="ct">This Month</span></div>'+mc.sort((a,b)=>new Date(a.date)-new Date(b.date)).map(c=>{
+    const clp=(c.linkedIGPost&&typeof stData!=='undefined'&&stData.igPosts)?stData.igPosts.find(x=>x.id===c.linkedIGPost):null;
+    return `<div style="display:flex;align-items:center;gap:10px;padding:9px 16px;border-bottom:1px solid rgba(0,0,0,.04);">
     <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--terracotta);width:52px;flex-shrink:0;">${c.date}</div>
     <div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${c.title}</div>
-    <div style="font-size:10px;color:var(--warm-gray);">${c.platform}${c.audio?' · 🎵 '+c.audio.slice(0,25):''}</div>
+    <div style="font-size:10px;color:var(--warm-gray);">${c.platform}${c.audio?' · 🎵 '+c.audio.slice(0,25):''}${clp?' · <span style="color:#c13584;">📸 W'+clp.week+'</span>':''}</div>
     ${(c.types||[]).length?`<div style="display:flex;flex-wrap:wrap;gap:2px;margin-top:3px;">${(c.types||[]).map(t=>`<span style="font-size:9px;font-family:'DM Mono',monospace;padding:1px 5px;border-radius:20px;background:rgba(196,113,79,.1);color:var(--terracotta);">${t}</span>`).join('')}</div>`:''}</div>
     <select class="fs" style="padding:3px 7px;font-size:9px;width:auto;flex-shrink:0;" onchange="updCtStatus('${c.id}',this.value)">${['idea','scripting','filming','editing','done','published'].map(s=>`<option value="${s}"${c.status===s?' selected':''}>${s}</option>`).join('')}</select>
     <button class="ib" onclick="delContent('${c.id}')">🗑</button>
-  </div>`).join('')+'</div>';
+  </div>`;
+  }).join('')+'</div>';
 }
 function openCtDate(ds){setV('ct-id','');resetTP('ct');setV('ct-date',ds);resetScrData('ct');openModal('content-modal');}
 function updCtStatus(id,val){const c=D.content.find(x=>x.id===id);if(c){c.status=val;save();}toast('Status → '+val);}
@@ -2229,9 +2242,9 @@ function saveContent(){
   const title=v('ct-title').trim();if(!title){toast('Title required');return;}
   const id=v('ct-id');
   const scrData=readScrData('ct');
-  const ct={id:id||'c'+Date.now(),title,niche:v('ct-niche'),platform:v('ct-plat'),date:v('ct-date'),types:TP.ct||[],status:v('ct-status'),linkedGig:v('ct-lgig'),linkedIdea:v('ct-lidea'),hook:v('ct-hook'),audio:v('ct-audio'),notes:v('ct-notes'),img:v('ct-img-data'),script:scrData.script,scrnotes:scrData.scrnotes,shots:scrData.shots};
+  const ct={id:id||'c'+Date.now(),title,niche:v('ct-niche'),platform:v('ct-plat'),date:v('ct-date'),types:TP.ct||[],status:v('ct-status'),linkedGig:v('ct-lgig'),linkedIdea:v('ct-lidea'),linkedIGPost:v('ct-ligpost'),hook:v('ct-hook'),audio:v('ct-audio'),notes:v('ct-notes'),img:v('ct-img-data'),script:scrData.script,scrnotes:scrData.scrnotes,shots:scrData.shots};
   if(id)D.content=D.content.map(c=>c.id===id?ct:c);else D.content.push(ct);
-  save();closeModal('content-modal');resetTP('ct');['ct-title','ct-date','ct-hook','ct-audio','ct-notes','ct-lgig','ct-lidea','ct-id'].forEach(i=>setV(i,''));setV('ct-img-data','');document.getElementById('ct-img-pre').innerHTML='';resetScrData('ct');
+  save();closeModal('content-modal');resetTP('ct');['ct-title','ct-date','ct-hook','ct-audio','ct-notes','ct-lgig','ct-lidea','ct-ligpost','ct-id'].forEach(i=>setV(i,''));setV('ct-img-data','');document.getElementById('ct-img-pre').innerHTML='';resetScrData('ct');
   rCal();rDash();toast('Content saved!');
 }
 function delContent(id){D.content=D.content.filter(c=>c.id!==id);save();rCal();rDash();}
@@ -2245,6 +2258,7 @@ function rIdeas(filt){
   if(!ideas.length){grid.innerHTML='<div class="es" style="grid-column:1/-1"><div class="es-icon">💡</div><div class="es-title">No ideas yet</div></div>';return;}
   grid.innerHTML=[...ideas].reverse().map(i=>{
     const lg=i.linkedGig?D.gigs.find(g=>g.id===i.linkedGig):null;
+    const lip=(i.linkedIGPost&&typeof stData!=='undefined'&&stData.igPosts)?stData.igPosts.find(x=>x.id===i.linkedIGPost):null;
     const typeHtml=(i.types||[]).map(t=>`<span style="font-size:9px;font-family:'DM Mono',monospace;padding:1px 6px;border-radius:20px;background:rgba(196,113,79,.1);color:var(--terracotta);">${t}</span>`).join('');
     return `<div class="id-card">
       <div style="display:flex;align-items:center;justify-content:space-between;gap:6px;">
@@ -2258,6 +2272,7 @@ function rIdeas(filt){
       ${i.audio?`<div class="au-chip">🎵 ${i.audio.slice(0,35)}</div>`:''}
       ${i.script?`<div style="font-size:9px;font-family:'DM Mono',monospace;padding:2px 8px;border-radius:20px;background:rgba(196,113,79,.08);color:var(--terracotta);display:inline-block;margin-top:2px;">✍️ Script ready</div>`:''}
       ${lg?`<div class="lb2">🔗 ${lg.brand}</div>`:''}
+      ${lip?`<div class="lb2" style="background:rgba(225,48,108,.07);border-color:rgba(225,48,108,.2);color:#c13584;margin-top:2px;">📸 W${lip.week} · ${lip.title.slice(0,22)}</div>`:''}
       ${i.notes?`<div style="font-size:11px;color:var(--warm-gray);">${i.notes.slice(0,80)}${i.notes.length>80?'…':''}</div>`:''}
       <div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:3px;">
         <button class="btn btn-g btn-s" onclick="schedIdeaToContent('${i.id}')">📅 Schedule</button>
@@ -2274,7 +2289,7 @@ function editIdea(id){
   setV('i-id',id);setV('i-title',idea.title);setV('i-niche',idea.niche);setV('i-plat',idea.platform);setV('i-status',idea.status);setV('i-hook',idea.hook||'');setV('i-audio',idea.audio||'');setV('i-notes',idea.notes||'');setV('i-img-data',idea.img||'');
   setTP('i',idea.types||[]);
   document.getElementById('i-img-pre').innerHTML=idea.img?`<img src="${idea.img}" style="width:100%;border-radius:8px;max-height:140px;object-fit:cover;">`:'';
-  populateLinks();setV('i-lgig',idea.linkedGig||'');
+  populateLinks();setV('i-lgig',idea.linkedGig||'');setV('i-ligpost',idea.linkedIGPost||'');
   loadScrData('i',{script:idea.script||'',scrnotes:idea.scrnotes||'',shots:idea.shots||[]});
   openModal('idea-modal');
 }
@@ -2282,7 +2297,7 @@ function saveIdea(){
   const title=v('i-title').trim();if(!title){toast('Title required');return;}
   const id=v('i-id');
   const scrData=readScrData('i');
-  const idea={id:id||'i'+Date.now(),title,niche:v('i-niche'),platform:v('i-plat'),status:v('i-status'),types:TP.i||[],linkedGig:v('i-lgig'),hook:v('i-hook'),audio:v('i-audio'),notes:v('i-notes'),img:v('i-img-data'),script:scrData.script,scrnotes:scrData.scrnotes,shots:scrData.shots,added:Date.now()};
+  const idea={id:id||'i'+Date.now(),title,niche:v('i-niche'),platform:v('i-plat'),status:v('i-status'),types:TP.i||[],linkedGig:v('i-lgig'),linkedIGPost:v('i-ligpost'),hook:v('i-hook'),audio:v('i-audio'),notes:v('i-notes'),img:v('i-img-data'),script:scrData.script,scrnotes:scrData.scrnotes,shots:scrData.shots,added:Date.now()};
   if(id)D.ideas=D.ideas.map(x=>x.id===id?idea:x);else D.ideas.push(idea);
   save();closeModal('idea-modal');resetTP('i');['i-title','i-hook','i-audio','i-notes','i-lgig','i-id'].forEach(i=>setV(i,''));setV('i-img-data','');document.getElementById('i-img-pre').innerHTML='';resetScrData('i');
   rIdeas(ideaFilt);rDash();toast('Idea saved!');
@@ -2295,6 +2310,7 @@ function schedIdeaToContent(id){
   setTP('ct',idea.types||[]);
   setV('ct-img-data','');document.getElementById('ct-img-pre').innerHTML='';
   populateLinks();setV('ct-lidea',idea.id);
+  if(idea.linkedIGPost)setV('ct-ligpost',idea.linkedIGPost);
   loadScrData('ct',{script:idea.script||'',scrnotes:idea.scrnotes||'',shots:(idea.shots||[]).map(s=>({...s,id:++scrShotCtr}))});
   openModal('content-modal');
 }
@@ -2308,12 +2324,30 @@ function rFeed(){
   const cells=feedP==='ig'?D.feedIg:D.feedTt;
   const cls=feedP==='ig'?'fc ig-cell':'fc tt-cell';
   const cols=feedP==='ig'?'repeat(3,1fr)':'repeat(3,1fr)';
+  // Render post legend
+  const legend=document.getElementById('feed-post-legend');
+  if(legend&&typeof stData!=='undefined'&&stData.igPosts){
+    const plat=feedP==='ig'?'instagram':'tiktok';
+    const assigned=stData.igPosts.filter(p=>p.feedCell!=null&&(p.feedPlatform||'instagram')===plat).sort((a,b)=>a.feedCell-b.feedCell);
+    if(assigned.length){
+      legend.innerHTML=`<div style="font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--warm-gray);margin-bottom:6px;font-family:'DM Mono',monospace;">Posts assigned to grid cells</div><div style="display:flex;flex-wrap:wrap;gap:5px;">`+assigned.map(p=>`<div style="display:inline-flex;align-items:center;gap:4px;background:rgba(225,48,108,.07);border:1px solid rgba(225,48,108,.15);border-radius:20px;padding:3px 10px;font-size:10px;color:#c13584;font-family:'DM Mono',monospace;"><span style="background:#c13584;color:#fff;border-radius:50%;width:16px;height:16px;display:inline-flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;">${p.feedCell+1}</span> W${p.week} · ${p.title.slice(0,20)}</div>`).join('')+'</div>';
+    } else {
+      legend.innerHTML=`<div style="font-size:11px;color:var(--mid-gray);">No posts assigned to grid cells yet. Open <strong>IG Post Planner</strong> → each post has a "Feed Grid Cell" field to assign it.</div>`;
+    }
+  }
   grid.innerHTML=`<div style="display:grid;grid-template-columns:${cols};gap:2px;border-radius:12px;overflow:hidden;background:${feedP==='ig'?'#fff':'#000'};">`+
-    cells.map((img,i)=>`<div class="${cls}${feedSel===i?' selected-cell':''}" id="fc-${i}" onclick="selCell(${i})">
+    cells.map((img,i)=>{
+      // Find content or IG post linked to this cell position
+      const cellPost = (typeof stData!=='undefined'&&stData.igPosts) ? stData.igPosts.find(p=>p.feedCell===i&&p.feedPlatform===(feedP==='ig'?'instagram':'tiktok')) : null;
+      const cellContent = (typeof D!=='undefined') ? D.content.find(c=>c.feedCell===i&&(feedP==='ig'?c.platform&&c.platform.toLowerCase().includes('insta'):c.platform&&c.platform.toLowerCase().includes('tiktok'))) : null;
+      const cellLabel = cellPost ? `W${cellPost.week} · ${cellPost.title.slice(0,18)}` : cellContent ? cellContent.title.slice(0,20) : '';
+      return `<div class="${cls}${feedSel===i?' selected-cell':''}" id="fc-${i}" onclick="selCell(${i})">
       ${img?`<img src="${img}">`:`<div class="fc-add">${feedP==='ig'?'➕':'▶'}</div>`}
       <div class="fc-n">${i+1}</div>
+      ${cellLabel?`<div style="position:absolute;bottom:3px;left:3px;right:3px;font-size:8px;font-family:'DM Mono',monospace;background:rgba(225,48,108,.85);color:#fff;padding:1px 4px;border-radius:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${cellLabel}</div>`:''}
       <div class="fc-ov">${img?`<button class="fc-btn" onclick="clrCell(${i},event)">✕ Remove</button>`:'<button class="fc-btn">+ Select</button>'}</div>
-    </div>`).join('')+'</div>';
+    </div>`;
+    }).join('')+'</div>';
   rFeedBank();
 }
 function selCell(i){feedSel=i;rFeed();}
@@ -2944,8 +2978,25 @@ function stRenderIGPosts() {
         <div>
           <div class="st-field"><div class="st-field-lbl">Goal</div><textarea class="st-editable" oninput="stUpdIG('${p.id}','goal',this.value)">${esc(p.goal)}</textarea></div>
           <div class="st-field"><div class="st-field-lbl">Hashtags</div><textarea class="st-editable" oninput="stUpdIG('${p.id}','hashtags',this.value)">${esc(p.hashtags)}</textarea></div>
+          <div style="display:flex;gap:8px;align-items:flex-end;">
+            <div class="st-field" style="flex:1;margin-bottom:0;"><div class="st-field-lbl">📐 Feed Grid Cell (1–9)</div><input type="number" class="st-editable" min="1" max="9" placeholder="e.g. 3" style="max-width:80px;" value="${p.feedCell!=null?p.feedCell+1:''}" oninput="stUpdIG('${p.id}','feedCell',this.value?+this.value-1:null);rFeed()"></div>
+            <div class="st-field" style="flex:1;margin-bottom:0;"><div class="st-field-lbl">Platform</div><select class="st-editable" style="min-height:0;padding:6px 9px;resize:none;" oninput="stUpdIG('${p.id}','feedPlatform',this.value)"><option value="instagram"${p.feedPlatform!=='tiktok'?' selected':''}>Instagram</option><option value="tiktok"${p.feedPlatform==='tiktok'?' selected':''}>TikTok</option></select></div>
+          </div>
         </div>
       </div>
+      ${(()=>{
+        // Reverse-lookup: find gigs, ideas, content linked to this IG post
+        const linkedGigs=(typeof D!=='undefined'?D.gigs:[]).filter(g=>g.linkedIGPost===p.id);
+        const linkedIdeas=(typeof D!=='undefined'?D.ideas:[]).filter(i=>i.linkedIGPost===p.id);
+        const linkedContent=(typeof D!=='undefined'?D.content:[]).filter(c=>c.linkedIGPost===p.id);
+        if(!linkedGigs.length&&!linkedIdeas.length&&!linkedContent.length) return '';
+        return `<div style="background:rgba(225,48,108,.04);border:1px solid rgba(225,48,108,.12);border-radius:10px;padding:10px 13px;margin-top:4px;">
+          <div style="font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:#c13584;font-weight:600;margin-bottom:7px;font-family:'DM Mono',monospace;">📸 Linked To This Post</div>
+          ${linkedGigs.map(g=>`<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;"><span style="font-size:10px;">🔗</span><span style="font-size:11px;font-weight:500;">${g.brand}</span><span class="sp s-${g.status}" style="margin-left:auto;">${g.status}</span></div>`).join('')}
+          ${linkedIdeas.map(i=>`<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;"><span style="font-size:10px;">💡</span><span style="font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;">${i.title}</span><span style="font-size:9px;font-family:'DM Mono',monospace;color:var(--warm-gray);">${i.niche}</span></div>`).join('')}
+          ${linkedContent.map(c=>`<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;"><span style="font-size:10px;">📅</span><span style="font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;">${c.title}</span>${c.date?`<span style="font-size:9px;font-family:'DM Mono',monospace;color:var(--terracotta);">${c.date}</span>`:''}</div>`).join('')}
+        </div>`;
+      })()}
     </div>`;
   });
   c.innerHTML = html;
