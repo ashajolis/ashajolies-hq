@@ -442,6 +442,45 @@ body{background:var(--ivory);font-family:'Jost',sans-serif;font-weight:300;color
 #ios-tip.show{display:block;}
 #ios-tip strong{display:block;font-size:13px;font-weight:600;margin-bottom:6px;color:var(--blush);}
 .ios-close{margin-top:12px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);color:var(--ivory);border-radius:100px;padding:6px 18px;cursor:pointer;font-family:'Jost',sans-serif;font-size:11px;}
+/* ─── INTEGRATED FEED + POSTS ─── */
+.feed-post-card{background:#fff;border-radius:14px;border:2px solid rgba(0,0,0,.06);padding:15px 16px;cursor:pointer;transition:border-color .15s,box-shadow .15s;}
+.feed-post-card:hover{border-color:rgba(196,113,79,.25);box-shadow:0 3px 14px rgba(0,0,0,.07);}
+.feed-post-card.fpc-active{border-color:var(--terracotta);box-shadow:0 0 0 3px rgba(196,113,79,.12);}
+.feed-post-card.fpc-linked{border-color:#c13584;box-shadow:0 0 0 3px rgba(193,53,132,.08);}
+.fpc-header{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.fpc-cell-badge{width:28px;height:28px;border-radius:7px;background:var(--terracotta);color:#fff;font-size:11px;font-weight:700;font-family:'DM Mono',monospace;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.fpc-cell-badge.unassigned{background:var(--warm-white);color:var(--mid-gray);border:1px dashed var(--mid-gray);}
+.fpc-type{font-size:9px;font-family:'DM Mono',monospace;padding:2px 8px;border-radius:20px;font-weight:600;}
+.fpc-body{display:none;margin-top:12px;border-top:1px solid rgba(0,0,0,.05);padding-top:12px;}
+.fpc-body.open{display:block;}
+.fpc-field{margin-bottom:10px;}
+.fpc-lbl{font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--warm-gray);font-family:'DM Mono',monospace;margin-bottom:4px;}
+.fpc-input{width:100%;border:1px solid rgba(0,0,0,.1);border-radius:8px;padding:7px 10px;font-family:'Jost',sans-serif;font-size:12px;background:var(--warm-white);outline:none;transition:border .13s;}
+.fpc-input:focus{border-color:var(--terracotta);background:#fff;}
+.fpc-ta{resize:vertical;min-height:60px;}
+.fpc-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.fpc-row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+.fpc-link-bar{background:rgba(225,48,108,.04);border:1px solid rgba(225,48,108,.13);border-radius:9px;padding:9px 12px;margin-top:8px;}
+.fpc-link-lbl{font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:#c13584;font-family:'DM Mono',monospace;margin-bottom:6px;font-weight:600;}
+@media(max-width:900px){
+  #feed-integrated-layout{grid-template-columns:1fr!important;}
+}
+.fab-opt{background:#fff;border:1px solid rgba(0,0,0,.1);border-radius:100px;padding:8px 16px;font-family:'Jost',sans-serif;font-size:12px;font-weight:500;cursor:pointer;box-shadow:0 3px 12px rgba(0,0,0,.12);white-space:nowrap;transition:all .14s;}
+.fab-opt:hover{background:var(--warm-white);transform:translateX(-3px);}
+#fab-btn.fab-open{background:var(--ink);transform:rotate(45deg);}
+#fab-menu{display:none;position:fixed;bottom:84px;right:22px;z-index:800;flex-direction:column;gap:8px;align-items:flex-end;}
+#fab-menu.open{display:flex;}
+
+/* ─── KANBAN BOARD ─── */
+.kanban-board{display:flex;gap:12px;overflow-x:auto;padding-bottom:12px;scrollbar-width:thin;}
+.kanban-col{background:var(--warm-white);border-radius:12px;padding:12px;min-width:192px;flex-shrink:0;}
+.kanban-col-hdr{font-size:9px;letter-spacing:.2em;text-transform:uppercase;font-weight:600;color:var(--warm-gray);margin-bottom:10px;font-family:'DM Mono',monospace;display:flex;align-items:center;justify-content:space-between;}
+.kanban-card{background:#fff;border-radius:10px;padding:10px 12px;margin-bottom:8px;border:1px solid rgba(0,0,0,.06);cursor:pointer;transition:box-shadow .14s,transform .12s;}
+.kanban-card:hover{box-shadow:0 4px 14px rgba(0,0,0,.09);transform:translateY(-1px);}
+.kanban-card-brand{font-size:12px;font-weight:600;margin-bottom:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.kanban-card-meta{font-size:10px;color:var(--warm-gray);}
+.kanban-card-rate{font-family:'DM Mono',monospace;font-size:11px;font-weight:600;color:var(--forest);margin-top:6px;}
+.kanban-card-due{font-size:9px;font-family:'DM Mono',monospace;margin-top:3px;}
 </style>
 </head>
 <body>
@@ -463,12 +502,11 @@ body{background:var(--ivory);font-family:'Jost',sans-serif;font-weight:300;color
     <div class="nl">Content</div>
     <div class="ni" onclick="goTo('planner',this)"><span class="ni-icon">📅</span>Planner</div>
     <div class="ni" onclick="goTo('ideas',this)"><span class="ni-icon">💡</span>Ideas</div>
-    <div class="ni" onclick="goTo('feed',this)"><span class="ni-icon">🖼</span>Feed Planner</div>
+    <div class="ni" onclick="goTo('feed',this)"><span class="ni-icon">📸</span>Feed & Posts</div>
     <div class="nl">Resources</div>
     <div class="ni" onclick="goTo('pitches',this)"><span class="ni-icon">✉️</span>Pitches</div>
     <div class="ni" onclick="goTo('brand',this)"><span class="ni-icon">🎨</span>Brand Hub</div>
     <div class="nl">Studio</div>
-    <div class="ni" onclick="goTo('studio-ig',this)"><span class="ni-icon">📸</span>IG Post Planner</div>
     <div class="ni" onclick="goTo('studio-rates',this)"><span class="ni-icon">💼</span>Services & Rates</div>
     <div class="ni" onclick="goTo('studio-packages',this)"><span class="ni-icon">📦</span>Packages & Add-Ons</div>
     <div class="ni" onclick="goTo('studio-portfolio',this)"><span class="ni-icon">🎥</span>Portfolio Videos</div>
@@ -498,7 +536,7 @@ body{background:var(--ivory);font-family:'Jost',sans-serif;font-weight:300;color
 <!-- ═══ MAIN ═══ -->
 <div class="main">
   <div class="topbar">
-    <div class="tb-title" id="tb-title">Good morning, <em>Asha</em> ✨</div>
+    <div class="tb-title" id="tb-title">Loading…</div>
     <div class="tb-search">
       <span class="tb-search-icon">🔍</span>
       <input type="text" placeholder="Search everything…" id="search-input" oninput="globalSearch(this.value)" onfocus="openSearch()" onkeydown="if(event.key==='Escape')closeSearch()">
@@ -513,16 +551,50 @@ body{background:var(--ivory);font-family:'Jost',sans-serif;font-weight:300;color
 
 <!-- ─── DASHBOARD ─── -->
 <div class="pg active" id="pg-dashboard">
+
+  <!-- TODAY'S FOCUS PANEL -->
+  <div id="d-today-panel" style="display:none;background:var(--ink);border-radius:var(--r);padding:16px 20px;margin-bottom:16px;">
+    <div style="font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:var(--warm-gold);font-family:'DM Mono',monospace;margin-bottom:10px;">✦ Today's Focus</div>
+    <div id="d-today-items" style="display:flex;flex-direction:column;gap:7px;"></div>
+  </div>
+
+  <!-- OVERDUE ALERT BANNER -->
+  <div id="d-overdue-banner" style="display:none;background:rgba(192,57,43,.09);border:1px solid rgba(192,57,43,.22);border-radius:12px;padding:11px 16px;margin-bottom:14px;cursor:pointer;align-items:center;gap:10px;" onclick="goTo('followup',document.querySelectorAll('.ni')[3])">
+    <span style="font-size:18px;">⚠️</span>
+    <div style="flex:1;font-size:12px;color:#c0392b;" id="d-overdue-text"></div>
+    <span style="font-size:11px;color:#c0392b;opacity:.6;">View →</span>
+  </div>
+
+  <!-- STATS ROW -->
   <div class="sg">
     <div class="sc"><div class="sc-l">Active Gigs</div><div class="sc-v c-t" id="s-active">0</div><div class="sc-s">in progress</div></div>
     <div class="sc"><div class="sc-l">Pending</div><div class="sc-v c-g" id="s-pending">0</div><div class="sc-s">awaiting reply</div></div>
     <div class="sc"><div class="sc-l">Total Earned</div><div class="sc-v c-f" id="s-earned">$0</div><div class="sc-s">paid only</div></div>
     <div class="sc"><div class="sc-l">Delivered</div><div class="sc-v c-k" id="s-delivered">0</div><div class="sc-s">completed</div></div>
-    <div class="sc"><div class="sc-l">Ideas</div><div class="sc-v" id="s-ideas" style="color:var(--lavender)">0</div><div class="sc-s">total</div></div>
+    <div class="sc"><div class="sc-l">Ideas</div><div class="sc-v" id="s-ideas" style="color:var(--lavender)">0</div><div class="sc-s">in library</div></div>
   </div>
+
+  <!-- INCOME PROGRESS BAR -->
+  <div style="background:#fff;border-radius:var(--r);border:1px solid rgba(0,0,0,.06);padding:15px 18px;margin-bottom:16px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;gap:10px;flex-wrap:wrap;">
+      <div>
+        <div style="font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--warm-gray);font-weight:500;margin-bottom:2px;">Month-One Goal</div>
+        <div style="font-size:11px;color:var(--mid-gray);" id="d-goal-sub">Keep going — every pitch counts.</div>
+      </div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:1.4rem;color:var(--forest);font-weight:300;" id="d-goal-label">$0 / $200</div>
+    </div>
+    <div style="background:var(--warm-white);border-radius:100px;height:8px;overflow:hidden;">
+      <div id="d-goal-bar" style="height:100%;background:linear-gradient(90deg,var(--sage),var(--forest));border-radius:100px;transition:width .6s ease;width:0%;"></div>
+    </div>
+  </div>
+
+  <!-- MAIN GRID -->
   <div style="display:grid;grid-template-columns:1fr 300px;gap:16px;" id="dash-grid">
     <div style="display:flex;flex-direction:column;gap:14px;">
-      <div class="card"><div class="ch"><span class="ct">Recent Gigs</span><button class="btn btn-g btn-s" onclick="goTo('gigs',document.querySelectorAll('.ni')[2])">All →</button></div><div id="d-gigs"></div></div>
+      <div class="card">
+        <div class="ch"><span class="ct">Active Pipeline</span><button class="btn btn-g btn-s" onclick="goTo('gigs',document.querySelectorAll('.ni')[2])">All →</button></div>
+        <div id="d-gigs"></div>
+      </div>
       <div class="card"><div class="ch"><span class="ct">This Week's Content</span></div><div id="d-content"></div></div>
     </div>
     <div style="display:flex;flex-direction:column;gap:12px;">
@@ -559,7 +631,11 @@ body{background:var(--ivory);font-family:'Jost',sans-serif;font-weight:300;color
 <div class="pg" id="pg-gigs">
   <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:16px;gap:10px;">
     <div><div style="font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:var(--terracotta);font-weight:500;margin-bottom:3px;">Pipeline</div><div style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:300;">Gig <em style="font-style:italic;color:var(--terracotta);">Tracker</em></div></div>
-    <button class="btn btn-p btn-s" onclick="openGigModal()">+ New Gig</button>
+    <div style="display:flex;gap:7px;align-items:center;">
+      <button class="btn btn-g btn-s active" id="gig-view-table" onclick="setGigView('table',this)" style="font-size:10px;">☰ Table</button>
+      <button class="btn btn-g btn-s" id="gig-view-kanban" onclick="setGigView('kanban',this)" style="font-size:10px;">⊞ Kanban</button>
+      <button class="btn btn-p btn-s" onclick="openGigModal()">+ New Gig</button>
+    </div>
   </div>
   <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;" id="gig-filters">
     <button class="btn btn-g btn-s active" onclick="filterGigs('all',this)">All</button>
@@ -570,9 +646,14 @@ body{background:var(--ivory);font-family:'Jost',sans-serif;font-weight:300;color
     <button class="btn btn-g btn-s" onclick="filterGigs('delivered',this)">Delivered</button>
     <button class="btn btn-g btn-s" onclick="filterGigs('declined',this)">Declined</button>
   </div>
-  <div style="background:#fff;border-radius:var(--r);border:1px solid rgba(0,0,0,.06);overflow:hidden;overflow-x:auto;">
+  <!-- TABLE VIEW -->
+  <div id="gig-table-view" style="background:#fff;border-radius:var(--r);border:1px solid rgba(0,0,0,.06);overflow:hidden;overflow-x:auto;">
     <table class="dt"><thead><tr><th>Brand</th><th>Types</th><th>Rate</th><th>Status</th><th>Due</th><th>Linked</th><th>Actions</th></tr></thead>
     <tbody id="gig-tbody"></tbody></table>
+  </div>
+  <!-- KANBAN VIEW -->
+  <div id="gig-kanban-view" style="display:none;">
+    <div class="kanban-board" id="gig-kanban-board"></div>
   </div>
 </div>
 
@@ -621,26 +702,55 @@ body{background:var(--ivory);font-family:'Jost',sans-serif;font-weight:300;color
 
 <!-- ─── FEED PLANNER ─── -->
 <div class="pg" id="pg-feed">
-  <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:14px;gap:10px;flex-wrap:wrap;">
-    <div><div style="font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:var(--terracotta);font-weight:500;margin-bottom:3px;">Visual Strategy</div><div style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:300;">Feed <em style="font-style:italic;color:var(--terracotta);">Planner</em></div></div>
-    <label class="btn btn-p btn-s" style="cursor:pointer;">+ Add Images<input type="file" multiple accept="image/*" style="display:none" onchange="addFeedImgs(event)"></label>
-  </div>
-  <div style="display:flex;gap:8px;margin-bottom:14px;">
-    <button class="btn btn-g btn-s active" id="feed-ig-btn" onclick="switchFeed('ig',this)">📸 Instagram</button>
-    <button class="btn btn-g btn-s" id="feed-tt-btn" onclick="switchFeed('tt',this)">🎵 TikTok</button>
-  </div>
-  <div id="feed-post-legend" style="margin-bottom:14px;"></div>
-  <div style="display:grid;grid-template-columns:auto 1fr;gap:22px;align-items:start;" id="feed-layout">
+  <!-- TOP BAR -->
+  <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:16px;gap:10px;flex-wrap:wrap;">
     <div>
-      <div style="font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--warm-gray);margin-bottom:7px;font-family:'DM Mono',monospace;" id="feed-plat-label">Instagram Grid</div>
-      <div id="feed-grid"></div>
-      <div style="margin-top:8px;font-size:11px;color:var(--mid-gray);">Click cell → then click image to place</div>
-      <button class="btn btn-g btn-s" style="margin-top:8px;" onclick="clearSelectedCell()">✕ Clear Cell</button>
+      <div style="font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:var(--terracotta);font-weight:500;margin-bottom:3px;">Visual Strategy</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:300;">Feed & <em style="font-style:italic;color:var(--terracotta);">Posts</em></div>
     </div>
+    <div style="display:flex;gap:7px;align-items:center;flex-wrap:wrap;">
+      <button class="btn btn-g btn-s active" id="feed-ig-btn" onclick="switchFeed('ig',this)">📸 Instagram</button>
+      <button class="btn btn-g btn-s" id="feed-tt-btn" onclick="switchFeed('tt',this)">🎵 TikTok</button>
+      <label class="btn btn-g btn-s" style="cursor:pointer;">🖼 Add Photo<input type="file" multiple accept="image/*" style="display:none" onchange="addFeedImgs(event)"></label>
+      <button class="btn btn-p btn-s" onclick="feedAddPost()">+ New Post</button>
+    </div>
+  </div>
+
+  <!-- MAIN SPLIT LAYOUT -->
+  <div id="feed-integrated-layout" style="display:grid;grid-template-columns:300px 1fr;gap:20px;align-items:start;">
+
+    <!-- LEFT: LIVE GRID + IMAGE BANK -->
+    <div style="position:sticky;top:0;">
+      <!-- GRID -->
+      <div style="background:#fff;border-radius:14px;border:1px solid rgba(0,0,0,.07);padding:14px;margin-bottom:12px;">
+        <div style="font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--warm-gray);margin-bottom:10px;font-family:'DM Mono',monospace;display:flex;justify-content:space-between;align-items:center;">
+          <span id="feed-plat-label">Instagram Grid</span>
+          <button class="btn btn-g btn-s" style="padding:2px 9px;font-size:9px;" onclick="clearSelectedCell()">✕ Clear</button>
+        </div>
+        <div id="feed-grid"></div>
+        <div style="margin-top:9px;font-size:10px;color:var(--mid-gray);line-height:1.5;">Tap a cell to select it · tap a post card to link it · tap a photo below to place it</div>
+      </div>
+      <!-- IMAGE BANK -->
+      <div style="background:#fff;border-radius:14px;border:1px solid rgba(0,0,0,.07);padding:14px;">
+        <div style="font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--warm-gray);margin-bottom:9px;font-family:'DM Mono',monospace;">Photo Bank</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(68px,1fr));gap:5px;" id="feed-bank"></div>
+        <label class="btn btn-g btn-s" style="cursor:pointer;margin-top:8px;display:inline-block;">+ Upload<input type="file" multiple accept="image/*" style="display:none" onchange="addFeedImgs(event)"></label>
+      </div>
+    </div>
+
+    <!-- RIGHT: POST CARDS -->
     <div>
-      <div style="font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--warm-gray);margin-bottom:7px;font-family:'DM Mono',monospace;">Image Bank</div>
-      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(75px,1fr));gap:5px;" id="feed-bank"></div>
+      <!-- WEEK TABS -->
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;" id="feed-week-tabs">
+        <button class="btn btn-g btn-s active" onclick="filterFeedWeek(0,this)">All</button>
+        <button class="btn btn-g btn-s" onclick="filterFeedWeek(1,this)">Week 1</button>
+        <button class="btn btn-g btn-s" onclick="filterFeedWeek(2,this)">Week 2</button>
+        <button class="btn btn-g btn-s" onclick="filterFeedWeek(3,this)">Week 3</button>
+        <button class="btn btn-g btn-s" onclick="filterFeedWeek(4,this)">Week 4</button>
+      </div>
+      <div id="feed-posts-panel" style="display:flex;flex-direction:column;gap:12px;"></div>
     </div>
+
   </div>
 </div>
 
@@ -745,18 +855,6 @@ body{background:var(--ivory);font-family:'Jost',sans-serif;font-weight:300;color
     </div>
   </div>
 </div>
-<!-- ─── STUDIO: IG POST PLANNER ─── -->
-<div class="pg" id="pg-studio-ig">
-  <div class="st-hdr">
-    <div class="st-eyebrow">Studio · Instagram</div>
-    <div class="st-title">IG Post <em>Planner</em></div>
-    <div class="st-desc">Plan every Instagram post — hook, content brief, goal, and hashtags. All 30 posts pre-loaded and fully editable. Add new posts anytime.</div>
-  </div>
-  <div class="st-info tip"><strong>The four-week arc:</strong> Week 1 builds identity, Week 2 demonstrates range, Week 3 builds trust, Week 4 converts followers into brand clients.</div>
-  <div id="studio-ig-container"></div>
-  <button class="st-add" onclick="stAddIGPost()">+ Add New Post</button>
-</div>
-
 <!-- ─── STUDIO: SERVICES & RATES ─── -->
 <div class="pg" id="pg-studio-rates">
   <div class="st-hdr">
@@ -884,6 +982,15 @@ Total cash: $190 + product value</textarea></div>
 </div>
 
 </div><!-- main -->
+
+<!-- ═══ FLOATING QUICK-ADD ═══ -->
+<div id="fab-menu" style="display:none;position:fixed;bottom:80px;right:22px;z-index:800;display:flex;flex-direction:column;gap:8px;align-items:flex-end;">
+  <button class="fab-opt" onclick="closeFab();openGigModal()">🔗 New Gig</button>
+  <button class="fab-opt" onclick="closeFab();openIdeaModal()">💡 New Idea</button>
+  <button class="fab-opt" onclick="closeFab();openModal('content-modal');populateLinks()">📅 Schedule Content</button>
+  <button class="fab-opt" onclick="closeFab();openModal('fu-modal')">🔔 Follow-Up Reminder</button>
+</div>
+<button id="fab-btn" onclick="toggleFab()" style="position:fixed;bottom:22px;right:22px;z-index:801;width:52px;height:52px;border-radius:50%;background:var(--terracotta);border:none;color:#fff;font-size:24px;cursor:pointer;box-shadow:0 4px 18px rgba(196,113,79,.45);transition:transform .2s,background .2s;display:flex;align-items:center;justify-content:center;" title="Quick Add">＋</button>
 
 <!-- ═══ SEARCH OVERLAY ═══ -->
 <div class="sr-overlay" id="sr-overlay" onclick="if(event.target===this)closeSearch()">
@@ -1943,7 +2050,7 @@ function resetTP(ns){TP[ns]=[];renderTPTags(ns);}
 function setTP(ns,arr){TP[ns]=[...(arr||[])];renderTPTags(ns);}
 
 // ── NAVIGATION ──
-const PAGES={dashboard:'Good morning, <em>Asha</em> ✨',earnings:'Earnings',gigs:'Gig Tracker',followup:'Follow-Ups',planner:'Content Planner',ideas:'Ideas Library',feed:'Feed Planner',pitches:'Pitch Templates',brand:'Brand Hub','studio-ig':'IG Post Planner','studio-rates':'Services & Rates','studio-packages':'Packages & Add-Ons','studio-portfolio':'Portfolio Videos','studio-gifting':'Gifting Policy','studio-income':'Income Plan','studio-brands':'Brand Targets'};
+const PAGES={dashboard:'Good morning, <em>Asha</em> ✨',earnings:'Earnings',gigs:'Gig Tracker',followup:'Follow-Ups',planner:'Content Planner',ideas:'Ideas Library',feed:'Feed & Posts',pitches:'Pitch Templates',brand:'Brand Hub','studio-rates':'Services & Rates','studio-packages':'Packages & Add-Ons','studio-portfolio':'Portfolio Videos','studio-gifting':'Gifting Policy','studio-income':'Income Plan','studio-brands':'Brand Targets'};
 let currentPage='dashboard';
 function goTo(page,el){
   document.querySelectorAll('.pg').forEach(p=>p.classList.remove('active'));
@@ -1951,7 +2058,13 @@ function goTo(page,el){
   const pg=document.getElementById('pg-'+page);if(pg)pg.classList.add('active');
   if(el)el.classList.add('active');
   currentPage=page;
-  document.getElementById('tb-title').innerHTML=PAGES[page]||page;
+  if(page==='dashboard'){
+    const h=new Date().getHours();
+    const g=h<12?'Good morning':h<17?'Good afternoon':'Good evening';
+    document.getElementById('tb-title').innerHTML=`${g}, <em>Asha</em> ✨`;
+  } else {
+    document.getElementById('tb-title').innerHTML=PAGES[page]||page;
+  }
   renderPage(page);
 }
 function renderPage(p){
@@ -1961,10 +2074,10 @@ function renderPage(p){
   if(p==='followup')rFU();
   if(p==='planner')rCal();
   if(p==='ideas')rIdeas('all');
-  if(p==='feed')rFeed();
+  if(p==='feed'){if(typeof stData==='undefined'||!stData.igPosts)stLoad();rFeed();}
   if(p==='pitches')renderPitches('');
   if(p==='brand')rBrand();
-  if(p==='studio-ig'){if(!stData.igPosts)stLoad();stRenderIGPosts();}
+  if(p==='studio-ig'){if(typeof stData==='undefined'||!stData.igPosts)stLoad();goTo('feed',document.querySelector('.ni[onclick*="feed"]'));}
   if(p==='studio-rates'){if(!stData.services)stLoad();stRenderRates();}
   if(p==='studio-packages'){if(!stData.packages)stLoad();stRenderPackages();}
   if(p==='studio-portfolio'){if(!stData.portfolioVideos)stLoad();stRenderPortfolio();}
@@ -2068,6 +2181,8 @@ function lightbox(src){const d=document.createElement('div');d.style.cssText='po
 
 // ── DASHBOARD ──
 function rDash(){
+  const now=new Date();
+  const todayStr=now.toISOString().slice(0,10);
   const active=D.gigs.filter(g=>['paid','gifted','negotiating','waitingapproval'].includes(g.status)).length;
   const pending=D.gigs.filter(g=>g.status==='pending').length;
   const earned=D.gigs.filter(g=>g.rateType==='paid'&&g.status==='delivered').reduce((s,g)=>s+parseFloat(g.rate||0),0);
@@ -2075,30 +2190,173 @@ function rDash(){
   setEl('s-active',active);setEl('s-pending',pending);setEl('s-earned','$'+earned.toFixed(0));setEl('s-delivered',delivered);setEl('s-ideas',D.ideas.length);
   setEl('gig-badge',D.gigs.filter(g=>!['delivered','declined'].includes(g.status)).length||'');
   setEl('fu-badge',D.followups.filter(f=>!f.done).length||'');
-  // recent gigs
+
+  // ── INCOME PROGRESS BAR ──
+  const goal=200;
+  const pct=Math.min(100,(earned/goal)*100);
+  const bar=document.getElementById('d-goal-bar');
+  if(bar)bar.style.width=pct+'%';
+  setEl('d-goal-label','$'+earned.toFixed(0)+' / $'+goal);
+  const sub=document.getElementById('d-goal-sub');
+  if(sub){
+    const rem=goal-earned;
+    if(earned>=goal)sub.textContent='🎉 Goal reached! Time to raise your rates.';
+    else if(earned>=goal*0.75)sub.textContent='Almost there — $'+rem.toFixed(0)+' to go.';
+    else if(earned>=goal*0.5)sub.textContent='Halfway there — keep pitching!';
+    else sub.textContent='$'+rem.toFixed(0)+' remaining — every pitch counts.';
+  }
+
+  // ── OVERDUE FOLLOW-UPS ALERT ──
+  const overdue=D.followups.filter(f=>!f.done&&new Date(f.date)<now);
+  const ob=document.getElementById('d-overdue-banner');
+  if(ob){
+    if(overdue.length){
+      ob.style.display='flex';
+      setEl('d-overdue-text',overdue.length===1?`⚠ ${overdue[0].brand} follow-up is overdue — send it today.`:`⚠ ${overdue.length} follow-ups are overdue. Send them today.`);
+    } else {
+      ob.style.display='none';
+    }
+  }
+
+  // ── TODAY'S FOCUS PANEL ──
+  const todayPanel=document.getElementById('d-today-panel');
+  const todayItems=document.getElementById('d-today-items');
+  const focusItems=[];
+  // Today's content
+  D.content.filter(c=>c.date===todayStr&&!['done','published'].includes(c.status)).forEach(c=>{
+    focusItems.push({icon:'📅',label:`Post today: <strong>${c.title}</strong>`,status:c.status,color:'var(--blush)'});
+  });
+  // Active gigs needing action
+  D.gigs.filter(g=>['paid','gifted'].includes(g.status)&&g.due&&g.due<=todayStr).forEach(g=>{
+    focusItems.push({icon:'🔴',label:`Deliver today: <strong>${g.brand}</strong> — due ${g.due}`,status:g.status,color:'#e87c6a'});
+  });
+  // Follow-ups due today
+  D.followups.filter(f=>!f.done&&f.date===todayStr).forEach(f=>{
+    focusItems.push({icon:'🔔',label:`Follow up with: <strong>${f.brand}</strong>`,status:'',color:'var(--warm-gold)'});
+  });
+  // Overdue follow-ups (up to 2)
+  overdue.slice(0,2).forEach(f=>{
+    focusItems.push({icon:'⚠️',label:`OVERDUE: Follow up with <strong>${f.brand}</strong>`,status:'',color:'#c0392b'});
+  });
+  if(todayPanel&&todayItems){
+    if(focusItems.length){
+      todayPanel.style.display='block';
+      todayItems.innerHTML=focusItems.map(f=>`<div style="display:flex;align-items:center;gap:9px;background:rgba(255,255,255,.05);border-radius:8px;padding:8px 11px;">
+        <span style="font-size:16px;flex-shrink:0;">${f.icon}</span>
+        <div style="flex:1;font-size:12px;color:${f.color};line-height:1.4;">${f.label}</div>
+        ${f.status?`<span class="sp s-${f.status}" style="flex-shrink:0;">${f.status}</span>`:''}
+      </div>`).join('');
+    } else {
+      todayPanel.style.display='none';
+    }
+  }
+
+  // ── ACTIVE PIPELINE (replaces "recent gigs") ──
   const rg=document.getElementById('d-gigs');
-  const rgs=[...D.gigs].reverse().slice(0,5);
-  rg.innerHTML=rgs.length?rgs.map(g=>`<div style="display:flex;align-items:center;gap:10px;padding:9px 16px;border-bottom:1px solid rgba(0,0,0,.04);">${g.img?`<img src="${g.img}" style="width:34px;height:34px;border-radius:7px;object-fit:cover;flex-shrink:0;">`:''}
-    <div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${g.brand}</div><div style="font-size:10px;color:var(--warm-gray);">${g.niche}</div></div>
-    <span class="sp s-${g.status}">${sLabel(g.status)}</span>
-    <span style="font-family:'DM Mono',monospace;font-size:11px;font-weight:500;color:var(--forest);">${fmtRate(g)}</span>
-  </div>`).join(''):'<div class="es"><div class="es-icon">📋</div><div class="es-title">No gigs yet</div></div>';
-  // this week content
+  const activeGigs=D.gigs.filter(g=>!['delivered','declined'].includes(g.status)).reverse().slice(0,6);
+  const allGigsSlice=[...D.gigs].reverse().slice(0,5);
+  const showGigs=activeGigs.length?activeGigs:allGigsSlice;
+  rg.innerHTML=showGigs.length?showGigs.map(g=>{
+    const isUrgent=g.due&&g.due<=todayStr&&!['delivered','declined'].includes(g.status);
+    return `<div style="display:flex;align-items:center;gap:10px;padding:9px 16px;border-bottom:1px solid rgba(0,0,0,.04);${isUrgent?'background:rgba(192,57,43,.03);':''}" onclick="editGig('${g.id}')" style="cursor:pointer;">
+      ${g.img?`<img src="${g.img}" style="width:34px;height:34px;border-radius:7px;object-fit:cover;flex-shrink:0;">`:''}
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${g.brand}</div>
+        <div style="font-size:10px;color:${isUrgent?'#c0392b':'var(--warm-gray)'};">${g.niche}${g.due?' · Due '+g.due:''}</div>
+      </div>
+      <span class="sp s-${g.status}">${sLabel(g.status)}</span>
+      <span style="font-family:'DM Mono',monospace;font-size:11px;font-weight:500;color:var(--forest);">${fmtRate(g)}</span>
+    </div>`;
+  }).join(''):'<div class="es"><div class="es-icon">📋</div><div class="es-title">No gigs yet</div><div class="es-sub">Add your first gig to get started</div></div>';
+
+  // ── THIS WEEK'S CONTENT ──
   const dc=document.getElementById('d-content');
   const sw=new Date();sw.setDate(sw.getDate()-sw.getDay());
   const ew=new Date(sw);ew.setDate(ew.getDate()+6);
-  const wc=D.content.filter(c=>{if(!c.date)return false;const d=new Date(c.date);return d>=sw&&d<=ew;});
-  dc.innerHTML=wc.length?wc.map(c=>`<div style="display:flex;align-items:center;gap:8px;padding:9px 16px;border-bottom:1px solid rgba(0,0,0,.04);"><div style="flex:1;font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${c.title}</div><span style="font-size:9px;font-family:'DM Mono',monospace;color:var(--warm-gray);">${c.platform}</span><span class="sp s-${c.status}">${c.status}</span></div>`).join(''):'<div style="padding:14px 16px;font-size:12px;color:var(--mid-gray);">Nothing planned this week</div>';
-  // followups
+  const wc=D.content.filter(c=>{if(!c.date)return false;const d=new Date(c.date);return d>=sw&&d<=ew;}).sort((a,b)=>new Date(a.date)-new Date(b.date));
+  dc.innerHTML=wc.length?wc.map(c=>`<div style="display:flex;align-items:center;gap:8px;padding:9px 16px;border-bottom:1px solid rgba(0,0,0,.04);">
+    <div style="font-size:9px;font-family:'DM Mono',monospace;color:${c.date===todayStr?'var(--terracotta)':'var(--mid-gray)'};flex-shrink:0;width:28px;">${new Date(c.date+'T00:00:00').toLocaleDateString('en',{weekday:'short'})}</div>
+    <div style="flex:1;font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${c.title}</div>
+    <span class="sp s-${c.status}">${c.status}</span>
+  </div>`).join(''):'<div style="padding:14px 16px;font-size:12px;color:var(--mid-gray);">Nothing planned this week</div>';
+
+  // ── FOLLOW-UPS ──
   const df=document.getElementById('d-fu');
-  const now=new Date();
-  const fus=D.followups.filter(f=>!f.done).sort((a,b)=>new Date(a.date)-new Date(b.date)).slice(0,4);
-  df.innerHTML=fus.length?fus.map(f=>`<div style="display:flex;align-items:center;gap:8px;padding:9px 16px;border-bottom:1px solid rgba(0,0,0,.04);"><div style="flex:1;font-size:13px;font-weight:500;">${f.brand}</div><div style="font-size:9px;font-family:'DM Mono',monospace;color:${new Date(f.date)<now?'#c0392b':'var(--warm-gray)'};">${f.date}</div></div>`).join(''):'<div style="padding:12px 16px;font-size:12px;color:var(--mid-gray);">None due 🎉</div>';
-  // ideas
+  const fus=D.followups.filter(f=>!f.done).sort((a,b)=>new Date(a.date)-new Date(b.date)).slice(0,5);
+  df.innerHTML=fus.length?fus.map(f=>{
+    const isOverdue=new Date(f.date)<now;
+    const isToday=f.date===todayStr;
+    return `<div style="display:flex;align-items:center;gap:8px;padding:9px 16px;border-bottom:1px solid rgba(0,0,0,.04);">
+      <div style="flex:1;font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${f.brand}</div>
+      <div style="font-size:9px;font-family:'DM Mono',monospace;color:${isOverdue?'#c0392b':isToday?'var(--terracotta)':'var(--warm-gray)'};">${isOverdue?'OVERDUE':isToday?'Today':f.date}</div>
+    </div>`;
+  }).join(''):'<div style="padding:12px 16px;font-size:12px;color:var(--mid-gray);">None due 🎉</div>';
+
+  // ── RECENT IDEAS ──
   const di=document.getElementById('d-ideas');
-  di.innerHTML=[...D.ideas].reverse().slice(0,4).map(i=>`<div style="display:flex;align-items:center;gap:8px;padding:9px 16px;border-bottom:1px solid rgba(0,0,0,.04);"><span class="id-tag t-${i.niche}" style="flex-shrink:0;">${i.niche}</span><div style="font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${i.title}</div></div>`).join('');
+  di.innerHTML=[...D.ideas].reverse().slice(0,4).map(i=>`<div style="display:flex;align-items:center;gap:8px;padding:9px 16px;border-bottom:1px solid rgba(0,0,0,.04);">
+    <span class="id-tag t-${i.niche}" style="flex-shrink:0;">${i.niche}</span>
+    <div style="font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;">${i.title}</div>
+    <span class="sp s-${i.status||'idea'}" style="flex-shrink:0;">${i.status||'idea'}</span>
+  </div>`).join('');
 }
 function setEl(id,val){const el=document.getElementById(id);if(el)el.textContent=val;}
+
+// ── FLOATING QUICK-ADD ──
+let fabOpen=false;
+function toggleFab(){
+  fabOpen=!fabOpen;
+  const btn=document.getElementById('fab-btn');
+  const menu=document.getElementById('fab-menu');
+  btn.classList.toggle('fab-open',fabOpen);
+  menu.classList.toggle('open',fabOpen);
+  btn.textContent=fabOpen?'×':'＋';
+}
+function closeFab(){fabOpen=false;const btn=document.getElementById('fab-btn');const menu=document.getElementById('fab-menu');btn.classList.remove('fab-open');menu.classList.remove('open');btn.textContent='＋';}
+document.addEventListener('click',e=>{if(fabOpen&&!e.target.closest('#fab-btn')&&!e.target.closest('#fab-menu'))closeFab();});
+
+// ── GIG VIEW TOGGLE ──
+let gigView='table';
+function setGigView(v,btn){
+  gigView=v;
+  document.getElementById('gig-table-view').style.display=v==='table'?'block':'none';
+  document.getElementById('gig-kanban-view').style.display=v==='kanban'?'block':'none';
+  document.querySelectorAll('#pg-gigs .btn').forEach(b=>b.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  if(v==='kanban')rKanban();
+}
+function rKanban(){
+  const board=document.getElementById('gig-kanban-board');if(!board)return;
+  const cols=[
+    {key:'pending',label:'Pending',color:'var(--gold)'},
+    {key:'negotiating',label:'Negotiating',color:'#7a5a8a'},
+    {key:'waitingapproval',label:'Approval',color:'var(--sky-deep)'},
+    {key:'paid',label:'Paid ✓',color:'var(--forest)'},
+    {key:'gifted',label:'Gifted',color:'var(--terracotta)'},
+    {key:'delivered',label:'Delivered',color:'#2d5a35'},
+    {key:'declined',label:'Declined',color:'var(--mid-gray)'},
+  ];
+  const today=new Date().toISOString().slice(0,10);
+  board.innerHTML=cols.map(col=>{
+    const gigs=D.gigs.filter(g=>g.status===col.key);
+    return `<div class="kanban-col">
+      <div class="kanban-col-hdr">
+        <span style="color:${col.color};">${col.label}</span>
+        <span style="background:rgba(0,0,0,.08);border-radius:20px;padding:1px 7px;">${gigs.length}</span>
+      </div>
+      ${gigs.length?gigs.map(g=>{
+        const isUrgent=g.due&&g.due<=today&&!['delivered','declined'].includes(g.status);
+        return `<div class="kanban-card" onclick="editGig('${g.id}')">
+          ${g.img?`<img src="${g.img}" style="width:100%;height:60px;object-fit:cover;border-radius:7px;margin-bottom:7px;">`:''}
+          <div class="kanban-card-brand">${g.brand}</div>
+          <div class="kanban-card-meta">${g.niche||''}</div>
+          ${g.due?`<div class="kanban-card-due" style="color:${isUrgent?'#c0392b':'var(--mid-gray)'};">${isUrgent?'⚠ ':''}Due ${g.due}</div>`:''}
+          <div class="kanban-card-rate">${fmtRate(g)}</div>
+        </div>`;
+      }).join(''):`<div style="font-size:11px;color:var(--mid-gray);text-align:center;padding:10px 0;">Empty</div>`}
+    </div>`;
+  }).join('');
+}
 
 // ── EARNINGS ──
 function rEarnings(){
@@ -2123,6 +2381,7 @@ function rEarnings(){
 let gigFilt='all';
 function filterGigs(f,el){gigFilt=f;document.querySelectorAll('#gig-filters .btn').forEach(b=>b.classList.remove('active'));el.classList.add('active');rGigs();}
 function rGigs(){
+  if(typeof gigView!=='undefined'&&gigView==='kanban'){rKanban();return;}
   let gs=gigFilt==='all'?D.gigs:D.gigs.filter(g=>g.status===gigFilt);
   const tb=document.getElementById('gig-tbody');
   tb.innerHTML=[...gs].reverse().map(g=>{
@@ -2180,16 +2439,36 @@ function rFU(){
   const el=document.getElementById('fu-list');
   const fus=[...D.followups].sort((a,b)=>new Date(a.date)-new Date(b.date));
   const now=new Date();
+  const todayStr=now.toISOString().slice(0,10);
   if(!fus.length){el.innerHTML='<div class="es"><div class="es-icon">🔔</div><div class="es-title">No follow-ups</div></div>';return;}
-  el.innerHTML=fus.map(f=>`<div style="background:#fff;border-radius:var(--r);border:1px solid rgba(0,0,0,.06);padding:14px 16px;display:grid;grid-template-columns:1fr auto;gap:10px;align-items:start;opacity:${f.done?.5:1};">
-    <div><div style="font-weight:500;font-size:13px;">${f.brand}</div><div style="font-size:11px;color:var(--warm-gray);margin-top:2px;">${f.platform}${f.note?' · '+f.note.slice(0,55):''}</div>
-    <div style="font-family:'DM Mono',monospace;font-size:10px;margin-top:4px;color:${!f.done&&new Date(f.date)<now?'#c0392b':'var(--warm-gray)'};">${!f.done&&new Date(f.date)<now?'⚠ OVERDUE · ':''}${f.date}</div></div>
-    <div style="display:flex;flex-direction:column;gap:5px;align-items:flex-end;">
-      <span class="sp" style="background:rgba(${f.priority==='high'?'192,57,43':f.priority==='medium'?'196,150,58':'74,107,80'},.1);color:${f.priority==='high'?'#c0392b':f.priority==='medium'?'var(--gold)':'var(--forest)'};">${f.priority}</span>
-      ${!f.done?`<button onclick="doneFU('${f.id}')" style="padding:4px 10px;border-radius:20px;background:rgba(74,107,80,.1);border:1px solid rgba(74,107,80,.2);color:var(--forest);font-size:9px;cursor:pointer;font-family:'Jost',sans-serif;">✓ Done</button>`:'<span style="font-size:10px;color:var(--forest);">✓ Done</span>'}
-      <button class="ib" onclick="delFU('${f.id}')">🗑</button>
-    </div>
-  </div>`).join('');
+  el.innerHTML=fus.map(f=>{
+    const isOverdue=!f.done&&new Date(f.date)<now;
+    const isToday=!f.done&&f.date===todayStr;
+    const statusColor=isOverdue?'rgba(192,57,43,.08)':isToday?'rgba(196,150,58,.06)':'transparent';
+    const borderColor=isOverdue?'rgba(192,57,43,.2)':isToday?'rgba(196,150,58,.2)':'rgba(0,0,0,.06)';
+    // Generate a quick DM follow-up message
+    const msg=`Hi! Just following up on my earlier message about a potential collaboration. I'd love to create UGC content for ${f.brand}${f.platform?' on '+f.platform:''}. Happy to share my portfolio if that helps — excited to work together! 🌟`;
+    return `<div style="background:${statusColor};border-radius:var(--r);border:1px solid ${borderColor};padding:14px 16px;opacity:${f.done?.45:1};">
+      <div style="display:flex;align-items:flex-start;gap:10px;">
+        <div style="flex:1;min-width:0;">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+            <div style="font-weight:600;font-size:13px;">${f.brand}</div>
+            <span class="sp" style="background:rgba(${f.priority==='high'?'192,57,43':f.priority==='medium'?'196,150,58':'74,107,80'},.1);color:${f.priority==='high'?'#c0392b':f.priority==='medium'?'var(--gold)':'var(--forest)'};">${f.priority}</span>
+          </div>
+          <div style="font-size:11px;color:var(--warm-gray);margin-top:2px;">${f.platform||''}${f.note?' · '+f.note.slice(0,55):''}</div>
+          <div style="font-family:'DM Mono',monospace;font-size:10px;margin-top:5px;color:${isOverdue?'#c0392b':isToday?'var(--terracotta)':'var(--warm-gray)'};">
+            ${isOverdue?'⚠ OVERDUE · ':isToday?'📅 Today · ':''}${f.date}
+          </div>
+          ${!f.done&&(isOverdue||isToday)?`<div style="margin-top:8px;background:rgba(0,0,0,.03);border-radius:8px;padding:8px 10px;font-size:10px;color:var(--warm-gray);font-style:italic;line-height:1.5;">"${msg}"</div>`:''} 
+        </div>
+        <div style="display:flex;flex-direction:column;gap:5px;align-items:flex-end;flex-shrink:0;">
+          ${!f.done?`<button onclick="doneFU('${f.id}')" style="padding:4px 10px;border-radius:20px;background:rgba(74,107,80,.1);border:1px solid rgba(74,107,80,.2);color:var(--forest);font-size:9px;cursor:pointer;font-family:'Jost',sans-serif;white-space:nowrap;">✓ Done</button>`:'<span style="font-size:10px;color:var(--forest);">✓ Done</span>'}
+          ${!f.done&&(isOverdue||isToday)?`<button onclick="navigator.clipboard.writeText(${JSON.stringify(msg)}).then(()=>toast('📋 Message copied!'))" style="padding:4px 10px;border-radius:20px;background:rgba(196,113,79,.1);border:1px solid rgba(196,113,79,.2);color:var(--terracotta);font-size:9px;cursor:pointer;font-family:'Jost',sans-serif;white-space:nowrap;">📋 Copy DM</button>`:''}
+          <button class="ib" onclick="delFU('${f.id}')">🗑</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
   setEl('fu-badge',D.followups.filter(f=>!f.done).length||'');
 }
 function saveFU(){
@@ -2316,54 +2595,269 @@ function schedIdeaToContent(id){
 }
 
 // ── FEED PLANNER ──
-let feedP='ig',feedSel=-1;
-function switchFeed(p,el){feedP=p;document.querySelectorAll('#pg-feed .btn').forEach(b=>b.classList.remove('active'));el.classList.add('active');feedSel=-1;rFeed();}
+let feedP='ig',feedSel=-1,feedWeekFilt=0,feedOpenPost=null;
+
+function switchFeed(p,el){
+  feedP=p;
+  document.querySelectorAll('#pg-feed .btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  feedSel=-1;
+  rFeed();
+}
+
+function filterFeedWeek(w,el){
+  feedWeekFilt=w;
+  document.querySelectorAll('#feed-week-tabs .btn').forEach(b=>b.classList.remove('active'));
+  if(el)el.classList.add('active');
+  rFeedPosts();
+}
+
 function rFeed(){
-  const grid=document.getElementById('feed-grid');
-  setEl('feed-plat-label',feedP==='ig'?'Instagram Grid (9 cells)':'TikTok Feed (6 videos)');
-  const cells=feedP==='ig'?D.feedIg:D.feedTt;
-  const cls=feedP==='ig'?'fc ig-cell':'fc tt-cell';
-  const cols=feedP==='ig'?'repeat(3,1fr)':'repeat(3,1fr)';
-  // Render post legend
-  const legend=document.getElementById('feed-post-legend');
-  if(legend&&typeof stData!=='undefined'&&stData.igPosts){
-    const plat=feedP==='ig'?'instagram':'tiktok';
-    const assigned=stData.igPosts.filter(p=>p.feedCell!=null&&(p.feedPlatform||'instagram')===plat).sort((a,b)=>a.feedCell-b.feedCell);
-    if(assigned.length){
-      legend.innerHTML=`<div style="font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--warm-gray);margin-bottom:6px;font-family:'DM Mono',monospace;">Posts assigned to grid cells</div><div style="display:flex;flex-wrap:wrap;gap:5px;">`+assigned.map(p=>`<div style="display:inline-flex;align-items:center;gap:4px;background:rgba(225,48,108,.07);border:1px solid rgba(225,48,108,.15);border-radius:20px;padding:3px 10px;font-size:10px;color:#c13584;font-family:'DM Mono',monospace;"><span style="background:#c13584;color:#fff;border-radius:50%;width:16px;height:16px;display:inline-flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;">${p.feedCell+1}</span> W${p.week} · ${p.title.slice(0,20)}</div>`).join('')+'</div>';
-    } else {
-      legend.innerHTML=`<div style="font-size:11px;color:var(--mid-gray);">No posts assigned to grid cells yet. Open <strong>IG Post Planner</strong> → each post has a "Feed Grid Cell" field to assign it.</div>`;
-    }
-  }
-  grid.innerHTML=`<div style="display:grid;grid-template-columns:${cols};gap:2px;border-radius:12px;overflow:hidden;background:${feedP==='ig'?'#fff':'#000'};">`+
-    cells.map((img,i)=>{
-      // Find content or IG post linked to this cell position
-      const cellPost = (typeof stData!=='undefined'&&stData.igPosts) ? stData.igPosts.find(p=>p.feedCell===i&&p.feedPlatform===(feedP==='ig'?'instagram':'tiktok')) : null;
-      const cellContent = (typeof D!=='undefined') ? D.content.find(c=>c.feedCell===i&&(feedP==='ig'?c.platform&&c.platform.toLowerCase().includes('insta'):c.platform&&c.platform.toLowerCase().includes('tiktok'))) : null;
-      const cellLabel = cellPost ? `W${cellPost.week} · ${cellPost.title.slice(0,18)}` : cellContent ? cellContent.title.slice(0,20) : '';
-      return `<div class="${cls}${feedSel===i?' selected-cell':''}" id="fc-${i}" onclick="selCell(${i})">
-      ${img?`<img src="${img}">`:`<div class="fc-add">${feedP==='ig'?'➕':'▶'}</div>`}
-      <div class="fc-n">${i+1}</div>
-      ${cellLabel?`<div style="position:absolute;bottom:3px;left:3px;right:3px;font-size:8px;font-family:'DM Mono',monospace;background:rgba(225,48,108,.85);color:#fff;padding:1px 4px;border-radius:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${cellLabel}</div>`:''}
-      <div class="fc-ov">${img?`<button class="fc-btn" onclick="clrCell(${i},event)">✕ Remove</button>`:'<button class="fc-btn">+ Select</button>'}</div>
-    </div>`;
-    }).join('')+'</div>';
+  if(typeof stData==='undefined'||!stData.igPosts)stLoad();
+  setEl('feed-plat-label',feedP==='ig'?'Instagram Grid · 9 cells':'TikTok Feed · 6 cells');
+  rFeedGrid();
+  rFeedPosts();
   rFeedBank();
 }
-function selCell(i){feedSel=i;rFeed();}
-function clrCell(i,e){e&&e.stopPropagation();if(feedP==='ig')D.feedIg[i]=null;else D.feedTt[i]=null;save();rFeed();toast('Cell cleared');}
+
+function rFeedGrid(){
+  const grid=document.getElementById('feed-grid');
+  if(!grid)return;
+  const cells=feedP==='ig'?D.feedIg:D.feedTt;
+  const count=feedP==='ig'?9:6;
+  const typeColor={reel:'#e1306c',carousel:'#405DE6',story:'#fd5949',static:'#8a3ab9'};
+  grid.innerHTML=`<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:2px;border-radius:10px;overflow:hidden;background:${feedP==='ig'?'#efefef':'#111'};">` +
+    Array.from({length:count},(_,i)=>{
+      const img=cells[i]||null;
+      const post=stData.igPosts?stData.igPosts.find(p=>p.feedCell===i&&(p.feedPlatform||'instagram')===(feedP==='ig'?'instagram':'tiktok')):null;
+      const isSel=feedSel===i;
+      const isLinked=feedOpenPost&&post&&post.id===feedOpenPost;
+      return `<div class="fc ${feedP==='ig'?'ig-cell':'tt-cell'}${isSel?' selected-cell':''}${isLinked?' fpc-linked-cell':''}" id="fc-${i}" onclick="selCell(${i})" style="${isLinked?'outline:2px solid #c13584;outline-offset:-2px;':''}">
+        ${img?`<img src="${img}" style="width:100%;height:100%;object-fit:cover;">`:`<div class="fc-add" style="font-size:${isSel?'22px':'16px'};color:${isSel?'var(--terracotta)':'var(--mid-gray)'};">${isSel?'📌':'+'}</div>`}
+        <div class="fc-n">${i+1}</div>
+        ${post?`<div style="position:absolute;bottom:0;left:0;right:0;padding:2px 3px;background:${typeColor[post.type]||'#e1306c'}cc;"><div style="font-size:7px;color:#fff;font-family:'DM Mono',monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">W${post.week} ${post.title.slice(0,16)}</div></div>`:''}
+        <div class="fc-ov">
+          ${img?`<button class="fc-btn" onclick="clrCell(${i},event)">✕</button>`:''}
+          ${post?`<button class="fc-btn" onclick="openFeedPost('${post.id}',event)">✏️</button>`:''}
+        </div>
+      </div>`;
+    }).join('')+'</div>';
+}
+
+function rFeedPosts(){
+  if(typeof stData==='undefined'||!stData.igPosts)return;
+  const panel=document.getElementById('feed-posts-panel');
+  if(!panel)return;
+  const typeColor={reel:'rgba(225,48,108,.1)',carousel:'rgba(64,93,230,.1)',story:'rgba(253,89,73,.1)',static:'rgba(138,58,185,.1)'};
+  const typeTextColor={reel:'#e1306c',carousel:'#405DE6',story:'#fd5949',static:'#8a3ab9'};
+  const typeLabel={reel:'🎬 Reel',carousel:'📲 Carousel',story:'📖 Story',static:'🖼 Static'};
+  const weekLabel={1:'Week 1 · Foundation',2:'Week 2 · Depth',3:'Week 3 · Trust',4:'Week 4 · Pitch'};
+  let posts=feedWeekFilt?stData.igPosts.filter(p=>p.week===feedWeekFilt):stData.igPosts;
+  if(!posts.length){panel.innerHTML='<div class="es"><div class="es-icon">📸</div><div class="es-title">No posts yet</div><div class="es-sub">Click "+ New Post" to add your first planned post.</div></div>';return;}
+  let html='',curWeek=0;
+  posts.forEach(p=>{
+    if(p.week!==curWeek&&feedWeekFilt===0){
+      curWeek=p.week;
+      html+=`<div style="font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--warm-gray);font-family:'DM Mono',monospace;margin:8px 0 4px;padding:0 2px;">${weekLabel[curWeek]||'Week '+curWeek}</div>`;
+    }
+    const isOpen=feedOpenPost===p.id;
+    const assigned=p.feedCell!=null;
+    const isSel=feedSel>=0&&p.feedCell===feedSel;
+    // reverse links
+    const linkedGigs=D.gigs.filter(g=>g.linkedIGPost===p.id);
+    const linkedIdeas=D.ideas.filter(i=>i.linkedIGPost===p.id);
+    const linkedContent=D.content.filter(c=>c.linkedIGPost===p.id);
+    const hasLinks=linkedGigs.length||linkedIdeas.length||linkedContent.length;
+    html+=`<div class="feed-post-card${isOpen?' fpc-active':''}${isSel?' fpc-linked':''}" id="fpc-${p.id}" onclick="toggleFeedPost('${p.id}')">
+      <div class="fpc-header">
+        <div class="fpc-cell-badge ${assigned?'':'unassigned'}">${assigned?p.feedCell+1:'—'}</div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${p.title||'Untitled Post'}</div>
+          <div style="font-size:10px;color:var(--warm-gray);margin-top:1px;font-style:italic;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${p.hook||'No hook set'}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
+          <span class="fpc-type" style="background:${typeColor[p.type]||typeColor.reel};color:${typeTextColor[p.type]||typeTextColor.reel};">${typeLabel[p.type]||p.type}</span>
+          <span style="font-size:9px;font-family:'DM Mono',monospace;color:var(--mid-gray);">W${p.week}</span>
+          ${hasLinks?`<span style="font-size:11px;color:#c13584;" title="Has linked items">🔗</span>`:''}
+          <span style="font-size:12px;color:var(--mid-gray);transform:${isOpen?'rotate(180deg)':'none'};display:inline-block;transition:transform .2s;">▾</span>
+        </div>
+      </div>
+
+      <div class="fpc-body${isOpen?' open':''}" onclick="event.stopPropagation()">
+        <!-- TOP ROW: type, week, cell -->
+        <div class="fpc-row3" style="margin-bottom:10px;">
+          <div class="fpc-field" style="margin:0;">
+            <div class="fpc-lbl">Type</div>
+            <select class="fpc-input" style="padding:6px 8px;" onchange="fpcUpd('${p.id}','type',this.value);rFeedGrid();">
+              ${['reel','carousel','story','static'].map(t=>`<option value="${t}"${p.type===t?' selected':''}>${typeLabel[t]}</option>`).join('')}
+            </select>
+          </div>
+          <div class="fpc-field" style="margin:0;">
+            <div class="fpc-lbl">Week</div>
+            <input type="number" class="fpc-input" min="1" max="8" value="${p.week}" style="padding:6px 8px;" oninput="fpcUpd('${p.id}','week',+this.value);rFeedPosts();">
+          </div>
+          <div class="fpc-field" style="margin:0;">
+            <div class="fpc-lbl">Grid Cell</div>
+            <div style="display:flex;gap:4px;align-items:center;">
+              <input type="number" class="fpc-input" min="1" max="9" placeholder="—" style="padding:6px 8px;" value="${p.feedCell!=null?p.feedCell+1:''}" oninput="fpcUpd('${p.id}','feedCell',this.value===''?null:+this.value-1);rFeedGrid();">
+              ${feedSel>=0?`<button class="btn btn-p btn-s" style="padding:4px 8px;font-size:9px;white-space:nowrap;" onclick="fpcAssignCell('${p.id}')">← Pin to #${feedSel+1}</button>`:''}
+            </div>
+          </div>
+        </div>
+
+        <div class="fpc-field">
+          <div class="fpc-lbl">Hook / Opening Line</div>
+          <input class="fpc-input" value="${esc(p.hook)}" oninput="fpcUpd('${p.id}','hook',this.value)">
+        </div>
+        <div class="fpc-row">
+          <div class="fpc-field">
+            <div class="fpc-lbl">Content Brief</div>
+            <textarea class="fpc-input fpc-ta" oninput="fpcUpd('${p.id}','desc',this.value)">${esc(p.desc)}</textarea>
+          </div>
+          <div>
+            <div class="fpc-field">
+              <div class="fpc-lbl">Goal</div>
+              <textarea class="fpc-input fpc-ta" style="min-height:44px;" oninput="fpcUpd('${p.id}','goal',this.value)">${esc(p.goal)}</textarea>
+            </div>
+            <div class="fpc-field">
+              <div class="fpc-lbl">Hashtags</div>
+              <textarea class="fpc-input fpc-ta" style="min-height:44px;" oninput="fpcUpd('${p.id}','hashtags',this.value)">${esc(p.hashtags)}</textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- GRID CELL PHOTO: place image directly from post card -->
+        ${p.feedCell!=null?`<div class="fpc-field">
+          <div class="fpc-lbl">Cell ${p.feedCell+1} Photo</div>
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+            ${(feedP==='ig'?D.feedIg:D.feedTt)[p.feedCell]?`<img src="${(feedP==='ig'?D.feedIg:D.feedTt)[p.feedCell]}" style="width:60px;height:60px;object-fit:cover;border-radius:8px;border:1px solid rgba(0,0,0,.08);">
+              <button class="btn btn-g btn-s" onclick="clrCell(${p.feedCell},event);rFeedGrid();">✕ Remove</button>`
+              :`<label class="btn btn-g btn-s" style="cursor:pointer;">📷 Upload for this cell<input type="file" accept="image/*" style="display:none;" onchange="uploadCellImg(event,${p.feedCell})"></label>`}
+          </div>
+        </div>`:''}
+
+        <!-- LINKED ITEMS -->
+        ${hasLinks?`<div class="fpc-link-bar">
+          <div class="fpc-link-lbl">Linked Items</div>
+          ${linkedGigs.map(g=>`<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;font-size:11px;"><span>🔗</span><strong>${g.brand}</strong><span class="sp s-${g.status}" style="margin-left:auto;">${g.status}</span></div>`).join('')}
+          ${linkedIdeas.map(i=>`<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;font-size:11px;"><span>💡</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${i.title}</span></div>`).join('')}
+          ${linkedContent.map(c=>`<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;font-size:11px;"><span>📅</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${c.title}</span>${c.date?`<span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--terracotta);">${c.date}</span>`:''}</div>`).join('')}
+        </div>`:''}
+
+        <div style="display:flex;justify-content:flex-end;margin-top:10px;">
+          <button class="btn btn-d btn-s" onclick="event.stopPropagation();fpcDel('${p.id}')">🗑 Delete Post</button>
+        </div>
+      </div>
+    </div>`;
+  });
+  panel.innerHTML=html;
+}
+
+function toggleFeedPost(id){
+  feedOpenPost=feedOpenPost===id?null:id;
+  rFeedPosts();
+  // Scroll the opened card into view
+  if(feedOpenPost){
+    setTimeout(()=>{const el=document.getElementById('fpc-'+id);if(el)el.scrollIntoView({behavior:'smooth',block:'nearest'});},50);
+  }
+}
+
+function openFeedPost(id,e){
+  if(e)e.stopPropagation();
+  feedOpenPost=id;
+  rFeedPosts();
+}
+
+function selCell(i){
+  feedSel=feedSel===i?-1:i;
+  rFeedGrid();
+  // If a post is assigned to this cell, highlight its card
+  const post=stData.igPosts?stData.igPosts.find(p=>p.feedCell===i&&(p.feedPlatform||'instagram')===(feedP==='ig'?'instagram':'tiktok')):null;
+  if(post){
+    feedOpenPost=post.id;
+    rFeedPosts();
+    setTimeout(()=>{const el=document.getElementById('fpc-'+post.id);if(el)el.scrollIntoView({behavior:'smooth',block:'nearest'});},50);
+  } else {
+    rFeedPosts();
+  }
+}
+
+function fpcAssignCell(postId){
+  if(feedSel<0)return;
+  // Unassign any other post from this cell
+  stData.igPosts.forEach(p=>{if(p.feedCell===feedSel&&(p.feedPlatform||'instagram')===(feedP==='ig'?'instagram':'tiktok')&&p.id!==postId)p.feedCell=null;});
+  const p=stData.igPosts.find(x=>x.id===postId);
+  if(p){p.feedCell=feedSel;p.feedPlatform=feedP==='ig'?'instagram':'tiktok';}
+  stSave();
+  const assignedCell=feedSel+1;
+  feedSel=-1;
+  rFeedGrid();rFeedPosts();
+  toast(`Post pinned to cell ${assignedCell} ✓`);
+}
+
+function fpcUpd(id,field,value){
+  const p=stData.igPosts.find(x=>x.id===id);
+  if(p){p[field]=value;stSave();}
+}
+
+function fpcDel(id){
+  if(!confirm('Delete this post?'))return;
+  stData.igPosts=stData.igPosts.filter(x=>x.id!==id);
+  if(feedOpenPost===id)feedOpenPost=null;
+  stSave();rFeedPosts();rFeedGrid();toast('Post deleted');
+}
+
+function feedAddPost(){
+  if(typeof stData==='undefined')stLoad();
+  const id='ig_'+Date.now();
+  const nextWeek=stData.igPosts.length?Math.min(4,Math.max(...stData.igPosts.map(p=>p.week))):1;
+  stData.igPosts.push({id,week:nextWeek,type:'reel',title:'New Post',hook:'Your hook…',desc:'Content brief…',goal:'Goal…',hashtags:'#UGCCreator #ContentCreator',feedCell:null,feedPlatform:'instagram'});
+  stSave();feedOpenPost=id;rFeedPosts();rFeedGrid();
+  setTimeout(()=>{const el=document.getElementById('fpc-'+id);if(el)el.scrollIntoView({behavior:'smooth',block:'nearest'});},80);
+  toast('New post added ✓');
+}
+
+function uploadCellImg(e,cellIndex){
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=ev=>{
+    if(feedP==='ig')D.feedIg[cellIndex]=ev.target.result;
+    else D.feedTt[cellIndex]=ev.target.result;
+    save();rFeedGrid();rFeedPosts();toast('Photo placed ✓');
+  };
+  r.readAsDataURL(f);
+  e.target.value='';
+}
+
+function clrCell(i,e){
+  if(e)e.stopPropagation();
+  if(feedP==='ig')D.feedIg[i]=null;else D.feedTt[i]=null;
+  save();rFeedGrid();rFeedPosts();toast('Cell cleared');
+}
 function clearSelectedCell(){if(feedSel<0){toast('Select a cell first');return;}clrCell(feedSel,null);feedSel=-1;}
+
 function rFeedBank(){
-  const el=document.getElementById('feed-bank');
-  if(!D.feedBank.length){el.innerHTML='<div style="font-size:11px;color:var(--mid-gray);grid-column:1/-1;padding:10px;">Upload images to start placing them in the grid</div>';return;}
+  const el=document.getElementById('feed-bank');if(!el)return;
+  if(!D.feedBank.length){el.innerHTML='<div style="font-size:11px;color:var(--mid-gray);grid-column:1/-1;padding:6px 0;">Upload photos to place in your grid</div>';return;}
   el.innerHTML=D.feedBank.map((img,i)=>`<div style="position:relative;border-radius:7px;overflow:hidden;aspect-ratio:${feedP==='ig'?'1':'9/16'};cursor:pointer;border:2px solid transparent;transition:border .12s;" onclick="placeImg(${i})" title="Click to place in selected cell">
     <img src="${img}" style="width:100%;height:100%;object-fit:cover;">
-    <button onclick="removeFromBank(${i},event)" style="position:absolute;top:2px;right:2px;background:rgba(0,0,0,.6);color:#fff;border:none;border-radius:50%;width:15px;height:15px;font-size:8px;cursor:pointer;">×</button>
+    <button onclick="removeFromBank(${i},event)" style="position:absolute;top:2px;right:2px;background:rgba(0,0,0,.6);color:#fff;border:none;border-radius:50%;width:16px;height:16px;font-size:9px;cursor:pointer;line-height:1;">×</button>
   </div>`).join('');
 }
 function addFeedImgs(e){Array.from(e.target.files).forEach(f=>{const r=new FileReader();r.onload=ev=>{D.feedBank.push(ev.target.result);save();rFeedBank();};r.readAsDataURL(f);});e.target.value='';}
-function placeImg(bi){if(feedSel<0){toast('Click a cell first to select it');return;}const img=D.feedBank[bi];if(feedP==='ig')D.feedIg[feedSel]=img;else D.feedTt[feedSel]=img;save();rFeed();toast('Image placed ✓');}
+function placeImg(bi){
+  if(feedSel<0){toast('Tap a grid cell first to select it');return;}
+  const img=D.feedBank[bi];
+  if(feedP==='ig')D.feedIg[feedSel]=img;else D.feedTt[feedSel]=img;
+  save();rFeedGrid();rFeedPosts();toast('Photo placed ✓');
+}
 function removeFromBank(i,e){e.stopPropagation();D.feedBank.splice(i,1);save();rFeedBank();}
+
+// Alias for old stRenderIGPosts call paths
+function stRenderIGPosts(){rFeedPosts();rFeedGrid();}
+function stAddIGPost(){feedAddPost();}
+function stDelIG(id){fpcDel(id);}
+function stUpdIG(id,field,value){fpcUpd(id,field,value);}
 
 // ── PITCHES ──
 function renderPitches(q=''){
@@ -2943,81 +3437,8 @@ function stSave() {
   localStorage.setItem('ashajolies-studio-hq-v1', JSON.stringify(stData));
 }
 
-// ═══ IG POSTS ═══
-function stRenderIGPosts() {
-  const c = document.getElementById('studio-ig-container');
-  if (!c) return;
-  const typeColor = { reel:'nb-reel', carousel:'nb-carousel', story:'nb-story', static:'nb-static' };
-  const typeLabel = { reel:'🎬 Reel', carousel:'📲 Carousel', story:'📖 Story', static:'🖼 Static' };
-  const weekLabel = { 1:'Week 1 · Foundation', 2:'Week 2 · Depth', 3:'Week 3 · Trust', 4:'Week 4 · Pitch' };
-  let html = '';
-  let curWeek = 0;
-  stData.igPosts.forEach(p => {
-    if (p.week !== curWeek) {
-      curWeek = p.week;
-      html += `<div class="st-section"><h3>${weekLabel[curWeek]||'Week '+curWeek}</h3><div class="st-section-line"></div></div>`;
-    }
-    html += `<div class="st-ig-card" id="ig-card-${p.id}">
-      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:8px;">
-        <div style="flex:1;">
-          <div class="st-ig-week">Week ${p.week}</div>
-          <span class="st-niche-badge ${typeColor[p.type]||'nb-reel'}">${typeLabel[p.type]||p.type}</span>
-        </div>
-        <div style="display:flex;gap:5px;flex-shrink:0;">
-          <select class="fi" style="font-size:10px;padding:3px 6px;width:auto;" onchange="stUpdIG('${p.id}','type',this.value)">
-            ${['reel','carousel','story','static'].map(t=>`<option value="${t}"${p.type===t?' selected':''}>${typeLabel[t]}</option>`).join('')}
-          </select>
-          <input type="number" class="fi" style="width:64px;font-size:10px;padding:3px 6px;" value="${p.week}" min="1" max="8" onchange="stUpdIG('${p.id}','week',+this.value)">
-          <button class="ib" onclick="stDelIG('${p.id}')" title="Delete post" style="color:#c0392b;">✕</button>
-        </div>
-      </div>
-      <div class="st-field"><div class="st-field-lbl">Post Title</div><input class="st-editable" value="${esc(p.title)}" oninput="stUpdIG('${p.id}','title',this.value)"></div>
-      <div class="st-field"><div class="st-field-lbl">Hook (opening line or caption hook)</div><input class="st-editable" value="${esc(p.hook)}" oninput="stUpdIG('${p.id}','hook',this.value)"></div>
-      <div class="st-g2">
-        <div class="st-field"><div class="st-field-lbl">Content Brief</div><textarea class="st-editable lg" oninput="stUpdIG('${p.id}','desc',this.value)">${esc(p.desc)}</textarea></div>
-        <div>
-          <div class="st-field"><div class="st-field-lbl">Goal</div><textarea class="st-editable" oninput="stUpdIG('${p.id}','goal',this.value)">${esc(p.goal)}</textarea></div>
-          <div class="st-field"><div class="st-field-lbl">Hashtags</div><textarea class="st-editable" oninput="stUpdIG('${p.id}','hashtags',this.value)">${esc(p.hashtags)}</textarea></div>
-          <div style="display:flex;gap:8px;align-items:flex-end;">
-            <div class="st-field" style="flex:1;margin-bottom:0;"><div class="st-field-lbl">📐 Feed Grid Cell (1–9)</div><input type="number" class="st-editable" min="1" max="9" placeholder="e.g. 3" style="max-width:80px;" value="${p.feedCell!=null?p.feedCell+1:''}" oninput="stUpdIG('${p.id}','feedCell',this.value?+this.value-1:null);rFeed()"></div>
-            <div class="st-field" style="flex:1;margin-bottom:0;"><div class="st-field-lbl">Platform</div><select class="st-editable" style="min-height:0;padding:6px 9px;resize:none;" oninput="stUpdIG('${p.id}','feedPlatform',this.value)"><option value="instagram"${p.feedPlatform!=='tiktok'?' selected':''}>Instagram</option><option value="tiktok"${p.feedPlatform==='tiktok'?' selected':''}>TikTok</option></select></div>
-          </div>
-        </div>
-      </div>
-      ${(()=>{
-        // Reverse-lookup: find gigs, ideas, content linked to this IG post
-        const linkedGigs=(typeof D!=='undefined'?D.gigs:[]).filter(g=>g.linkedIGPost===p.id);
-        const linkedIdeas=(typeof D!=='undefined'?D.ideas:[]).filter(i=>i.linkedIGPost===p.id);
-        const linkedContent=(typeof D!=='undefined'?D.content:[]).filter(c=>c.linkedIGPost===p.id);
-        if(!linkedGigs.length&&!linkedIdeas.length&&!linkedContent.length) return '';
-        return `<div style="background:rgba(225,48,108,.04);border:1px solid rgba(225,48,108,.12);border-radius:10px;padding:10px 13px;margin-top:4px;">
-          <div style="font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:#c13584;font-weight:600;margin-bottom:7px;font-family:'DM Mono',monospace;">📸 Linked To This Post</div>
-          ${linkedGigs.map(g=>`<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;"><span style="font-size:10px;">🔗</span><span style="font-size:11px;font-weight:500;">${g.brand}</span><span class="sp s-${g.status}" style="margin-left:auto;">${g.status}</span></div>`).join('')}
-          ${linkedIdeas.map(i=>`<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;"><span style="font-size:10px;">💡</span><span style="font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;">${i.title}</span><span style="font-size:9px;font-family:'DM Mono',monospace;color:var(--warm-gray);">${i.niche}</span></div>`).join('')}
-          ${linkedContent.map(c=>`<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;"><span style="font-size:10px;">📅</span><span style="font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;">${c.title}</span>${c.date?`<span style="font-size:9px;font-family:'DM Mono',monospace;color:var(--terracotta);">${c.date}</span>`:''}</div>`).join('')}
-        </div>`;
-      })()}
-    </div>`;
-  });
-  c.innerHTML = html;
-}
-
-function stUpdIG(id, field, value) {
-  const p = stData.igPosts.find(x=>x.id===id);
-  if (p) { p[field]=value; stSave(); }
-}
-
-function stDelIG(id) {
-  if (!confirm('Delete this post?')) return;
-  stData.igPosts = stData.igPosts.filter(x=>x.id!==id);
-  stSave(); stRenderIGPosts(); toast('Post deleted');
-}
-
-function stAddIGPost() {
-  const id = 'ig_'+Date.now();
-  stData.igPosts.push({ id, week:1, type:'reel', title:'New Post', hook:'Your hook here…', desc:'Content brief…', goal:'Goal for this post…', hashtags:'#UGCCreator' });
-  stSave(); stRenderIGPosts(); toast('Post added');
-}
+// ═══ IG POSTS — fully integrated into Feed & Posts page ═══
+// stRenderIGPosts, stUpdIG, stDelIG, stAddIGPost handled by Feed & Posts integration
 
 // ═══ SERVICES ═══
 function stRenderRates() {
@@ -3184,7 +3605,6 @@ function stAddBrand(){const id='br_'+Date.now();stData.brands.push({id,priority:
 
 function stRenderAll() {
   stLoad();
-  stRenderIGPosts();
   stRenderRates();
   stRenderPackages();
   stRenderPortfolio();
