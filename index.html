@@ -427,6 +427,72 @@ body{background:var(--ivory);font-family:'Jost',sans-serif;font-weight:300;color
 }
 
 /* ─── PWA INSTALL BANNER ─── */
+/* ─── CLIENT BRIEFS ─── */
+.brief-card{background:#fff;border-radius:var(--r);border:1px solid rgba(0,0,0,.06);overflow:hidden;margin-bottom:14px;transition:box-shadow .14s;}
+.brief-card:hover{box-shadow:0 4px 18px rgba(0,0,0,.08);}
+.brief-card-hdr{padding:14px 18px;border-bottom:1px solid rgba(0,0,0,.05);display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.brief-card-meta{display:flex;align-items:center;gap:10px;flex:1;min-width:0;}
+.brief-card-brand{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:400;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.brief-card-date{font-size:9px;font-family:'DM Mono',monospace;color:var(--warm-gray);flex-shrink:0;}
+.brief-card-actions{display:flex;gap:6px;flex-shrink:0;}
+.brief-card-body{padding:16px 18px;}
+.brief-section{margin-bottom:16px;}
+.brief-section:last-child{margin-bottom:0;}
+.brief-section-lbl{font-size:9px;letter-spacing:.2em;text-transform:uppercase;font-weight:600;color:var(--terracotta);font-family:'DM Mono',monospace;margin-bottom:8px;}
+.brief-script-box{background:var(--warm-white);border:1px solid rgba(0,0,0,.07);border-radius:10px;padding:13px 15px;font-size:13px;font-weight:300;line-height:1.7;white-space:pre-wrap;color:var(--ink);max-height:220px;overflow-y:auto;}
+.brief-shot-table{width:100%;border-collapse:collapse;font-size:12px;}
+.brief-shot-table th{padding:6px 10px;text-align:left;font-size:9px;letter-spacing:.15em;text-transform:uppercase;font-weight:600;color:var(--warm-gray);background:var(--warm-white);border-bottom:1px solid rgba(0,0,0,.07);}
+.brief-shot-table td{padding:9px 10px;border-bottom:1px solid rgba(0,0,0,.04);vertical-align:top;}
+.brief-shot-table tr:last-child td{border-bottom:none;}
+.brief-mood-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:8px;}
+.brief-mood-img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px;border:1px solid rgba(0,0,0,.07);}
+.brief-mood-empty{aspect-ratio:1;border:2px dashed rgba(0,0,0,.1);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:20px;color:var(--mid-gray);background:var(--warm-white);cursor:pointer;}
+.brief-status-bar{display:flex;align-items:center;gap:8px;padding:9px 18px;background:rgba(196,150,58,.06);border-top:1px solid rgba(196,150,58,.12);font-size:10px;color:var(--warm-gray);}
+.brief-niche-pill{font-size:9px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;padding:2px 9px;border-radius:20px;font-family:'DM Mono',monospace;background:rgba(196,113,79,.1);color:var(--terracotta);}
+
+/* ─── BRIEF MODAL ─── */
+.bm-tabs{display:flex;border-bottom:1px solid rgba(0,0,0,.07);margin-bottom:16px;}
+.bm-tab{padding:9px 16px;font-size:11px;font-weight:500;color:var(--warm-gray);cursor:pointer;border:none;background:transparent;border-bottom:2px solid transparent;font-family:'Jost',sans-serif;letter-spacing:.04em;transition:all .14s;}
+.bm-tab.active{color:var(--terracotta);border-bottom-color:var(--terracotta);}
+.bm-panel{display:none;}.bm-panel.active{display:block;}
+.shot-row{display:grid;grid-template-columns:28px 1fr 1fr 90px 28px;gap:7px;align-items:start;margin-bottom:7px;}
+.shot-num{width:28px;height:32px;background:var(--warm-white);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-family:'DM Mono',monospace;color:var(--warm-gray);flex-shrink:0;}
+.mood-upload-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:8px;margin-bottom:10px;}
+.mood-up-thumb{position:relative;border-radius:9px;overflow:hidden;aspect-ratio:1;}
+.mood-up-thumb img{width:100%;height:100%;object-fit:cover;}
+.mood-up-del{position:absolute;top:3px;right:3px;background:rgba(0,0,0,.65);color:#fff;border:none;border-radius:50%;width:18px;height:18px;font-size:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.mood-add-btn{aspect-ratio:1;border:2px dashed rgba(0,0,0,.12);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:22px;color:var(--mid-gray);background:var(--warm-white);cursor:pointer;transition:border-color .13s;}
+.mood-add-btn:hover{border-color:var(--terracotta);color:var(--terracotta);}
+
+/* ─── PRINT BRIEF ─── */
+@media print {
+  body > *{display:none!important;}
+  #print-brief-area{display:block!important;}
+}
+#print-brief-area{display:none;}
+.print-brief-wrap{padding:28px 36px;font-family:'Jost',sans-serif;font-size:12px;color:#1E1916;max-width:760px;margin:0 auto;}
+.print-brief-logo{font-family:'Georgia',serif;font-size:1.6rem;font-weight:300;margin-bottom:4px;letter-spacing:.02em;}
+.print-brief-logo em{font-style:italic;color:#C4714F;}
+.print-brief-eyebrow{font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:#7A6F68;margin-bottom:22px;font-family:monospace;}
+.print-brief-title{font-family:'Georgia',serif;font-size:1.7rem;font-weight:300;border-bottom:2px solid #C4714F;padding-bottom:10px;margin-bottom:18px;}
+.print-brief-meta{display:flex;gap:18px;flex-wrap:wrap;margin-bottom:22px;font-size:11px;color:#7A6F68;}
+.print-brief-meta span strong{color:#1E1916;}
+.print-section-hdr{font-size:9px;letter-spacing:.22em;text-transform:uppercase;font-weight:700;color:#C4714F;margin-bottom:10px;font-family:monospace;margin-top:22px;}
+.print-script-box{background:#FAF6EF;border:1px solid #E8C4B0;border-radius:8px;padding:14px 16px;font-size:12px;line-height:1.75;white-space:pre-wrap;margin-bottom:6px;}
+.print-shot-tbl{width:100%;border-collapse:collapse;font-size:11px;margin-bottom:6px;}
+.print-shot-tbl th{padding:6px 10px;text-align:left;font-size:9px;letter-spacing:.15em;text-transform:uppercase;font-weight:700;color:#7A6F68;background:#FAF6EF;border-bottom:1px solid #E8C4B0;}
+.print-shot-tbl td{padding:8px 10px;border-bottom:1px solid rgba(0,0,0,.05);vertical-align:top;}
+.print-mood-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:6px;}
+.print-mood-img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:7px;}
+.print-notes-box{background:#FAF6EF;border:1px solid #E8C4B0;border-radius:8px;padding:13px 15px;font-size:12px;line-height:1.7;white-space:pre-wrap;}
+.print-footer{margin-top:32px;padding-top:12px;border-top:1px solid rgba(0,0,0,.1);font-size:9px;color:#B5ADA8;text-align:center;font-family:monospace;letter-spacing:.08em;}
+
+/* ─── PORTFOLIO NICHE FILTER & SELECTOR ─── */
+.pt-niche-filter{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;}
+.st-card-niche-sel{display:flex;align-items:center;gap:6px;margin-bottom:8px;}
+.st-card-niche-sel label{font-size:9px;letter-spacing:.15em;text-transform:uppercase;font-weight:600;color:var(--warm-gray);font-family:'DM Mono',monospace;}
+.st-card-niche-sel select{background:var(--warm-white);border:1px solid rgba(0,0,0,.09);border-radius:7px;padding:4px 9px;font-family:'Jost',sans-serif;font-size:11px;color:var(--ink);outline:none;cursor:pointer;}
+
 #pwa-banner{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--ivory);border-radius:100px;padding:10px 14px 10px 16px;display:none;align-items:center;gap:10px;box-shadow:0 8px 32px rgba(0,0,0,.4);z-index:9998;white-space:nowrap;animation:pwaUp .3s ease;}
 #pwa-banner.show{display:flex;}
 @keyframes pwaUp{from{opacity:0;transform:translateX(-50%) translateY(16px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
@@ -502,6 +568,7 @@ body{background:var(--ivory);font-family:'Jost',sans-serif;font-weight:300;color
     <div class="nl">Content</div>
     <div class="ni" onclick="goTo('ideas',this)"><span class="ni-icon">💡</span>Ideas & Planner</div>
     <div class="ni" onclick="goTo('feed',this)"><span class="ni-icon">📸</span>Feed & Posts</div>
+    <div class="ni" onclick="goTo('briefs',this)"><span class="ni-icon">📄</span>Client Briefs</div>
     <div class="nl">Resources</div>
     <div class="ni" onclick="goTo('pitches',this)"><span class="ni-icon">✉️</span>Pitches</div>
     <div class="ni" onclick="goTo('brand',this)"><span class="ni-icon">🎨</span>Brand Hub</div>
@@ -758,6 +825,36 @@ body{background:var(--ivory);font-family:'Jost',sans-serif;font-weight:300;color
       <div id="feed-posts-panel" style="display:flex;flex-direction:column;gap:12px;"></div>
     </div>
 
+  </div>
+</div>
+
+<!-- ─── CLIENT BRIEFS ─── -->
+<div class="pg" id="pg-briefs">
+  <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:16px;gap:10px;flex-wrap:wrap;">
+    <div>
+      <div style="font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:var(--terracotta);font-weight:500;margin-bottom:3px;">Pre-Production</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:300;">Client <em style="font-style:italic;color:var(--terracotta);">Briefs</em></div>
+    </div>
+    <button class="btn btn-p btn-s" onclick="openBriefModal()">+ New Brief</button>
+  </div>
+  <div style="background:rgba(196,113,79,.07);border:1px solid rgba(196,113,79,.15);border-radius:12px;padding:12px 16px;margin-bottom:16px;font-size:12px;color:var(--warm-gray);line-height:1.6;">
+    <strong style="color:var(--terracotta);">How it works:</strong> Build a pre-production brief with your script, shot list, and mood board before every shoot. Send it to your client for approval, then print it on shoot day.
+  </div>
+  <!-- Niche filter tabs -->
+  <div class="pt-niche-filter" id="briefs-filter-row">
+    <button class="btn btn-g btn-s active" onclick="filterBriefs('all',this)">All</button>
+    <button class="btn btn-g btn-s" onclick="filterBriefs('Beauty & Skincare',this)">💄 Beauty</button>
+    <button class="btn btn-g btn-s" onclick="filterBriefs('Hair Care',this)">✂️ Hair</button>
+    <button class="btn btn-g btn-s" onclick="filterBriefs('Lifestyle & Home',this)">🏠 Lifestyle</button>
+    <button class="btn btn-g btn-s" onclick="filterBriefs('Tech & Apps',this)">📱 Tech</button>
+    <button class="btn btn-g btn-s" onclick="filterBriefs('Fashion',this)">👗 Fashion</button>
+    <button class="btn btn-g btn-s" onclick="filterBriefs('Food',this)">🍳 Food</button>
+  </div>
+  <div id="briefs-list"></div>
+  <div id="briefs-empty" class="es" style="display:none;">
+    <div class="es-icon">📄</div>
+    <div class="es-title">No briefs yet</div>
+    <div class="es-sub">Create your first client brief to share before a shoot</div>
   </div>
 </div>
 
@@ -1190,6 +1287,72 @@ Total cash: $190 + product value</textarea></div>
       <textarea class="scr-textarea" id="i-scrnotes" placeholder="Location, props, lighting notes, brand requirements, posting schedule…" style="min-height:90px;"></textarea>
     </div>
     <div class="fa"><button class="btn btn-g" onclick="closeModal('idea-modal')">Cancel</button><button class="btn btn-p" onclick="saveIdea()">Save Idea</button></div>
+  </div>
+</div>
+</div>
+
+<!-- CLIENT BRIEF -->
+<div class="mo" id="brief-modal">
+<div class="md xl">
+  <div class="mh"><div class="mt">Client <em>Brief</em></div><button class="mc" onclick="closeModal('brief-modal')">×</button></div>
+  <div class="mb2">
+    <input type="hidden" id="br-id">
+    <div class="fr f1"><div class="fg"><label class="fl">Brief Title / Concept *</label><input class="fi" id="br-title" placeholder="e.g. Neutrogena Sunscreen — 30s TikTok UGC"></div></div>
+    <div class="fr"><div class="fg"><label class="fl">Brand / Client *</label><input class="fi" id="br-brand" placeholder="Brand name"></div><div class="fg"><label class="fl">Niche</label><select class="fs" id="br-niche"><option>Beauty & Skincare</option><option>Hair Care</option><option>Lifestyle & Home</option><option>Tech & Apps</option><option>Fashion</option><option>Food</option><option>Other</option></select></div></div>
+    <div class="fr"><div class="fg"><label class="fl">Platform</label><select class="fs" id="br-plat"><option>TikTok</option><option>Instagram Reels</option><option>YouTube Shorts</option><option>Instagram Feed</option><option>Multiple</option></select></div><div class="fg"><label class="fl">Video Duration</label><input class="fi" id="br-duration" placeholder="e.g. 30–45 seconds"></div></div>
+    <div class="fr"><div class="fg"><label class="fl">Shoot Date</label><input class="fi" id="br-date" type="date"></div><div class="fg"><label class="fl">Delivery Deadline</label><input class="fi" id="br-deadline" type="date"></div></div>
+    <div class="fr f1"><div class="fg"><label class="fl">Product / What You're Featuring</label><input class="fi" id="br-product" placeholder="Product name, colour, variant…"></div></div>
+
+    <div class="bm-tabs">
+      <button class="bm-tab active" onclick="bmTab('script',this)">✍️ Script</button>
+      <button class="bm-tab" onclick="bmTab('shots',this)">🎬 Shot List</button>
+      <button class="bm-tab" onclick="bmTab('mood',this)">🖼 Mood Board</button>
+      <button class="bm-tab" onclick="bmTab('notes',this)">📝 Production Notes</button>
+    </div>
+
+    <!-- SCRIPT TAB -->
+    <div class="bm-panel active" id="bm-panel-script">
+      <div class="fg" style="margin-bottom:8px;"><label class="fl">Hook / Opening Line (first 3 seconds)</label><input class="fi" id="br-hook" placeholder="POV: you finally found a sunscreen that doesn't feel like sunscreen…"></div>
+      <div class="fg"><label class="fl">Full Script</label><textarea class="ft" id="br-script" style="min-height:160px;" placeholder="Write the full script here. Use [ACTION] for stage directions — these are cues for you, not spoken aloud.&#10;&#10;Example:&#10;[OPEN on product on bathroom shelf]&#10;VO: I have oily skin and I've been avoiding SPF for years because...&#10;[HOLD product up to camera]&#10;But this changed everything."></textarea></div>
+      <div class="scr-hint">Stage directions in [brackets] are cues — not spoken aloud. Share this with your client for approval before filming.</div>
+    </div>
+
+    <!-- SHOT LIST TAB -->
+    <div class="bm-panel" id="bm-panel-shots">
+      <div style="font-size:11px;color:var(--warm-gray);margin-bottom:10px;line-height:1.5;">List every shot you'll film. Your client can approve this before shoot day.</div>
+      <div style="display:grid;grid-template-columns:28px 1fr 1fr 120px 28px;gap:6px;margin-bottom:5px;">
+        <div style="font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--warm-gray);font-family:'DM Mono',monospace;">#</div>
+        <div style="font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--warm-gray);font-family:'DM Mono',monospace;">Shot Description</div>
+        <div style="font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--warm-gray);font-family:'DM Mono',monospace;">Direction / Notes</div>
+        <div style="font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--warm-gray);font-family:'DM Mono',monospace;">Type</div>
+        <div></div>
+      </div>
+      <div id="br-shot-rows"></div>
+      <button class="btn btn-g btn-s" style="margin-top:8px;" onclick="addBriefShot()">+ Add Shot</button>
+    </div>
+
+    <!-- MOOD BOARD TAB -->
+    <div class="bm-panel" id="bm-panel-mood">
+      <div style="font-size:11px;color:var(--warm-gray);margin-bottom:12px;line-height:1.5;">Upload reference images, aesthetic inspo, or product photos. These print alongside your brief on shoot day.</div>
+      <div class="mood-upload-grid" id="br-mood-grid"></div>
+      <label class="mood-add-btn" style="display:flex;width:90px;height:90px;" onclick="document.getElementById('br-mood-upload').click()">+</label>
+      <input type="file" id="br-mood-upload" accept="image/*" multiple style="display:none" onchange="addBriefMoodImages(event)">
+      <div style="font-size:10px;color:var(--mid-gray);margin-top:10px;">Upload up to 8 reference images · They'll appear on the printable brief</div>
+    </div>
+
+    <!-- PRODUCTION NOTES TAB -->
+    <div class="bm-panel" id="bm-panel-notes">
+      <div class="fr"><div class="fg"><label class="fl">Filming Location</label><input class="fi" id="br-location" placeholder="e.g. Kitchen counter by window"></div><div class="fg"><label class="fl">Outfit / Look</label><input class="fi" id="br-outfit" placeholder="e.g. Cream linen top, natural hair"></div></div>
+      <div class="fr"><div class="fg"><label class="fl">Lighting Setup</label><input class="fi" id="br-lighting" placeholder="e.g. Morning natural light, face window"></div><div class="fg"><label class="fl">Camera / Device</label><input class="fi" id="br-camera" placeholder="e.g. iPhone 15 Pro, 4K 30fps"></div></div>
+      <div class="fr f1"><div class="fg"><label class="fl">Props Needed</label><input class="fi" id="br-props" placeholder="e.g. Towel, moisturiser, glass of water"></div></div>
+      <div class="fr f1"><div class="fg"><label class="fl">Brand Requirements / Do Not Do</label><textarea class="ft" id="br-requirements" style="min-height:80px;" placeholder="e.g. Must show product name clearly · No competitors in frame · Include TikTok handle overlay"></textarea></div></div>
+      <div class="fr f1"><div class="fg"><label class="fl">Extra Notes</label><textarea class="ft" id="br-extra" style="min-height:70px;" placeholder="Anything else your client needs to know before approving this brief…"></textarea></div></div>
+    </div>
+
+    <div class="fa">
+      <button class="btn btn-g" onclick="closeModal('brief-modal')">Cancel</button>
+      <button class="btn btn-p" onclick="saveBrief()">Save Brief</button>
+    </div>
   </div>
 </div>
 </div>
@@ -3644,6 +3807,361 @@ function init(){
   setEl('fu-badge',D.followups.filter(f=>!f.done).length||'');
 }
 
+
+// ═══ CLIENT BRIEFS ═══
+(function(){
+
+// ── Data: briefs stored in D.briefs array ──
+function getBriefs(){ return D.briefs || (D.briefs=[]); }
+
+let _briefMoodImages=[]; // working array for modal
+let _briefFilter='all';
+
+// ── Render briefs list ──
+window.renderBriefs=function(filter){
+  if(filter!==undefined) _briefFilter=filter;
+  const list=document.getElementById('briefs-list');
+  const empty=document.getElementById('briefs-empty');
+  if(!list)return;
+  const briefs=getBriefs();
+  const filtered=_briefFilter==='all'?briefs:briefs.filter(b=>b.niche===_briefFilter);
+  if(!filtered.length){list.innerHTML='';if(empty)empty.style.display='';return;}
+  if(empty)empty.style.display='none';
+  list.innerHTML=filtered.map(b=>renderBriefCard(b)).join('');
+};
+
+function renderBriefCard(b){
+  const moodHtml=b.moodImages&&b.moodImages.length
+    ?b.moodImages.slice(0,4).map(img=>`<img src="${img}" class="brief-mood-img" alt="">`).join('')
+    :'<div style="font-size:11px;color:var(--mid-gray);padding:8px 0;">No mood board images yet</div>';
+  const shotsHtml=b.shots&&b.shots.length
+    ?`<table class="brief-shot-table"><thead><tr><th>#</th><th>Shot</th><th>Direction</th><th>Type</th></tr></thead><tbody>${b.shots.map((s,i)=>`<tr><td style="font-family:'DM Mono',monospace;color:var(--warm-gray);">${i+1}</td><td>${esc(s.desc||'')}</td><td>${esc(s.notes||'')}</td><td>${esc(s.type||'')}</td></tr>`).join('')}</tbody></table>`
+    :'<div style="font-size:11px;color:var(--mid-gray);">No shots added yet</div>';
+
+  return `<div class="brief-card" id="brief-${b.id}">
+    <div class="brief-card-hdr">
+      <div class="brief-card-meta">
+        <div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px;">
+            <div class="brief-card-brand">${esc(b.title||b.brand)}</div>
+            <span class="brief-niche-pill">${esc(b.niche||'')}</span>
+          </div>
+          <div style="font-size:11px;color:var(--warm-gray);">${esc(b.brand)} · ${esc(b.plat||'')}${b.duration?' · '+esc(b.duration):''}</div>
+        </div>
+      </div>
+      <div class="brief-card-actions">
+        <span class="brief-card-date">${b.date||''}</span>
+        <button class="ib" onclick="openBriefModal('${b.id}')" title="Edit">✏️</button>
+        <button class="ib" onclick="printBrief('${b.id}')" title="Print / Save PDF">🖨</button>
+        <button class="ib" onclick="deleteBrief('${b.id}')" style="color:#c0392b;" title="Delete">✕</button>
+      </div>
+    </div>
+    <div class="brief-card-body">
+      ${b.hook?`<div class="brief-section"><div class="brief-section-lbl">Hook</div><div style="font-size:13px;font-style:italic;color:var(--ink);">"${esc(b.hook)}"</div></div>`:''}
+      ${b.script?`<div class="brief-section"><div class="brief-section-lbl">Script</div><div class="brief-script-box">${esc(b.script)}</div></div>`:''}
+      ${b.shots&&b.shots.length?`<div class="brief-section"><div class="brief-section-lbl">Shot List (${b.shots.length} shots)</div>${shotsHtml}</div>`:''}
+      ${b.moodImages&&b.moodImages.length?`<div class="brief-section"><div class="brief-section-lbl">Mood Board</div><div class="brief-mood-grid">${moodHtml}</div></div>`:''}
+      ${(b.location||b.lighting||b.camera)?`<div class="brief-section"><div class="brief-section-lbl">Production Notes</div><div style="font-size:12px;color:var(--warm-gray);line-height:1.7;">${b.location?'📍 '+esc(b.location)+'<br>':''}${b.lighting?'💡 '+esc(b.lighting)+'<br>':''}${b.camera?'📷 '+esc(b.camera):''}</div></div>`:''}
+    </div>
+    <div class="brief-status-bar">
+      <span>📅 Shoot: <strong>${b.date||'TBD'}</strong></span>
+      ${b.deadline?`<span>🚚 Deliver by: <strong>${b.deadline}</strong></span>`:''}
+      ${b.product?`<span>📦 ${esc(b.product)}</span>`:''}
+    </div>
+  </div>`;
+}
+
+// ── Filter briefs ──
+window.filterBriefs=function(niche,el){
+  document.querySelectorAll('#briefs-filter-row button').forEach(b=>b.classList.remove('active'));
+  if(el)el.classList.add('active');
+  renderBriefs(niche);
+};
+
+// ── Open brief modal ──
+window.openBriefModal=function(id){
+  const b=id?getBriefs().find(x=>x.id===id):null;
+  document.getElementById('br-id').value=b?b.id:'';
+  document.getElementById('br-title').value=b?b.title||'':'';
+  document.getElementById('br-brand').value=b?b.brand||'':'';
+  document.getElementById('br-niche').value=b?b.niche||'Beauty & Skincare':'Beauty & Skincare';
+  document.getElementById('br-plat').value=b?b.plat||'TikTok':'TikTok';
+  document.getElementById('br-duration').value=b?b.duration||'':'';
+  document.getElementById('br-date').value=b?b.date||'':'';
+  document.getElementById('br-deadline').value=b?b.deadline||'':'';
+  document.getElementById('br-product').value=b?b.product||'':'';
+  document.getElementById('br-hook').value=b?b.hook||'':'';
+  document.getElementById('br-script').value=b?b.script||'':'';
+  document.getElementById('br-location').value=b?b.location||'':'';
+  document.getElementById('br-outfit').value=b?b.outfit||'':'';
+  document.getElementById('br-lighting').value=b?b.lighting||'':'';
+  document.getElementById('br-camera').value=b?b.camera||'':'';
+  document.getElementById('br-props').value=b?b.props||'':'';
+  document.getElementById('br-requirements').value=b?b.requirements||'':'';
+  document.getElementById('br-extra').value=b?b.extra||'':'';
+  // Load shots
+  _briefShots=b&&b.shots?JSON.parse(JSON.stringify(b.shots)):[];
+  renderBriefShotRows();
+  // Load mood images
+  _briefMoodImages=b&&b.moodImages?[...b.moodImages]:[];
+  renderBriefMoodGrid();
+  // Reset to first tab
+  bmTab('script',document.querySelector('.bm-tab'));
+  openModal('brief-modal');
+};
+
+// ── Modal tabs ──
+window.bmTab=function(name,el){
+  document.querySelectorAll('.bm-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.bm-panel').forEach(p=>p.classList.remove('active'));
+  if(el)el.classList.add('active');
+  const panel=document.getElementById('bm-panel-'+name);
+  if(panel)panel.classList.add('active');
+};
+
+// ── Shot list ──
+let _briefShots=[];
+window.addBriefShot=function(){
+  _briefShots.push({desc:'',notes:'',type:'Wide'});
+  renderBriefShotRows();
+};
+function renderBriefShotRows(){
+  const c=document.getElementById('br-shot-rows');
+  if(!c)return;
+  const types=['Wide','Medium','Close-up','Extreme Close-up','POV','Overhead','B-roll','Transition'];
+  c.innerHTML=_briefShots.map((s,i)=>`
+    <div class="shot-row" style="margin-bottom:7px;">
+      <div class="shot-num">${i+1}</div>
+      <input class="fi" value="${esc(s.desc)}" placeholder="What happens in this shot…" oninput="_briefShots[${i}].desc=this.value" style="font-size:12px;">
+      <input class="fi" value="${esc(s.notes)}" placeholder="Angle, lighting tip…" oninput="_briefShots[${i}].notes=this.value" style="font-size:12px;">
+      <select class="fs" onchange="_briefShots[${i}].type=this.value" style="font-size:12px;">${types.map(t=>`<option${t===s.type?' selected':''}>${t}</option>`).join('')}</select>
+      <button class="ib" onclick="_briefShots.splice(${i},1);renderBriefShotRows()" style="font-size:12px;color:#c0392b;">✕</button>
+    </div>`).join('');
+}
+
+// ── Mood board images ──
+window.addBriefMoodImages=function(e){
+  const files=Array.from(e.target.files);
+  files.forEach(f=>{
+    if(_briefMoodImages.length>=8)return;
+    const r=new FileReader();
+    r.onload=ev=>{_briefMoodImages.push(ev.target.result);renderBriefMoodGrid();};
+    r.readAsDataURL(f);
+  });
+  e.target.value='';
+};
+function renderBriefMoodGrid(){
+  const g=document.getElementById('br-mood-grid');
+  if(!g)return;
+  g.innerHTML=_briefMoodImages.map((img,i)=>`
+    <div class="mood-up-thumb">
+      <img src="${img}" alt="">
+      <button class="mood-up-del" onclick="_briefMoodImages.splice(${i},1);renderBriefMoodGrid()">✕</button>
+    </div>`).join('');
+}
+
+// ── Save brief ──
+window.saveBrief=function(){
+  const id=document.getElementById('br-id').value||('brief_'+Date.now());
+  const obj={
+    id,
+    title:document.getElementById('br-title').value.trim(),
+    brand:document.getElementById('br-brand').value.trim(),
+    niche:document.getElementById('br-niche').value,
+    plat:document.getElementById('br-plat').value,
+    duration:document.getElementById('br-duration').value.trim(),
+    date:document.getElementById('br-date').value,
+    deadline:document.getElementById('br-deadline').value,
+    product:document.getElementById('br-product').value.trim(),
+    hook:document.getElementById('br-hook').value.trim(),
+    script:document.getElementById('br-script').value.trim(),
+    shots:JSON.parse(JSON.stringify(_briefShots)),
+    moodImages:[..._briefMoodImages],
+    location:document.getElementById('br-location').value.trim(),
+    outfit:document.getElementById('br-outfit').value.trim(),
+    lighting:document.getElementById('br-lighting').value.trim(),
+    camera:document.getElementById('br-camera').value.trim(),
+    props:document.getElementById('br-props').value.trim(),
+    requirements:document.getElementById('br-requirements').value.trim(),
+    extra:document.getElementById('br-extra').value.trim(),
+    createdAt:Date.now()
+  };
+  if(!obj.title&&!obj.brand){toast('Add a title or brand name');return;}
+  const briefs=getBriefs();
+  const idx=briefs.findIndex(x=>x.id===id);
+  if(idx>-1)briefs[idx]=obj;else briefs.push(obj);
+  D.briefs=briefs;
+  save();
+  closeModal('brief-modal');
+  renderBriefs();
+  toast('Brief saved ✓');
+};
+
+window.deleteBrief=function(id){
+  if(!confirm('Delete this brief?'))return;
+  D.briefs=getBriefs().filter(x=>x.id!==id);
+  save();renderBriefs();toast('Brief deleted');
+};
+
+// ── Print brief ──
+window.printBrief=function(id){
+  const b=getBriefs().find(x=>x.id===id);
+  if(!b)return;
+  const moodHtml=b.moodImages&&b.moodImages.length
+    ?`<div class="print-section-hdr">Mood Board</div><div class="print-mood-grid">${b.moodImages.slice(0,8).map(img=>`<img src="${img}" class="print-mood-img" alt="">`).join('')}</div>`:'';
+  const shotsHtml=b.shots&&b.shots.length
+    ?`<div class="print-section-hdr">Shot List</div>
+       <table class="print-shot-tbl"><thead><tr><th>#</th><th>Shot Description</th><th>Direction / Notes</th><th>Type</th></tr></thead>
+       <tbody>${b.shots.map((s,i)=>`<tr><td style="font-family:monospace;color:#7A6F68;">${i+1}</td><td>${esc(s.desc||'')}</td><td>${esc(s.notes||'')}</td><td>${esc(s.type||'')}</td></tr>`).join('')}</tbody></table>`
+    :'';
+  const notesHtml=(b.location||b.lighting||b.camera||b.outfit||b.props||b.requirements||b.extra)
+    ?`<div class="print-section-hdr">Production Notes</div>
+      <div class="print-notes-box">${
+        [b.location&&('📍 Location: '+b.location),
+         b.lighting&&('💡 Lighting: '+b.lighting),
+         b.camera&&('📷 Camera: '+b.camera),
+         b.outfit&&('👗 Outfit/Look: '+b.outfit),
+         b.props&&('🎁 Props: '+b.props),
+         b.requirements&&('⚠️ Brand Requirements:\n'+b.requirements),
+         b.extra&&('📝 Extra Notes:\n'+b.extra)
+        ].filter(Boolean).join('\n\n')
+      }</div>`
+    :'';
+
+  const html=`<div class="print-brief-wrap">
+    <div class="print-brief-logo">Asha<em>Jolies</em></div>
+    <div class="print-brief-eyebrow">UGC Creator · Client Brief</div>
+    <div class="print-brief-title">${esc(b.title||b.brand+' Brief')}</div>
+    <div class="print-brief-meta">
+      <span><strong>Brand:</strong> ${esc(b.brand)}</span>
+      <span><strong>Niche:</strong> ${esc(b.niche)}</span>
+      <span><strong>Platform:</strong> ${esc(b.plat)}</span>
+      ${b.duration?`<span><strong>Duration:</strong> ${esc(b.duration)}</span>`:''}
+      ${b.date?`<span><strong>Shoot Date:</strong> ${esc(b.date)}</span>`:''}
+      ${b.deadline?`<span><strong>Deadline:</strong> ${esc(b.deadline)}</span>`:''}
+      ${b.product?`<span><strong>Product:</strong> ${esc(b.product)}</span>`:''}
+    </div>
+    ${b.hook?`<div class="print-section-hdr">Hook / Opening</div><div style="font-size:13px;font-style:italic;margin-bottom:10px;padding:10px 14px;border-left:3px solid #C4714F;background:#FAF6EF;border-radius:0 8px 8px 0;">"${esc(b.hook)}"</div>`:''}
+    ${b.script?`<div class="print-section-hdr">Script</div><div class="print-script-box">${esc(b.script)}</div>`:''}
+    ${shotsHtml}
+    ${moodHtml}
+    ${notesHtml}
+    <div class="print-footer">AshaJolies UGC Creator · ashajolies.com · Generated ${new Date().toLocaleDateString()}</div>
+  </div>`;
+
+  document.getElementById('print-brief-area').innerHTML=html;
+  window.print();
+};
+
+// Ensure briefs render when navigating to the page
+const _origGoTo=window.goTo;
+if(_origGoTo){
+  window.goTo=function(pg,el){
+    _origGoTo(pg,el);
+    if(pg==='briefs') renderBriefs();
+  };
+}
+
+// Patch save to include briefs in LIGHT_KEYS after firebase init
+document.addEventListener('fb-ready',function(){
+  if(typeof LIGHT_KEYS!=='undefined'&&!LIGHT_KEYS.includes('briefs')){
+    LIGHT_KEYS.push('briefs');
+  }
+},{once:true});
+
+})();
+
+// ═══ PORTFOLIO NICHE SELECTOR ENHANCEMENT ═══
+(function(){
+  const _origRenderPortfolio=window.stRenderPortfolio;
+  if(!_origRenderPortfolio)return;
+
+  window.stRenderPortfolio=function(){
+    const c=document.getElementById('studio-portfolio-container');
+    if(!c)return;
+    
+    // Build filter bar if not present
+    let filterBar=document.getElementById('pt-niche-filter-bar');
+    if(!filterBar){
+      filterBar=document.createElement('div');
+      filterBar.id='pt-niche-filter-bar';
+      filterBar.className='pt-niche-filter';
+      filterBar.innerHTML=`
+        <button class="btn btn-g btn-s active" onclick="ptFilterNiche('all',this)">All</button>
+        <button class="btn btn-g btn-s" onclick="ptFilterNiche('beauty',this)">💄 Beauty</button>
+        <button class="btn btn-g btn-s" onclick="ptFilterNiche('hair',this)">✂️ Hair</button>
+        <button class="btn btn-g btn-s" onclick="ptFilterNiche('lifestyle',this)">🏠 Lifestyle</button>
+        <button class="btn btn-g btn-s" onclick="ptFilterNiche('tech',this)">📱 Tech</button>
+        <button class="btn btn-g btn-s" onclick="ptFilterNiche('fashion',this)">👗 Fashion</button>
+      `;
+      c.parentNode.insertBefore(filterBar,c);
+    }
+
+    // Use the original render but patch each card to include niche selector
+    _origRenderPortfolio();
+    
+    // After original renders, add niche selectors to each card header
+    document.querySelectorAll('#studio-portfolio-container .st-card').forEach(card=>{
+      const hdr=card.querySelector('.st-card-hdr');
+      if(!hdr||hdr.querySelector('.st-card-niche-sel'))return;
+      const titleEl=hdr.querySelector('.st-card-title');
+      if(!titleEl)return;
+      // Find video id from delete button
+      const delBtn=hdr.querySelector('button[onclick*="stDelPV"]');
+      if(!delBtn)return;
+      const match=delBtn.getAttribute('onclick').match(/stDelPV\('([^']+)'\)/);
+      if(!match)return;
+      const vid=match[1];
+      const vobj=stData&&stData.portfolioVideos?stData.portfolioVideos.find(v=>v.id===vid):null;
+      if(!vobj)return;
+      const sel=document.createElement('div');
+      sel.className='st-card-niche-sel';
+      sel.innerHTML=`<label>Niche</label><select onchange="ptChangeNiche('${vid}',this.value)">
+        <option value="beauty"${vobj.niche==='beauty'?' selected':''}>💄 Beauty</option>
+        <option value="hair"${vobj.niche==='hair'?' selected':''}>✂️ Hair</option>
+        <option value="lifestyle"${vobj.niche==='lifestyle'?' selected':''}>🏠 Lifestyle</option>
+        <option value="tech"${vobj.niche==='tech'?' selected':''}>📱 Tech</option>
+        <option value="fashion"${vobj.niche==='fashion'?' selected':''}>👗 Fashion</option>
+      </select>`;
+      titleEl.parentNode.insertBefore(sel,titleEl);
+    });
+  };
+
+  window.ptFilterNiche=function(niche,el){
+    document.querySelectorAll('#pt-niche-filter-bar button').forEach(b=>b.classList.remove('active'));
+    if(el)el.classList.add('active');
+    document.querySelectorAll('#studio-portfolio-container .st-card').forEach(card=>{
+      const delBtn=card.querySelector('button[onclick*="stDelPV"]');
+      if(!delBtn){card.style.display='';return;}
+      const match=delBtn.getAttribute('onclick').match(/stDelPV\('([^']+)'\)/);
+      if(!match){card.style.display='';return;}
+      const vid=match[1];
+      const vobj=stData&&stData.portfolioVideos?stData.portfolioVideos.find(v=>v.id===vid):null;
+      if(!vobj){card.style.display='';return;}
+      card.style.display=(niche==='all'||vobj.niche===niche)?'':'none';
+    });
+    // Also hide/show section headers
+    document.querySelectorAll('#studio-portfolio-container .st-section').forEach(sec=>{
+      if(niche==='all'){sec.style.display='';return;}
+      // Check if any following cards are visible
+      let next=sec.nextElementSibling;
+      let hasVisible=false;
+      while(next&&!next.classList.contains('st-section')){
+        if(next.style.display!=='none')hasVisible=true;
+        next=next.nextElementSibling;
+      }
+      sec.style.display=hasVisible?'':'none';
+    });
+  };
+
+  window.ptChangeNiche=function(id,niche){
+    if(stData&&stData.portfolioVideos){
+      const v=stData.portfolioVideos.find(x=>x.id===id);
+      if(v){v.niche=niche;stSave();stRenderPortfolio();toast('Niche updated ✓');}
+    }
+  };
+})();
+
 // Close search on outside click
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeSearch();document.getElementById('moodboard').classList.contains('open')&&closeMB();}});
 
@@ -3678,5 +4196,8 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeSearch();docum
   updateOnlineBar();
 })();
 </script>
+<!-- ─── PRINT BRIEF (hidden until print) ─── -->
+<div id="print-brief-area"></div>
+
 </body>
 </html>
