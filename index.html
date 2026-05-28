@@ -1854,6 +1854,22 @@ window.save = function() {
     }
     const light = {};
     LIGHT_KEYS.forEach(function(k){ light[k] = window.D[k]; });
+    // Strip base64 images from ideas/content/gigs before Firestore sync (images stay in localStorage only)
+    ['ideas','content','gigs'].forEach(function(k){
+      if(light[k]) light[k] = light[k].map(function(item){
+        var copy = Object.assign({}, item);
+        if(copy.img && copy.img.length > 200) copy.img = '__local__';
+        return copy;
+      });
+    });
+    // Strip base64 images from ideas/content/gigs before Firestore sync (images stay in localStorage only)
+    ['ideas','content','gigs'].forEach(function(k){
+      if(light[k]) light[k] = light[k].map(function(item){
+        var copy = Object.assign({}, item);
+        if(copy.img && copy.img.length > 200) copy.img = '__local__';
+        return copy;
+      });
+    });
     db.collection('users').doc(uid).collection('hq').doc('main').set(light, {merge:true})
       .then(function(){
         const heavyPromises = HEAVY.map(function(k){
@@ -1882,7 +1898,18 @@ function _startRealtimeSync(uid) {
     const remote = snap.data();
     // Only apply if this is a change from another device (not our own write)
     if(lsIsDirty()) return; // we have unsaved local changes — don't overwrite
+    // Merge remote data, restoring local-only images (base64) that were stripped before upload
+    var localSnap = lsLoad() || {};
     Object.keys(remote).forEach(function(k){ if(k in window.D) window.D[k] = remote[k]; });
+    ['ideas','content','gigs'].forEach(function(k){
+      if(!window.D[k] || !localSnap[k]) return;
+      window.D[k] = window.D[k].map(function(item){
+        if(item.img !== '__local__') return item;
+        var local = (localSnap[k]||[]).find(function(x){ return x.id === item.id; });
+        if(local && local.img && local.img !== '__local__') item = Object.assign({}, item, {img: local.img});
+        return item;
+      });
+    });
     lsSave(window.D);
     const el = document.getElementById('sb-saved');
     if(el){ const n=new Date(); el.textContent='Synced ✓ '+n.toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit'}); }
@@ -1910,6 +1937,14 @@ window.addEventListener('online', function() {
   if(el) el.textContent = '🔄 Syncing…';
   const light = {};
   LIGHT_KEYS.forEach(function(k){ light[k] = window.D[k]; });
+    // Strip base64 images from ideas/content/gigs before Firestore sync (images stay in localStorage only)
+    ['ideas','content','gigs'].forEach(function(k){
+      if(light[k]) light[k] = light[k].map(function(item){
+        var copy = Object.assign({}, item);
+        if(copy.img && copy.img.length > 200) copy.img = '__local__';
+        return copy;
+      });
+    });
   db.collection('users').doc(uid).collection('hq').doc('main').set(light, {merge:true})
     .then(function(){
       const heavyPromises = HEAVY.map(function(k){
@@ -2464,7 +2499,7 @@ function rDash(){
 
   // ── RECENT IDEAS ──
   const di=document.getElementById('d-ideas');
-  di.innerHTML=[...D.ideas].reverse().slice(0,4).map(i=>`<div style="display:flex;align-items:center;gap:8px;padding:9px 16px;border-bottom:1px solid rgba(0,0,0,.04);">
+  di.innerHTML=[...D.ideas].reverse().slice(0,6).map(i=>`<div style="display:flex;align-items:center;gap:8px;padding:9px 16px;border-bottom:1px solid rgba(0,0,0,.04);">
     <span class="id-tag t-${i.niche}" style="flex-shrink:0;">${i.niche}</span>
     <div style="font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;">${i.title}</div>
     <span class="sp s-${i.status||'idea'}" style="flex-shrink:0;">${i.status||'idea'}</span>
@@ -2751,7 +2786,10 @@ function saveIdea(){
   const title=v('i-title').trim();if(!title){toast('Title required');return;}
   const id=v('i-id');
   const scrData=readScrData('i');
-  const idea={id:id||'i'+Date.now(),title,niche:v('i-niche'),platform:v('i-plat'),status:v('i-status'),date:v('i-date'),types:TP.i||[],linkedGig:v('i-lgig'),linkedIGPost:v('i-ligpost'),hook:v('i-hook'),audio:v('i-audio'),notes:v('i-notes'),img:v('i-img-data'),script:scrData.script,scrnotes:scrData.scrnotes,shots:scrData.shots,added:Date.now()};
+  // Preserve existing image if no new image was uploaded during edit
+  const existingIdea = id ? D.ideas.find(x=>x.id===id) : null;
+  const imgData = v('i-img-data') || (existingIdea ? existingIdea.img : '');
+  const idea={id:id||'i'+Date.now(),title,niche:v('i-niche'),platform:v('i-plat'),status:v('i-status'),date:v('i-date'),types:TP.i||[],linkedGig:v('i-lgig'),linkedIGPost:v('i-ligpost'),hook:v('i-hook'),audio:v('i-audio'),notes:v('i-notes'),img:imgData,script:scrData.script,scrnotes:scrData.scrnotes,shots:scrData.shots,added:Date.now()};
   if(id)D.ideas=D.ideas.map(x=>x.id===id?idea:x);else D.ideas.push(idea);
   save();closeModal('idea-modal');resetTP('i');['i-title','i-hook','i-audio','i-notes','i-lgig','i-id','i-date'].forEach(i=>setV(i,''));setV('i-img-data','');document.getElementById('i-img-pre').innerHTML='';resetScrData('i');
   rIdeas(ideaFilt);rCal();rDash();toast('Idea saved!');
@@ -4028,7 +4066,7 @@ window.printBrief=function(id){
       }</div>`
     :'';
 
-  const html=`<div class="print-brief-wrap">
+  const bodyHtml=`<div class="print-brief-wrap">
     <div class="print-brief-logo">Asha<em>Jolies</em></div>
     <div class="print-brief-eyebrow">UGC Creator · Client Brief</div>
     <div class="print-brief-title">${esc(b.title||b.brand+' Brief')}</div>
@@ -4049,8 +4087,44 @@ window.printBrief=function(id){
     <div class="print-footer">AshaJolies UGC Creator · ashajolies.com · Generated ${new Date().toLocaleDateString()}</div>
   </div>`;
 
-  document.getElementById('print-brief-area').innerHTML=html;
-  window.print();
+  const fullPage=`<!DOCTYPE html><html><head><meta charset="UTF-8">
+  <title>${esc(b.title||b.brand+' Brief')}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@200;300;400;500&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{background:#fff;font-family:'Jost',sans-serif;font-weight:300;color:#1E1916;line-height:1.6;padding:0;}
+    .print-brief-wrap{padding:28px 36px;font-family:'Jost',sans-serif;font-size:12px;color:#1E1916;max-width:760px;margin:0 auto;}
+    .print-brief-logo{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:300;margin-bottom:4px;letter-spacing:.02em;}
+    .print-brief-logo em{font-style:italic;color:#C4714F;}
+    .print-brief-eyebrow{font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:#7A6F68;margin-bottom:22px;font-family:monospace;}
+    .print-brief-title{font-family:'Cormorant Garamond',serif;font-size:1.7rem;font-weight:300;border-bottom:2px solid #C4714F;padding-bottom:10px;margin-bottom:18px;}
+    .print-brief-meta{display:flex;gap:18px;flex-wrap:wrap;margin-bottom:22px;font-size:11px;color:#7A6F68;}
+    .print-brief-meta span strong{color:#1E1916;}
+    .print-section-hdr{font-size:9px;letter-spacing:.22em;text-transform:uppercase;font-weight:700;color:#C4714F;margin-bottom:10px;font-family:monospace;margin-top:22px;}
+    .print-script-box{background:#FAF6EF;border:1px solid #E8C4B0;border-radius:8px;padding:14px 16px;font-size:12px;line-height:1.75;white-space:pre-wrap;margin-bottom:6px;}
+    .print-shot-tbl{width:100%;border-collapse:collapse;font-size:11px;margin-bottom:6px;}
+    .print-shot-tbl th{padding:6px 10px;text-align:left;font-size:9px;letter-spacing:.15em;text-transform:uppercase;font-weight:700;color:#7A6F68;background:#FAF6EF;border-bottom:1px solid #E8C4B0;}
+    .print-shot-tbl td{padding:8px 10px;border-bottom:1px solid rgba(0,0,0,.05);vertical-align:top;}
+    .print-mood-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:6px;}
+    .print-mood-img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:7px;}
+    .print-notes-box{background:#FAF6EF;border:1px solid #E8C4B0;border-radius:8px;padding:13px 15px;font-size:12px;line-height:1.7;white-space:pre-wrap;}
+    .print-footer{margin-top:32px;padding-top:12px;border-top:1px solid rgba(0,0,0,.1);font-size:9px;color:#B5ADA8;text-align:center;font-family:monospace;letter-spacing:.08em;}
+    @media print{body{background:#fff!important;}}
+  </style>
+  </head><body>${bodyHtml}
+  <script>window.onload=function(){window.print();};<\/script>
+  </body></html>`;
+
+  const w=window.open('','_blank','width=820,height=900');
+  if(w){
+    w.document.open();
+    w.document.write(fullPage);
+    w.document.close();
+  } else {
+    // fallback if popup blocked
+    document.getElementById('print-brief-area').innerHTML=bodyHtml;
+    window.print();
+  }
 };
 
 // Ensure briefs render when navigating to the page
