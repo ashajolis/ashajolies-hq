@@ -547,6 +547,37 @@ body{background:var(--ivory);font-family:'Jost',sans-serif;font-weight:300;color
 .kanban-card-meta{font-size:10px;color:var(--warm-gray);}
 .kanban-card-rate{font-family:'DM Mono',monospace;font-size:11px;font-weight:600;color:var(--forest);margin-top:6px;}
 .kanban-card-due{font-size:9px;font-family:'DM Mono',monospace;margin-top:3px;}
+
+/* ─── BRAND TARGET CRM ─── */
+.bt-card{background:#fff;border-radius:var(--r);border:1px solid rgba(0,0,0,.07);margin-bottom:12px;overflow:hidden;transition:box-shadow .15s;}
+.bt-card:hover{box-shadow:0 4px 18px rgba(0,0,0,.08);}
+.bt-card.bt-accepted{border-left:3px solid var(--forest);}
+.bt-card.bt-declined{border-left:3px solid var(--mid-gray);opacity:.7;}
+.bt-card.bt-replied{border-left:3px solid var(--sky-deep);}
+.bt-card.bt-pitched{border-left:3px solid var(--gold);}
+.bt-card.bt-followed-up{border-left:3px solid var(--terracotta);}
+.bt-card.bt-researching{border-left:3px solid var(--lavender);}
+.bt-hdr{padding:13px 16px;display:flex;align-items:center;gap:10px;cursor:pointer;}
+.bt-avatar{width:36px;height:36px;border-radius:9px;background:var(--warm-white);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;border:1px solid rgba(0,0,0,.07);}
+.bt-name{font-weight:600;font-size:14px;line-height:1.2;}
+.bt-meta{font-size:10px;color:var(--warm-gray);margin-top:1px;}
+.bt-body{display:none;padding:14px 16px;border-top:1px solid rgba(0,0,0,.05);}
+.bt-body.open{display:block;}
+.bt-section{margin-bottom:14px;}
+.bt-section:last-child{margin-bottom:0;}
+.bt-section-lbl{font-size:9px;letter-spacing:.18em;text-transform:uppercase;font-weight:600;color:var(--terracotta);font-family:'DM Mono',monospace;margin-bottom:6px;}
+.bt-section-val{font-size:12px;color:var(--ink);line-height:1.6;white-space:pre-wrap;}
+.bt-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.bt-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+.bt-info-item{background:var(--warm-white);border-radius:8px;padding:9px 12px;}
+.bt-info-lbl{font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--warm-gray);font-family:'DM Mono',monospace;margin-bottom:3px;}
+.bt-info-val{font-size:12px;font-weight:500;}
+.bt-info-val a{color:var(--sky-deep);text-decoration:none;}
+.bt-info-val a:hover{text-decoration:underline;}
+.bt-actions{display:flex;gap:6px;flex-wrap:wrap;padding:10px 16px;border-top:1px solid rgba(0,0,0,.05);background:var(--warm-white);}
+.bt-stat-card{background:#fff;border-radius:var(--r);padding:12px 14px;border:1px solid rgba(0,0,0,.06);}
+.bt-stat-lbl{font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--warm-gray);margin-bottom:3px;}
+.bt-stat-val{font-family:'Cormorant Garamond',serif;font-size:1.7rem;font-weight:300;line-height:1;}
 </style>
 </head>
 <body>
@@ -1078,12 +1109,122 @@ Total cash: $190 + product value</textarea></div>
   <div class="st-hdr">
     <div class="st-eyebrow">Studio · Outreach</div>
     <div class="st-title">Brand <em>Targets</em></div>
-    <div class="st-desc">Which types to pitch first, your angle for each, and the rate to quote. Add specific brand names as you research them.</div>
+    <div class="st-desc">Your full outreach CRM — track every brand you pitch, what you sent, follow-ups, and their response. When a brand says yes, convert it to a gig.</div>
   </div>
   <div class="st-info tip"><strong>The 10-per-week rule:</strong> Send 10 personalised messages per week. Each one researched — one genuine detail about the brand. At 15% reply rate: 1–2 replies per week.</div>
+
+  <!-- Stats row -->
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px;margin-bottom:18px;" id="bt-stats"></div>
+
+  <!-- Filter bar -->
+  <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;align-items:center;">
+    <button class="btn btn-g btn-s active" id="btf-all"    onclick="btFilter('all',this)">All</button>
+    <button class="btn btn-g btn-s" id="btf-researching"   onclick="btFilter('researching',this)">🔍 Researching</button>
+    <button class="btn btn-g btn-s" id="btf-pitched"       onclick="btFilter('pitched',this)">✉️ Pitched</button>
+    <button class="btn btn-g btn-s" id="btf-followed-up"   onclick="btFilter('followed-up',this)">🔔 Followed Up</button>
+    <button class="btn btn-g btn-s" id="btf-replied"       onclick="btFilter('replied',this)">💬 Replied</button>
+    <button class="btn btn-g btn-s" id="btf-accepted"      onclick="btFilter('accepted',this)">✅ Accepted</button>
+    <button class="btn btn-g btn-s" id="btf-declined"      onclick="btFilter('declined',this)">❌ Declined</button>
+    <button class="btn btn-p btn-s" style="margin-left:auto;" onclick="openBTModal()">+ Add Brand</button>
+  </div>
+
   <div id="studio-brands-container"></div>
-  <button class="st-add" onclick="stAddBrand()">+ Add Brand Target</button>
 </div>
+
+<!-- BRAND TARGET MODAL -->
+<div class="mo" id="bt-modal"><div class="md wide">
+  <div class="mh">
+    <div class="mt" id="bt-modal-title">Add <em>Brand Target</em></div>
+    <button class="mc" onclick="closeModal('bt-modal')">×</button>
+  </div>
+  <div class="mb2">
+    <!-- Row 1: brand name, niche, status -->
+    <div class="fr f3">
+      <div class="fg"><label class="fl">Brand Name *</label><input class="fi" id="bt-name" placeholder="e.g. Noni Beauty"></div>
+      <div class="fg"><label class="fl">Niche</label>
+        <select class="fs" id="bt-niche">
+          <option>Beauty</option><option>Hair</option><option>Lifestyle</option><option>Tech</option><option>Fashion</option><option>Food</option><option>Other</option>
+        </select>
+      </div>
+      <div class="fg"><label class="fl">Status</label>
+        <select class="fs" id="bt-status">
+          <option value="researching">🔍 Researching</option>
+          <option value="pitched">✉️ Pitched</option>
+          <option value="followed-up">🔔 Followed Up</option>
+          <option value="replied">💬 Replied</option>
+          <option value="accepted">✅ Accepted</option>
+          <option value="declined">❌ Declined</option>
+        </select>
+      </div>
+    </div>
+    <!-- Row 2: website, email, contact name -->
+    <div class="fr f3">
+      <div class="fg"><label class="fl">Website / Instagram URL</label><input class="fi" id="bt-url" placeholder="https://…"></div>
+      <div class="fg"><label class="fl">Email</label><input class="fi" id="bt-email" placeholder="collab@brand.com"></div>
+      <div class="fg"><label class="fl">Contact Person</label><input class="fi" id="bt-contact" placeholder="Marketing manager name…"></div>
+    </div>
+    <!-- Row 3: platform, rate, priority -->
+    <div class="fr f3">
+      <div class="fg"><label class="fl">Outreach Platform</label>
+        <select class="fs" id="bt-platform">
+          <option>Email</option><option>Instagram DM</option><option>WhatsApp</option><option>TikTok DM</option><option>LinkedIn</option>
+        </select>
+      </div>
+      <div class="fg"><label class="fl">Rate to Quote</label><input class="fi" id="bt-rate" placeholder="e.g. $35 / $85 bundle"></div>
+      <div class="fg"><label class="fl">Priority</label>
+        <select class="fs" id="bt-priority">
+          <option value="high">🔴 High</option>
+          <option value="medium" selected>🟡 Medium</option>
+          <option value="low">🟢 Low</option>
+        </select>
+      </div>
+    </div>
+    <!-- Pitch body -->
+    <div class="fr f1">
+      <div class="fg">
+        <label class="fl">Pitch Sent</label>
+        <textarea class="ft" id="bt-pitch" style="min-height:100px;" placeholder="Paste the exact pitch you sent (or plan to send)…"></textarea>
+      </div>
+    </div>
+    <!-- Dates row -->
+    <div class="fr f3">
+      <div class="fg"><label class="fl">Date Pitched</label><input class="fi" id="bt-date-pitched" type="date"></div>
+      <div class="fg"><label class="fl">Follow-Up Date</label><input class="fi" id="bt-date-followup" type="date"></div>
+      <div class="fg"><label class="fl">Follow-Up Sent?</label>
+        <select class="fs" id="bt-followup-sent">
+          <option value="no">Not yet</option>
+          <option value="yes">✓ Follow-up sent</option>
+        </select>
+      </div>
+    </div>
+    <!-- Follow-up message -->
+    <div class="fr f1">
+      <div class="fg">
+        <label class="fl">Follow-Up Message</label>
+        <textarea class="ft" id="bt-followup-msg" style="min-height:70px;" placeholder="What you plan to say in your follow-up…"></textarea>
+      </div>
+    </div>
+    <!-- Response -->
+    <div class="fr f1">
+      <div class="fg">
+        <label class="fl">Their Response</label>
+        <textarea class="ft" id="bt-response" style="min-height:70px;" placeholder="What they replied (or leave blank if no reply yet)…"></textarea>
+      </div>
+    </div>
+    <!-- Notes -->
+    <div class="fr f1">
+      <div class="fg">
+        <label class="fl">Notes / Pitch Angle</label>
+        <textarea class="ft" id="bt-notes" style="min-height:60px;" placeholder="Why they'll say yes, one genuine detail about this brand, your angle…"></textarea>
+      </div>
+    </div>
+    <input type="hidden" id="bt-edit-id">
+    <div class="fa">
+      <button class="btn btn-g" onclick="closeModal('bt-modal')">Cancel</button>
+      <button class="btn btn-p" onclick="saveBT()">Save Brand Target</button>
+    </div>
+  </div>
+</div></div>
 
 </div><!-- main -->
 
@@ -3628,6 +3769,21 @@ function stLoad() {
     const saved = localStorage.getItem('ashajolies-studio-hq-v1');
     if (saved) {
       stData = JSON.parse(saved);
+      // Migrate old brand format (had priority/type/why/angle/specific) to new CRM format
+      if (stData.brands && stData.brands.length && stData.brands[0].type !== undefined && stData.brands[0].status === undefined) {
+        stData.brands = stData.brands.map(b => ({
+          id: b.id || 'bt'+Date.now()+Math.random(),
+          name: b.specific || b.type || 'Brand Target',
+          niche: 'Beauty', status: 'researching',
+          url: '', email: '', contact: '',
+          platform: 'Instagram DM', rate: b.rate || '',
+          priority: b.priority && b.priority.includes('High') ? 'high' : b.priority && b.priority.includes('Low') ? 'low' : 'medium',
+          pitch: '', datePitched: '', dateFollowup: '', followupSent: 'no',
+          followupMsg: '', response: '',
+          notes: [b.why, b.angle].filter(Boolean).join('\n')
+        }));
+        stSave();
+      }
     } else {
       stReset();
     }
@@ -3792,29 +3948,231 @@ function stRenderIncome() {
   }).join('');
 }
 
-// ═══ BRANDS ═══
+// ═══ BRANDS CRM ═══
+let _btFilter = 'all';
+
+const BT_STATUS_LABEL = {
+  'researching': '🔍 Researching',
+  'pitched':     '✉️ Pitched',
+  'followed-up': '🔔 Followed Up',
+  'replied':     '💬 Replied',
+  'accepted':    '✅ Accepted',
+  'declined':    '❌ Declined'
+};
+const BT_STATUS_CLASS = {
+  'researching': 's-idea',
+  'pitched':     's-pending',
+  'followed-up': 's-filming',
+  'replied':     's-waitingapproval',
+  'accepted':    's-active',
+  'declined':    's-declined'
+};
+const BT_NICHE_ICON = {Beauty:'💄',Hair:'✂️',Lifestyle:'🏠',Tech:'📱',Fashion:'👗',Food:'🍳',Other:'🎯'};
+
+function btFilter(f, el) {
+  _btFilter = f;
+  document.querySelectorAll('[id^="btf-"]').forEach(b => b.classList.remove('active'));
+  if (el) el.classList.add('active');
+  stRenderBrands();
+}
+
 function stRenderBrands() {
   const c = document.getElementById('studio-brands-container');
   if (!c) return;
-  c.innerHTML = stData.brands.map(b=>`
-    <div class="st-card" style="margin-bottom:10px;">
-      <div class="st-card-body">
-        <div style="display:grid;grid-template-columns:100px 1fr 1fr 1fr 90px auto;gap:8px;align-items:center;margin-bottom:8px;">
-          <input class="st-editable" value="${esc(b.priority)}" placeholder="Priority" style="font-size:11px;" oninput="stUpdBr('${b.id}','priority',this.value)">
-          <input class="st-editable" value="${esc(b.type)}" placeholder="Brand type" style="font-size:11px;" oninput="stUpdBr('${b.id}','type',this.value)">
-          <input class="st-editable" value="${esc(b.why)}" placeholder="Why they'll say yes" style="font-size:11px;" oninput="stUpdBr('${b.id}','why',this.value)">
-          <input class="st-editable" value="${esc(b.angle)}" placeholder="Your pitch angle" style="font-size:11px;" oninput="stUpdBr('${b.id}','angle',this.value)">
-          <input class="st-editable" value="${esc(b.rate)}" placeholder="Rate" style="font-size:11px;color:var(--terracotta);" oninput="stUpdBr('${b.id}','rate',this.value)">
-          <button class="ib" onclick="stDelBr('${b.id}')" style="color:#c0392b;">✕</button>
+  const brands = (stData.brands || []);
+
+  // Stats
+  const statsEl = document.getElementById('bt-stats');
+  if (statsEl) {
+    const counts = {
+      total: brands.length,
+      pitched: brands.filter(b=>['pitched','followed-up','replied','accepted'].includes(b.status)).length,
+      accepted: brands.filter(b=>b.status==='accepted').length,
+      followDue: brands.filter(b=>b.status==='pitched' && b.dateFollowup && new Date(b.dateFollowup)<=new Date()).length
+    };
+    statsEl.innerHTML = [
+      {lbl:'Total Tracked', val:counts.total, col:'var(--ink)'},
+      {lbl:'Pitched', val:counts.pitched, col:'var(--gold)'},
+      {lbl:'Follow-Ups Due', val:counts.followDue, col:'var(--terracotta)'},
+      {lbl:'Accepted 🎉', val:counts.accepted, col:'var(--forest)'}
+    ].map(s=>`<div class="bt-stat-card"><div class="bt-stat-lbl">${s.lbl}</div><div class="bt-stat-val" style="color:${s.col}">${s.val}</div></div>`).join('');
+  }
+
+  const filtered = _btFilter === 'all' ? brands : brands.filter(b => b.status === _btFilter);
+  if (!filtered.length) {
+    c.innerHTML = `<div class="es"><div class="es-icon">🎯</div><div class="es-title">No brand targets yet</div><div class="es-sub">Click "+ Add Brand" to start tracking your outreach.</div></div>`;
+    return;
+  }
+
+  c.innerHTML = filtered.map(b => {
+    const icon = BT_NICHE_ICON[b.niche] || '🎯';
+    const statusCls = BT_STATUS_CLASS[b.status] || 's-pending';
+    const statusLbl = BT_STATUS_LABEL[b.status] || b.status;
+    const isOverdue = b.dateFollowup && b.status==='pitched' && new Date(b.dateFollowup)<=new Date();
+    const priColor = b.priority==='high'?'#c0392b':b.priority==='low'?'var(--forest)':'var(--gold)';
+    const priLabel = b.priority==='high'?'🔴 High':b.priority==='low'?'🟢 Low':'🟡 Medium';
+
+    return `<div class="bt-card bt-${b.status}" id="btc-${b.id}">
+      <div class="bt-hdr" onclick="toggleBT('${b.id}')">
+        <div class="bt-avatar">${icon}</div>
+        <div style="flex:1;min-width:0;">
+          <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;">
+            <div class="bt-name">${esc(b.name)}</div>
+            <span class="sp ${statusCls}">${statusLbl}</span>
+            ${isOverdue?'<span class="sp s-filming" style="animation:none;">⚠️ Follow-up overdue</span>':''}
+          </div>
+          <div class="bt-meta">
+            ${b.niche?`${b.niche} · `:''}${b.platform||''}${b.rate?` · ${b.rate}`:''}${b.datePitched?` · Pitched ${b.datePitched}`:''}
+          </div>
         </div>
-        <div class="st-field" style="margin-bottom:0;"><div class="st-field-lbl">Specific Brand Names to Target</div><input class="st-editable" value="${esc(b.specific||'')}" placeholder="E.g. Brand A (IG: @brandA)…" oninput="stUpdBr('${b.id}','specific',this.value)"></div>
+        <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
+          <span style="font-size:10px;color:${priColor};font-family:'DM Mono',monospace;font-weight:600;">${priLabel}</span>
+          <span style="font-size:12px;color:var(--mid-gray);">▾</span>
+        </div>
       </div>
-    </div>`).join('');
+
+      <div class="bt-body" id="btb-${b.id}">
+        <div class="bt-grid-3" style="margin-bottom:14px;">
+          <div class="bt-info-item"><div class="bt-info-lbl">Website / Link</div><div class="bt-info-val">${b.url?`<a href="${esc(b.url)}" target="_blank" rel="noopener">${esc(b.url)}</a>`:'—'}</div></div>
+          <div class="bt-info-item"><div class="bt-info-lbl">Email</div><div class="bt-info-val">${b.email?`<a href="mailto:${esc(b.email)}">${esc(b.email)}</a>`:'—'}</div></div>
+          <div class="bt-info-item"><div class="bt-info-lbl">Contact Person</div><div class="bt-info-val">${esc(b.contact||'—')}</div></div>
+        </div>
+
+        ${b.pitch?`<div class="bt-section"><div class="bt-section-lbl">Pitch Sent</div><div class="bt-section-val" style="background:var(--warm-white);border-radius:8px;padding:10px 13px;border:1px solid rgba(0,0,0,.06);">${esc(b.pitch)}</div></div>`:''}
+
+        <div class="bt-grid-3" style="margin-bottom:14px;">
+          <div class="bt-info-item"><div class="bt-info-lbl">Date Pitched</div><div class="bt-info-val">${b.datePitched||'—'}</div></div>
+          <div class="bt-info-item"><div class="bt-info-lbl">Follow-Up Date</div><div class="bt-info-val" style="${isOverdue?'color:var(--terracotta);font-weight:600;':''}">${b.dateFollowup||'—'}</div></div>
+          <div class="bt-info-item"><div class="bt-info-lbl">Follow-Up Sent</div><div class="bt-info-val">${b.followupSent==='yes'?'✓ Yes':'Not yet'}</div></div>
+        </div>
+
+        ${b.followupMsg?`<div class="bt-section"><div class="bt-section-lbl">Follow-Up Message</div><div class="bt-section-val" style="background:rgba(196,150,58,.06);border-radius:8px;padding:10px 13px;border:1px solid rgba(196,150,58,.15);">${esc(b.followupMsg)}</div></div>`:''}
+
+        ${b.response?`<div class="bt-section"><div class="bt-section-lbl">Their Response</div><div class="bt-section-val" style="background:rgba(74,107,80,.06);border-radius:8px;padding:10px 13px;border:1px solid rgba(74,107,80,.15);">${esc(b.response)}</div></div>`:''}
+
+        ${b.notes?`<div class="bt-section"><div class="bt-section-lbl">Notes / Pitch Angle</div><div class="bt-section-val">${esc(b.notes)}</div></div>`:''}
+      </div>
+
+      <div class="bt-actions">
+        <button class="btn btn-g btn-s" onclick="editBT('${b.id}')">✏️ Edit</button>
+        ${b.pitch?`<button class="btn btn-g btn-s" onclick="cpBTPitch('${b.id}')">📋 Copy Pitch</button>`:''}
+        ${b.status==='accepted'?`<button class="btn btn-p btn-s" onclick="btConvertToGig('${b.id}')">🚀 Convert to Gig</button>`:''}
+        ${b.status==='pitched'?`<button class="btn btn-g btn-s" onclick="btMarkFollowedUp('${b.id}')">🔔 Mark Followed Up</button>`:''}
+        <select class="fs btn-s" style="font-size:10px;padding:5px 8px;border-radius:100px;border:1px solid rgba(0,0,0,.1);background:var(--warm-white);" onchange="btChangeStatus('${b.id}',this.value);this.value='${b.status}'">
+          ${Object.entries(BT_STATUS_LABEL).map(([k,v])=>`<option value="${k}"${b.status===k?' selected':''}>${v}</option>`).join('')}
+        </select>
+        <button class="ib" onclick="stDelBr('${b.id}')" style="color:#c0392b;margin-left:auto;">🗑</button>
+      </div>
+    </div>`;
+  }).join('');
 }
 
-function stUpdBr(id,f,v){const b=stData.brands.find(x=>x.id===id);if(b){b[f]=v;stSave();}}
-function stDelBr(id){if(!confirm('Delete brand target?'))return;stData.brands=stData.brands.filter(x=>x.id!==id);stSave();stRenderBrands();toast('Brand target deleted');}
-function stAddBrand(){const id='br_'+Date.now();stData.brands.push({id,priority:'🟡 Week 2',type:'New brand type',why:"Why they'll work with you",angle:'Your pitch angle',rate:'$35',specific:''});stSave();stRenderBrands();toast('Brand target added');}
+function toggleBT(id) {
+  const body = document.getElementById('btb-'+id);
+  if (body) body.classList.toggle('open');
+}
+
+function cpBTPitch(id) {
+  const b = (stData.brands||[]).find(x=>x.id===id);
+  if (!b || !b.pitch) return;
+  navigator.clipboard?.writeText(b.pitch).then(()=>toast('Pitch copied! ✓'));
+}
+
+function btChangeStatus(id, status) {
+  const b = (stData.brands||[]).find(x=>x.id===id);
+  if (!b) return;
+  b.status = status;
+  stSave();
+  stRenderBrands();
+  toast('Status updated ✓');
+}
+
+function btMarkFollowedUp(id) {
+  const b = (stData.brands||[]).find(x=>x.id===id);
+  if (!b) return;
+  b.status = 'followed-up';
+  b.followupSent = 'yes';
+  stSave();
+  stRenderBrands();
+  toast('Marked as followed up ✓');
+}
+
+function btConvertToGig(id) {
+  const b = (stData.brands||[]).find(x=>x.id===id);
+  if (!b) return;
+  if (!confirm(`Convert "${b.name}" to a Gig? This will open the New Gig form pre-filled with this brand's info.`)) return;
+  // Pre-fill gig modal
+  openGigModal();
+  setTimeout(()=>{
+    setV('g-brand', b.name);
+    if (b.rate) setV('g-rate', b.rate.replace(/[^0-9.]/g,''));
+    setV('g-status','negotiating');
+    setV('g-notes', `Converted from Brand Targets. Contact: ${b.contact||''} ${b.email||''}\n\n${b.notes||''}`);
+    toast('Gig form pre-filled from Brand Target ✓');
+  }, 300);
+}
+
+function openBTModal() {
+  ['bt-name','bt-url','bt-email','bt-contact','bt-rate','bt-pitch','bt-followup-msg','bt-response','bt-notes'].forEach(id=>setV(id,''));
+  setV('bt-niche','Beauty'); setV('bt-status','researching'); setV('bt-platform','Email'); setV('bt-priority','medium');
+  setV('bt-date-pitched',''); setV('bt-date-followup',''); setV('bt-followup-sent','no');
+  setV('bt-edit-id','');
+  document.getElementById('bt-modal-title').innerHTML = 'Add <em>Brand Target</em>';
+  openModal('bt-modal');
+}
+
+function editBT(id) {
+  const b = (stData.brands||[]).find(x=>x.id===id);
+  if (!b) return;
+  setV('bt-name', b.name||'');
+  setV('bt-niche', b.niche||'Beauty');
+  setV('bt-status', b.status||'researching');
+  setV('bt-url', b.url||'');
+  setV('bt-email', b.email||'');
+  setV('bt-contact', b.contact||'');
+  setV('bt-platform', b.platform||'Email');
+  setV('bt-rate', b.rate||'');
+  setV('bt-priority', b.priority||'medium');
+  setV('bt-pitch', b.pitch||'');
+  setV('bt-date-pitched', b.datePitched||'');
+  setV('bt-date-followup', b.dateFollowup||'');
+  setV('bt-followup-sent', b.followupSent||'no');
+  setV('bt-followup-msg', b.followupMsg||'');
+  setV('bt-response', b.response||'');
+  setV('bt-notes', b.notes||'');
+  setV('bt-edit-id', id);
+  document.getElementById('bt-modal-title').innerHTML = `Edit <em>${esc(b.name)}</em>`;
+  openModal('bt-modal');
+}
+
+function saveBT() {
+  const name = v('bt-name').trim();
+  if (!name) { toast('Brand name required'); return; }
+  const editId = v('bt-edit-id');
+  const obj = {
+    id: editId || 'bt'+Date.now(),
+    name, niche: v('bt-niche'), status: v('bt-status'),
+    url: v('bt-url'), email: v('bt-email'), contact: v('bt-contact'),
+    platform: v('bt-platform'), rate: v('bt-rate'), priority: v('bt-priority'),
+    pitch: v('bt-pitch'), datePitched: v('bt-date-pitched'),
+    dateFollowup: v('bt-date-followup'), followupSent: v('bt-followup-sent'),
+    followupMsg: v('bt-followup-msg'), response: v('bt-response'), notes: v('bt-notes')
+  };
+  if (!stData.brands) stData.brands = [];
+  if (editId) {
+    const idx = stData.brands.findIndex(x=>x.id===editId);
+    if (idx>=0) stData.brands[idx]=obj; else stData.brands.push(obj);
+  } else {
+    stData.brands.push(obj);
+  }
+  stSave(); closeModal('bt-modal'); stRenderBrands();
+  toast(editId?'Brand updated ✓':'Brand target added ✓');
+}
+
+function stDelBr(id){if(!confirm('Delete this brand target?'))return;stData.brands=(stData.brands||[]).filter(x=>x.id!==id);stSave();stRenderBrands();toast('Brand target deleted');}
+
+// legacy shim — keep stAddBrand working if called from old code
+function stAddBrand(){ openBTModal(); }
 
 function stRenderAll() {
   stLoad();
