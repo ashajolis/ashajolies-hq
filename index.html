@@ -2003,14 +2003,14 @@ self.addEventListener('fetch',e=>{
         onkeydown="if(event.key==='Enter')document.getElementById('li-btn').click()">
     </div>
 
-    <button id="li-btn"
+    <button id="li-btn" onclick="authEmailSignIn()"
       style="width:100%;background:var(--terracotta);color:#fff;border:none;border-radius:100px;padding:11px;font-family:'Jost',sans-serif;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;margin-bottom:10px;">
       Sign In
     </button>
 
     <div style="text-align:center;font-size:11px;color:rgba(250,246,239,.3);margin-bottom:10px;">or</div>
 
-    <button id="li-google-btn"
+    <button id="li-google-btn" onclick="authGoogleSignIn()"
       style="width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);color:var(--ivory);border-radius:100px;padding:10px;font-family:'Jost',sans-serif;font-size:12px;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">
       <svg width="16" height="16" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.35-8.16 2.35-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
       Continue with Google
@@ -2042,7 +2042,7 @@ self.addEventListener('fetch',e=>{
         style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:10px 13px;font-family:'Jost',sans-serif;font-size:13px;color:var(--ivory);outline:none;"
         onkeydown="if(event.key==='Enter')document.getElementById('su-btn').click()">
     </div>
-    <button id="su-btn"
+    <button id="su-btn" onclick="authEmailSignUp()"
       style="width:100%;background:var(--terracotta);color:#fff;border:none;border-radius:100px;padding:11px;font-family:'Jost',sans-serif;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;margin-bottom:12px;">
       Create Account
     </button>
@@ -2063,7 +2063,7 @@ self.addEventListener('fetch',e=>{
         style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:10px 13px;font-family:'Jost',sans-serif;font-size:13px;color:var(--ivory);outline:none;"
         onkeydown="if(event.key==='Enter')document.getElementById('rs-btn').click()">
     </div>
-    <button id="rs-btn"
+    <button id="rs-btn" onclick="authSendReset()"
       style="width:100%;background:var(--terracotta);color:#fff;border:none;border-radius:100px;padding:11px;font-family:'Jost',sans-serif;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;margin-bottom:12px;">
       Send Reset Link
     </button>
@@ -2243,7 +2243,7 @@ function heavyForFirestore(val){
 }
 
 // ── Save (local-first, then Firebase) ──
-window._saveTimer = null;
+let _saveTimer = null;
 window.save = function() {
   const el = document.getElementById('sb-saved');
   if(el) el.textContent = 'Saving…';
@@ -2252,8 +2252,8 @@ window.save = function() {
   // Always save to localStorage immediately (full data including base64)
   lsSave(window.D);
   lsMarkDirty();
-  clearTimeout(window._saveTimer);
-  window._saveTimer = setTimeout(function() {
+  clearTimeout(_saveTimer);
+  _saveTimer = setTimeout(function() {
     const uid = auth.currentUser && auth.currentUser.uid;
     if(!uid){
       if(el) el.textContent = '💾 Saved locally';
@@ -2547,12 +2547,14 @@ window.showReset = function(){
   document.getElementById('reset-box').style.display='';
 };
 
-// ── Auth actions ──
-document.getElementById('li-btn') && document.getElementById('li-btn').addEventListener('click', function() {
+// ── Auth actions — defined as named globals so onclick attributes work
+// regardless of when _initFirebase() completes ──
+window.authEmailSignIn = function() {
   var email = document.getElementById('li-email').value.trim();
   var pass  = document.getElementById('li-pass').value;
   var err   = document.getElementById('login-err');
   var btn   = document.getElementById('li-btn');
+  if(!auth){ err.textContent='Still loading — please wait a moment and try again.'; err.style.display='block'; return; }
   err.style.display='none'; btn.textContent='Signing in…'; btn.disabled=true;
   auth.signInWithEmailAndPassword(email, pass)
     .catch(function(e){
@@ -2560,31 +2562,45 @@ document.getElementById('li-btn') && document.getElementById('li-btn').addEventL
       err.style.display='block';
     })
     .finally(function(){ btn.textContent='Sign In'; btn.disabled=false; });
-});
+};
 
-document.getElementById('li-google-btn') && document.getElementById('li-google-btn').addEventListener('click', function() {
+window.authGoogleSignIn = function() {
   var err = document.getElementById('login-err');
+  var btn = document.getElementById('li-google-btn');
+  if(!auth || !gProvider){ err.textContent='Still loading — please wait a moment and try again.'; err.style.display='block'; return; }
   err.style.display='none';
-  auth.signInWithPopup(gProvider).catch(function(e){
-    err.textContent = friendlyAuthError(e.code);
-    err.style.display='block';
-  });
-});
+  if(btn){ btn.textContent='Opening Google…'; btn.disabled=true; }
+  auth.signInWithPopup(gProvider)
+    .catch(function(e){
+      // Fallback to redirect if popup was blocked (common on mobile/PWA)
+      if(e.code === 'auth/popup-blocked' || e.code === 'auth/popup-closed-by-user'){
+        auth.signInWithRedirect(gProvider);
+        return;
+      }
+      err.textContent = friendlyAuthError(e.code);
+      err.style.display='block';
+    })
+    .finally(function(){
+      if(btn){ btn.innerHTML='<svg width="16" height="16" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.35-8.16 2.35-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg> Continue with Google'; btn.disabled=false; }
+    });
+};
 
-document.getElementById('su-btn') && document.getElementById('su-btn').addEventListener('click', function() {
+window.authEmailSignUp = function() {
   var email = document.getElementById('su-email').value.trim();
   var pass  = document.getElementById('su-pass').value;
   var err   = document.getElementById('su-err');
+  if(!auth){ err.textContent='Still loading — please wait a moment and try again.'; err.style.display='block'; return; }
   err.style.display='none';
   auth.createUserWithEmailAndPassword(email, pass).catch(function(e){
     err.textContent = friendlyAuthError(e.code);
     err.style.display='block';
   });
-});
+};
 
-document.getElementById('rs-btn') && document.getElementById('rs-btn').addEventListener('click', function() {
+window.authSendReset = function() {
   var email = document.getElementById('rs-email').value.trim();
   var msg   = document.getElementById('rs-msg');
+  if(!auth){ msg.style.background='rgba(192,57,43,.15)'; msg.style.color='#e87c6a'; msg.textContent='Still loading — please wait a moment.'; msg.style.display='block'; return; }
   auth.sendPasswordResetEmail(email)
     .then(function(){
       msg.style.background='rgba(74,107,80,.15)'; msg.style.color='#8ecf96';
@@ -2596,9 +2612,9 @@ document.getElementById('rs-btn') && document.getElementById('rs-btn').addEventL
       msg.textContent = friendlyAuthError(e.code);
       msg.style.display='block';
     });
-});
+};
 
-// Also wire keyboard Enter on password fields
+// Legacy addEventListener wiring removed — buttons now use onclick attributes above
 
 window.authSignOut = function(){
   if(_unsubMain){ _unsubMain(); _unsubMain=null; }
@@ -2613,14 +2629,11 @@ window.authSignOut = function(){
 // ── Smart merge: for ID-keyed arrays, union local+remote so nothing is lost ──
 // Arrays without IDs (niches, platforms) are simply replaced by remote.
 var MERGE_ARRAY_KEYS = ['gigs','content','ideas','followups','pitches','rates','colors','briefs'];
-function mergeRemoteIntoD(remote, localSource) {
-  // localSource defaults to window.D but callers can pass a localStorage snapshot
-  // to ensure in-flight (not-yet-uploaded) items are not lost during a forced pull.
-  var local = localSource || window.D;
+function mergeRemoteIntoD(remote) {
   Object.keys(remote).forEach(function(k) {
     if(!(k in window.D)) return;
     var rv = remote[k];
-    var lv = local[k];
+    var lv = window.D[k];
     // Array with id-keyed items → merge: remote wins on conflicts, keep local-only items
     if(MERGE_ARRAY_KEYS.indexOf(k) !== -1 && Array.isArray(rv) && Array.isArray(lv)) {
       var merged = rv.slice(); // start with all remote items
@@ -2643,23 +2656,15 @@ function mergeRemoteIntoD(remote, localSource) {
   if(btn) btn.style.opacity='0.4';
   if(el) el.textContent='Pulling…';
 
-  // Flush any pending debounced save so local data is fully written before we pull.
-  // This prevents in-flight additions (e.g. a pitch added <800ms ago) from being lost.
-  if(window._saveTimer){ clearTimeout(window._saveTimer); window._saveTimer = null; }
-  lsSave(window.D); // persist current in-memory state to localStorage immediately
-
-  // Snapshot local data BEFORE the pull so we can restore local-only images and
-  // preserve any items not yet uploaded to Firebase.
+  // Snapshot local data BEFORE the pull so we can restore local-only images afterwards
   var localSnap = lsLoad() || {};
 
   db.collection('users').doc(uid).collection('hq').doc('main').get()
     .then(function(snap){
       if(snap && snap.exists){
         var d = snap.data();
-        // MERGE remote into local — arrays are unioned by ID so local-only items survive.
-        // Pass localSnap so items saved locally but not yet uploaded (e.g. a pitch added
-        // just before clicking Sync) are preserved even if Firebase doesn't have them yet.
-        mergeRemoteIntoD(d, localSnap);
+        // MERGE remote into local — arrays are unioned by ID so local-only items survive
+        mergeRemoteIntoD(d);
       }
       var heavyFetches = HEAVY.map(function(k){
         return db.collection('users').doc(uid).collection('hq').doc(k).get()
