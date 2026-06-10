@@ -1461,7 +1461,7 @@ Total cash: $190 + product value</textarea></div>
 </div></div>
 
 <!-- ═══ FLOATING QUICK-ADD ═══ -->
-<div id="fab-menu" style="display:none;position:fixed;bottom:80px;right:22px;z-index:800;display:flex;flex-direction:column;gap:8px;align-items:flex-end;">
+<div id="fab-menu" style="position:fixed;bottom:80px;right:22px;z-index:800;flex-direction:column;gap:8px;align-items:flex-end;">
   <button class="fab-opt" onclick="closeFab();openGigModal()">🔗 New Gig</button>
   <button class="fab-opt" onclick="closeFab();openIdeaModal()">💡 New Idea</button>
   <button class="fab-opt" onclick="closeFab();openModal('content-modal');populateLinks()">📅 Schedule Content</button>
@@ -4497,7 +4497,7 @@ function mobNav(page, el){
   if(mEl) mEl.classList.add('active');
   else if(el) el.classList.add('active');
   // Find matching sidebar nav item to pass to goTo
-  const sideEl = document.querySelector('.ni[onclick*="''+page+''"]');
+  const sideEl = document.querySelector(".ni[onclick*='" + page + "']");
   goTo(page, sideEl);
 }
 function openMobMore(){
@@ -4614,9 +4614,7 @@ document.addEventListener('DOMContentLoaded',()=>{
     btn.onclick=function(){
       const opts = (D.pitches||[]);
       if(!opts.length){ toast('No pitch templates saved yet'); return; }
-      const sel = prompt('Choose a template (type the number):
-'+opts.map((p,i)=>`${i+1}. ${p.name}`).join('
-'));
+      const sel = prompt('Choose a template (type number):\n'+opts.map(function(p,i){return (i+1)+'. '+p.name;}).join('\n'))
       const idx = parseInt(sel)-1;
       if(!isNaN(idx) && opts[idx]){
         document.getElementById('bt-pitch').value = opts[idx].body;
@@ -4824,8 +4822,7 @@ function exportBrandsCSV(){
     const val = (b[c]||'').toString().replace(/"/g,'""');
     return `"${val}"`;
   }).join(','));
-  const csv = [hdr,...rows].join('
-');
+  const csv = [hdr,...rows].join('\n');
   const a=document.createElement('a');
   a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
   a.download='brand-targets-'+new Date().toISOString().slice(0,10)+'.csv';
