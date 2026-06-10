@@ -674,12 +674,28 @@ body.dark-mode .inv-preview{background:#1E1A16;color:var(--ivory);}
 #dark-toggle:hover{background:rgba(0,0,0,.04);}
 body.dark-mode #dark-toggle{border-color:rgba(255,255,255,.15);color:rgba(250,246,239,.5);}
 
+/* ─── MOODBOARD PREVIEW TOOLTIP ─── */
+.mb-preview-wrap{position:relative;display:inline-block;}
+.mb-preview-pop{position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);width:220px;background:#fff;border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.18);border:1px solid rgba(0,0,0,.08);padding:8px;z-index:9999;display:none;pointer-events:none;}
+.mb-preview-pop img{width:100%;border-radius:8px;display:block;}
+.mb-preview-pop .mb-preview-empty{text-align:center;font-size:11px;color:var(--mid-gray);padding:14px 0;}
+.mb-preview-pop .mb-preview-title{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--warm-gray);font-family:'DM Mono',monospace;margin-bottom:5px;}
+.mb-preview-wrap:hover .mb-preview-pop{display:block;}
+
 @media print{
   .sb,.topbar,.mob-nav,.mo,#fab-btn,#fab-menu,.bt-actions,.btn,.inv-actions-bar{display:none!important;}
   .ca{padding:0;overflow:visible;}
   .pg{display:block!important;}
   .inv-preview{border:none;box-shadow:none;}
 }
+/* ─── MOODBOARD PRINT ─── */
+@media print{
+  body.printing-moodboard > *{display:none!important;}
+  body.printing-moodboard #mb-print-area{display:block!important;position:fixed;inset:0;background:#fff;z-index:99999;padding:20px;}
+  body.printing-moodboard #mb-print-area canvas,
+  body.printing-moodboard #mb-print-area img{max-width:100%;display:block;}
+}
+#mb-print-area{display:none;}
 </style>
 </head>
 <body>
@@ -1496,6 +1512,7 @@ Total cash: $190 + product value</textarea></div>
     <button class="mbt" onclick="clearMBDraw()">🗑 Clear Drawing</button>
     <button class="mbt" onclick="clearMBAll()">🔄 Reset All</button>
     <button class="mbt" onclick="saveMB()">💾 Save</button>
+    <button class="mbt" onclick="printMB()">🖨 Print</button>
     <div class="mbt-sep"></div>
     <button class="mbt" onclick="closeMB()" style="background:rgba(192,57,43,.3);">✕ Close</button>
   </div>
@@ -1544,6 +1561,9 @@ Total cash: $190 + product value</textarea></div>
     </div>
   </div>
 </div>
+
+<!-- ─── MOODBOARD PRINT AREA ─── -->
+<div id="mb-print-area"></div>
 
 <!-- ═══ MODALS ═══ -->
 
@@ -2779,9 +2799,11 @@ function fmtRate(g){return g.rateType==='paid'?'$'+g.rate:(g.gift||'Gifted');}
 function handleImg(e,preId,dataId){
   const f=e.target.files[0];if(!f)return;
   const r=new FileReader();r.onload=ev=>{
-    setV(dataId,ev.target.result);
-    const pre=document.getElementById(preId);
-    if(pre)pre.innerHTML=`<img src="${ev.target.result}" style="max-height:90px;border-radius:8px;">`;
+    compressImg(ev.target.result, 800, 800, 0.75, function(compressed) {
+      setV(dataId,compressed);
+      const pre=document.getElementById(preId);
+      if(pre)pre.innerHTML=`<img src="${compressed}" style="max-height:90px;border-radius:8px;">`;
+    });
   };r.readAsDataURL(f);
 }
 let multiImgTmp={};
@@ -3191,7 +3213,10 @@ function rIdeas(filt){
       ${lip?`<div class="lb2" style="background:rgba(225,48,108,.07);border-color:rgba(225,48,108,.2);color:#c13584;margin-top:2px;">📸 W${lip.week} · ${lip.title.slice(0,22)}</div>`:''}
       ${i.notes?`<div style="font-size:11px;color:var(--warm-gray);">${i.notes.slice(0,80)}${i.notes.length>80?'…':''}</div>`:''}
       <div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:3px;">
-        <button class="btn btn-g btn-s" onclick="openMB('idea','${i.id}','${esc(i.title.slice(0,20))}')">🎨 Moodboard</button>
+        <div class="mb-preview-wrap">
+          <button class="btn btn-g btn-s" onclick="openMB('idea','${i.id}','${esc(i.title.slice(0,20))}')">🎨 Moodboard</button>
+          <div class="mb-preview-pop">${getMBPreviewHTML('idea',i.id)}</div>
+        </div>
         <button class="ib" onclick="editIdea('${i.id}')">✏️</button>
         <button class="ib" onclick="delIdea('${i.id}')">🗑</button>
       </div>
@@ -3748,6 +3773,98 @@ function importData(e){
   };r.readAsText(f);e.target.value='';
 }
 
+// ── IMAGE COMPRESSION ──
+function compressImg(dataURL, maxW, maxH, quality, cb) {
+  const img = new Image();
+  img.onload = function() {
+    let w = img.width, h = img.height;
+    const ratio = Math.min(maxW / w, maxH / h, 1);
+    w = Math.round(w * ratio); h = Math.round(h * ratio);
+    const cvs = document.createElement('canvas');
+    cvs.width = w; cvs.height = h;
+    cvs.getContext('2d').drawImage(img, 0, 0, w, h);
+    cb(cvs.toDataURL('image/jpeg', quality));
+  };
+  img.src = dataURL;
+}
+
+// ── MOODBOARD PREVIEW ──
+function getMBPreviewHTML(type, id) {
+  const key = type + '_' + id;
+  const mb = D && D.moodboards && D.moodboards[key];
+  if (!mb) return '<div class="mb-preview-empty">No moodboard yet<br><span style="font-size:10px;opacity:.6;">Click 🎨 to create one</span></div>';
+  const hasItems = mb.items && mb.items.length > 0;
+  const hasDrawing = mb.drawing && mb.drawing.length > 50;
+  if (!hasItems && !hasDrawing) return '<div class="mb-preview-empty">Empty moodboard<br><span style="font-size:10px;opacity:.6;">Click 🎨 to add content</span></div>';
+  // Show first image item or drawing thumbnail
+  const imgItem = mb.items && mb.items.find(i => i.type === 'image' && i.html);
+  if (imgItem) {
+    const match = imgItem.html.match(/src="([^"]+)"/);
+    if (match) return `<div class="mb-preview-title">Moodboard preview</div><img src="${match[1]}" style="width:100%;border-radius:8px;">`;
+  }
+  if (hasDrawing) return `<div class="mb-preview-title">Moodboard · ${mb.items ? mb.items.length : 0} element(s)</div><img src="${mb.drawing}" style="width:100%;border-radius:8px;">`;
+  return `<div class="mb-preview-empty">${mb.items ? mb.items.length : 0} element(s) added<br><span style="font-size:10px;opacity:.6;">Click 🎨 to view</span></div>`;
+}
+
+// ── MOODBOARD PRINT ──
+function printMB() {
+  saveMB();
+  const area = document.getElementById('mb-cvs');
+  const canvas = document.getElementById('mb-dc');
+  const name = document.getElementById('mb-name').textContent;
+  // Capture the moodboard visually using html2canvas-style approach
+  // We'll use a combined canvas: draw the freehand canvas + overlay elements as images
+  const wrapper = document.getElementById('mb-area');
+  const W = wrapper.offsetWidth, H = wrapper.offsetHeight;
+  const printCvs = document.createElement('canvas');
+  printCvs.width = W; printCvs.height = H;
+  const ctx = printCvs.getContext('2d');
+  // White bg
+  ctx.fillStyle = '#FAF6EF';
+  ctx.fillRect(0, 0, W, H);
+  // Draw freehand strokes
+  if (canvas.width > 0) ctx.drawImage(canvas, 0, 0);
+  // Serialize element positions — for images only (text is harder without html2canvas)
+  const items = D.moodboards[mbKey] && D.moodboards[mbKey].items || [];
+  let pending = items.filter(i => i.type === 'image');
+  let done = 0;
+  function doFinish() {
+    const imgData = printCvs.toDataURL('image/png');
+    const printArea = document.getElementById('mb-print-area');
+    printArea.innerHTML = `
+      <div style="font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:300;margin-bottom:10px;color:#1E1916;">
+        🎨 Moodboard — <em style="font-style:italic;color:#C4714F;">${name}</em>
+      </div>
+      <img src="${imgData}" style="max-width:100%;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,.1);">
+      <div style="margin-top:16px;font-size:11px;font-family:'DM Mono',monospace;color:#7A6F68;">Printed from AshaJolies HQ · ${new Date().toLocaleDateString()}</div>
+    `;
+    document.body.classList.add('printing-moodboard');
+    printArea.style.display = 'block';
+    setTimeout(() => {
+      window.print();
+      document.body.classList.remove('printing-moodboard');
+      printArea.style.display = 'none';
+    }, 300);
+  }
+  if (!pending.length) { doFinish(); return; }
+  pending.forEach(item => {
+    const el = document.getElementById('mbi-' + item.id);
+    if (!el) { done++; if (done >= pending.length) doFinish(); return; }
+    const imgEl = el.querySelector('img');
+    if (!imgEl) { done++; if (done >= pending.length) doFinish(); return; }
+    const x = el.offsetLeft, y = el.offsetTop;
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = function() {
+      ctx.drawImage(img, x, y, Math.min(imgEl.naturalWidth, 220), Math.min(imgEl.naturalHeight, 220));
+      done++;
+      if (done >= pending.length) doFinish();
+    };
+    img.onerror = function() { done++; if (done >= pending.length) doFinish(); };
+    img.src = imgEl.src;
+  });
+}
+
 // ── MOODBOARD ──
 let mbKey='',mbTool2='sel',mbColor='#1E1916',mbBrush=4,mbTS='sm';
 let mbDrawing=false,mbLX,mbLY,mbPaths2=[];
@@ -3815,7 +3932,11 @@ function clearMBDraw(){const cvs=document.getElementById('mb-dc');const ctx=cvs.
 function addMBText(){mount({id:'mb'+Date.now(),type:'text',x:100,y:100},`<div contenteditable="true" style="padding:8px 12px;background:#fff;border-radius:8px;box-shadow:0 2px 12px rgba(0,0,0,.1);min-width:100px;outline:none;font-size:${tsSizes[mbTS]};color:${mbColor};">Type here…</div>`);}
 function addMBSticky(){mount({id:'mb'+Date.now(),type:'sticky',x:120,y:120},`<div contenteditable="true" style="padding:13px;background:#fff9c4;border-radius:8px;box-shadow:0 2px 12px rgba(0,0,0,.12);min-width:130px;min-height:70px;outline:none;font-family:'Jost',sans-serif;font-size:13px;color:#333;">Sticky note…</div>`);}
 function trigMBImg(){document.getElementById('mb-img-in').click();}
-function handleMBImg(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{mount({id:'mb'+Date.now(),type:'image',x:80,y:80},`<img src="${ev.target.result}" style="max-width:220px;max-height:220px;border-radius:8px;box-shadow:0 4px 20px rgba(0,0,0,.15);display:block;" draggable="false">`);};r.readAsDataURL(f);e.target.value='';}
+function handleMBImg(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{
+  compressImg(ev.target.result, 600, 600, 0.80, function(compressed) {
+    mount({id:'mb'+Date.now(),type:'image',x:80,y:80},`<img src="${compressed}" style="max-width:220px;max-height:220px;border-radius:8px;box-shadow:0 4px 20px rgba(0,0,0,.15);display:block;" draggable="false">`);
+  });
+};r.readAsDataURL(f);e.target.value='';}
 function addMBShot(){mount({id:'mb'+Date.now(),type:'shot',x:140,y:140},`<div style="background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:10px;padding:12px 14px;min-width:190px;box-shadow:0 2px 10px rgba(0,0,0,.07);"><div style="font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--terracotta);font-weight:600;margin-bottom:5px;">🎬 Shot List</div><div contenteditable="true" style="font-size:12px;outline:none;min-height:40px;width:100%;">1. Opening shot\n2. Product close-up\n3. Reaction</div></div>`);}
 
 function mount(item,html){
