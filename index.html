@@ -616,6 +616,7 @@ body.dark-mode .inv-preview{background:#1E1A16;color:var(--ivory);}
 .mn-more-item-icon{font-size:20px;width:28px;text-align:center;}
 
 @media(max-width:768px){
+  html{overflow:auto;height:auto;}
   body{overflow:auto;}
   html,body{height:auto;min-height:100vh;}
   .sb{display:none;}
@@ -2289,10 +2290,10 @@ function _startRealtimeSync(uid) {
     if(!snap || !snap.exists) return;
     const remote = snap.data();
 
-    // Block incoming sync only within 6 seconds of a local write (our own echo)
-    // After that, always apply — this is the fix for phone↔laptop not syncing
+    // Block incoming sync only within 2 seconds of a local write (our own echo)
+    // Keeping this short ensures changes from other devices arrive quickly
     const msSinceWrite = Date.now() - _lastLocalWrite;
-    if(msSinceWrite < 6000) return;
+    if(msSinceWrite < 2000) return;
 
     // Merge remote data, restoring local-only images (base64) that were stripped before upload
     var localSnap = lsLoad() || {};
@@ -2391,15 +2392,18 @@ window.addEventListener('online', function() {
 function loadUserData(uid) {
   const el = document.getElementById('sb-saved');
   if(el) el.textContent = 'Loading…';
-  window.D = DEFAULTS();
 
   // 1. Load from localStorage immediately — app is usable at once
+  // Only reset to DEFAULTS if there is no local data (first-time use)
   var local = lsLoad();
   if(local) {
     Object.keys(local).forEach(function(k){ if(k in window.D) window.D[k] = local[k]; });
     if(el) el.textContent = navigator.onLine ? 'Syncing…' : '📴 Offline — local data';
     window._fbReady = true;
     document.dispatchEvent(new Event('fb-ready'));
+  } else {
+    // No local data at all — initialise to defaults
+    window.D = DEFAULTS();
   }
 
   if(!navigator.onLine) {
@@ -2602,9 +2606,17 @@ window.forceSyncPull = function(){
   if(!navigator.onLine){ if(typeof toast==='function') toast('You are offline'); return; }
   if(btn) btn.style.opacity='0.4';
   if(el) el.textContent='Pulling…';
+
+  // Snapshot local data BEFORE the pull so we can restore local-only images afterwards
+  var localSnap = lsLoad() || {};
+
   db.collection('users').doc(uid).collection('hq').doc('main').get()
     .then(function(snap){
-      if(snap && snap.exists){ var d=snap.data(); Object.keys(d).forEach(function(k){ if(k in window.D) window.D[k]=d[k]; }); }
+      if(snap && snap.exists){
+        var d = snap.data();
+        // MERGE remote into local — don't overwrite keys that aren't in the remote snapshot
+        Object.keys(d).forEach(function(k){ if(k in window.D) window.D[k]=d[k]; });
+      }
       var heavyFetches = HEAVY.map(function(k){
         return db.collection('users').doc(uid).collection('hq').doc(k).get()
           .then(function(s){ if(s && s.exists && s.data()[k]!==undefined) window.D[k]=s.data()[k]; });
@@ -2612,6 +2624,16 @@ window.forceSyncPull = function(){
       return Promise.all(heavyFetches);
     })
     .then(function(){
+      // Restore local-only base64 images that were stripped before upload
+      ['ideas','content','gigs'].forEach(function(k){
+        if(!window.D[k] || !localSnap[k]) return;
+        window.D[k] = window.D[k].map(function(item){
+          if(item.img !== '__local__') return item;
+          var local = (localSnap[k]||[]).find(function(x){ return x.id === item.id; });
+          if(local && local.img && local.img !== '__local__') return Object.assign({}, item, {img: local.img});
+          return item;
+        });
+      });
       lsSave(window.D); lsClearDirty();
       // Hydrate stData + invoices after forced pull
       if(window.D.studioData && typeof window.D.studioData === 'object' && Object.keys(window.D.studioData).length > 0){
@@ -3840,11 +3862,16 @@ function printMB() {
     `;
     document.body.classList.add('printing-moodboard');
     printArea.style.display = 'block';
-    setTimeout(() => {
-      window.print();
+    // Use onafterprint so the print area stays visible until the browser
+    // finishes the print/save dialog — the old 300ms timeout was too short
+    function cleanupPrint() {
       document.body.classList.remove('printing-moodboard');
       printArea.style.display = 'none';
-    }, 300);
+      window.removeEventListener('afterprint', cleanupPrint);
+    }
+    window.addEventListener('afterprint', cleanupPrint);
+    // Small delay so the DOM renders fully before the print dialog opens
+    setTimeout(() => { window.print(); }, 120);
   }
   if (!pending.length) { doFinish(); return; }
   pending.forEach(item => {
