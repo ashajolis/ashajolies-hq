@@ -2243,17 +2243,15 @@ function heavyForFirestore(val){
 }
 
 // ── Save (local-first, then Firebase) ──
-let _saveTimer = null;
+window._saveTimer = null;
 window.save = function() {
   const el = document.getElementById('sb-saved');
   if(el) el.textContent = 'Saving…';
-  // Record time of local write so the realtime listener ignores our own echo
   _lastLocalWrite = Date.now();
-  // Always save to localStorage immediately (full data including base64)
   lsSave(window.D);
   lsMarkDirty();
-  clearTimeout(_saveTimer);
-  _saveTimer = setTimeout(function() {
+  clearTimeout(window._saveTimer);
+  window._saveTimer = setTimeout(function() {
     const uid = auth.currentUser && auth.currentUser.uid;
     if(!uid){
       if(el) el.textContent = '💾 Saved locally';
@@ -2547,8 +2545,9 @@ window.showReset = function(){
   document.getElementById('reset-box').style.display='';
 };
 
-// ── Auth actions — defined as named globals so onclick attributes work
-// regardless of when _initFirebase() completes ──
+// ── Auth actions — named globals so onclick attributes work immediately,
+//    even before _initFirebase() has finished its async init ──
+
 window.authEmailSignIn = function() {
   var email = document.getElementById('li-email').value.trim();
   var pass  = document.getElementById('li-pass').value;
@@ -2557,10 +2556,7 @@ window.authEmailSignIn = function() {
   if(!auth){ err.textContent='Still loading — please wait a moment and try again.'; err.style.display='block'; return; }
   err.style.display='none'; btn.textContent='Signing in…'; btn.disabled=true;
   auth.signInWithEmailAndPassword(email, pass)
-    .catch(function(e){
-      err.textContent = friendlyAuthError(e.code);
-      err.style.display='block';
-    })
+    .catch(function(e){ err.textContent=friendlyAuthError(e.code); err.style.display='block'; })
     .finally(function(){ btn.textContent='Sign In'; btn.disabled=false; });
 };
 
@@ -2572,15 +2568,12 @@ window.authGoogleSignIn = function() {
   if(btn){ btn.textContent='Opening Google…'; btn.disabled=true; }
   auth.signInWithPopup(gProvider)
     .catch(function(e){
-      // Fallback to redirect if popup was blocked (common on mobile/PWA)
-      if(e.code === 'auth/popup-blocked' || e.code === 'auth/popup-closed-by-user'){
+      // On mobile/PWA popups are often blocked — fall back to redirect automatically
+      if(e.code==='auth/popup-blocked'||e.code==='auth/popup-closed-by-user'){
         auth.signInWithRedirect(gProvider);
         return;
       }
-      err.textContent = friendlyAuthError(e.code);
-      err.style.display='block';
-    })
-    .finally(function(){
+      err.textContent=friendlyAuthError(e.code); err.style.display='block';
       if(btn){ btn.innerHTML='<svg width="16" height="16" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.35-8.16 2.35-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg> Continue with Google'; btn.disabled=false; }
     });
 };
@@ -2591,10 +2584,8 @@ window.authEmailSignUp = function() {
   var err   = document.getElementById('su-err');
   if(!auth){ err.textContent='Still loading — please wait a moment and try again.'; err.style.display='block'; return; }
   err.style.display='none';
-  auth.createUserWithEmailAndPassword(email, pass).catch(function(e){
-    err.textContent = friendlyAuthError(e.code);
-    err.style.display='block';
-  });
+  auth.createUserWithEmailAndPassword(email, pass)
+    .catch(function(e){ err.textContent=friendlyAuthError(e.code); err.style.display='block'; });
 };
 
 window.authSendReset = function() {
@@ -2602,19 +2593,25 @@ window.authSendReset = function() {
   var msg   = document.getElementById('rs-msg');
   if(!auth){ msg.style.background='rgba(192,57,43,.15)'; msg.style.color='#e87c6a'; msg.textContent='Still loading — please wait a moment.'; msg.style.display='block'; return; }
   auth.sendPasswordResetEmail(email)
-    .then(function(){
-      msg.style.background='rgba(74,107,80,.15)'; msg.style.color='#8ecf96';
-      msg.textContent='Reset link sent! Check your inbox.';
-      msg.style.display='block';
-    })
-    .catch(function(e){
-      msg.style.background='rgba(192,57,43,.15)'; msg.style.color='#e87c6a';
-      msg.textContent = friendlyAuthError(e.code);
-      msg.style.display='block';
-    });
+    .then(function(){ msg.style.background='rgba(74,107,80,.15)'; msg.style.color='#8ecf96'; msg.textContent='Reset link sent! Check your inbox.'; msg.style.display='block'; })
+    .catch(function(e){ msg.style.background='rgba(192,57,43,.15)'; msg.style.color='#e87c6a'; msg.textContent=friendlyAuthError(e.code); msg.style.display='block'; });
 };
 
-// Legacy addEventListener wiring removed — buttons now use onclick attributes above
+// Handle redirect result on page load (needed when Google sign-in falls back to redirect on mobile)
+// Must run after auth is initialised, so we defer until _initFirebase completes
+(function pollForRedirectResult(){
+  if(typeof auth !== 'undefined' && auth && typeof auth.getRedirectResult === 'function'){
+    auth.getRedirectResult().then(function(result){
+      // result.user is populated if we just came back from a Google redirect
+      // onAuthStateChanged will handle the actual boot; this just catches errors
+    }).catch(function(e){
+      var err = document.getElementById('login-err');
+      if(err){ err.textContent=friendlyAuthError(e.code); err.style.display='block'; }
+    });
+  } else {
+    setTimeout(pollForRedirectResult, 200);
+  }
+})();
 
 window.authSignOut = function(){
   if(_unsubMain){ _unsubMain(); _unsubMain=null; }
@@ -2629,11 +2626,12 @@ window.authSignOut = function(){
 // ── Smart merge: for ID-keyed arrays, union local+remote so nothing is lost ──
 // Arrays without IDs (niches, platforms) are simply replaced by remote.
 var MERGE_ARRAY_KEYS = ['gigs','content','ideas','followups','pitches','rates','colors','briefs'];
-function mergeRemoteIntoD(remote) {
+function mergeRemoteIntoD(remote, localSource) {
+  var local = localSource || window.D;
   Object.keys(remote).forEach(function(k) {
     if(!(k in window.D)) return;
     var rv = remote[k];
-    var lv = window.D[k];
+    var lv = local[k];
     // Array with id-keyed items → merge: remote wins on conflicts, keep local-only items
     if(MERGE_ARRAY_KEYS.indexOf(k) !== -1 && Array.isArray(rv) && Array.isArray(lv)) {
       var merged = rv.slice(); // start with all remote items
@@ -2656,15 +2654,20 @@ function mergeRemoteIntoD(remote) {
   if(btn) btn.style.opacity='0.4';
   if(el) el.textContent='Pulling…';
 
-  // Snapshot local data BEFORE the pull so we can restore local-only images afterwards
+  // Flush any pending debounced save so local data is committed before we pull
+  if(window._saveTimer){ clearTimeout(window._saveTimer); window._saveTimer=null; }
+  lsSave(window.D);
+
+  // Snapshot local data BEFORE the pull so local-only items (e.g. pitches added just before
+  // clicking Sync that haven't uploaded yet) survive the merge
   var localSnap = lsLoad() || {};
 
   db.collection('users').doc(uid).collection('hq').doc('main').get()
     .then(function(snap){
       if(snap && snap.exists){
         var d = snap.data();
-        // MERGE remote into local — arrays are unioned by ID so local-only items survive
-        mergeRemoteIntoD(d);
+        // MERGE remote into local — pass localSnap so items not yet in Firebase are kept
+        mergeRemoteIntoD(d, localSnap);
       }
       var heavyFetches = HEAVY.map(function(k){
         return db.collection('users').doc(uid).collection('hq').doc(k).get()
