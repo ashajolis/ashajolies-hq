@@ -2243,7 +2243,7 @@ function heavyForFirestore(val){
 }
 
 // ── Save (local-first, then Firebase) ──
-let _saveTimer = null;
+window._saveTimer = null;
 window.save = function() {
   const el = document.getElementById('sb-saved');
   if(el) el.textContent = 'Saving…';
@@ -2252,8 +2252,8 @@ window.save = function() {
   // Always save to localStorage immediately (full data including base64)
   lsSave(window.D);
   lsMarkDirty();
-  clearTimeout(_saveTimer);
-  _saveTimer = setTimeout(function() {
+  clearTimeout(window._saveTimer);
+  window._saveTimer = setTimeout(function() {
     const uid = auth.currentUser && auth.currentUser.uid;
     if(!uid){
       if(el) el.textContent = '💾 Saved locally';
@@ -2613,11 +2613,14 @@ window.authSignOut = function(){
 // ── Smart merge: for ID-keyed arrays, union local+remote so nothing is lost ──
 // Arrays without IDs (niches, platforms) are simply replaced by remote.
 var MERGE_ARRAY_KEYS = ['gigs','content','ideas','followups','pitches','rates','colors','briefs'];
-function mergeRemoteIntoD(remote) {
+function mergeRemoteIntoD(remote, localSource) {
+  // localSource defaults to window.D but callers can pass a localStorage snapshot
+  // to ensure in-flight (not-yet-uploaded) items are not lost during a forced pull.
+  var local = localSource || window.D;
   Object.keys(remote).forEach(function(k) {
     if(!(k in window.D)) return;
     var rv = remote[k];
-    var lv = window.D[k];
+    var lv = local[k];
     // Array with id-keyed items → merge: remote wins on conflicts, keep local-only items
     if(MERGE_ARRAY_KEYS.indexOf(k) !== -1 && Array.isArray(rv) && Array.isArray(lv)) {
       var merged = rv.slice(); // start with all remote items
@@ -2640,15 +2643,23 @@ function mergeRemoteIntoD(remote) {
   if(btn) btn.style.opacity='0.4';
   if(el) el.textContent='Pulling…';
 
-  // Snapshot local data BEFORE the pull so we can restore local-only images afterwards
+  // Flush any pending debounced save so local data is fully written before we pull.
+  // This prevents in-flight additions (e.g. a pitch added <800ms ago) from being lost.
+  if(window._saveTimer){ clearTimeout(window._saveTimer); window._saveTimer = null; }
+  lsSave(window.D); // persist current in-memory state to localStorage immediately
+
+  // Snapshot local data BEFORE the pull so we can restore local-only images and
+  // preserve any items not yet uploaded to Firebase.
   var localSnap = lsLoad() || {};
 
   db.collection('users').doc(uid).collection('hq').doc('main').get()
     .then(function(snap){
       if(snap && snap.exists){
         var d = snap.data();
-        // MERGE remote into local — arrays are unioned by ID so local-only items survive
-        mergeRemoteIntoD(d);
+        // MERGE remote into local — arrays are unioned by ID so local-only items survive.
+        // Pass localSnap so items saved locally but not yet uploaded (e.g. a pitch added
+        // just before clicking Sync) are preserved even if Firebase doesn't have them yet.
+        mergeRemoteIntoD(d, localSnap);
       }
       var heavyFetches = HEAVY.map(function(k){
         return db.collection('users').doc(uid).collection('hq').doc(k).get()
