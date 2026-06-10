@@ -4444,6 +4444,13 @@ function editBT(id) {
 }
 
 function saveBT() {
+  // Auto-set follow-up date to 3 days after pitch date if not already set
+  const _pitched = v('bt-date-pitched');
+  const _followup = v('bt-date-followup');
+  if(_pitched && !_followup){
+    const _d = new Date(_pitched); _d.setDate(_d.getDate()+3);
+    setV('bt-date-followup', _d.toISOString().slice(0,10));
+  }
   const name = v('bt-name').trim();
   if (!name) { toast('Brand name required'); return; }
   const editId = v('bt-edit-id');
@@ -4799,18 +4806,7 @@ function cpInvText(){
 
 // ── AUTO FOLLOW-UP SCHEDULE when pitch date is set ──
 // Patch saveBT to auto-fill follow-up date if not set
-const _origSaveBT = saveBT;
-function saveBT(){
-  // Auto-set follow-up date to 3 days after pitch date if not already set
-  const pitched = v('bt-date-pitched');
-  const followup = v('bt-date-followup');
-  if(pitched && !followup){
-    const d=new Date(pitched); d.setDate(d.getDate()+3);
-    setV('bt-date-followup', d.toISOString().slice(0,10));
-    toast('Follow-up auto-set to 3 days after pitch ✓');
-  }
-  _origSaveBT();
-}
+
 
 // ── CSV EXPORT of Brand Targets ──
 function exportBrandsCSV(){
