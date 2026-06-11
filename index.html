@@ -2548,11 +2548,15 @@ window.showReset = function(){
 };
 
 // ── Auth actions ──
+// Detect mobile/WebView so we use redirect instead of popup (popups are blocked on mobile browsers)
+var _isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent) || window.matchMedia('(max-width:768px)').matches;
+
 document.getElementById('li-btn') && document.getElementById('li-btn').addEventListener('click', function() {
   var email = document.getElementById('li-email').value.trim();
   var pass  = document.getElementById('li-pass').value;
   var err   = document.getElementById('login-err');
   var btn   = document.getElementById('li-btn');
+  if(!email || !pass){ err.textContent='Please enter your email and password.'; err.style.display='block'; return; }
   err.style.display='none'; btn.textContent='Signing in…'; btn.disabled=true;
   auth.signInWithEmailAndPassword(email, pass)
     .catch(function(e){
@@ -2565,26 +2569,52 @@ document.getElementById('li-btn') && document.getElementById('li-btn').addEventL
 document.getElementById('li-google-btn') && document.getElementById('li-google-btn').addEventListener('click', function() {
   var err = document.getElementById('login-err');
   err.style.display='none';
-  auth.signInWithPopup(gProvider).catch(function(e){
-    err.textContent = friendlyAuthError(e.code);
-    err.style.display='block';
-  });
+  if(_isMobile){
+    // Redirect flow: doesn't open a popup — works on all mobile browsers
+    var gBtn = document.getElementById('li-google-btn');
+    if(gBtn){ gBtn.textContent='Redirecting…'; gBtn.disabled=true; }
+    auth.signInWithRedirect(gProvider).catch(function(e){
+      if(gBtn){ gBtn.innerHTML='<svg width="16" height="16" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.35-8.16 2.35-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg> Continue with Google'; gBtn.disabled=false; }
+      err.textContent = friendlyAuthError(e.code);
+      err.style.display='block';
+    });
+  } else {
+    auth.signInWithPopup(gProvider).catch(function(e){
+      err.textContent = friendlyAuthError(e.code);
+      err.style.display='block';
+    });
+  }
+});
+
+// Handle the redirect result on page load (for mobile Google sign-in)
+auth.getRedirectResult().then(function(result){
+  // result.user will be set if returning from a Google redirect — onAuthStateChanged handles the rest
+}).catch(function(e){
+  if(e.code && e.code !== 'auth/no-auth-event'){
+    var err = document.getElementById('login-err');
+    if(err){ err.textContent = friendlyAuthError(e.code); err.style.display='block'; }
+  }
 });
 
 document.getElementById('su-btn') && document.getElementById('su-btn').addEventListener('click', function() {
   var email = document.getElementById('su-email').value.trim();
   var pass  = document.getElementById('su-pass').value;
   var err   = document.getElementById('su-err');
-  err.style.display='none';
-  auth.createUserWithEmailAndPassword(email, pass).catch(function(e){
-    err.textContent = friendlyAuthError(e.code);
-    err.style.display='block';
-  });
+  var btn   = document.getElementById('su-btn');
+  if(!email || !pass){ err.textContent='Please enter your email and a password.'; err.style.display='block'; return; }
+  err.style.display='none'; btn.textContent='Creating…'; btn.disabled=true;
+  auth.createUserWithEmailAndPassword(email, pass)
+    .catch(function(e){
+      err.textContent = friendlyAuthError(e.code);
+      err.style.display='block';
+    })
+    .finally(function(){ btn.textContent='Create Account'; btn.disabled=false; });
 });
 
 document.getElementById('rs-btn') && document.getElementById('rs-btn').addEventListener('click', function() {
   var email = document.getElementById('rs-email').value.trim();
   var msg   = document.getElementById('rs-msg');
+  if(!email){ msg.style.background='rgba(192,57,43,.15)'; msg.style.color='#e87c6a'; msg.textContent='Please enter your email.'; msg.style.display='block'; return; }
   auth.sendPasswordResetEmail(email)
     .then(function(){
       msg.style.background='rgba(74,107,80,.15)'; msg.style.color='#8ecf96';
@@ -2690,16 +2720,24 @@ function mergeRemoteIntoD(remote) {
 function friendlyAuthError(code){
   var map = {
     'auth/invalid-email':'Invalid email address.',
-    'auth/user-not-found':'No account with that email.',
-    'auth/wrong-password':'Incorrect password.',
-    'auth/invalid-credential':'Incorrect email or password.',
+    'auth/user-not-found':'No account with that email.',        // legacy, kept for fallback
+    'auth/wrong-password':'Incorrect password.',                // legacy, kept for fallback
+    'auth/invalid-credential':'Incorrect email or password.',   // current Firebase v9+ code
+    'auth/user-disabled':'This account has been disabled.',
     'auth/email-already-in-use':'An account with this email already exists.',
     'auth/weak-password':'Password must be at least 6 characters.',
-    'auth/too-many-requests':'Too many attempts. Try again later.',
+    'auth/too-many-requests':'Too many attempts. Please wait a few minutes and try again.',
     'auth/popup-closed-by-user':'Google sign-in was cancelled.',
-    'auth/network-request-failed':'Network error. Check your connection.',
+    'auth/popup-blocked':'Sign-in popup was blocked. Try again or use email/password.',
+    'auth/cancelled-popup-request':'Sign-in was cancelled.',
+    'auth/network-request-failed':'Network error. Check your connection and try again.',
+    'auth/requires-recent-login':'Please sign out and sign in again to continue.',
+    'auth/account-exists-with-different-credential':'An account already exists with this email. Try signing in with email/password.',
+    'auth/operation-not-allowed':'This sign-in method is not enabled. Contact support.',
+    'auth/missing-email':'Please enter your email address.',
+    'auth/missing-password':'Please enter your password.',
   };
-  return map[code] || 'Something went wrong. Please try again.';
+  return map[code] || ('Something went wrong ('+code+'). Please try again.');
 }
 
 } // end _initFirebase
