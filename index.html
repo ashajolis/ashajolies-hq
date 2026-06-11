@@ -277,8 +277,8 @@ body{background:var(--ivory);font-family:'Jost',sans-serif;font-weight:300;color
 .mbt-sep{width:1px;height:20px;background:rgba(255,255,255,.12);flex-shrink:0;}
 .mb-body{display:flex;flex:1;overflow:hidden;}
 .mb-area{flex:1;position:relative;overflow:hidden;}
-.mb-cvs{width:100%;height:100%;position:relative;overflow:visible;}
-.mb-dc{position:absolute;inset:0;touch-action:none;}
+.mb-cvs{width:100%;height:100%;position:absolute;inset:0;overflow:visible;}
+.mb-dc{position:absolute;inset:0;touch-action:none;z-index:1;}
 .mb-side{width:200px;background:#fff;border-left:1px solid rgba(0,0,0,.07);display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0;}
 .mb-sec{padding:11px 13px;border-bottom:1px solid rgba(0,0,0,.06);}
 .mb-slbl{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--warm-gray);margin-bottom:7px;font-weight:500;}
@@ -3262,7 +3262,7 @@ function rIdeas(filt){
         <span class="id-tag t-${i.niche}">${i.niche}</span>
         <select class="fs" style="padding:2px 6px;font-size:9px;width:auto;" onchange="updIdeaStatus('${i.id}',this.value)">${['idea','scripting','filming','editing','done','published'].map(s=>`<option value="${s}"${i.status===s?' selected':''}>${s}</option>`).join('')}</select>
       </div>
-      ${(i.imgs && i.imgs.length>1)?`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(70px,1fr));gap:4px;margin-top:2px;">${i.imgs.slice(0,4).map((src,idx)=>`<img src="${src}" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:6px;cursor:pointer;" onclick="lightbox('${src}')">`).join('')}${i.imgs.length>4?`<div style="aspect-ratio:1;border-radius:6px;background:var(--warm-white);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--warm-gray);">+${i.imgs.length-4}</div>`:''}</div>`:(i.img?`<img src="${i.img}" class="id-img" onclick="lightbox('${i.img}')">`:'')}      <div style="font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:400;line-height:1.3;">${i.title}</div>
+      ${(i.imgs && i.imgs.length>0)?`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(70px,1fr));gap:4px;margin-top:2px;">${i.imgs.slice(0,4).map((src,idx)=>`<img src="${src}" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:6px;cursor:pointer;" onclick="lightbox('${src}')">`).join('')}${i.imgs.length>4?`<div style="aspect-ratio:1;border-radius:6px;background:var(--warm-white);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--warm-gray);">+${i.imgs.length-4}</div>`:''}</div>`:(i.img?`<img src="${i.img}" class="id-img" onclick="lightbox('${i.img}')">`:'')}      <div style="font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:400;line-height:1.3;">${i.title}</div>
       ${typeHtml?`<div style="display:flex;flex-wrap:wrap;gap:3px;">${typeHtml}</div>`:''}
       ${i.hook?`<div style="font-size:11px;color:var(--warm-gray);font-style:italic;">"${i.hook}"</div>`:''}
       ${i.date?`<div style="font-size:10px;font-family:'DM Mono',monospace;color:var(--terracotta);margin-top:1px;">📅 ${i.date}</div>`:''}${i.audio?`<div class="au-chip">🎵 ${i.audio.slice(0,35)}</div>`:''}
@@ -3862,10 +3862,10 @@ function getMBPreviewHTML(type, id) {
   const hasDrawing = mb.drawing && mb.drawing.length > 50;
   if (!hasItems && !hasDrawing) return '<div class="mb-preview-empty">Empty moodboard<br><span style="font-size:10px;opacity:.6;">Click 🎨 to add content</span></div>';
   // Show first image item or drawing thumbnail
-  const imgItem = mb.items && mb.items.find(i => i.type === 'image' && i.html);
+  const imgItem = mb.items && mb.items.find(i => i.type === 'image' && (i.src || i.html));
   if (imgItem) {
-    const match = imgItem.html.match(/src="([^"]+)"/);
-    if (match) return `<div class="mb-preview-title">Moodboard preview</div><img src="${match[1]}" style="width:100%;border-radius:8px;">`;
+    const _src = imgItem.src || (imgItem.html && (imgItem.html.match(/src="([^"]+)"/)||[])[1]) || '';
+    if (_src) return `<div class="mb-preview-title">Moodboard preview</div><img src="${_src}" style="width:100%;border-radius:8px;">`;
   }
   if (hasDrawing) return `<div class="mb-preview-title">Moodboard · ${mb.items ? mb.items.length : 0} element(s)</div><img src="${mb.drawing}" style="width:100%;border-radius:8px;">`;
   return `<div class="mb-preview-empty">${mb.items ? mb.items.length : 0} element(s) added<br><span style="font-size:10px;opacity:.6;">Click 🎨 to view</span></div>`;
@@ -3988,10 +3988,14 @@ function setMBT(t){
   ['sel','draw','erase'].forEach(x=>{const b=document.getElementById('mbt-'+x);if(b)b.classList.remove('on');});
   document.getElementById('mbt-'+t)?.classList.add('on');
   const cvs=document.getElementById('mb-dc');
+  const itemLayer=document.getElementById('mb-cvs');
   if(!cvs)return;
-  cvs.style.pointerEvents=(t==='draw'||t==='erase')?'all':'none';
-  cvs.style.zIndex=(t==='draw'||t==='erase')?20:1;
+  const drawing=(t==='draw'||t==='erase');
+  cvs.style.pointerEvents=drawing?'all':'none';
+  cvs.style.zIndex=drawing?20:1;
+  if(itemLayer)itemLayer.style.zIndex=drawing?1:2;
   cvs.style.cursor=t==='draw'?'crosshair':t==='erase'?'cell':'default';
+  if(itemLayer)itemLayer.style.pointerEvents=drawing?'none':'all';
 }
 function mbPD(e){
   if(mbTool2!=='draw'&&mbTool2!=='erase')return;
@@ -4020,6 +4024,27 @@ function setMBC(hex,el){mbColor=hex;document.querySelectorAll('#mb-swatches .sw'
 function setMBS(sz,el){mbBrush=sz;document.querySelectorAll('.bs').forEach(b=>b.classList.remove('on'));if(el)el.classList.add('on');}
 function setTS(sz,el){mbTS=sz;['sm','md','lg','xl'].forEach(s=>{const b=document.getElementById('ts-'+s);if(b)b.classList.remove('on');});if(el)el.classList.add('on');}
 function clearMBDraw(){const cvs=document.getElementById('mb-dc');const ctx=cvs.getContext('2d');ctx.clearRect(0,0,cvs.width,cvs.height);if(D.moodboards[mbKey])D.moodboards[mbKey].drawing='';save();toast('Drawing cleared');}
+function saveMB(){
+  // Persist text/sticky/shot edited content back into items before saving
+  if(!D.moodboards[mbKey])return;
+  (D.moodboards[mbKey].items||[]).forEach(item=>{
+    const el=document.getElementById('mbi-'+item.id);
+    if(!el)return;
+    const ce=el.querySelector('[contenteditable]');
+    if(ce)item.savedText=ce.innerHTML;
+    item.x=el.offsetLeft;item.y=el.offsetTop;
+    item.w=el.offsetWidth;item.h=el.offsetHeight;
+  });
+  save();toast('Moodboard saved ✓');
+}
+function clearMBAll(){
+  if(!confirm('Reset all elements and drawing?'))return;
+  if(D.moodboards[mbKey]){D.moodboards[mbKey].items=[];D.moodboards[mbKey].drawing='';}
+  document.getElementById('mb-cvs').innerHTML='';
+  const cvs=document.getElementById('mb-dc');
+  const ctx=cvs.getContext('2d');ctx.clearRect(0,0,cvs.width,cvs.height);
+  mbSelId=null;updateLayers();save();toast('Moodboard reset ✓');
+}
 
 function addMBText(){mount({id:'mb'+Date.now(),type:'text',x:100,y:100,w:180,h:null},null);}
 function addMBSticky(){mount({id:'mb'+Date.now(),type:'sticky',x:120,y:120,w:160,h:90},null);}
