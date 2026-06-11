@@ -2885,6 +2885,7 @@ function removeMultiImg(ns,idx,preId,dataId){
   renderMultiImgPre(preId,dataId,multiImgTmp[ns]||[]);
 }
 function lightbox(src){const d=document.createElement('div');d.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;display:flex;align-items:center;justify-content:center;cursor:pointer;';d.innerHTML=`<img src="${src}" style="max-width:90vw;max-height:90vh;border-radius:12px;">`;d.onclick=()=>d.remove();document.body.appendChild(d);}
+function lbIdea(ideaId,idx){const idea=D.ideas.find(x=>x.id===ideaId);if(!idea)return;const imgs=idea.imgs||(idea.img?[idea.img]:[]);const src=imgs[idx];if(src)lightbox(src);}
 
 // ── DASHBOARD ──
 function rDash(){
@@ -3262,7 +3263,7 @@ function rIdeas(filt){
         <span class="id-tag t-${i.niche}">${i.niche}</span>
         <select class="fs" style="padding:2px 6px;font-size:9px;width:auto;" onchange="updIdeaStatus('${i.id}',this.value)">${['idea','scripting','filming','editing','done','published'].map(s=>`<option value="${s}"${i.status===s?' selected':''}>${s}</option>`).join('')}</select>
       </div>
-      ${(i.imgs && i.imgs.length>0)?`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(70px,1fr));gap:4px;margin-top:2px;">${i.imgs.slice(0,4).map((src,idx)=>`<img src="${src}" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:6px;cursor:pointer;" onclick="lightbox('${src}')">`).join('')}${i.imgs.length>4?`<div style="aspect-ratio:1;border-radius:6px;background:var(--warm-white);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--warm-gray);">+${i.imgs.length-4}</div>`:''}</div>`:(i.img?`<img src="${i.img}" class="id-img" onclick="lightbox('${i.img}')">`:'')}      <div style="font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:400;line-height:1.3;">${i.title}</div>
+      ${(i.imgs && i.imgs.length>0)?`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(70px,1fr));gap:4px;margin-top:2px;">${i.imgs.slice(0,4).map((src,idx)=>`<img src="${src}" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:6px;cursor:pointer;" onclick="lbIdea('${i.id}',${idx})">`).join('')}${i.imgs.length>4?`<div style="aspect-ratio:1;border-radius:6px;background:var(--warm-white);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--warm-gray);">+${i.imgs.length-4}</div>`:''}</div>`:(i.img?`<img src="${i.img}" class="id-img" onclick="lbIdea('${i.id}',0)">`:'')}      <div style="font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:400;line-height:1.3;">${i.title}</div>
       ${typeHtml?`<div style="display:flex;flex-wrap:wrap;gap:3px;">${typeHtml}</div>`:''}
       ${i.hook?`<div style="font-size:11px;color:var(--warm-gray);font-style:italic;">"${i.hook}"</div>`:''}
       ${i.date?`<div style="font-size:10px;font-family:'DM Mono',monospace;color:var(--terracotta);margin-top:1px;">📅 ${i.date}</div>`:''}${i.audio?`<div class="au-chip">🎵 ${i.audio.slice(0,35)}</div>`:''}
@@ -3980,7 +3981,11 @@ function initMBCanvas2(){
   cvs.width=area.offsetWidth;cvs.height=area.offsetHeight;
   const mb=D.moodboards[mbKey];
   if(mb&&mb.drawing){const img=new Image();img.onload=()=>cvs.getContext('2d').drawImage(img,0,0);img.src=mb.drawing;}
-  cvs.onpointerdown=mbPD;cvs.onpointermove=mbPM;cvs.onpointerup=mbPU;cvs.onpointerleave=mbPU;
+  // Wire drawing to the AREA element (always receives events), not the canvas
+  // Remove old listeners before adding new ones (safe re-init)
+  area.onpointerdown=mbPD;area.onpointermove=mbPM;area.onpointerup=mbPU;area.onpointerleave=mbPU;
+  // Canvas itself never needs to receive pointer events — area handles it all
+  cvs.style.pointerEvents='none';
   setMBT('sel');
 }
 function setMBT(t){
@@ -3991,16 +3996,26 @@ function setMBT(t){
   const itemLayer=document.getElementById('mb-cvs');
   if(!cvs)return;
   const drawing=(t==='draw'||t==='erase');
-  cvs.style.pointerEvents=drawing?'all':'none';
-  cvs.style.zIndex=drawing?20:1;
-  if(itemLayer)itemLayer.style.zIndex=drawing?1:2;
-  cvs.style.cursor=t==='draw'?'crosshair':t==='erase'?'cell':'default';
-  if(itemLayer)itemLayer.style.pointerEvents=drawing?'none':'all';
+  // Canvas is always pointer-events:none — area element handles all drawing events
+  cvs.style.pointerEvents='none';
+  // Cursor on the area so user sees crosshair/cell feedback
+  const area2=document.getElementById('mb-area');
+  if(area2)area2.style.cursor=t==='draw'?'crosshair':t==='erase'?'cell':'default';
+  // z-index: canvas stays below items always (drawing goes through area)
+  cvs.style.zIndex=1;
+  if(itemLayer){
+    itemLayer.style.zIndex=2;
+    // Toggle item interactivity: block item clicks while drawing
+    itemLayer.querySelectorAll('.mb-el').forEach(el=>{
+      el.style.pointerEvents=drawing?'none':'auto';
+    });
+  }
 }
 function mbPD(e){
   if(mbTool2!=='draw'&&mbTool2!=='erase')return;
-  mbDrawing=true;e.preventDefault();
-  const r=e.target.getBoundingClientRect();mbLX=e.clientX-r.left;mbLY=e.clientY-r.top;
+  mbDrawing=true;e.preventDefault();e.stopPropagation();
+  const cvs=document.getElementById('mb-dc');
+  const r=cvs.getBoundingClientRect();mbLX=e.clientX-r.left;mbLY=e.clientY-r.top;
 }
 function mbPM(e){
   if(!mbDrawing)return;e.preventDefault();
@@ -4093,6 +4108,8 @@ function renderMBItem(item){
   const div=document.createElement('div');
   div.className='mb-el';
   div.id='mbi-'+item.id;
+  // Respect current tool mode — if drawing, new elements shouldn't intercept pointer events
+  div.style.pointerEvents=(mbTool2==='draw'||mbTool2==='erase')?'none':'auto';
   div.style.left=(item.x||0)+'px';
   div.style.top=(item.y||0)+'px';
   div.style.width=(item.w||180)+'px';
