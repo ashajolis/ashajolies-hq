@@ -804,7 +804,7 @@ body.dark-mode #dark-toggle{border-color:rgba(255,255,255,.15);color:rgba(250,24
   <div class="sg">
     <div class="sc"><div class="sc-l">Active Gigs</div><div class="sc-v c-t" id="s-active">0</div><div class="sc-s">in progress</div></div>
     <div class="sc"><div class="sc-l">Pending</div><div class="sc-v c-g" id="s-pending">0</div><div class="sc-s">awaiting reply</div></div>
-    <div class="sc"><div class="sc-l">Total Earned</div><div class="sc-v c-f" id="s-earned">$0</div><div class="sc-s">paid only</div></div>
+    <div class="sc"><div class="sc-l">Total Earned</div><div class="sc-v c-f" id="s-earned">$0</div><div class="sc-s">paid &amp; delivered</div></div>
     <div class="sc"><div class="sc-l">Delivered</div><div class="sc-v c-k" id="s-delivered">0</div><div class="sc-s">completed</div></div>
     <div class="sc"><div class="sc-l">Ideas</div><div class="sc-v" id="s-ideas" style="color:var(--lavender)">0</div><div class="sc-s">in library</div></div>
     <div class="sc"><div class="sc-l">Pitches This Week</div><div class="sc-v" id="s-pitches-week" style="color:var(--sky-deep)">0</div><div class="sc-s">/ 10 goal</div></div>
@@ -1033,7 +1033,7 @@ body.dark-mode #dark-toggle{border-color:rgba(255,255,255,.15);color:rgba(250,24
 <div class="pg" id="pg-pitches">
   <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:14px;gap:10px;">
     <div><div style="font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:var(--terracotta);font-weight:500;margin-bottom:3px;">Ready to Send</div><div style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:300;">Pitch <em style="font-style:italic;color:var(--terracotta);">Templates</em></div></div>
-    <button class="btn btn-p btn-s" onclick="openModal('pitch-modal')">+ Template</button>
+    <button class="btn btn-p btn-s" onclick="openModal('pitch-modal');setV('p-id','');['p-name','p-subj','p-body'].forEach(i=>setV(i,''));(document.getElementById('pitch-modal-title')||{}).innerHTML='Pitch <em>Template</em>'">+ Template</button>
   </div>
   <input class="fi" style="margin-bottom:12px;" placeholder="Search pitches…" oninput="renderPitches(this.value)">
   <div id="pitch-list" style="display:flex;flex-direction:column;gap:10px;"></div>
@@ -1570,7 +1570,7 @@ Total cash: $190 + product value</textarea></div>
 <!-- GIG -->
 <div class="mo" id="gig-modal">
 <div class="md">
-  <div class="mh"><div class="mt">New <em>Gig</em></div><button class="mc" onclick="closeModal('gig-modal')">×</button></div>
+  <div class="mh"><div class="mt" id="gig-modal-title">New <em>Gig</em></div><button class="mc" onclick="closeModal('gig-modal')">×</button></div>
   <div class="mb2">
     <input type="hidden" id="g-id">
     <div class="fr"><div class="fg"><label class="fl">Brand *</label><input class="fi" id="g-brand" placeholder="e.g. Neutrogena"></div><div class="fg"><label class="fl">Niche</label><select class="fs" id="g-niche"><option>Beauty & Skincare</option><option>Hair Care</option><option>Lifestyle & Home</option><option>Tech & Apps</option><option>Fashion</option><option>Food</option><option>Other</option></select></div></div>
@@ -1649,12 +1649,12 @@ Total cash: $190 + product value</textarea></div>
 <!-- IDEA -->
 <div class="mo" id="idea-modal">
 <div class="md">
-  <div class="mh"><div class="mt">New <em>Idea</em></div><button class="mc" onclick="closeModal('idea-modal')">×</button></div>
+  <div class="mh"><div class="mt" id="idea-modal-title">New <em>Idea</em></div><button class="mc" onclick="closeModal('idea-modal')">×</button></div>
   <div class="mb2">
     <input type="hidden" id="i-id">
     <div class="fr f1"><div class="fg"><label class="fl">Title *</label><input class="fi" id="i-title" placeholder="Video title or concept"></div></div>
     <div class="fr f1"><div class="fg"><label class="fl">Content Types</label><div class="tp-wrap"><div class="tp" id="i-types-tp" onclick="focusTP('i-types-inp')"><div id="i-types-tags"></div><input class="tp-input" id="i-types-inp" placeholder="Search or type…" oninput="filterDD('i')" onfocus="showDD('i')" onblur="setTimeout(()=>hideDD('i'),200)" onkeydown="tpKey(event,'i')"></div><div class="tp-dd" id="i-dd"></div></div></div></div>
-    <div class="fr"><div class="fg"><label class="fl">Niche</label><select class="fs" id="i-niche"><option>Beauty</option><option>Hair</option><option>Lifestyle</option><option>Tech</option><option>Fashion</option><option>Food</option></select></div><div class="fg"><label class="fl">Platform</label><select class="fs" id="i-plat"><option>TikTok</option><option>Instagram</option><option>YouTube</option><option>Multiple</option></select></div></div>
+    <div class="fr"><div class="fg"><label class="fl">Niche</label><select class="fs" id="i-niche"><option>Beauty</option><option>Hair</option><option>Lifestyle</option><option>Tech</option><option>Fashion</option><option>Food</option></select></div><div class="fg"><label class="fl">Platform</label><select class="fs" id="i-plat"><option>TikTok</option><option>Instagram</option><option>Instagram Reels</option><option>YouTube</option><option>YouTube Shorts</option><option>Threads</option><option>Pinterest</option><option>Multiple</option></select></div></div>
     <div class="fr"><div class="fg"><label class="fl">Date (optional — adds to calendar)</label><input class="fi" id="i-date" type="date"></div><div class="fg"><label class="fl">Status</label><select class="fs" id="i-status"><option value="idea">Idea 💡</option><option value="scripting">Scripting ✍️</option><option value="filming">Filming 🎬</option><option value="editing">Editing ✂️</option><option value="done">Done ✓</option><option value="published">Published 🚀</option></select></div></div>
     <div class="fr"><div class="fg"><label class="fl">Linked Gig</label><select class="fs" id="i-lgig"><option value="">— none —</option></select></div><div class="fg"></div></div>
     <div class="fr f1"><div class="fg"><label class="fl">📸 Linked IG Post</label><select class="fs" id="i-ligpost"><option value="">— none —</option></select></div></div>
@@ -1753,8 +1753,9 @@ Total cash: $190 + product value</textarea></div>
 
 <!-- PITCH -->
 <div class="mo" id="pitch-modal"><div class="md">
-  <div class="mh"><div class="mt">Pitch <em>Template</em></div><button class="mc" onclick="closeModal('pitch-modal')">×</button></div>
+  <div class="mh"><div class="mt" id="pitch-modal-title">Pitch <em>Template</em></div><button class="mc" onclick="closeModal('pitch-modal')">×</button></div>
   <div class="mb2">
+    <input type="hidden" id="p-id">
     <div class="fr"><div class="fg"><label class="fl">Name *</label><input class="fi" id="p-name" placeholder="e.g. Beauty Gifted DM"></div><div class="fg"><label class="fl">Niche</label><select class="fs" id="p-niche"><option>Beauty</option><option>Hair</option><option>Lifestyle</option><option>Tech</option><option>Fashion</option><option>General</option></select></div></div>
     <div class="fr"><div class="fg"><label class="fl">Type</label><select class="fs" id="p-type"><option>Gifted Collab</option><option>Paid Collab</option><option>Follow-Up</option><option>Cold Outreach</option></select></div><div class="fg"><label class="fl">Platform</label><select class="fs" id="p-plat"><option>Email</option><option>Instagram DM</option><option>TikTok DM</option><option>LinkedIn</option></select></div></div>
     <div class="fr f1"><div class="fg"><label class="fl">Subject (email)</label><input class="fi" id="p-subj" placeholder="Email subject…"></div></div>
@@ -2768,7 +2769,7 @@ function renderPage(p){
   if(p==='earnings')rEarnings();
   if(p==='gigs')rGigs();
   if(p==='followup')rFU();
-  if(p==='planner'||p==='ideas'){rIdeas('all');rCal();}
+  if(p==='planner'||p==='ideas'){rIdeas(ideaFilt||'all');rCal();}
   if(p==='feed'){if(typeof stData==='undefined'||!stData.igPosts)stLoad();rFeed();}
   if(p==='pitches')renderPitches('');
   if(p==='brand')rBrand();
@@ -2788,6 +2789,7 @@ function openModal(id){
 }
 function closeModal(id){document.getElementById(id)?.classList.remove('open');}
 function openGigModal(){
+  const mt=document.getElementById('gig-modal-title');if(mt)mt.innerHTML='New <em>Gig</em>';
   resetTP('g');
   setV('g-id','');
   ['g-brand','g-rate','g-gift','g-due','g-contact','g-notes'].forEach(i=>setV(i,''));
@@ -2802,6 +2804,7 @@ function openGigModal(){
   openModal('gig-modal');
 }
 function openIdeaModal(){
+  const mt=document.getElementById('idea-modal-title');if(mt)mt.innerHTML='New <em>Idea</em>';
   resetTP('i');
   setV('i-id','');
   ['i-title','i-hook','i-audio','i-notes','i-date'].forEach(i=>setV(i,''));
@@ -2893,7 +2896,7 @@ function rDash(){
   const todayStr=now.toISOString().slice(0,10);
   const active=D.gigs.filter(g=>['paid','gifted','negotiating','waitingapproval'].includes(g.status)).length;
   const pending=D.gigs.filter(g=>g.status==='pending').length;
-  const earned=D.gigs.filter(g=>g.rateType==='paid'&&g.status==='delivered').reduce((s,g)=>s+parseFloat(g.rate||0),0);
+  const earned=D.gigs.filter(g=>g.rateType==='paid'&&['delivered','paid'].includes(g.status)).reduce((s,g)=>s+parseFloat(g.rate||0),0);
   const delivered=D.gigs.filter(g=>g.status==='delivered').length;
   setEl('s-active',active);setEl('s-pending',pending);setEl('s-earned','$'+earned.toFixed(0));setEl('s-delivered',delivered);setEl('s-ideas',D.ideas.length);
   setEl('gig-badge',D.gigs.filter(g=>!['delivered','declined'].includes(g.status)).length||'');
@@ -3129,6 +3132,7 @@ function togGR(){
 }
 function editGig(id){
   const g=D.gigs.find(x=>x.id===id);if(!g)return;
+  const mt=document.getElementById('gig-modal-title');if(mt)mt.innerHTML='Edit <em>Gig</em>';
   setV('g-id',id);setV('g-brand',g.brand);setV('g-niche',g.niche);setV('g-plat',g.platform);setV('g-rtype',g.rateType);setV('g-rate',g.rate||'');setV('g-gift',g.gift||'');setV('g-status',g.status);setV('g-due',g.due||'');setV('g-contact',g.contact||'');setV('g-notes',g.notes||'');setV('g-img-data',g.img||'');
   setTP('g',g.types||[]);
   document.getElementById('g-img-pre').innerHTML=g.img?`<img src="${g.img}" style="max-height:80px;border-radius:8px;">`:'';
@@ -3229,13 +3233,29 @@ function rCal(){
     <div style="font-size:10px;color:var(--warm-gray);">${c.platform}${c.audio?' · 🎵 '+c.audio.slice(0,25):''}${clp?' · <span style="color:#c13584;">📸 W'+clp.week+'</span>':''}</div>
     ${(c.types||[]).length?`<div style="display:flex;flex-wrap:wrap;gap:2px;margin-top:3px;">${(c.types||[]).map(t=>`<span style="font-size:9px;font-family:'DM Mono',monospace;padding:1px 5px;border-radius:20px;background:rgba(196,113,79,.1);color:var(--terracotta);">${t}</span>`).join('')}</div>`:''}</div>
     <select class="fs" style="padding:3px 7px;font-size:9px;width:auto;flex-shrink:0;" onchange="updIdeaStatus('${c.id}',this.value)">${['idea','scripting','filming','editing','done','published'].map(s=>`<option value="${s}"${c.status===s?' selected':''}>${s}</option>`).join('')}</select>
-    <button class="ib" onclick="delIdea('${c.id}')">🗑</button>
+    <button class="ib" onclick="editIdea('${c.id}')" title="Edit">✏️</button>
+    <button class="ib" onclick="schedIdeaToContent('${c.id}')" title="Push to Content Planner" style="color:var(--terracotta);">📅</button>
+    <button class="ib" onclick="delIdea('${c.id}')" title="Delete">🗑</button>
   </div>`;
   }).join('')+'</div>';
   }); // end forEach plan-list
 }
-function openCtDate(ds){resetTP('i');setV('i-id','');['i-title','i-hook','i-audio','i-notes'].forEach(x=>setV(x,''));setV('i-date',ds);setV('i-img-data','');setV('i-imgs-data','[]');multiImgTmp['i-imgs-data']=[];document.getElementById('i-imgs-pre').innerHTML='';populateLinks();setV('i-lgig','');resetScrData('i');openModal('idea-modal');}
-function updCtStatus(id,val){const c=D.content.find(x=>x.id===id);if(c){c.status=val;save();}toast('Status → '+val);}
+function openCtDate(ds){
+  // Determine which calendar was clicked: if we're on the ideas page, open the idea modal
+  const onIdeasPage = document.getElementById('pg-ideas')?.classList.contains('active');
+  if(onIdeasPage){
+    const mt=document.getElementById('idea-modal-title');if(mt)mt.innerHTML='New <em>Idea</em>';
+    resetTP('i');setV('i-id','');['i-title','i-hook','i-audio','i-notes'].forEach(x=>setV(x,''));setV('i-date',ds);setV('i-img-data','');setV('i-imgs-data','[]');multiImgTmp['i-imgs-data']=[];document.getElementById('i-imgs-pre').innerHTML='';populateLinks();setV('i-lgig','');resetScrData('i');openModal('idea-modal');
+  } else {
+    resetTP('i');setV('i-id','');['i-title','i-hook','i-audio','i-notes'].forEach(x=>setV(x,''));setV('i-date',ds);setV('i-img-data','');setV('i-imgs-data','[]');multiImgTmp['i-imgs-data']=[];document.getElementById('i-imgs-pre').innerHTML='';populateLinks();setV('i-lgig','');resetScrData('i');openModal('idea-modal');
+  }
+}
+function updCtStatus(id,val){
+  // Try ideas first (calendar is now idea-based), then content
+  const idea=D.ideas.find(x=>x.id===id);
+  if(idea){idea.status=val;save();rCal();rDash();toast('Status → '+val);return;}
+  const c=D.content.find(x=>x.id===id);if(c){c.status=val;save();}toast('Status → '+val);
+}
 function saveContent(){
   const title=v('ct-title').trim();if(!title){toast('Title required');return;}
   const id=v('ct-id');
@@ -3285,6 +3305,7 @@ function rIdeas(filt){
 function updIdeaStatus(id,val){const i=D.ideas.find(x=>x.id===id);if(i){i.status=val;save();}toast('Status → '+val);}
 function editIdea(id){
   const idea=D.ideas.find(x=>x.id===id);if(!idea)return;
+  const mt=document.getElementById('idea-modal-title');if(mt)mt.innerHTML='Edit <em>Idea</em>';
   setV('i-id',id);setV('i-title',idea.title);setV('i-niche',idea.niche);setV('i-plat',idea.platform);setV('i-status',idea.status);setV('i-date',idea.date||'');setV('i-hook',idea.hook||'');setV('i-audio',idea.audio||'');setV('i-notes',idea.notes||'');setV('i-img-data',idea.img||'');
   setTP('i',idea.types||[]);
   // Load multi-images
@@ -3306,12 +3327,12 @@ function saveIdea(){
   try { imgs = JSON.parse(v('i-imgs-data')||'[]'); } catch(e){ imgs=[]; }
   if(!imgs.length && existingIdea) imgs = existingIdea.imgs || (existingIdea.img?[existingIdea.img]:[]);
   const imgData = imgs[0] || (existingIdea ? existingIdea.img : '');
-  const idea={id:id||'i'+Date.now(),title,niche:v('i-niche'),platform:v('i-plat'),status:v('i-status'),date:v('i-date'),types:TP.i||[],linkedGig:v('i-lgig'),linkedIGPost:v('i-ligpost'),hook:v('i-hook'),audio:v('i-audio'),notes:v('i-notes'),img:imgData,imgs:imgs,script:scrData.script,scrnotes:scrData.scrnotes,shots:scrData.shots,added:Date.now()};
+  const idea={id:id||'i'+Date.now(),title,niche:v('i-niche'),platform:v('i-plat'),status:v('i-status'),date:v('i-date'),types:TP.i||[],linkedGig:v('i-lgig'),linkedIGPost:v('i-ligpost'),hook:v('i-hook'),audio:v('i-audio'),notes:v('i-notes'),img:imgData,imgs:imgs,script:scrData.script,scrnotes:scrData.scrnotes,shots:scrData.shots,added:id?(existingIdea&&existingIdea.added?existingIdea.added:Date.now()):Date.now()};
   if(id)D.ideas=D.ideas.map(x=>x.id===id?idea:x);else D.ideas.push(idea);
   save();closeModal('idea-modal');resetTP('i');['i-title','i-hook','i-audio','i-notes','i-lgig','i-id','i-date'].forEach(i=>setV(i,''));setV('i-img-data','');setV('i-imgs-data','[]');document.getElementById('i-imgs-pre').innerHTML='';resetScrData('i');
   rIdeas(ideaFilt);rCal();rDash();toast('Idea saved!');
 }
-function delIdea(id){if(!confirm('Delete idea?'))return;D.ideas=D.ideas.filter(x=>x.id!==id);save();rIdeas(ideaFilt);rCal();}
+function delIdea(id){if(!confirm('Delete idea?'))return;D.ideas=D.ideas.filter(x=>x.id!==id);save();rIdeas(ideaFilt);rCal();rDash();}
 function schedIdeaToContent(id){
   const idea=D.ideas.find(x=>x.id===id);if(!idea)return;
   setV('ct-id','');
@@ -3607,6 +3628,7 @@ function renderPitches(q=''){
       <div style="display:flex;gap:7px;margin-top:12px;flex-wrap:wrap;">
         <button class="btn btn-g btn-s" id="cpb-${p.id}" onclick="cpPitch('${p.id}')">Copy Pitch</button>
         ${p.subject?`<button class="btn btn-g btn-s" onclick="cpTxt('${esc(p.subject)}','Subject copied!')">Copy Subject</button>`:''}
+        <button class="ib" onclick="editPitch('${p.id}')" title="Edit pitch">✏️</button>
         <button class="ib" onclick="delPitch('${p.id}')" style="margin-left:auto;">🗑</button>
       </div>
     </div>
@@ -3617,10 +3639,25 @@ function cpPitch(id){const p=D.pitches.find(x=>x.id===id);if(!p)return;navigator
 function cpTxt(txt,msg){// txt may be escaped; decode before copying
   const d=document.createElement('textarea');d.innerHTML=txt;const raw=d.value;
   navigator.clipboard?.writeText(raw).then(()=>toast(msg||'Copied!'));}
+function editPitch(id){
+  const p=D.pitches.find(x=>x.id===id);if(!p)return;
+  const mt=document.getElementById('pitch-modal-title');if(mt)mt.innerHTML='Edit <em>Pitch</em>';
+  setV('p-id',id);setV('p-name',p.name);setV('p-niche',p.niche);setV('p-type',p.type);setV('p-plat',p.platform);setV('p-subj',p.subject||'');setV('p-body',p.body);
+  openModal('pitch-modal');
+}
 function savePitch(){
   const name=v('p-name').trim();const body=v('p-body').trim();if(!name||!body){toast('Name and body required');return;}
-  D.pitches.push({id:'p'+Date.now(),name,niche:v('p-niche'),type:v('p-type'),platform:v('p-plat'),subject:v('p-subj'),body});
-  save();closeModal('pitch-modal');['p-name','p-subj','p-body'].forEach(i=>setV(i,''));renderPitches('');toast('Pitch saved!');
+  const id=v('p-id');
+  if(id){
+    D.pitches=D.pitches.map(p=>p.id===id?{...p,name,niche:v('p-niche'),type:v('p-type'),platform:v('p-plat'),subject:v('p-subj'),body}:p);
+    toast('Pitch updated!');
+  } else {
+    D.pitches.push({id:'p'+Date.now(),name,niche:v('p-niche'),type:v('p-type'),platform:v('p-plat'),subject:v('p-subj'),body});
+    toast('Pitch saved!');
+  }
+  save();closeModal('pitch-modal');['p-name','p-subj','p-body','p-id'].forEach(i=>setV(i,''));renderPitches('');
+  // Reset modal title
+  const mt=document.getElementById('pitch-modal-title');if(mt)mt.innerHTML='Pitch <em>Template</em>';
 }
 function delPitch(id){if(!confirm('Delete pitch?'))return;D.pitches=D.pitches.filter(p=>p.id!==id);save();renderPitches('');}
 
