@@ -303,6 +303,18 @@ body{background:var(--ivory);font-family:'Jost',sans-serif;font-weight:300;color
 .mb-li:hover{background:var(--warm-white);}
 .mb-li.sel{background:rgba(196,113,79,.1);color:var(--terracotta);}
 
+/* ─── MOODBOARD RESIZE HANDLES ─── */
+.mb-rh{position:absolute;width:10px;height:10px;background:#fff;border:2px solid var(--terracotta);border-radius:50%;z-index:10;opacity:0;transition:opacity .14s;}
+.mb-el:hover .mb-rh,.mb-el.sel .mb-rh{opacity:1;}
+.mb-rh[data-d="nw"]{top:-5px;left:-5px;cursor:nw-resize;}
+.mb-rh[data-d="n"]{top:-5px;left:calc(50% - 5px);cursor:n-resize;}
+.mb-rh[data-d="ne"]{top:-5px;right:-5px;cursor:ne-resize;}
+.mb-rh[data-d="e"]{top:calc(50% - 5px);right:-5px;cursor:e-resize;}
+.mb-rh[data-d="se"]{bottom:-5px;right:-5px;cursor:se-resize;}
+.mb-rh[data-d="s"]{bottom:-5px;left:calc(50% - 5px);cursor:s-resize;}
+.mb-rh[data-d="sw"]{bottom:-5px;left:-5px;cursor:sw-resize;}
+.mb-rh[data-d="w"]{top:calc(50% - 5px);left:-5px;cursor:w-resize;}
+
 /* ─── BRAND HUB ─── */
 .br-tabs{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:16px;}
 .br-tab{padding:6px 13px;border-radius:8px;font-size:11px;font-weight:500;cursor:pointer;color:var(--warm-gray);border:1px solid rgba(0,0,0,.08);background:#fff;font-family:'Jost',sans-serif;transition:all .14s;}
@@ -1511,7 +1523,7 @@ Total cash: $190 + product value</textarea></div>
     <div class="mbt-sep"></div>
     <button class="mbt" onclick="clearMBDraw()">🗑 Clear Drawing</button>
     <button class="mbt" onclick="clearMBAll()">🔄 Reset All</button>
-    <button class="mbt" onclick="saveMB()">💾 Save</button>
+    <button class="mbt" onclick="saveMB(true)">💾 Save</button>
     <button class="mbt" onclick="printMB()">🖨 Print</button>
     <div class="mbt-sep"></div>
     <button class="mbt" onclick="closeMB()" style="background:rgba(192,57,43,.3);">✕ Close</button>
@@ -3911,7 +3923,7 @@ function getMBPreviewHTML(type, id) {
 
 // ── MOODBOARD DOWNLOAD ──
 function printMB() {
-  saveMB();
+  saveMB(false);
   const name = document.getElementById('mb-name').textContent || 'moodboard';
   const canvas = document.getElementById('mb-dc');
   const wrapper = document.getElementById('mb-area');
@@ -4011,7 +4023,7 @@ function openMB(type,id,name){
   setTimeout(initMBCanvas2,60);
   loadMB2();
 }
-function closeMB(){saveMB();document.getElementById('moodboard').classList.remove('open');}
+function closeMB(){saveMB(false);document.getElementById('moodboard').classList.remove('open');if(window._mbResizeOb){window._mbResizeOb.disconnect();window._mbResizeOb=null;}}
 function initMBCanvas2(){
   const cvs=document.getElementById('mb-dc');
   const area=document.getElementById('mb-area');
@@ -4024,6 +4036,16 @@ function initMBCanvas2(){
   // Canvas itself never needs to receive pointer events — area handles it all
   cvs.style.pointerEvents='none';
   setMBT('sel');
+  // Resize observer: redraw canvas at new size when window/container resizes
+  if(window._mbResizeOb){window._mbResizeOb.disconnect();}
+  window._mbResizeOb=new ResizeObserver(()=>{
+    const nb=D.moodboards[mbKey];
+    // Save current drawing before resize
+    if(nb&&cvs.width>0)nb.drawing=cvs.toDataURL();
+    cvs.width=area.offsetWidth;cvs.height=area.offsetHeight;
+    if(nb&&nb.drawing){const img=new Image();img.onload=()=>cvs.getContext('2d').drawImage(img,0,0);img.src=nb.drawing;}
+  });
+  window._mbResizeOb.observe(area);
 }
 function setMBT(t){
   mbTool2=t;
@@ -4059,10 +4081,18 @@ function mbPM(e){
   const cvs=document.getElementById('mb-dc');
   const r=cvs.getBoundingClientRect();const x=e.clientX-r.left;const y=e.clientY-r.top;
   const ctx=cvs.getContext('2d');
-  ctx.strokeStyle=mbTool2==='erase'?'#FAF6EF':mbColor;
-  ctx.lineWidth=mbTool2==='erase'?24:mbBrush;
+  if(mbTool2==='erase'){
+    ctx.globalCompositeOperation='destination-out';
+    ctx.strokeStyle='rgba(0,0,0,1)';
+    ctx.lineWidth=24;
+  } else {
+    ctx.globalCompositeOperation='source-over';
+    ctx.strokeStyle=mbColor;
+    ctx.lineWidth=mbBrush;
+  }
   ctx.lineCap='round';ctx.lineJoin='round';
   ctx.beginPath();ctx.moveTo(mbLX,mbLY);ctx.lineTo(x,y);ctx.stroke();
+  ctx.globalCompositeOperation='source-over';
   mbLX=x;mbLY=y;
 }
 function mbPU(){
@@ -4076,7 +4106,7 @@ function setMBC(hex,el){mbColor=hex;document.querySelectorAll('#mb-swatches .sw'
 function setMBS(sz,el){mbBrush=sz;document.querySelectorAll('.bs').forEach(b=>b.classList.remove('on'));if(el)el.classList.add('on');}
 function setTS(sz,el){mbTS=sz;['sm','md','lg','xl'].forEach(s=>{const b=document.getElementById('ts-'+s);if(b)b.classList.remove('on');});if(el)el.classList.add('on');}
 function clearMBDraw(){const cvs=document.getElementById('mb-dc');const ctx=cvs.getContext('2d');ctx.clearRect(0,0,cvs.width,cvs.height);if(D.moodboards[mbKey])D.moodboards[mbKey].drawing='';save();toast('Drawing cleared');}
-function saveMB(){
+function saveMB(showToast){
   // Persist text/sticky/shot edited content back into items before saving
   if(!D.moodboards[mbKey])return;
   (D.moodboards[mbKey].items||[]).forEach(item=>{
@@ -4087,7 +4117,8 @@ function saveMB(){
     item.x=el.offsetLeft;item.y=el.offsetTop;
     item.w=el.offsetWidth;item.h=el.offsetHeight;
   });
-  save();toast('Moodboard saved ✓');
+  save();
+  if(showToast)toast('Moodboard saved ✓');
 }
 function clearMBAll(){
   if(!confirm('Reset all elements and drawing?'))return;
@@ -4137,7 +4168,7 @@ function mount(item,_legacyHtml){
   }
   D.moodboards[mbKey].items.push(item);
   renderMBItem(item);
-  updateLayers();save();
+  updateLayers();saveMB(false);
 }
 
 function renderMBItem(item){
@@ -4227,11 +4258,18 @@ function loadMB2(){
     if(!_mbAction) return;
     const el = document.getElementById('mbi-'+_mbAction.id);
     if(el){
+      const area=document.getElementById('mb-area');
+      // Clamp so element can't be fully dragged off-canvas
+      const maxX=Math.max(0,(area?.offsetWidth||800)-40);
+      const maxY=Math.max(0,(area?.offsetHeight||600)-40);
+      const nx=Math.min(maxX,Math.max(0,el.offsetLeft));
+      const ny=Math.min(maxY,Math.max(0,el.offsetTop));
+      el.style.left=nx+'px'; el.style.top=ny+'px';
       const item = D.moodboards[mbKey]?.items?.find(i=>i.id===_mbAction.id);
-      if(item){ item.x=el.offsetLeft; item.y=el.offsetTop; item.w=el.offsetWidth; item.h=el.offsetHeight; }
+      if(item){ item.x=nx; item.y=ny; item.w=el.offsetWidth; item.h=el.offsetHeight; }
     }
     _mbAction=null;
-    save();
+    saveMB(false);
   });
 })();
 
@@ -4277,19 +4315,23 @@ function delMBItem(id){
   const mb=D.moodboards[mbKey];
   if(mb)mb.items=mb.items?.filter(i=>i.id!==id);
   if(mbSelId===id)mbSelId=null;
-  save();updateLayers();
+  saveMB(false);updateLayers();
 }
+let _mbZCtr=10;
 function bringTop(id){
+  _mbZCtr++;
   const el=document.getElementById('mbi-'+id);
-  if(el){el.style.zIndex=99;}
+  if(el){el.style.zIndex=_mbZCtr;}
   const item=D.moodboards[mbKey]?.items?.find(i=>i.id===id);
-  if(item)item.z=99;save();
+  if(item)item.z=_mbZCtr;saveMB(false);
 }
 function sendBack(id){
   const el=document.getElementById('mbi-'+id);
-  if(el){el.style.zIndex=1;}
+  const curZ=parseInt(el?.style.zIndex||5);
+  const newZ=Math.max(1,curZ-2);
+  if(el){el.style.zIndex=newZ;}
   const item=D.moodboards[mbKey]?.items?.find(i=>i.id===id);
-  if(item)item.z=1;save();
+  if(item)item.z=newZ;saveMB(false);
 }
 function dupMBItem(id){
   const mb=D.moodboards[mbKey];
@@ -4304,11 +4346,22 @@ function updateLayers(){
   const mb=D.moodboards[mbKey];
   if(!mb?.items?.length){el.innerHTML='<div style="font-size:11px;color:var(--mid-gray);padding:4px 0;">No elements yet</div>';return;}
   const icons={text:'T',sticky:'📝',image:'🖼',shot:'🎬'};
-  el.innerHTML=[...mb.items].reverse().map(item=>`<div class="mb-li${mbSelId===item.id?' sel':''}" onclick="selLayer('${item.id}')">
+  el.innerHTML=[...mb.items].reverse().map(item=>{
+    // Show a useful preview label
+    let label=item.type;
+    if(item.type==='text'||item.type==='sticky'||item.type==='shot'){
+      const tmp=document.createElement('div');tmp.innerHTML=item.savedText||'';
+      const txt=(tmp.textContent||tmp.innerText||'').trim().slice(0,18);
+      if(txt)label=txt;
+    } else if(item.type==='image'){
+      label='Image';
+    }
+    return `<div class="mb-li${mbSelId===item.id?' sel':''}" onclick="selLayer('${item.id}')">
     <span style="font-size:13px;">${icons[item.type]||'◻'}</span>
-    <span style="font-size:11px;flex:1;">${item.type}</span>
+    <span style="font-size:11px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${label}">${label}</span>
     <button class="mb-ctrl" onclick="event.stopPropagation();delMBItem('${item.id}')" style="padding:1px 5px;">×</button>
-  </div>`).join('');
+  </div>`;
+  }).join('');
 }
 function selLayer(id){
   mbSelId=id;
