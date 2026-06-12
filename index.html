@@ -3316,6 +3316,7 @@ function rIdeas(filt){
           <div class="mb-preview-pop">${getMBPreviewHTML('idea',i.id)}</div>
         </div>
         <button class="ib" onclick="editIdea('${i.id}')">✏️</button>
+        <button class="ib" onclick="schedIdeaToContent('${i.id}')">📅</button>
         <button class="ib" onclick="delIdea('${i.id}')">🗑</button>
       </div>
     </div>`;
@@ -3507,12 +3508,32 @@ function rFeedPosts(){
         </div>`:''}
 
         <!-- LINKED ITEMS -->
-        ${hasLinks?`<div class="fpc-link-bar">
-          <div class="fpc-link-lbl">Linked Items</div>
-          ${linkedGigs.map(g=>`<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;font-size:11px;"><span>🔗</span><strong>${g.brand}</strong><span class="sp s-${g.status}" style="margin-left:auto;">${g.status}</span></div>`).join('')}
-          ${linkedIdeas.map(i=>`<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;font-size:11px;"><span>💡</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${i.title}</span></div>`).join('')}
-          ${linkedContent.map(c=>`<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;font-size:11px;"><span>📅</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${c.title}</span>${c.date?`<span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--terracotta);">${c.date}</span>`:''}</div>`).join('')}
-        </div>`:''}
+        <div class="fpc-link-bar" style="margin-bottom:10px;">
+          <div class="fpc-link-lbl" style="margin-bottom:6px;">💡 Linked Ideas</div>
+          ${linkedIdeas.length?linkedIdeas.map(i=>`<div style="display:flex;align-items:center;gap:7px;margin-bottom:5px;padding:6px 9px;background:rgba(196,113,79,.04);border-radius:8px;border:1px solid rgba(196,113,79,.1);">
+            <span class="id-tag t-${i.niche}" style="flex-shrink:0;">${i.niche}</span>
+            <span style="flex:1;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${i.title}</span>
+            <span class="sp s-${i.status}" style="flex-shrink:0;">${i.status}</span>
+            <button onclick="event.stopPropagation();fpcUnlinkIdea('${p.id}','${i.id}')" style="background:none;border:none;cursor:pointer;font-size:13px;color:var(--mid-gray);line-height:1;padding:0 2px;" title="Unlink">✕</button>
+          </div>`).join(''):`<div style="font-size:11px;color:var(--mid-gray);font-style:italic;margin-bottom:6px;">No ideas linked yet</div>`}
+          <div style="position:relative;" id="idea-picker-wrap-${p.id}">
+            <button class="btn btn-g btn-s" style="width:100%;text-align:left;" onclick="event.stopPropagation();toggleIdeaPicker('${p.id}')">+ Link an Idea</button>
+            <div id="idea-picker-${p.id}" style="display:none;position:absolute;z-index:600;bottom:calc(100% + 4px);left:0;right:0;background:#fff;border:1px solid rgba(0,0,0,.1);border-radius:12px;box-shadow:0 8px 28px rgba(0,0,0,.14);max-height:220px;overflow-y:auto;">
+              <div style="padding:8px 10px;border-bottom:1px solid rgba(0,0,0,.06);">
+                <input class="fpc-input" placeholder="Search ideas…" style="padding:5px 9px;font-size:12px;" oninput="filterIdeaPicker('${p.id}',this.value)" onclick="event.stopPropagation()">
+              </div>
+              <div id="idea-picker-list-${p.id}">
+                ${D.ideas.filter(i=>!linkedIdeas.find(li=>li.id===i.id)).map(i=>`<div onclick="event.stopPropagation();fpcLinkIdea('${p.id}','${i.id}')" style="display:flex;align-items:center;gap:8px;padding:8px 12px;cursor:pointer;font-size:12px;transition:background .12s;" onmouseover="this.style.background='var(--warm-white)'" onmouseout="this.style.background=''">
+                  <span class="id-tag t-${i.niche}" style="flex-shrink:0;">${i.niche}</span>
+                  <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${i.title}</span>
+                  <span class="sp s-${i.status}">${i.status}</span>
+                </div>`).join('') || '<div style="padding:12px;font-size:11px;color:var(--mid-gray);text-align:center;">All ideas already linked</div>'}
+              </div>
+            </div>
+          </div>
+          ${linkedGigs.length?`<div class="fpc-link-lbl" style="margin:8px 0 6px;">🔗 Linked Gigs</div>${linkedGigs.map(g=>`<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;font-size:11px;padding:5px 8px;background:rgba(74,107,80,.04);border-radius:7px;"><span>🔗</span><strong>${g.brand}</strong><span class="sp s-${g.status}" style="margin-left:auto;">${g.status}</span></div>`).join('')}`:''}
+          ${linkedContent.length?`<div class="fpc-link-lbl" style="margin:8px 0 6px;">📅 Linked Content</div>${linkedContent.map(c=>`<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;font-size:11px;padding:5px 8px;background:rgba(122,174,204,.05);border-radius:7px;"><span>📅</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${c.title}</span>${c.date?`<span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--terracotta);">${c.date}</span>`:''}</div>`).join('')}`:''}
+        </div>
 
         <div style="display:flex;justify-content:flex-end;margin-top:10px;">
           <button class="btn btn-d btn-s" onclick="event.stopPropagation();fpcDel('${p.id}')">🗑 Delete Post</button>
@@ -3575,6 +3596,56 @@ function fpcDel(id){
   stData.igPosts=stData.igPosts.filter(x=>x.id!==id);
   if(feedOpenPost===id)feedOpenPost=null;
   stSave();rFeedPosts();rFeedGrid();toast('Post deleted');
+}
+
+function fpcLinkIdea(postId,ideaId){
+  // Set linkedIGPost on the idea
+  const idea=D.ideas.find(x=>x.id===ideaId);
+  if(!idea)return;
+  idea.linkedIGPost=postId;
+  save();
+  closeIdeaPickers();
+  rFeedPosts();
+  rIdeas(ideaFilt);
+  toast('Idea linked ✓');
+}
+
+function fpcUnlinkIdea(postId,ideaId){
+  const idea=D.ideas.find(x=>x.id===ideaId);
+  if(!idea)return;
+  idea.linkedIGPost='';
+  save();
+  rFeedPosts();
+  rIdeas(ideaFilt);
+  toast('Idea unlinked');
+}
+
+let _openIdeaPicker=null;
+function toggleIdeaPicker(postId){
+  const el=document.getElementById('idea-picker-'+postId);
+  if(!el)return;
+  const isOpen=el.style.display!=='none';
+  closeIdeaPickers();
+  if(!isOpen){el.style.display='block';_openIdeaPicker=postId;}
+}
+function closeIdeaPickers(){
+  if(_openIdeaPicker){
+    const el=document.getElementById('idea-picker-'+_openIdeaPicker);
+    if(el)el.style.display='none';
+    _openIdeaPicker=null;
+  }
+}
+function filterIdeaPicker(postId,q){
+  const list=document.getElementById('idea-picker-list-'+postId);
+  if(!list)return;
+  const post=stData.igPosts.find(x=>x.id===postId);
+  const linkedIds=new Set(D.ideas.filter(i=>i.linkedIGPost===postId).map(i=>i.id));
+  const filtered=q?D.ideas.filter(i=>!linkedIds.has(i.id)&&i.title.toLowerCase().includes(q.toLowerCase())):D.ideas.filter(i=>!linkedIds.has(i.id));
+  list.innerHTML=filtered.map(i=>`<div onclick="event.stopPropagation();fpcLinkIdea('${postId}','${i.id}')" style="display:flex;align-items:center;gap:8px;padding:8px 12px;cursor:pointer;font-size:12px;transition:background .12s;" onmouseover="this.style.background='var(--warm-white)'" onmouseout="this.style.background=''">
+    <span class="id-tag t-${i.niche}" style="flex-shrink:0;">${i.niche}</span>
+    <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${i.title}</span>
+    <span class="sp s-${i.status}">${i.status}</span>
+  </div>`).join('')||'<div style="padding:12px;font-size:11px;color:var(--mid-gray);text-align:center;">No ideas found</div>';
 }
 
 function feedAddPost(){
@@ -5749,7 +5820,8 @@ document.addEventListener('fb-ready',function(){
 })();
 
 // Close search on outside click
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeSearch();document.getElementById('moodboard').classList.contains('open')&&closeMB();}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeSearch();document.getElementById('moodboard').classList.contains('open')&&closeMB();if(typeof closeIdeaPickers==='function')closeIdeaPickers();}});
+document.addEventListener('click',function(e){if(_openIdeaPicker&&!e.target.closest('#idea-picker-wrap-'+_openIdeaPicker))closeIdeaPickers();});
 
 // ── BOOT ──
 (function bootWhenReady(){
