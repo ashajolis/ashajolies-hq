@@ -2270,6 +2270,7 @@ window.save = function() {
       if(light[k]) light[k] = light[k].map(function(item){
         var copy = Object.assign({}, item);
         if(copy.img && copy.img.length > 200) copy.img = '__local__';
+        if(Array.isArray(copy.imgs) && copy.imgs.some(function(s){ return s && s.length > 200; })) copy.imgs = '__local_imgs__';
         return copy;
       });
     });
@@ -2313,9 +2314,14 @@ function _startRealtimeSync(uid) {
     ['ideas','content','gigs'].forEach(function(k){
       if(!window.D[k] || !localSnap[k]) return;
       window.D[k] = window.D[k].map(function(item){
-        if(item.img !== '__local__') return item;
         var local = (localSnap[k]||[]).find(function(x){ return x.id === item.id; });
-        if(local && local.img && local.img !== '__local__') item = Object.assign({}, item, {img: local.img});
+        if(item.img === '__local__') {
+          if(local && local.img && local.img !== '__local__') item = Object.assign({}, item, {img: local.img});
+        }
+        if(item.imgs === '__local_imgs__') {
+          if(local && Array.isArray(local.imgs) && local.imgs.length > 0) item = Object.assign({}, item, {imgs: local.imgs});
+          else item = Object.assign({}, item, {imgs: []});
+        }
         return item;
       });
     });
@@ -2377,6 +2383,7 @@ window.addEventListener('online', function() {
       if(light[k]) light[k] = light[k].map(function(item){
         var copy = Object.assign({}, item);
         if(copy.img && copy.img.length > 200) copy.img = '__local__';
+        if(Array.isArray(copy.imgs) && copy.imgs.some(function(s){ return s && s.length > 200; })) copy.imgs = '__local_imgs__';
         return copy;
       });
     });
