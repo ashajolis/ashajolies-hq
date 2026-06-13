@@ -726,6 +726,7 @@ body.dark-mode #dark-toggle{border-color:rgba(255,255,255,.15);color:rgba(250,24
     <div class="nl">Gigs</div>
     <div class="ni" onclick="goTo('gigs',this)"><span class="ni-icon">📋</span>Gig Tracker<span class="ni-badge" id="gig-badge"></span></div>
     <div class="ni" onclick="goTo('followup',this)"><span class="ni-icon">🔔</span>Follow-Ups<span class="ni-badge" id="fu-badge" style="background:var(--gold)"></span></div>
+    <div class="ni" onclick="goTo('product-shelf',this)"><span class="ni-icon">📦</span>Product Shelf<span class="ni-badge" id="shelf-badge" style="background:var(--sage)"></span></div>
     <div class="nl">Content</div>
     <div class="ni" onclick="goTo('ideas',this)"><span class="ni-icon">💡</span>Ideas & Planner</div>
     <div class="ni" onclick="goTo('feed',this)"><span class="ni-icon">📸</span>Feed & Posts</div>
@@ -742,6 +743,13 @@ body.dark-mode #dark-toggle{border-color:rgba(255,255,255,.15);color:rgba(250,24
     <div class="ni" onclick="goTo('studio-brands',this)"><span class="ni-icon">🎯</span>Brand Targets</div>
     <div class="nl">Finance</div>
     <div class="ni" onclick="goTo('invoices',this)"><span class="ni-icon">🧾</span>Invoices</div>
+    <div class="ni" onclick="goTo('contracts',this)"><span class="ni-icon">📝</span>Contracts</div>
+    <div class="ni" onclick="goTo('payment-chaser',this)"><span class="ni-icon">💸</span>Payment Chaser<span class="ni-badge" id="chaser-badge" style="background:#c0392b;"></span></div>
+    <div class="nl">Insights</div>
+    <div class="ni" onclick="goTo('testimonials',this)"><span class="ni-icon">⭐</span>Testimonials</div>
+    <div class="ni" onclick="goTo('rate-negotiations',this)"><span class="ni-icon">📊</span>Rate Negotiation Log</div>
+    <div class="ni" onclick="goTo('pitch-tracker',this)"><span class="ni-icon">📬</span>Pitch Tracker</div>
+    <div class="ni" onclick="goTo('repurpose',this)"><span class="ni-icon">♻️</span>Repurpose Tracker</div>
   </nav>
   <div class="sb-foot">
     <div class="sb-rate">
@@ -834,18 +842,35 @@ body.dark-mode #dark-toggle{border-color:rgba(255,255,255,.15);color:rgba(250,24
     <div id="d-pillar-counters" style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;"></div>
   </div>
 
-  <!-- INCOME PROGRESS BAR -->
+  <!-- INCOME PROGRESS BAR (Enhanced) -->
   <div style="background:#fff;border-radius:var(--r);border:1px solid rgba(0,0,0,.06);padding:15px 18px;margin-bottom:16px;">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;gap:10px;flex-wrap:wrap;">
       <div>
-        <div style="font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--warm-gray);font-weight:500;margin-bottom:2px;">Month-One Goal</div>
+        <div style="font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--warm-gray);font-weight:500;margin-bottom:2px;" id="d-goal-period-label">Monthly Goal</div>
         <div style="font-size:11px;color:var(--mid-gray);" id="d-goal-sub">Keep going — every pitch counts.</div>
       </div>
-      <div style="font-family:'Cormorant Garamond',serif;font-size:1.4rem;color:var(--forest);font-weight:300;" id="d-goal-label">$0 / $200</div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div style="display:flex;gap:4px;">
+          <button class="btn btn-p btn-s" id="goal-btn-month" onclick="switchGoalPeriod('month',this)" style="font-size:9px;padding:3px 9px;">Month</button>
+          <button class="btn btn-g btn-s" id="goal-btn-quarter" onclick="switchGoalPeriod('quarter',this)" style="font-size:9px;padding:3px 9px;">Quarter</button>
+        </div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:1.4rem;color:var(--forest);font-weight:300;" id="d-goal-label">$0 / $200</div>
+      </div>
     </div>
     <div style="background:var(--warm-white);border-radius:100px;height:8px;overflow:hidden;">
       <div id="d-goal-bar" style="height:100%;background:linear-gradient(90deg,var(--sage),var(--forest));border-radius:100px;transition:width .6s ease;width:0%;"></div>
     </div>
+    <!-- Pipeline breakdown -->
+    <div id="d-pipeline-breakdown" style="display:flex;gap:12px;margin-top:10px;flex-wrap:wrap;"></div>
+  </div>
+
+  <!-- PRODUCTION PIPELINE KANBAN -->
+  <div style="background:#fff;border-radius:var(--r);border:1px solid rgba(0,0,0,.06);padding:15px 18px;margin-bottom:16px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
+      <div style="font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--warm-gray);font-weight:500;font-family:'DM Mono',monospace;">Content → Gig Production Pipeline</div>
+      <button class="btn btn-g btn-s" onclick="goTo('ideas',document.querySelector('.ni[onclick*=ideas]'))">Full Ideas →</button>
+    </div>
+    <div id="d-prod-pipeline" style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;"></div>
   </div>
 
   <!-- MAIN GRID -->
@@ -908,7 +933,7 @@ body.dark-mode #dark-toggle{border-color:rgba(255,255,255,.15);color:rgba(250,24
   </div>
   <!-- TABLE VIEW -->
   <div id="gig-table-view" style="background:#fff;border-radius:var(--r);border:1px solid rgba(0,0,0,.06);overflow:hidden;overflow-x:auto;">
-    <table class="dt"><thead><tr><th>Brand</th><th>Types</th><th>Rate</th><th>Status</th><th>Due</th><th>Linked</th><th>Actions</th></tr></thead>
+    <table class="dt"><thead><tr><th>Brand</th><th>Types</th><th>Rate / Profit</th><th>Status</th><th>Due</th><th>Deliverables</th><th>Rights</th><th>Actions</th></tr></thead>
     <tbody id="gig-tbody"></tbody></table>
   </div>
   <!-- KANBAN VIEW -->
@@ -1375,6 +1400,18 @@ Total cash: $190 + product value</textarea></div>
         </select>
       </div>
     </div>
+    <!-- Repeat / Retainer flags -->
+    <div class="fr f3">
+      <div class="fg"><label class="fl">Client Type</label>
+        <select class="fs" id="bt-client-type">
+          <option value="prospect">🆕 New Prospect</option>
+          <option value="repeat">🔁 Repeat Client</option>
+          <option value="retainer">⭐ Retainer / Monthly</option>
+        </select>
+      </div>
+      <div class="fg"><label class="fl">Retainer Pitch Date</label><input class="fi" id="bt-retainer-date" type="date" title="When to pitch a retainer deal"></div>
+      <div class="fg"><label class="fl">Retainer Amount</label><input class="fi" id="bt-retainer-amount" placeholder="e.g. $120/mo"></div>
+    </div>
     <!-- Pitch body -->
     <div class="fr f1">
       <div class="fg">
@@ -1422,6 +1459,77 @@ Total cash: $190 + product value</textarea></div>
   </div>
 </div></div>
 
+<!-- ─── CONTRACTS PAGE ─── -->
+<div class="pg" id="pg-contracts">
+  <div style="font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:var(--terracotta);font-weight:500;margin-bottom:4px;">Professional Agreements</div>
+  <div style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:300;margin-bottom:4px;"><em style="font-style:italic;color:var(--terracotta);">Contracts</em> & Agreements</div>
+  <div style="font-size:12px;color:var(--warm-gray);margin-bottom:16px;line-height:1.5;">One-page agreements protect you before you start filming. Send this before delivering any work — it shifts you from "creator who trusts brands" to "professional with receipts."</div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;">
+    <button class="btn btn-p btn-s" onclick="openContractModal()">+ New Contract</button>
+    <button class="btn btn-g btn-s" onclick="openContractFromGig()">📋 Generate from Active Gig</button>
+  </div>
+  <div id="contracts-list"></div>
+</div>
+
+<!-- ─── PAYMENT CHASER PAGE ─── -->
+<div class="pg" id="pg-payment-chaser">
+  <div style="font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:var(--terracotta);font-weight:500;margin-bottom:4px;">Accounts Receivable</div>
+  <div style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:300;margin-bottom:4px;">Payment <em style="font-style:italic;color:var(--terracotta);">Chaser</em></div>
+  <div style="font-size:12px;color:var(--warm-gray);margin-bottom:16px;line-height:1.5;">Systematic follow-ups for money owed. Invoice sent Day 1 → chase Day 7 → final notice Day 14. Stop letting this live in your head.</div>
+  <div style="display:flex;gap:8px;margin-bottom:16px;">
+    <button class="btn btn-p btn-s" onclick="openChaserModal()">+ Add Payment to Chase</button>
+  </div>
+  <div id="chaser-urgent" style="margin-bottom:14px;"></div>
+  <div id="chaser-list"></div>
+</div>
+
+<!-- ─── TESTIMONIALS PAGE ─── -->
+<div class="pg" id="pg-testimonials">
+  <div style="font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:var(--terracotta);font-weight:500;margin-bottom:4px;">Social Proof</div>
+  <div style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:300;margin-bottom:4px;"><em style="font-style:italic;color:var(--terracotta);">Testimonials</em> & Feedback</div>
+  <div style="font-size:12px;color:var(--warm-gray);margin-bottom:16px;line-height:1.5;">When a brand comes back or says "loved the content" — that's a quote you can use in your next pitch. Capture it here before it gets lost in a DM thread.</div>
+  <div style="display:flex;gap:8px;margin-bottom:16px;">
+    <button class="btn btn-p btn-s" onclick="openTestimonialModal()">+ Log Feedback</button>
+  </div>
+  <div id="testimonials-highlight" style="margin-bottom:14px;"></div>
+  <div id="testimonials-list"></div>
+</div>
+
+<!-- ─── RATE NEGOTIATION LOG PAGE ─── -->
+<div class="pg" id="pg-rate-negotiations">
+  <div style="font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:var(--terracotta);font-weight:500;margin-bottom:4px;">Pricing Intelligence</div>
+  <div style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:300;margin-bottom:4px;">Rate <em style="font-style:italic;color:var(--terracotta);">Negotiation</em> Log</div>
+  <div style="font-size:12px;color:var(--warm-gray);margin-bottom:16px;line-height:1.5;">Track what you quoted, what they countered, and what you agreed. Over 20 gigs you'll see patterns — which niches push back hardest, which accept your first quote. Price smarter.</div>
+  <div style="display:flex;gap:8px;margin-bottom:16px;">
+    <button class="btn btn-p btn-s" onclick="openNegModal()">+ Log Negotiation</button>
+  </div>
+  <div id="neg-insights" style="margin-bottom:14px;"></div>
+  <div id="neg-list"></div>
+</div>
+
+<!-- ─── PITCH TRACKER PAGE ─── -->
+<div class="pg" id="pg-pitch-tracker">
+  <div style="font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:var(--terracotta);font-weight:500;margin-bottom:4px;">Outreach Analytics</div>
+  <div style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:300;margin-bottom:4px;">Pitch <em style="font-style:italic;color:var(--terracotta);">Tracker</em></div>
+  <div style="font-size:12px;color:var(--warm-gray);margin-bottom:16px;line-height:1.5;">Track every pitch you send: who, when, which template, did they reply? Knowing which template gets the best reply rate sharpens your outreach fast.</div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;">
+    <button class="btn btn-p btn-s" onclick="openPitchSendModal()">+ Log Pitch Sent</button>
+  </div>
+  <div id="pitchtrack-stats" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:16px;"></div>
+  <div id="pitchtrack-list"></div>
+</div>
+
+<!-- ─── REPURPOSE TRACKER PAGE ─── -->
+<div class="pg" id="pg-repurpose">
+  <div style="font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:var(--terracotta);font-weight:500;margin-bottom:4px;">Content Maximiser</div>
+  <div style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:300;margin-bottom:4px;">Repurpose <em style="font-style:italic;color:var(--terracotta);">Tracker</em></div>
+  <div style="font-size:12px;color:var(--warm-gray);margin-bottom:16px;line-height:1.5;">B-roll and angles you film for a brand often have organic life left in them. Flag which gigs allow repurposing (based on usage rights), link ideas, and stop footage going to waste.</div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;">
+    <button class="btn btn-g btn-s" onclick="scanRepurpose()">🔍 Scan Gigs for Repurpose Opportunities</button>
+  </div>
+  <div id="repurpose-list"></div>
+</div>
+
 </div><!-- main -->
 
 
@@ -1445,6 +1553,58 @@ Total cash: $190 + product value</textarea></div>
   <button class="mn-more-item" onclick="closeMobMore();mobNav('studio-rates',null)"><span class="mn-more-item-icon">💼</span>Services</button>
 </div>
 
+
+<!-- ─── PRODUCT SHELF ─── -->
+<div class="pg" id="pg-product-shelf">
+  <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:16px;gap:10px;flex-wrap:wrap;">
+    <div>
+      <div style="font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:var(--terracotta);font-weight:500;margin-bottom:3px;">Gifted Products</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:300;">Product <em style="font-style:italic;color:var(--terracotta);">Shelf</em></div>
+    </div>
+    <button class="btn btn-p btn-s" onclick="openShelfModal()">+ Add Product</button>
+  </div>
+  <div style="background:rgba(196,113,79,.07);border:1px solid rgba(196,113,79,.15);border-radius:12px;padding:11px 16px;margin-bottom:16px;font-size:12px;color:var(--warm-gray);">
+    <strong style="color:var(--terracotta);">Why this matters:</strong> Gifted products sitting unused = money lost. Track what arrived, what it's for, and whether you've filmed it. If it's been 7+ days and unfilmed, it shows up as a flag here.
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:16px;">
+    <div class="sc"><div class="sc-l">Total Products</div><div class="sc-v c-t" id="shelf-total">0</div></div>
+    <div class="sc"><div class="sc-l">Unfilmed</div><div class="sc-v" style="color:#c0392b;" id="shelf-unfilmed">0</div></div>
+    <div class="sc"><div class="sc-l">Filmed ✓</div><div class="sc-v c-f" id="shelf-filmed">0</div></div>
+    <div class="sc"><div class="sc-l">Overdue (7+ days)</div><div class="sc-v c-g" id="shelf-overdue">0</div></div>
+  </div>
+  <div style="display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;">
+    <button class="btn btn-g btn-s active" id="shelf-f-all" onclick="shelfFilter('all',this)">All</button>
+    <button class="btn btn-g btn-s" id="shelf-f-unfilmed" onclick="shelfFilter('unfilmed',this)">Unfilmed</button>
+    <button class="btn btn-g btn-s" id="shelf-f-filmed" onclick="shelfFilter('filmed',this)">Filmed ✓</button>
+    <button class="btn btn-g btn-s" id="shelf-f-overdue" onclick="shelfFilter('overdue',this)">⚠ Overdue</button>
+  </div>
+  <div id="shelf-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;"></div>
+  <div id="shelf-empty" class="es" style="display:none;">
+    <div class="es-icon">📦</div>
+    <div class="es-title">No gifted products yet</div>
+    <div class="es-sub">Add products as they arrive so nothing sits unfiled</div>
+  </div>
+</div>
+
+<!-- PRODUCT SHELF MODAL -->
+<div class="mo" id="shelf-modal"><div class="md">
+  <div class="mh">
+    <div class="mt" id="shelf-modal-title">Add <em>Product</em></div>
+    <button class="mc" onclick="closeModal('shelf-modal')">×</button>
+  </div>
+  <div class="mb2">
+    <input type="hidden" id="sh-id">
+    <div class="fr"><div class="fg"><label class="fl">Product Name *</label><input class="fi" id="sh-name" placeholder="e.g. Shea Butter Curl Cream 250ml"></div><div class="fg"><label class="fl">Brand</label><input class="fi" id="sh-brand" placeholder="Brand name"></div></div>
+    <div class="fr"><div class="fg"><label class="fl">Arrived Date</label><input class="fi" id="sh-arrived" type="date"></div><div class="fg"><label class="fl">Estimated Value ($)</label><input class="fi" id="sh-value" type="number" placeholder="e.g. 25"></div></div>
+    <div class="fr"><div class="fg"><label class="fl">Linked Gig</label><select class="fs" id="sh-lgig"><option value="">— none —</option></select></div><div class="fg"><label class="fl">Filmed?</label><select class="fs" id="sh-filmed"><option value="no">No — not yet</option><option value="yes">Yes ✓</option></select></div></div>
+    <div class="fr f1"><div class="fg"><label class="fl">Film By Date</label><input class="fi" id="sh-film-by" type="date" title="Deadline by which you plan to film this product"></div></div>
+    <div class="fr f1"><div class="fg"><label class="fl">Notes</label><textarea class="ft" id="sh-notes" placeholder="Content idea, what angle you'll take, usage requirements…"></textarea></div></div>
+    <div class="fa">
+      <button class="btn btn-g" onclick="closeModal('shelf-modal')">Cancel</button>
+      <button class="btn btn-p" onclick="saveShelfProduct()">Save Product</button>
+    </div>
+  </div>
+</div></div>
 
 <!-- ─── INVOICES ─── -->
 <div class="pg" id="pg-invoices">
@@ -1528,6 +1688,87 @@ Total cash: $190 + product value</textarea></div>
     <button class="btn btn-g" onclick="closeModal('inv-preview-modal')">Close</button>
     <button class="btn btn-g" onclick="window.print()">🖨 Print / Save PDF</button>
     <button class="btn btn-p" onclick="cpInvText()">📋 Copy as Text</button>
+  </div>
+</div></div>
+
+<!-- ═══ CONTRACT MODAL ═══ -->
+<div class="mo" id="contract-modal"><div class="md wide">
+  <div class="mh"><div class="mt" id="contract-modal-title">New <em>Contract</em></div><button class="mc" onclick="closeModal('contract-modal')">×</button></div>
+  <div class="mb2">
+    <input type="hidden" id="con-id">
+    <div class="fr"><div class="fg"><label class="fl">Brand / Client *</label><input class="fi" id="con-brand" placeholder="Brand name"></div><div class="fg"><label class="fl">Project / Gig Description</label><input class="fi" id="con-project" placeholder="e.g. 2× UGC videos for skincare launch"></div></div>
+    <div class="fr"><div class="fg"><label class="fl">Agreed Rate</label><input class="fi" id="con-rate" placeholder="e.g. $70 total"></div><div class="fg"><label class="fl">Revisions Included</label><select class="fs" id="con-revisions"><option>1 revision</option><option>2 revisions</option><option>3 revisions</option><option>No revisions</option></select></div></div>
+    <div class="fr"><div class="fg"><label class="fl">Payment Terms</label><select class="fs" id="con-payment-terms"><option>50% upfront, 50% on delivery</option><option>100% on delivery</option><option>100% upfront</option><option>Net 7 days after delivery</option><option>Net 14 days after delivery</option></select></div><div class="fg"><label class="fl">Due Date</label><input class="fi" id="con-due" type="date"></div></div>
+    <div class="fr f1"><div class="fg"><label class="fl">Usage Rights</label><select class="fs" id="con-usage"><option value="organic-only">Organic posts only — no paid ads</option><option value="paid-ads">Paid ads allowed (unlimited)</option><option value="paid-ads-limited">Paid ads — limited run (specify below)</option><option value="whitelisting">Whitelisting / boosting allowed</option><option value="full-buyout">Full buyout — unlimited use</option></select></div></div>
+    <div class="fr f1"><div class="fg"><label class="fl">Deliverables (one per line)</label><textarea class="ft" id="con-deliverables" placeholder="Raw footage (full unedited)&#10;Edited MP4 (30s vertical)&#10;Thumbnail (1 static image)"></textarea></div></div>
+    <div class="fr f1"><div class="fg"><label class="fl">Additional Terms / Notes</label><textarea class="ft" id="con-terms" placeholder="e.g. Creator retains right to show in portfolio · Brand may not alter footage without consent · Late payment fee: 5% after 14 days"></textarea></div></div>
+    <div class="fr"><div class="fg"><label class="fl">Status</label><select class="fs" id="con-status"><option value="draft">Draft</option><option value="sent">Sent to Brand</option><option value="signed">Signed ✓</option><option value="active">Active</option><option value="completed">Completed</option></select></div><div class="fg"></div></div>
+    <div class="fa">
+      <button class="btn btn-g" onclick="closeModal('contract-modal')">Cancel</button>
+      <button class="btn btn-g" onclick="previewContract()">👁 Preview</button>
+      <button class="btn btn-p" onclick="saveContract()">Save Contract</button>
+    </div>
+  </div>
+</div></div>
+
+<!-- CONTRACT PREVIEW MODAL -->
+<div class="mo" id="contract-preview-modal"><div class="md xl">
+  <div class="mh"><div class="mt">Contract <em>Preview</em></div><button class="mc" onclick="closeModal('contract-preview-modal')">×</button></div>
+  <div style="padding:20px;" id="contract-preview-content"></div>
+  <div class="fa" style="padding:14px 22px;border-top:1px solid rgba(0,0,0,.06);">
+    <button class="btn btn-g" onclick="closeModal('contract-preview-modal')">Close</button>
+    <button class="btn btn-p" onclick="window.print()">🖨 Print / Save PDF</button>
+  </div>
+</div></div>
+
+<!-- ═══ PAYMENT CHASER MODAL ═══ -->
+<div class="mo" id="chaser-modal"><div class="md">
+  <div class="mh"><div class="mt" id="chaser-modal-title">Add <em>Payment to Chase</em></div><button class="mc" onclick="closeModal('chaser-modal')">×</button></div>
+  <div class="mb2">
+    <input type="hidden" id="ch-id">
+    <div class="fr"><div class="fg"><label class="fl">Brand *</label><input class="fi" id="ch-brand" placeholder="Brand name"></div><div class="fg"><label class="fl">Amount Owed *</label><input class="fi" id="ch-amount" type="number" placeholder="35"></div></div>
+    <div class="fr"><div class="fg"><label class="fl">Invoice Sent Date *</label><input class="fi" id="ch-invoice-date" type="date"></div><div class="fg"><label class="fl">Linked Gig</label><select class="fs" id="ch-gig"><option value="">— none —</option></select></div></div>
+    <div class="fr f1"><div class="fg"><label class="fl">Notes</label><textarea class="ft" id="ch-notes" placeholder="Invoice number, payment method agreed, contact…"></textarea></div></div>
+    <div class="fa"><button class="btn btn-g" onclick="closeModal('chaser-modal')">Cancel</button><button class="btn btn-p" onclick="saveChaser()">Save</button></div>
+  </div>
+</div></div>
+
+<!-- ═══ TESTIMONIAL MODAL ═══ -->
+<div class="mo" id="testimonial-modal"><div class="md">
+  <div class="mh"><div class="mt" id="test-modal-title">Log <em>Feedback</em></div><button class="mc" onclick="closeModal('testimonial-modal')">×</button></div>
+  <div class="mb2">
+    <input type="hidden" id="test-id">
+    <div class="fr"><div class="fg"><label class="fl">Brand *</label><input class="fi" id="test-brand" placeholder="Brand name"></div><div class="fg"><label class="fl">Date</label><input class="fi" id="test-date" type="date"></div></div>
+    <div class="fr"><div class="fg"><label class="fl">Type</label><select class="fs" id="test-type"><option value="quote">💬 Direct Quote / Message</option><option value="returned">🔄 Brand Came Back</option><option value="referral">🤝 Referred Me to Another Brand</option><option value="rating">⭐ Performance Rating / Metrics</option><option value="general">📝 General Positive Feedback</option></select></div><div class="fg"><label class="fl">Niche</label><select class="fs" id="test-niche"><option>Beauty & Skincare</option><option>Hair Care</option><option>Lifestyle & Home</option><option>Tech & Apps</option><option>Fashion</option><option>Food</option><option>General</option></select></div></div>
+    <div class="fr f1"><div class="fg"><label class="fl">Their Exact Words / What Happened *</label><textarea class="ft" id="test-content" placeholder="e.g. 'The video performed really well — 3× our usual engagement. We'd love to work with you again on our next launch.'" style="min-height:100px;"></textarea></div></div>
+    <div class="fr f1"><div class="fg"><label class="fl">Use in Pitches?</label><select class="fs" id="test-usable"><option value="yes">✓ Yes — add to pitch library</option><option value="private">Private — reference only</option></select></div></div>
+    <div class="fa"><button class="btn btn-g" onclick="closeModal('testimonial-modal')">Cancel</button><button class="btn btn-p" onclick="saveTestimonial()">Save Feedback</button></div>
+  </div>
+</div></div>
+
+<!-- ═══ NEGOTIATION MODAL ═══ -->
+<div class="mo" id="neg-modal"><div class="md">
+  <div class="mh"><div class="mt" id="neg-modal-title">Log <em>Negotiation</em></div><button class="mc" onclick="closeModal('neg-modal')">×</button></div>
+  <div class="mb2">
+    <input type="hidden" id="neg-id">
+    <div class="fr"><div class="fg"><label class="fl">Brand *</label><input class="fi" id="neg-brand" placeholder="Brand name"></div><div class="fg"><label class="fl">Niche</label><select class="fs" id="neg-niche"><option>Beauty & Skincare</option><option>Hair Care</option><option>Lifestyle & Home</option><option>Tech & Apps</option><option>Fashion</option><option>Food</option><option>General</option></select></div></div>
+    <div class="fr f3"><div class="fg"><label class="fl">Your Initial Quote ($)</label><input class="fi" id="neg-quoted" type="number" placeholder="50"></div><div class="fg"><label class="fl">Their Counter ($)</label><input class="fi" id="neg-counter" type="number" placeholder="30"></div><div class="fg"><label class="fl">Final Agreed ($)</label><input class="fi" id="neg-agreed" type="number" placeholder="40"></div></div>
+    <div class="fr"><div class="fg"><label class="fl">Outcome</label><select class="fs" id="neg-outcome"><option value="accepted-first">✓ Accepted first quote</option><option value="negotiated-down">↓ Negotiated down</option><option value="negotiated-up">↑ Negotiated up</option><option value="met-in-middle">⇔ Met in middle</option><option value="declined">✗ They declined</option><option value="walked-away">🚶 I walked away</option></select></div><div class="fg"><label class="fl">Date</label><input class="fi" id="neg-date" type="date"></div></div>
+    <div class="fr f1"><div class="fg"><label class="fl">Notes / What happened</label><textarea class="ft" id="neg-notes" placeholder="e.g. Pushed back on rate, wanted 2 videos for price of 1. Held firm. They came back 2 days later."></textarea></div></div>
+    <div class="fa"><button class="btn btn-g" onclick="closeModal('neg-modal')">Cancel</button><button class="btn btn-p" onclick="saveNeg()">Save</button></div>
+  </div>
+</div></div>
+
+<!-- ═══ PITCH SEND MODAL ═══ -->
+<div class="mo" id="pitchsend-modal"><div class="md">
+  <div class="mh"><div class="mt" id="pitchsend-modal-title">Log <em>Pitch Sent</em></div><button class="mc" onclick="closeModal('pitchsend-modal')">×</button></div>
+  <div class="mb2">
+    <input type="hidden" id="ps-id">
+    <div class="fr"><div class="fg"><label class="fl">Brand *</label><input class="fi" id="ps-brand" placeholder="Brand name"></div><div class="fg"><label class="fl">Date Sent *</label><input class="fi" id="ps-date" type="date"></div></div>
+    <div class="fr"><div class="fg"><label class="fl">Template Used</label><select class="fs" id="ps-template"><option value="">— custom / none —</option></select></div><div class="fg"><label class="fl">Platform</label><select class="fs" id="ps-platform"><option>Instagram DM</option><option>Email</option><option>WhatsApp</option><option>TikTok DM</option><option>LinkedIn</option></select></div></div>
+    <div class="fr"><div class="fg"><label class="fl">Niche</label><select class="fs" id="ps-niche"><option>Beauty & Skincare</option><option>Hair Care</option><option>Lifestyle & Home</option><option>Tech & Apps</option><option>Fashion</option><option>Food</option><option>General</option></select></div><div class="fg"><label class="fl">Reply Received?</label><select class="fs" id="ps-replied"><option value="no">No reply yet</option><option value="yes-positive">✓ Yes — positive</option><option value="yes-negative">✗ Yes — declined</option><option value="yes-ghosted">👻 Opened / seen, no reply</option></select></div></div>
+    <div class="fr f1"><div class="fg"><label class="fl">Notes</label><textarea class="ft" id="ps-notes" placeholder="Any personalisation you added, their response…"></textarea></div></div>
+    <div class="fa"><button class="btn btn-g" onclick="closeModal('pitchsend-modal')">Cancel</button><button class="btn btn-p" onclick="savePitchSend()">Save</button></div>
   </div>
 </div></div>
 
@@ -1664,7 +1905,34 @@ Total cash: $190 + product value</textarea></div>
     <div class="fr"><div class="fg"><label class="fl">Contact</label><input class="fi" id="g-contact" placeholder="email or DM handle"></div><div class="fg"></div></div>
     <div class="fr"><div class="fg"><label class="fl">Linked Idea</label><select class="fs" id="g-lidea"><option value="">— none —</option></select></div><div class="fg"><label class="fl">Linked Content</label><select class="fs" id="g-lct"><option value="">— none —</option></select></div></div>
     <div class="fr f1"><div class="fg"><label class="fl">📸 Linked IG Post</label><select class="fs" id="g-ligpost"><option value="">— none —</option></select></div></div>
-    <div class="fr f1"><div class="fg"><label class="fl">Notes / Deliverables</label><textarea class="ft" id="g-notes" placeholder="Deliverables, agreements…"></textarea></div></div>
+    <div class="fr f1"><div class="fg"><label class="fl">Notes</label><textarea class="ft" id="g-notes" placeholder="Agreements, brand requirements…"></textarea></div></div>
+    <!-- DELIVERABLES CHECKLIST -->
+    <div style="margin-bottom:10px;">
+      <div style="font-size:9px;letter-spacing:.15em;text-transform:uppercase;font-weight:600;color:var(--terracotta);font-family:'DM Mono',monospace;margin-bottom:7px;">✓ Deliverables Checklist</div>
+      <div id="g-deliverables-list" style="display:flex;flex-direction:column;gap:5px;margin-bottom:7px;"></div>
+      <div style="display:flex;gap:6px;align-items:center;">
+        <input class="fi" id="g-deliv-inp" placeholder="Add deliverable (e.g. Raw footage, Edited 30s MP4…)" style="flex:1;font-size:12px;" onkeydown="if(event.key==='Enter'){event.preventDefault();addGigDeliverable();}">
+        <button class="btn btn-g btn-s" onclick="addGigDeliverable()">+ Add</button>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:6px;">
+        <button class="btn btn-g btn-s" style="font-size:9px;" onclick="addGigDelivTemplate('Raw footage (full)'),addGigDelivTemplate('Edited MP4 (30s)'),addGigDelivTemplate('Vertical crop (9:16)'),addGigDelivTemplate('Thumbnail'),addGigDelivTemplate('Usage notes PDF')">📦 Load Full Template</button>
+        <button class="btn btn-g btn-s" style="font-size:9px;" onclick="addGigDelivTemplate('Raw footage (full)')">Raw</button>
+        <button class="btn btn-g btn-s" style="font-size:9px;" onclick="addGigDelivTemplate('Edited MP4')">Edited MP4</button>
+        <button class="btn btn-g btn-s" style="font-size:9px;" onclick="addGigDelivTemplate('Vertical crop (9:16)')">Vertical crop</button>
+        <button class="btn btn-g btn-s" style="font-size:9px;" onclick="addGigDelivTemplate('Revision 1')">Revision slot</button>
+      </div>
+    </div>
+    <!-- EXPENSES -->
+    <div class="fr f1" style="margin-bottom:2px;"><div style="font-size:9px;letter-spacing:.15em;text-transform:uppercase;font-weight:600;color:var(--terracotta);font-family:'DM Mono',monospace;">🇰🇪 Expenses (data, props, printing…)</div></div>
+    <div id="g-expenses-list" style="display:flex;flex-direction:column;gap:5px;margin-bottom:7px;"></div>
+    <div style="display:flex;gap:6px;margin-bottom:10px;align-items:center;">
+      <input class="fi" id="g-exp-label" placeholder="Expense label (e.g. Data upload)" style="flex:2;font-size:12px;">
+      <input class="fi" id="g-exp-amount" placeholder="$ amount" type="number" style="flex:1;font-size:12px;" onkeydown="if(event.key==='Enter'){event.preventDefault();addGigExpense();}">
+      <button class="btn btn-g btn-s" onclick="addGigExpense()">+ Add</button>
+    </div>
+    <!-- USAGE RIGHTS & EXCLUSIVITY -->
+    <div class="fr"><div class="fg"><label class="fl">Usage Rights</label><select class="fs" id="g-usage-rights"><option value="">— not specified —</option><option value="organic-only">Organic posts only</option><option value="paid-ads">Paid ads allowed</option><option value="paid-ads-limited">Paid ads (limited run)</option><option value="whitelisting">Whitelisting / boosting</option><option value="full-buyout">Full buyout</option></select></div><div class="fg"><label class="fl">Usage Duration</label><select class="fs" id="g-usage-duration"><option value="">— not specified —</option><option value="3mo">3 months</option><option value="6mo">6 months</option><option value="12mo">1 year</option><option value="unlimited">Unlimited / perpetual</option></select></div></div>
+    <div class="fr"><div class="fg"><label class="fl">Exclusivity Until</label><input class="fi" id="g-exclusivity-date" type="date" placeholder="Leave blank if no exclusivity"></div><div class="fg"><label class="fl">Exclusivity Niche</label><input class="fi" id="g-exclusivity-niche" placeholder="e.g. haircare brands"></div></div>
     <div class="fr f1"><div class="fg"><label class="fl">Product Image</label><div class="uz" onclick="document.getElementById('g-img-in').click()"><input type="file" id="g-img-in" accept="image/*" onchange="handleImg(event,'g-img-pre','g-img-data')"><div style="font-size:12px;color:var(--warm-gray);">📦 Click to upload product photo</div></div><div id="g-img-pre" style="margin-top:7px;"></div><input type="hidden" id="g-img-data"></div></div>
     <div class="scr-section-divider"><span class="scr-section-label">✍️ Script</span></div>
     <div class="scr-tabs">
@@ -1684,6 +1952,12 @@ Total cash: $190 + product value</textarea></div>
     </div>
     <div class="scr-panel" id="g-scr-scrnotes">
       <textarea class="scr-textarea" id="g-scrnotes" placeholder="Location, props, lighting notes, brand requirements, posting schedule…" style="min-height:90px;"></textarea>
+    </div>
+    <!-- DELIVERY CONFIRMATION CHECKLIST (shown when status is delivered) -->
+    <div id="g-delivery-section" style="display:none;background:rgba(74,107,80,.06);border:1px solid rgba(74,107,80,.2);border-radius:12px;padding:13px 15px;margin-bottom:10px;">
+      <div style="font-size:9px;letter-spacing:.15em;text-transform:uppercase;font-weight:600;color:var(--forest);font-family:'DM Mono',monospace;margin-bottom:8px;">📤 Delivery Confirmation — tick off what you actually sent</div>
+      <div id="g-delivery-checklist" style="display:flex;flex-direction:column;gap:6px;"></div>
+      <div style="margin-top:8px;font-size:10px;color:var(--warm-gray);">Tick every item before marking this gig Delivered. This protects you if a brand disputes delivery.</div>
     </div>
     <div class="fa"><button class="btn btn-g" onclick="closeModal('gig-modal')">Cancel</button><button class="btn btn-p" onclick="saveGig()">Save Gig</button></div>
   </div>
@@ -2937,6 +3211,7 @@ function renderPage(p){
   if(p==='studio-income'){if(!stData.income)stLoad();stRenderIncome();}
   if(p==='studio-brands'){if(!stData.brands)stLoad();stRenderBrands();}
   if(p==='invoices')rInvoices();
+  if(p==='product-shelf')renderShelf();
 }
 
 // ── MODAL ──
@@ -2949,12 +3224,15 @@ function openGigModal(){
   const mt=document.getElementById('gig-modal-title');if(mt)mt.innerHTML='New <em>Gig</em>';
   resetTP('g');
   setV('g-id','');
-  ['g-brand','g-rate','g-gift','g-due','g-contact','g-notes'].forEach(i=>setV(i,''));
+  ['g-brand','g-rate','g-gift','g-due','g-contact','g-notes','g-usage-rights','g-usage-duration','g-exclusivity-date','g-exclusivity-niche'].forEach(i=>setV(i,''));
   setV('g-rtype','paid');
   setV('g-status','pending');
   setV('g-niche','Beauty & Skincare');
   document.getElementById('g-img-pre').innerHTML='';
   setV('g-img-data','');
+  document.getElementById('g-deliverables-list').innerHTML='';
+  document.getElementById('g-expenses-list').innerHTML='';
+  const ds=document.getElementById('g-delivery-section');if(ds)ds.style.display='none';
   togGR();
   populateLinks();
   resetScrData('g');
@@ -3059,20 +3337,8 @@ function rDash(){
   setEl('gig-badge',D.gigs.filter(g=>!['delivered','declined'].includes(g.status)).length||'');
   setEl('fu-badge',D.followups.filter(f=>!f.done).length||'');
 
-  // ── INCOME PROGRESS BAR ──
-  const goal=200;
-  const pct=Math.min(100,(earned/goal)*100);
-  const bar=document.getElementById('d-goal-bar');
-  if(bar)bar.style.width=pct+'%';
-  setEl('d-goal-label','$'+earned.toFixed(0)+' / $'+goal);
-  const sub=document.getElementById('d-goal-sub');
-  if(sub){
-    const rem=goal-earned;
-    if(earned>=goal)sub.textContent='🎉 Goal reached! Time to raise your rates.';
-    else if(earned>=goal*0.75)sub.textContent='Almost there — $'+rem.toFixed(0)+' to go.';
-    else if(earned>=goal*0.5)sub.textContent='Halfway there — keep pitching!';
-    else sub.textContent='$'+rem.toFixed(0)+' remaining — every pitch counts.';
-  }
+  // ── INCOME PROGRESS BAR — handled by rDashIncomePipeline() ──
+  // (called via the patched rDash at end of file)
 
   // ── OVERDUE FOLLOW-UPS ALERT ──
   const overdue=D.followups.filter(f=>!f.done&&new Date(f.date)<now);
@@ -3262,13 +3528,25 @@ function rGigs(){
     const li=D.ideas.find(x=>x.id===g.linkedIdea);
     const lc=D.content.find(x=>x.id===g.linkedContent);
     const lip=(g.linkedIGPost&&typeof stData!=='undefined'&&stData.igPosts)?stData.igPosts.find(x=>x.id===g.linkedIGPost):null;
+    // Deliverables progress
+    const delivs=g.deliverables||[];
+    const delivDone=delivs.filter(d=>d.done).length;
+    const delivTotal=delivs.length;
+    const delivHtml=delivTotal>0?`<div style="font-size:10px;font-family:'DM Mono',monospace;color:${delivDone===delivTotal?'var(--forest)':'var(--warm-gray)'};">${delivDone}/${delivTotal} done</div>`:'<span style="color:var(--mid-gray);font-size:10px;">—</span>';
+    // Expenses / profit
+    const exp=(g.expenses||[]).reduce((s,e)=>s+(parseFloat(e.amount)||0),0);
+    const rateDisplay=`<span style="font-family:'DM Mono',monospace;font-size:12px;font-weight:500;color:${g.rateType==='paid'?'var(--forest)':'var(--terracotta)'};">${fmtRate(g)}</span>${exp>0?`<div style="font-size:9px;color:#c0392b;font-family:'DM Mono',monospace;">-$${exp.toFixed(2)} exp</div>`:''}`;
+    // Usage rights
+    const usageLabels={'organic-only':'Organic only','paid-ads':'Paid ads ✓','paid-ads-limited':'Paid ads (ltd)','whitelisting':'Whitelisting','full-buyout':'Full buyout'};
+    const usageHtml=g.usageRights?`<div style="font-size:9px;font-family:'DM Mono',monospace;color:var(--sky-deep);">${usageLabels[g.usageRights]||g.usageRights}</div>${g.exclusivityDate?`<div style="font-size:9px;color:#c0392b;font-family:'DM Mono',monospace;">🔒 Excl. to ${g.exclusivityDate}</div>`:''}`:'<span style="color:var(--mid-gray);font-size:10px;">—</span>';
     return `<tr>
       <td><div style="font-weight:500;">${g.brand}</div>${g.img?`<img src="${g.img}" style="width:34px;height:34px;border-radius:6px;object-fit:cover;margin-top:4px;cursor:pointer;" onclick="lightbox('${g.img}')">`:''}${g.contact?`<div style="font-size:10px;color:var(--warm-gray);">${g.contact}</div>`:''}${(()=>{if(g.status==='pending'){const daysOld=Math.floor((Date.now()-(g.added||Date.now()))/86400000);const hasFU=D.followups.some(f=>(f.brand||'').toLowerCase()===g.brand.toLowerCase()&&!f.done);if(daysOld>=5&&!hasFU)return`<button onclick="event.stopPropagation();fuNudgeFromGig('${g.id}')" style="margin-top:5px;font-size:9px;padding:2px 8px;border-radius:20px;background:rgba(196,150,58,.12);color:#8a6a00;border:1px solid rgba(196,150,58,.2);cursor:pointer;display:block;">🔔 Follow up?</button>`;}return'';})()}</td>
       <td>${typeHtml||'<span style="color:var(--mid-gray);font-size:11px;">—</span>'}</td>
-      <td style="font-family:'DM Mono',monospace;font-size:12px;font-weight:500;color:${g.rateType==='paid'?'var(--forest)':'var(--terracotta)'};">${fmtRate(g)}</td>
+      <td>${rateDisplay}</td>
       <td><div style="display:flex;flex-direction:column;gap:4px;"><select class="fs" style="padding:3px 7px;font-size:10px;width:auto;border-radius:20px;" onchange="updGigStatus('${g.id}',this.value)">${['pending','negotiating','waitingapproval','paid','gifted','delivered','declined'].map(s=>`<option value="${s}"${g.status===s?' selected':''}>${sLabel(s)}</option>`).join('')}</select>${(()=>{const ns=gigNextStep(g);return ns?`<button class="btn btn-p btn-s" style="font-size:9px;padding:2px 9px;" onclick="stepGig('${g.id}')">${ns.label} →</button>`:''})()}</div></td>
       <td style="font-family:'DM Mono',monospace;font-size:10px;color:var(--warm-gray);">${g.due||'—'}</td>
-      <td>${li?`<div class="lb2" style="margin-bottom:3px;">💡 ${li.title.slice(0,18)}</div>`:''}${lc?`<div class="lb2" style="margin-bottom:3px;">📅 ${lc.title.slice(0,18)}</div>`:''}${lip?`<div class="lb2" style="background:rgba(225,48,108,.07);border-color:rgba(225,48,108,.2);color:#c13584;">📸 W${lip.week} · ${lip.title.slice(0,14)}</div>`:''}</td>
+      <td>${delivHtml}${li?`<div class="lb2" style="margin-top:4px;">💡 ${li.title.slice(0,14)}</div>`:''}${lc?`<div class="lb2" style="margin-bottom:3px;">📅 ${lc.title.slice(0,14)}</div>`:''}${lip?`<div class="lb2" style="background:rgba(225,48,108,.07);border-color:rgba(225,48,108,.2);color:#c13584;">📸 W${lip.week}</div>`:''}</td>
+      <td>${usageHtml}</td>
       <td><div style="display:flex;gap:4px;">
         <button class="ib" onclick="openMB('gig','${g.id}','${esc(g.brand)}')">🎨</button>
         <button class="ib" onclick="editGig('${g.id}')">✏️</button>
@@ -3309,18 +3587,37 @@ function editGig(id){
   const g=D.gigs.find(x=>x.id===id);if(!g)return;
   const mt=document.getElementById('gig-modal-title');if(mt)mt.innerHTML='Edit <em>Gig</em>';
   setV('g-id',id);setV('g-brand',g.brand);setV('g-niche',g.niche);setV('g-plat',g.platform);setV('g-rtype',g.rateType);setV('g-rate',g.rate||'');setV('g-gift',g.gift||'');setV('g-status',g.status);setV('g-due',g.due||'');setV('g-contact',g.contact||'');setV('g-notes',g.notes||'');setV('g-img-data',g.img||'');
+  setV('g-usage-rights',g.usageRights||'');setV('g-usage-duration',g.usageDuration||'');setV('g-exclusivity-date',g.exclusivityDate||'');setV('g-exclusivity-niche',g.exclusivityNiche||'');
   setTP('g',g.types||[]);
   document.getElementById('g-img-pre').innerHTML=g.img?`<img src="${g.img}" style="max-height:80px;border-radius:8px;">`:'';
   togGR();populateLinks();
   setV('g-lidea',g.linkedIdea||'');setV('g-lct',g.linkedContent||'');setV('g-ligpost',g.linkedIGPost||'');
   loadScrData('g',{script:g.script||'',scrnotes:g.scrnotes||'',shots:g.shots||[]});
+  // Load deliverables
+  const delivList=document.getElementById('g-deliverables-list');delivList.innerHTML='';
+  (g.deliverables||[]).forEach(d=>appendGigDeliverable(d.label,d.done));
+  // Load expenses
+  const expList=document.getElementById('g-expenses-list');expList.innerHTML='';
+  (g.expenses||[]).forEach(e=>appendGigExpense(e.label,e.amount));
+  // Show/hide delivery section based on status
+  toggleDeliverySection(g.status,g.deliverables||[]);
   openModal('gig-modal');
 }
 function saveGig(){
   const brand=v('g-brand').trim();if(!brand){toast('Brand name required');return;}
   const id=v('g-id');
   const scrData=readScrData('g');
-  const gig={id:id||'g'+Date.now(),brand,niche:v('g-niche'),types:TP.g||[],platform:v('g-plat'),rateType:v('g-rtype'),rate:v('g-rate'),gift:v('g-gift'),status:v('g-status'),due:v('g-due'),contact:v('g-contact'),notes:v('g-notes'),img:v('g-img-data'),linkedIdea:v('g-lidea'),linkedContent:v('g-lct'),linkedIGPost:v('g-ligpost'),script:scrData.script,scrnotes:scrData.scrnotes,shots:scrData.shots,added:id?(D.gigs.find(g=>g.id===id)||{}).added||Date.now():Date.now()};
+  // Collect deliverables
+  const deliverables=[];
+  document.querySelectorAll('#g-deliverables-list .g-deliv-item').forEach(el=>{
+    deliverables.push({label:el.dataset.label,done:el.querySelector('input[type=checkbox]').checked});
+  });
+  // Collect expenses
+  const expenses=[];
+  document.querySelectorAll('#g-expenses-list .g-exp-item').forEach(el=>{
+    expenses.push({label:el.dataset.label,amount:parseFloat(el.dataset.amount)||0});
+  });
+  const gig={id:id||'g'+Date.now(),brand,niche:v('g-niche'),types:TP.g||[],platform:v('g-plat'),rateType:v('g-rtype'),rate:v('g-rate'),gift:v('g-gift'),status:v('g-status'),due:v('g-due'),contact:v('g-contact'),notes:v('g-notes'),img:v('g-img-data'),linkedIdea:v('g-lidea'),linkedContent:v('g-lct'),linkedIGPost:v('g-ligpost'),script:scrData.script,scrnotes:scrData.scrnotes,shots:scrData.shots,deliverables,expenses,usageRights:v('g-usage-rights'),usageDuration:v('g-usage-duration'),exclusivityDate:v('g-exclusivity-date'),exclusivityNiche:v('g-exclusivity-niche'),added:id?(D.gigs.find(g=>g.id===id)||{}).added||Date.now():Date.now()};
   if(id)D.gigs=D.gigs.map(g=>g.id===id?gig:g);else D.gigs.push(gig);
   save();closeModal('gig-modal');resetTP('g');resetScrData('g');rGigs();rDash();toast(id?'Gig updated!':'Gig saved! 🎉');
 }
@@ -6234,6 +6531,312 @@ window.saveIdea=function(){
 // ═══════════════════════════════════════════════════
 const PILLAR_IDEAS = [{"id": "sp_0", "pillar": "African Creator, Global Standards", "category": "UGC Craft & Process", "title": "My filming setup on the land — Sony ZV-E10, golden hour, no ring light", "hook": "This is where I film. No studio. No ring light. Just Mitheru.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_1", "pillar": "African Creator, Global Standards", "category": "UGC Craft & Process", "title": "How I approach a brand brief — from read to filming in one day", "hook": "A brand brief arrived at 9am. I had the video filmed by 3pm.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_2", "pillar": "African Creator, Global Standards", "category": "UGC Craft & Process", "title": "Reaction hook in real time — product arrives, camera on before I open it", "hook": "Camera was already rolling when this arrived.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_3", "pillar": "African Creator, Global Standards", "category": "UGC Craft & Process", "title": "Product shot formula — how I frame products in my world not against a wall", "hook": "Most creators put products on a white wall. Here is what I do instead.", "format": "Carousel", "niche": "Lifestyle"}, {"id": "sp_4", "pillar": "African Creator, Global Standards", "category": "UGC Craft & Process", "title": "Before and after — raw footage vs delivered UGC final cut", "hook": "Raw clip versus delivered ad. Same 30 seconds. Different world.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_5", "pillar": "African Creator, Global Standards", "category": "UGC Craft & Process", "title": "My golden hour window — why I film at exactly this time every day", "hook": "My light is free. But it only comes for 90 minutes.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_6", "pillar": "African Creator, Global Standards", "category": "UGC Craft & Process", "title": "Carousel: 5 things that make my UGC look different from everyone else's", "hook": "Why brands come back. The 5 things I never compromise.", "format": "Carousel", "niche": "Lifestyle"}, {"id": "sp_7", "pillar": "African Creator, Global Standards", "category": "UGC Craft & Process", "title": "Hook writing process — how I open a 30-second ad for a brand", "hook": "The first 3 seconds either stop the scroll or they don't.", "format": "Carousel", "niche": "Lifestyle"}, {"id": "sp_8", "pillar": "African Creator, Global Standards", "category": "UGC Craft & Process", "title": "Over-delivery moment — what I add that wasn't in the brief", "hook": "The brief asked for one thing. I delivered it and this.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_9", "pillar": "African Creator, Global Standards", "category": "UGC Craft & Process", "title": "Flat lay shot process — wooden surface, window light, product styled", "hook": "Flat lay on my kitchen table. Here is exactly how.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_10", "pillar": "African Creator, Global Standards", "category": "UGC Craft & Process", "title": "CapCut edit walkthrough — how I cut and finish a reel on my phone New", "hook": "From raw footage to final ad. My whole edit on a phone.", "format": "Carousel", "niche": "Lifestyle"}, {"id": "sp_11", "pillar": "African Creator, Global Standards", "category": "UGC Craft & Process", "title": "ASMR product unboxing — done intentionally as a brand would want it shot", "hook": "The unboxing that actually makes someone want the product.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_12", "pillar": "African Creator, Global Standards", "category": "Portfolio Showcase", "title": "Product in my world — any beauty item used in golden hour outdoor setting", "hook": "This product has never been filmed here before.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_13", "pillar": "African Creator, Global Standards", "category": "Portfolio Showcase", "title": "Talking to camera product review — honest, calm, specific benefit", "hook": "I have been using this for 3 weeks. Honest verdict.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_14", "pillar": "African Creator, Global Standards", "category": "Portfolio Showcase", "title": "Before/after product result — same angle, same light, genuine change", "hook": "I documented every day. This is Day 1 versus Day 14.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_15", "pillar": "African Creator, Global Standards", "category": "Portfolio Showcase", "title": "B-roll sequence — hands, product, setting, close-ups in one minute New", "hook": "60 seconds of the B-roll I film on every shoot. Brands use every clip.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_16", "pillar": "African Creator, Global Standards", "category": "Portfolio Showcase", "title": "Spec ad for a Kenyan brand — treated exactly like a paid brief", "hook": "I filmed this as if they paid me. Because this is the work.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_17", "pillar": "African Creator, Global Standards", "category": "Portfolio Showcase", "title": "Carousel: My rate card explained — what you get when you book me New", "hook": "What brands actually receive when they work with me.", "format": "Carousel", "niche": "Lifestyle"}, {"id": "sp_18", "pillar": "African Creator, Global Standards", "category": "Portfolio Showcase", "title": "Three-hook variations for one product — same product, three different opens", "hook": "Same product. Three completely different hooks. Which one wins?", "format": "Carousel", "niche": "Lifestyle"}, {"id": "sp_19", "pillar": "African Creator, Global Standards", "category": "Portfolio Showcase", "title": "Carousel: Why Mitheru is my studio — location as UGC asset New", "hook": "My backdrop costs nothing. That is exactly why it converts.", "format": "Carousel", "niche": "Lifestyle"}, {"id": "sp_20", "pillar": "African Creator, Global Standards", "category": "Creator POV & Industry Knowledge", "title": "What UGC actually is — and why brands pay for it over influencer content", "hook": "Brands don't pay me for followers. They pay me for this.", "format": "Carousel", "niche": "Lifestyle"}, {"id": "sp_21", "pillar": "African Creator, Global Standards", "category": "Creator POV & Industry Knowledge", "title": "How I pitch a brand — from DM to signed brief step by step", "hook": "The pitch that works. Every step.", "format": "Carousel", "niche": "Lifestyle"}, {"id": "sp_22", "pillar": "African Creator, Global Standards", "category": "Creator POV & Industry Knowledge", "title": "What makes UGC convert — hook, benefit, CTA explained simply", "hook": "Every ad that works has these three things.", "format": "Carousel", "niche": "Lifestyle"}, {"id": "sp_23", "pillar": "African Creator, Global Standards", "category": "Creator POV & Industry Knowledge", "title": "My first paid brand deal — what happened and what I learned", "hook": "My first paid deal. What went right. What went wrong.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_24", "pillar": "African Creator, Global Standards", "category": "Creator POV & Industry Knowledge", "title": "African creator advantage — what we offer that Western creators can't", "hook": "There is a gap in the market. We are it.", "format": "Carousel", "niche": "Lifestyle"}, {"id": "sp_25", "pillar": "African Creator, Global Standards", "category": "Creator POV & Industry Knowledge", "title": "Reading a brand brief — what to look for before you say yes", "hook": "Not every brand deal is worth taking. Here is how I decide.", "format": "Carousel", "niche": "Lifestyle"}, {"id": "sp_26", "pillar": "African Creator, Global Standards", "category": "Creator POV & Industry Knowledge", "title": "Volume creates luck — why I film something every single day", "hook": "I cannot predict which video changes everything. So I film everything.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_27", "pillar": "African Creator, Global Standards", "category": "Creator POV & Industry Knowledge", "title": "Rejection as a creator — what brands say no to and why it doesn't matter", "hook": "17 no's to 3 yes's. The maths of pitching.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_28", "pillar": "Hair as Heritage & Craft", "category": "Wash Day Rituals", "title": "Full 3b/3c wash day start to finish — detangle, wash, condition, style", "hook": "Wash day. Everything I do. Nothing skipped.", "format": "Reel", "niche": "Hair"}, {"id": "sp_29", "pillar": "Hair as Heritage & Craft", "category": "Wash Day Rituals", "title": "Slow voiceover wash day — meditative, cinematic on the land", "hook": "Wash day is the one hour a week I protect for myself.", "format": "Reel", "niche": "Hair"}, {"id": "sp_30", "pillar": "Hair as Heritage & Craft", "category": "Wash Day Rituals", "title": "Carousel: My wash day product lineup — what I use at each step and why", "hook": "Every product in my wash day routine. What it does. Why it stayed.", "format": "Carousel", "niche": "Hair"}, {"id": "sp_31", "pillar": "Hair as Heritage & Craft", "category": "Wash Day Rituals", "title": "Pre-poo treatment — oil application before shampooing", "hook": "The step before shampoo that changed my curl retention.", "format": "Reel", "niche": "Hair"}, {"id": "sp_32", "pillar": "Hair as Heritage & Craft", "category": "Wash Day Rituals", "title": "Detangling 3b/3c curls — wide-tooth comb on wet hair", "hook": "The right way to detangle. This takes patience and this tool.", "format": "Reel", "niche": "Hair"}, {"id": "sp_33", "pillar": "Hair as Heritage & Craft", "category": "Wash Day Rituals", "title": "Deep conditioning with natural light — steam cap, window, 30 mins", "hook": "Deep conditioning in Kenyan sun. My version of a salon treatment.", "format": "Reel", "niche": "Hair"}, {"id": "sp_34", "pillar": "Hair as Heritage & Craft", "category": "Wash Day Rituals", "title": "Product buildup on 3b curls — clarifying wash result shown", "hook": "This is what product buildup actually looks like removed.", "format": "Reel", "niche": "Hair"}, {"id": "sp_35", "pillar": "Hair as Heritage & Craft", "category": "Wash Day Rituals", "title": "Wash day as self-care ritual — the mindset around it, not just the steps", "hook": "I protect wash day. Here is exactly why.", "format": "Carousel", "niche": "Hair"}, {"id": "sp_36", "pillar": "Hair as Heritage & Craft", "category": "Wash Day Rituals", "title": "Night routine for curls — bonnet, pineapple, silk pillowcase", "hook": "Five minutes every night. This is what saves my curls by morning.", "format": "Reel", "niche": "Hair"}, {"id": "sp_37", "pillar": "Hair as Heritage & Craft", "category": "Wash Day Rituals", "title": "Refresh routine — second day curls revived without rewashing", "hook": "Day 2 curls. No wash. Here is how I revive them.", "format": "Reel", "niche": "Hair"}, {"id": "sp_38", "pillar": "Hair as Heritage & Craft", "category": "Multi-Texture Household", "title": "Same product on 3 different textures — my curls and both daughters' hair", "hook": "One product. Three hair types. Same house. Here is what happened.", "format": "Reel", "niche": "Hair"}, {"id": "sp_39", "pillar": "Hair as Heritage & Craft", "category": "Multi-Texture Household", "title": "Carousel: Understanding the curl types in our home — 3b, 3c, 4C explained", "hook": "Three hair types live in this house. Here is what that means for care.", "format": "Carousel", "niche": "Hair"}, {"id": "sp_40", "pillar": "Hair as Heritage & Craft", "category": "Multi-Texture Household", "title": "Daughter's 4C wash day — gentle detangle, protective style prep", "hook": "Her wash day. How I do it. What I use.", "format": "Reel", "niche": "Hair"}, {"id": "sp_41", "pillar": "Hair as Heritage & Craft", "category": "Multi-Texture Household", "title": "Teaching daughters about their hair — the conversation, not just the routine", "hook": "What I teach my daughters about their hair and exactly why.", "format": "Carousel", "niche": "Hair"}, {"id": "sp_42", "pillar": "Hair as Heritage & Craft", "category": "Multi-Texture Household", "title": "Daughter's reaction after new braids — pure joy moment", "hook": "She saw herself in the mirror for the first time with this style.", "format": "Reel", "niche": "Hair"}, {"id": "sp_43", "pillar": "Hair as Heritage & Craft", "category": "Multi-Texture Household", "title": "Product test across both daughters — same brand, different results", "hook": "Same bottle. Her 4C versus her sister's 3c. Night and day.", "format": "Reel", "niche": "Hair"}, {"id": "sp_44", "pillar": "Hair as Heritage & Craft", "category": "Multi-Texture Household", "title": "Braiding daughter's hair — full cornrow or protective style process", "hook": "I do her hair at home. This is the full process.", "format": "Reel", "niche": "Hair"}, {"id": "sp_45", "pillar": "Hair as Heritage & Craft", "category": "Multi-Texture Household", "title": "What I keep in my daughters' hair care kit — every product explained New", "hook": "Everything I use on their hair. Nothing in this kit is accidental.", "format": "Carousel", "niche": "Hair"}, {"id": "sp_46", "pillar": "Hair as Heritage & Craft", "category": "Multi-Texture Household", "title": "Hair heritage conversation — what our curls mean in our family New", "hook": "I didn't grow up knowing how to love my hair. My daughters will.", "format": "Reel", "niche": "Hair"}, {"id": "sp_47", "pillar": "Hair as Heritage & Craft", "category": "Multi-Texture Household", "title": "6-month length check — same position, same light, all three of us New", "hook": "Six months of consistent care. All three of us. Same position.", "format": "Reel", "niche": "Hair"}, {"id": "sp_48", "pillar": "Hair as Heritage & Craft", "category": "Curl Styling & Protective Styles", "title": "Defined curl set — product application, diffuse or air dry, final result", "hook": "The wash and go that actually works on 3b curls.", "format": "Reel", "niche": "Hair"}, {"id": "sp_49", "pillar": "Hair as Heritage & Craft", "category": "Curl Styling & Protective Styles", "title": "Half-up style on natural curls — keeps eyes as focal point", "hook": "The half-up. My most-worn style. Here is exactly how.", "format": "Reel", "niche": "Hair"}, {"id": "sp_50", "pillar": "Hair as Heritage & Craft", "category": "Curl Styling & Protective Styles", "title": "Volume styling — diffuser and afro pick technique", "hook": "The two tools that give my curls the volume I want.", "format": "Reel", "niche": "Hair"}, {"id": "sp_51", "pillar": "Hair as Heritage & Craft", "category": "Curl Styling & Protective Styles", "title": "Protective style install — mini twists or flat twists on natural hair", "hook": "Two hours. My hair protected for 6 weeks.", "format": "Reel", "niche": "Hair"}, {"id": "sp_52", "pillar": "Hair as Heritage & Craft", "category": "Curl Styling & Protective Styles", "title": "Carousel: 5 ways I wear my curls this week — all natural, all different", "hook": "Five styles. Zero heat. All this week.", "format": "Carousel", "niche": "Hair"}, {"id": "sp_53", "pillar": "Hair as Heritage & Craft", "category": "Curl Styling & Protective Styles", "title": "Frizz control in Kenyan humidity — what actually works", "hook": "Styled at 7am. Mitheru humidity by 9am. Here is what survived.", "format": "Reel", "niche": "Hair"}, {"id": "sp_54", "pillar": "Hair as Heritage & Craft", "category": "Curl Styling & Protective Styles", "title": "Box braids reveal — full before and after with daughters watching", "hook": "They watched the whole thing. Their reaction at the end.", "format": "Reel", "niche": "Hair"}, {"id": "sp_55", "pillar": "Hair as Heritage & Craft", "category": "Curl Styling & Protective Styles", "title": "Carousel: Protective style length retention — what I used, how long I wore it, the result", "hook": "8 weeks in braids. Here is the length I retained.", "format": "Carousel", "niche": "Hair"}, {"id": "sp_56", "pillar": "Hair as Heritage & Craft", "category": "Curl Styling & Protective Styles", "title": "Curl pattern in golden hour — no product, no style, just your natural texture in the light New", "hook": "My hair. Unfiltered. Golden hour on the land.", "format": "Reel", "niche": "Hair"}, {"id": "sp_57", "pillar": "Hair as Heritage & Craft", "category": "Curl Styling & Protective Styles", "title": "Hair journey — where I started and where consistent care brought me", "hook": "My hair three years ago. My hair now. Same person.", "format": "Carousel", "niche": "Hair"}, {"id": "sp_58", "pillar": "Hair as Heritage & Craft", "category": "Hair Education & Knowledge", "title": "Carousel: Curl porosity explained — why it matters for every product you buy", "hook": "If you buy hair products without knowing this, you are wasting money.", "format": "Carousel", "niche": "Hair"}, {"id": "sp_59", "pillar": "Hair as Heritage & Craft", "category": "Hair Education & Knowledge", "title": "Carousel: Protein vs moisture — how to know which your curls need right now", "hook": "Your curls are either thirsty or over-fed. Here is how to tell.", "format": "Carousel", "niche": "Hair"}, {"id": "sp_60", "pillar": "Hair as Heritage & Craft", "category": "Hair Education & Knowledge", "title": "Carousel: Understanding the LOC method on 3b/3c curls", "hook": "The LOC method. What it actually does. Whether it works for your hair.", "format": "Carousel", "niche": "Hair"}, {"id": "sp_61", "pillar": "Hair as Heritage & Craft", "category": "Hair Education & Knowledge", "title": "Scalp health first — why your scalp is more important than your strands", "hook": "Fix the scalp. The curls fix themselves.", "format": "Carousel", "niche": "Hair"}, {"id": "sp_62", "pillar": "Hair as Heritage & Craft", "category": "Hair Education & Knowledge", "title": "Braiding tension — why tight braids cause damage and what the right tension feels like", "hook": "Tight braids are not good braids. Here is the difference.", "format": "Carousel", "niche": "Hair"}, {"id": "sp_63", "pillar": "Hair as Heritage & Craft", "category": "Hair Education & Knowledge", "title": "Ingredients to avoid in natural hair products — what I check for before buying New", "hook": "I read every ingredient label before buying. Here is what I avoid.", "format": "Carousel", "niche": "Hair"}, {"id": "sp_64", "pillar": "Hair as Heritage & Craft", "category": "Hair Education & Knowledge", "title": "Talking cam: What I wish I knew when I started my natural hair journey", "hook": "Three years in. Here is what I would tell myself at the beginning.", "format": "Reel", "niche": "Hair"}, {"id": "sp_65", "pillar": "Hair as Heritage & Craft", "category": "Hair Education & Knowledge", "title": "Heat-free styling — why I have not used heat in over a year", "hook": "No heat. No heat damage. Over a year. Here is what changed.", "format": "Reel", "niche": "Hair"}, {"id": "sp_66", "pillar": "Building a Life That Works", "category": "Intentional Style", "title": "One piece, four ways — cornerstone format filmed on land at golden hour", "hook": "One trouser. Four completely different looks. Same land.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_67", "pillar": "Building a Life That Works", "category": "Intentional Style", "title": "OOTD on the land — outfit of the day, Mitheru as the backdrop", "hook": "Today's outfit. My backdrop earns its place.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_68", "pillar": "Building a Life That Works", "category": "Intentional Style", "title": "Linen in golden hour — fabric texture in natural light, no filter", "hook": "Linen in Kenyan golden hour. The filter is free.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_69", "pillar": "Building a Life That Works", "category": "Intentional Style", "title": "Carousel: My capsule wardrobe — every piece earns its place", "hook": "Everything in my wardrobe right now. All of it. Why each piece stayed.", "format": "Carousel", "niche": "Lifestyle"}, {"id": "sp_70", "pillar": "Building a Life That Works", "category": "Intentional Style", "title": "Outfit transition — homeschool morning to filming afternoon", "hook": "Teaching at 8am. Filming at 10am. Two looks.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_71", "pillar": "Building a Life That Works", "category": "Intentional Style", "title": "I made this — sewing machine reveal, piece she made herself", "hook": "I made this. On my sewing machine. In my kitchen.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_72", "pillar": "Building a Life That Works", "category": "Intentional Style", "title": "Kitenge everyday styling — African print as daily wear not occasion wear", "hook": "Kitenge is not just for special occasions in my house.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_73", "pillar": "Building a Life That Works", "category": "Intentional Style", "title": "Matching mother-daughter outfits — all three, on the land", "hook": "She wanted to match. So we all matched.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_74", "pillar": "Building a Life That Works", "category": "Intentional Style", "title": "Carousel: How I dress for my body — the rules I follow every time", "hook": "I know my body. I have learned how to dress for it. Here is everything.", "format": "Carousel", "niche": "Lifestyle"}, {"id": "sp_75", "pillar": "Building a Life That Works", "category": "Intentional Style", "title": "Slow fashion — buying one item per month and why", "hook": "One new clothing item per month maximum. Here is what changed.", "format": "Carousel", "niche": "Lifestyle"}, {"id": "sp_76", "pillar": "Building a Life That Works", "category": "Intentional Style", "title": "Earth tones week — every outfit shown, same palette throughout", "hook": "One colour palette. Seven days. Every outfit.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_77", "pillar": "Building a Life That Works", "category": "Intentional Style", "title": "Getting dressed as self-respect — the mindset behind getting dressed even at home", "hook": "Getting dressed every day is an act of self-respect. Let me explain.", "format": "Carousel", "niche": "Lifestyle"}, {"id": "sp_78", "pillar": "Building a Life That Works", "category": "Home, Cleaning & Intentional Living", "title": "Morning reset before homeschool — clean kitchen as the daily non-negotiable", "hook": "Every day starts the same. Kitchen clean before the girls sit down.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_79", "pillar": "Building a Life That Works", "category": "Home, Cleaning & Intentional Living", "title": "ASMR clean — speed clean the kitchen, spray and wipe, satisfying sounds", "hook": "Lunch done. Kitchen reset in 3 minutes.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_80", "pillar": "Building a Life That Works", "category": "Home, Cleaning & Intentional Living", "title": "Sunday bathroom refresh — weekly ritual", "hook": "Every Sunday. Every week. Non-negotiable.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_81", "pillar": "Building a Life That Works", "category": "Home, Cleaning & Intentional Living", "title": "Window cleaning — the Mitheru view behind clean glass", "hook": "Clean windows in Mitheru. The view earns the effort.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_82", "pillar": "Building a Life That Works", "category": "Home, Cleaning & Intentional Living", "title": "Laundry on the line — air drying with Kenyan sunshine", "hook": "No dryer. Just Kenyan sunshine. It works better.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_83", "pillar": "Building a Life That Works", "category": "Home, Cleaning & Intentional Living", "title": "Carousel: SAHM cleaning schedule — organised around homeschooling", "hook": "How I organise cleaning, cooking, and teaching in one day.", "format": "Carousel", "niche": "Lifestyle"}, {"id": "sp_84", "pillar": "Building a Life That Works", "category": "Home, Cleaning & Intentional Living", "title": "Evening 15-minute tidy — so you wake up to a calm house", "hook": "15 minutes every evening. I wake up to this.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_85", "pillar": "Building a Life That Works", "category": "Home, Cleaning & Intentional Living", "title": "Kids' chores — what each daughter does and at what age they started", "hook": "My 7-year-old has chores. Here is exactly what she does.", "format": "Carousel", "niche": "Lifestyle"}, {"id": "sp_86", "pillar": "Building a Life That Works", "category": "Home, Cleaning & Intentional Living", "title": "Mess to clean transition — problem and solution in one video", "hook": "This happened. I fixed it in 4 minutes.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_87", "pillar": "Building a Life That Works", "category": "Home, Cleaning & Intentional Living", "title": "Stain removal test — daughter's school uniform, 3 products, one winner", "hook": "Her uniform. Grass and food stain. Three cleaners. One winner.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_88", "pillar": "Building a Life That Works", "category": "Home, Cleaning & Intentional Living", "title": "Cleaning and mental clarity — the connection between home state and headspace New", "hook": "The state of my home is the state of my mind. Here is why I protect both.", "format": "Carousel", "niche": "Lifestyle"}, {"id": "sp_89", "pillar": "Building a Life That Works", "category": "Home, Cleaning & Intentional Living", "title": "Organised kitchen — under-sink flat lay, everything in its place New", "hook": "Everything under my kitchen sink. All earned their place.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_90", "pillar": "Building a Life That Works", "category": "Tech, Apps & Building Digitally", "title": "I built an app with Claude — what it does and how I made it without coding", "hook": "I built an app. In rural Kenya. With no coding background.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_91", "pillar": "Building a Life That Works", "category": "Tech, Apps & Building Digitally", "title": "Carousel: How I use AI in my daily life — homeschooling, budgeting, content planning", "hook": "AI tools changed how I run my home and my business. Here is how.", "format": "Carousel", "niche": "Lifestyle"}, {"id": "sp_92", "pillar": "Building a Life That Works", "category": "Tech, Apps & Building Digitally", "title": "CapCut as a UGC tool — my full editing workflow on my phone", "hook": "My entire editing studio fits in my pocket.", "format": "Carousel", "niche": "Lifestyle"}, {"id": "sp_93", "pillar": "Building a Life That Works", "category": "Tech, Apps & Building Digitally", "title": "How I homeschool with technology — apps and tools we use every day", "hook": "We homeschool with this. Here is the full setup.", "format": "Carousel", "niche": "Lifestyle"}, {"id": "sp_94", "pillar": "Building a Life That Works", "category": "Tech, Apps & Building Digitally", "title": "WhatsApp Business for UGC creators — how I communicate with brands professionally", "hook": "WhatsApp Business made my creator communication professional.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_95", "pillar": "Building a Life That Works", "category": "Tech, Apps & Building Digitally", "title": "Sony ZV-E10 honest review — the camera I use for everything, including UGC", "hook": "This camera. Every video you have seen on this page.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_96", "pillar": "Building a Life That Works", "category": "Tech, Apps & Building Digitally", "title": "Digital income for rural African women — what is possible from where I live New", "hook": "I earn digitally. From Mitheru. Here is what that actually means.", "format": "Carousel", "niche": "Lifestyle"}, {"id": "sp_97", "pillar": "Building a Life That Works", "category": "Tech, Apps & Building Digitally", "title": "Canva for UGC creators — how I make carousels, media kits, and rate cards", "hook": "My media kit, my rate card, my carousels. All made here.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_98", "pillar": "Building a Life That Works", "category": "Tech, Apps & Building Digitally", "title": "Tech that surprised me — tools I resisted and then couldn't work without New", "hook": "I resisted these for months. Now I can't run my business without them.", "format": "Carousel", "niche": "Lifestyle"}, {"id": "sp_99", "pillar": "Building a Life That Works", "category": "Tech, Apps & Building Digitally", "title": "Tracking UGC income — the simple system I use on my phone", "hook": "How I track what I earn and what I spend as a creator.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_100", "pillar": "Building a Life That Works", "category": "How I Work — Systems, Homeschooling, Creative Business", "title": "My content creation day — what actually happens from morning to filmed reel", "hook": "What my content creation day actually looks like.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_101", "pillar": "Building a Life That Works", "category": "How I Work — Systems, Homeschooling, Creative Business", "title": "Carousel: How I plan a week of content — 3 reels + 3 carousels in one afternoon", "hook": "One planning session. A full week of content mapped.", "format": "Carousel", "niche": "Lifestyle"}, {"id": "sp_102", "pillar": "Building a Life That Works", "category": "How I Work — Systems, Homeschooling, Creative Business", "title": "Batching content — how I film multiple posts in one golden hour session", "hook": "90 minutes of golden hour. Three pieces of content filmed.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_103", "pillar": "Building a Life That Works", "category": "How I Work — Systems, Homeschooling, Creative Business", "title": "Homeschool morning to creator afternoon — the transition", "hook": "Teaching at 8am. Camera out at 2pm. Here is how both happen.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_104", "pillar": "Building a Life That Works", "category": "How I Work — Systems, Homeschooling, Creative Business", "title": "Carousel: My homeschool setup — what we use, how the day runs", "hook": "We homeschool. Here is the full setup and how the day runs.", "format": "Carousel", "niche": "Lifestyle"}, {"id": "sp_105", "pillar": "Building a Life That Works", "category": "How I Work — Systems, Homeschooling, Creative Business", "title": "Responding to a brand brief — same day, start to deliver", "hook": "Brief received 9am. Delivered by 5pm. Here is what happened between.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_106", "pillar": "Building a Life That Works", "category": "How I Work — Systems, Homeschooling, Creative Business", "title": "Cooking and creating — how both fit in one day without compromise New", "hook": "I cook every meal from scratch and I run a creative business. Here is how.", "format": "Carousel", "niche": "Lifestyle"}, {"id": "sp_107", "pillar": "Building a Life That Works", "category": "How I Work — Systems, Homeschooling, Creative Business", "title": "The discipline behind the aesthetic — what the visible calm actually costs New", "hook": "Everything looks calm. Here is what it takes to keep it that way.", "format": "Carousel", "niche": "Lifestyle"}, {"id": "sp_108", "pillar": "Building a Life That Works", "category": "Beauty & Skincare in Real Life", "title": "Morning skincare ritual in window light — real skin, real routine, no filter", "hook": "My morning. My skin. Natural light only.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_109", "pillar": "Building a Life That Works", "category": "Beauty & Skincare in Real Life", "title": "Face mask while doing kitchen tasks — beauty that fits into real life", "hook": "Skincare while the kettle boils. Multitasking I actually do.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_110", "pillar": "Building a Life That Works", "category": "Beauty & Skincare in Real Life", "title": "Melanin skin in golden hour — no makeup, just the light", "hook": "No filter. No makeup. Just Kenyan golden hour on my skin.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_111", "pillar": "Building a Life That Works", "category": "Beauty & Skincare in Real Life", "title": "Carousel: My skincare routine — every product, every step, why each stayed", "hook": "My full skincare routine. Honest about every product.", "format": "Carousel", "niche": "Lifestyle"}, {"id": "sp_112", "pillar": "Building a Life That Works", "category": "Beauty & Skincare in Real Life", "title": "Lip care teaching moment — doing it with daughters as part of morning", "hook": "We do lip care together. Here is what I teach them.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_113", "pillar": "Building a Life That Works", "category": "Beauty & Skincare in Real Life", "title": "Sunscreen for melanin skin — why I use it in Kenya and what I use New", "hook": "Kenyan sun is serious. I use sunscreen. Here is what I use and why.", "format": "Carousel", "niche": "Lifestyle"}, {"id": "sp_114", "pillar": "Building a Life That Works", "category": "Beauty & Skincare in Real Life", "title": "Nighttime body care — shea butter, oils, the routine before sleep", "hook": "The 5 minutes before bed that my skin relies on.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_115", "pillar": "Building a Life That Works", "category": "Beauty & Skincare in Real Life", "title": "Tinted lip balm on dark lips — shade test, which actually shows", "hook": "Which shade actually shows on melanin lips? I tested four.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_116", "pillar": "Creative Layer — Editorial & Product", "category": "Product-Focused Content — Beyond the Demo", "title": "Slow product reveal — hands open product, close-up macro, held up to golden hour light", "hook": "Before I tell you what this does — look at it.", "format": "Reel", "niche": "Beauty"}, {"id": "sp_117", "pillar": "Creative Layer — Editorial & Product", "category": "Product-Focused Content — Beyond the Demo", "title": "Texture study — cream, oil, or serum applied to back of hand, filmed close in window light, slow spread", "hook": "The texture tells you everything about what this does.", "format": "Reel", "niche": "Beauty"}, {"id": "sp_118", "pillar": "Creative Layer — Editorial & Product", "category": "Product-Focused Content — Beyond the Demo", "title": "Product on red earth flat lay — product in soil, natural elements around it, golden light", "hook": "I took this outside. Here is what happened.", "format": "Reel", "niche": "Beauty"}, {"id": "sp_119", "pillar": "Creative Layer — Editorial & Product", "category": "Product-Focused Content — Beyond the Demo", "title": "Three-angle product study — top, side, close-up in one edit. Silent, ambient, loopable.", "hook": "Three angles. One product. No words needed.", "format": "Reel", "niche": "Beauty"}, {"id": "sp_120", "pillar": "Creative Layer — Editorial & Product", "category": "Product-Focused Content — Beyond the Demo", "title": "ASMR product interaction — peel the seal, first pump, lid click, liquid pour — sounds only, no voice", "hook": "The first time.", "format": "Reel", "niche": "Beauty"}, {"id": "sp_121", "pillar": "Creative Layer — Editorial & Product", "category": "Product-Focused Content — Beyond the Demo", "title": "Carousel: Product story — 5 slides, each a different angle or moment. No tutorial. Pure visual.", "hook": "Five frames. One product. You decide.", "format": "Carousel", "niche": "Beauty"}, {"id": "sp_122", "pillar": "Creative Layer — Editorial & Product", "category": "Product-Focused Content — Beyond the Demo", "title": "Product in or near the pool — teal and terracotta colour contrast, no words", "hook": "This product and this pool. Unplanned. Perfect.", "format": "Reel", "niche": "Beauty"}, {"id": "sp_123", "pillar": "Creative Layer — Editorial & Product", "category": "Product-Focused Content — Beyond the Demo", "title": "The pour shot — oil, serum, or conditioner poured slowly onto hand, filmed close from above in morning light", "hook": "Watch the consistency. That is how you know.", "format": "Reel", "niche": "Beauty"}, {"id": "sp_124", "pillar": "Creative Layer — Editorial & Product", "category": "Product-Focused Content — Beyond the Demo", "title": "Carousel: Same product in 4 locations on your land — shows your range as a product photographer", "hook": "Same product. Four locations. One land.", "format": "Carousel", "niche": "Beauty"}, {"id": "sp_125", "pillar": "Creative Layer — Editorial & Product", "category": "Product-Focused Content — Beyond the Demo", "title": "Ingredient close-up — shea, aloe, or oil filmed raw, then the product filmed. Visual from ingredient to finished product.", "hook": "Where it comes from. What it becomes.", "format": "Reel", "niche": "Beauty"}, {"id": "sp_126", "pillar": "Creative Layer — Editorial & Product", "category": "Product-Focused Content — Beyond the Demo", "title": "The scent face — you smell the product for the first time on camera. Real reaction. Nothing scripted.", "hook": "I was not ready for that.", "format": "Reel", "niche": "Beauty"}, {"id": "sp_127", "pillar": "Creative Layer — Editorial & Product", "category": "Product-Focused Content — Beyond the Demo", "title": "Before light vs after light — same product in flat overcast light versus golden hour. Why your light matters.", "hook": "Same product. Same day. Different light. This is why I wait for it.", "format": "Carousel", "niche": "Beauty"}, {"id": "sp_128", "pillar": "Creative Layer — Editorial & Product", "category": "Hair Editorial — Your Curls as Subject", "title": "Curl close-up in canopy light — extreme macro on curl definition, moving slightly in breeze, no voice", "hook": "These are 3b curls. Natural light. No filter.", "format": "Reel", "niche": "Beauty"}, {"id": "sp_129", "pillar": "Creative Layer — Editorial & Product", "category": "Hair Editorial — Your Curls as Subject", "title": "Hair movement reel — walking on the land, hair loose, filmed from behind at golden hour. No words.", "hook": "The way it moves is the whole point.", "format": "Reel", "niche": "Beauty"}, {"id": "sp_130", "pillar": "Creative Layer — Editorial & Product", "category": "Hair Editorial — Your Curls as Subject", "title": "Wash day water moment — water running through curls, close-up from above. ASMR. Pure texture.", "hook": "The sound. The feeling. Wash day.", "format": "Reel", "niche": "Beauty"}, {"id": "sp_131", "pillar": "Creative Layer — Editorial & Product", "category": "Hair Editorial — Your Curls as Subject", "title": "Carousel: Curl portrait series — same curls in 5 different light conditions. Morning window, midday shade, golden hour, cloudy, canopy.", "hook": "My curls in five different lights. Same hair. Different world.", "format": "Carousel", "niche": "Beauty"}, {"id": "sp_132", "pillar": "Creative Layer — Editorial & Product", "category": "Hair Editorial — Your Curls as Subject", "title": "Shrinkage versus stretched — side by side, close-up, no narration, just the visual contrast", "hook": "Same curl. Wet versus stretched.", "format": "Reel", "niche": "Beauty"}, {"id": "sp_133", "pillar": "Creative Layer — Editorial & Product", "category": "Hair Editorial — Your Curls as Subject", "title": "Product application as ritual — hands working through curls slowly, close-up, ambient sound only. No voiceover.", "hook": "This is what care looks like.", "format": "Reel", "niche": "Beauty"}, {"id": "sp_134", "pillar": "Creative Layer — Editorial & Product", "category": "Hair Editorial — Your Curls as Subject", "title": "Daughter's braid pattern — overhead close-up of a completed cornrow or flat twist. Geometric, beautiful, no words needed.", "hook": "I did this. At home. On her 4C hair.", "format": "Reel", "niche": "Beauty"}, {"id": "sp_135", "pillar": "Creative Layer — Editorial & Product", "category": "Hair Editorial — Your Curls as Subject", "title": "Hair in the mist — early morning, loose curls, mist behind you. Walk toward camera or stand still. Nothing else needed.", "hook": "Mitheru mornings and my hair.", "format": "Reel", "niche": "Beauty"}, {"id": "sp_136", "pillar": "Creative Layer — Editorial & Product", "category": "Fashion Editorial — Your Land as Studio", "title": "Earth tone outfit against green canopy — mustard or terracotta, stand at the treeline, camera low, looking away. No speaking.", "hook": "Dressed for where I live.", "format": "Reel", "niche": "Beauty"}, {"id": "sp_137", "pillar": "Creative Layer — Editorial & Product", "category": "Fashion Editorial — Your Land as Studio", "title": "Carousel: One outfit, four compositions — walking, still, close detail, wide land shot. The outfit is the subject, not the occasion.", "hook": "The same outfit. Four ways to see it.", "format": "Carousel", "niche": "Beauty"}, {"id": "sp_138", "pillar": "Creative Layer — Editorial & Product", "category": "Fashion Editorial — Your Land as Studio", "title": "Fabric detail reel — close-up of linen, kitenge, or knitwear, hands smooth it, light catches the texture. No face needed.", "hook": "The fabric is the whole story.", "format": "Reel", "niche": "Beauty"}, {"id": "sp_139", "pillar": "Creative Layer — Editorial & Product", "category": "Fashion Editorial — Your Land as Studio", "title": "Silhouette at golden hour — backlit, outline visible, hair defined against the light. Any outfit. The light does the editorial work.", "hook": "This light. Every evening. For free.", "format": "Reel", "niche": "Beauty"}, {"id": "sp_140", "pillar": "Creative Layer — Editorial & Product", "category": "Fashion Editorial — Your Land as Studio", "title": "Sitting in the land — seated on the ground or a stone, outfit styled, looking at the land not the camera. Wide shot. Still.", "hook": "I am not performing for anyone here.", "format": "Reel", "niche": "Beauty"}, {"id": "sp_141", "pillar": "Creative Layer — Editorial & Product", "category": "Fashion Editorial — Your Land as Studio", "title": "Carousel: Handmade piece editorial — a garment you sewed, photographed on the land in 5 styled compositions. Your craft as fashion content.", "hook": "I made this. Here is every angle.", "format": "Carousel", "niche": "Beauty"}, {"id": "sp_142", "pillar": "Creative Layer — Editorial & Product", "category": "Fashion Editorial — Your Land as Studio", "title": "Colour study reel — you wear one colour, stand in front of the complementary landscape. Pool teal against terracotta earth. Cobalt against the green canopy.", "hook": "Dressed for the landscape. Not in spite of it.", "format": "Reel", "niche": "Beauty"}, {"id": "sp_143", "pillar": "Creative Layer — Editorial & Product", "category": "Fashion Editorial — Your Land as Studio", "title": "Matching outfits wide shot — you and your daughters on the land, wide angle, landscape visible. Not a tutorial. A portrait of three women who match.", "hook": "Three of us. One land. One morning.", "format": "Reel", "niche": "Beauty"}];
 
+// ═══════════════════════════════════════════════════
+// FEATURE: DELIVERABLES CHECKLIST PER GIG
+// ═══════════════════════════════════════════════════
+function appendGigDeliverable(label, done=false){
+  const list=document.getElementById('g-deliverables-list');
+  const div=document.createElement('div');
+  div.className='g-deliv-item';
+  div.dataset.label=label;
+  div.style.cssText='display:flex;align-items:center;gap:8px;background:var(--warm-white);border-radius:8px;padding:6px 10px;font-size:12px;';
+  div.innerHTML=`<input type="checkbox" ${done?'checked':''} style="width:15px;height:15px;accent-color:var(--forest);flex-shrink:0;">
+    <span style="flex:1;${done?'text-decoration:line-through;opacity:.55;':''}">${esc(label)}</span>
+    <button onclick="this.closest('.g-deliv-item').remove()" style="background:none;border:none;cursor:pointer;font-size:13px;color:var(--mid-gray);flex-shrink:0;">×</button>`;
+  div.querySelector('input').addEventListener('change',function(){
+    div.querySelector('span').style.textDecoration=this.checked?'line-through':'none';
+    div.querySelector('span').style.opacity=this.checked?'0.55':'1';
+  });
+  list.appendChild(div);
+}
+function addGigDeliverable(){
+  const inp=document.getElementById('g-deliv-inp');
+  const label=inp.value.trim();if(!label)return;
+  appendGigDeliverable(label,false);
+  inp.value='';inp.focus();
+}
+function addGigDelivTemplate(label){
+  // Don't add duplicates
+  const existing=[...document.querySelectorAll('#g-deliverables-list .g-deliv-item')].map(el=>el.dataset.label);
+  if(!existing.includes(label))appendGigDeliverable(label,false);
+}
+
+// Delivery confirmation section (shown when status = delivered)
+function toggleDeliverySection(status, deliverables){
+  const sec=document.getElementById('g-delivery-section');
+  const checklist=document.getElementById('g-delivery-checklist');
+  if(!sec||!checklist)return;
+  if(status==='delivered'&&deliverables&&deliverables.length>0){
+    sec.style.display='block';
+    checklist.innerHTML=deliverables.map((d,i)=>`<label style="display:flex;align-items:center;gap:8px;font-size:12px;cursor:pointer;">
+      <input type="checkbox" ${d.done?'checked':''} style="width:15px;height:15px;accent-color:var(--forest);" onchange="updateDeliverableCheck(${i},this.checked)">
+      <span style="${d.done?'text-decoration:line-through;opacity:.6;':''}">${esc(d.label)}</span>
+    </label>`).join('');
+  } else {
+    sec.style.display='none';
+  }
+}
+function updateDeliverableCheck(idx,checked){
+  // Update the corresponding item in the deliverables list in the modal
+  const items=[...document.querySelectorAll('#g-deliverables-list .g-deliv-item')];
+  if(items[idx]){
+    const cb=items[idx].querySelector('input[type=checkbox]');
+    if(cb)cb.checked=checked;
+    items[idx].querySelector('span').style.textDecoration=checked?'line-through':'none';
+    items[idx].querySelector('span').style.opacity=checked?'0.55':'1';
+  }
+}
+// Also hook status select to show/hide delivery section
+document.addEventListener('DOMContentLoaded',function(){
+  const statusSel=document.getElementById('g-status');
+  if(statusSel){
+    statusSel.addEventListener('change',function(){
+      const deliverables=[...document.querySelectorAll('#g-deliverables-list .g-deliv-item')].map(el=>({label:el.dataset.label,done:el.querySelector('input').checked}));
+      toggleDeliverySection(this.value,deliverables);
+    });
+  }
+});
+
+// ═══════════════════════════════════════════════════
+// FEATURE: EXPENSES PER GIG
+// ═══════════════════════════════════════════════════
+function appendGigExpense(label, amount){
+  const list=document.getElementById('g-expenses-list');
+  const div=document.createElement('div');
+  div.className='g-exp-item';
+  div.dataset.label=label;
+  div.dataset.amount=amount;
+  div.style.cssText='display:flex;align-items:center;gap:8px;background:rgba(192,57,43,.05);border:1px solid rgba(192,57,43,.1);border-radius:8px;padding:6px 10px;font-size:12px;';
+  div.innerHTML=`<span style="flex:1;">${esc(label)}</span>
+    <span style="font-family:'DM Mono',monospace;font-size:11px;color:#c0392b;font-weight:500;">-$${parseFloat(amount).toFixed(2)}</span>
+    <button onclick="this.closest('.g-exp-item').remove()" style="background:none;border:none;cursor:pointer;font-size:13px;color:var(--mid-gray);flex-shrink:0;">×</button>`;
+  list.appendChild(div);
+}
+function addGigExpense(){
+  const label=document.getElementById('g-exp-label').value.trim();
+  const amount=parseFloat(document.getElementById('g-exp-amount').value)||0;
+  if(!label){toast('Enter expense label');return;}
+  appendGigExpense(label,amount);
+  document.getElementById('g-exp-label').value='';
+  document.getElementById('g-exp-amount').value='';
+}
+
+// ═══════════════════════════════════════════════════
+// FEATURE: PROFIT DISPLAY ON EARNINGS (expenses deducted)
+// ═══════════════════════════════════════════════════
+// Patch rEarnings to show profit
+const _origREarnings=window.rEarnings||rEarnings;
+function rEarnings(){
+  const paid=D.gigs.filter(g=>g.rateType==='paid'&&g.status==='delivered').reduce((s,g)=>s+parseFloat(g.rate||0),0);
+  const pend=D.gigs.filter(g=>g.rateType==='paid'&&['paid','negotiating','waitingapproval'].includes(g.status)).reduce((s,g)=>s+parseFloat(g.rate||0),0);
+  const gifted=D.gigs.filter(g=>g.rateType==='gifted').length;
+  const now=new Date();
+  const mo=D.gigs.filter(g=>{const d=new Date(g.added||Date.now());return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();}).length;
+  const totalExpenses=D.gigs.filter(g=>g.rateType==='paid'&&g.status==='delivered').reduce((s,g)=>s+((g.expenses||[]).reduce((es,e)=>es+(parseFloat(e.amount)||0),0)),0);
+  const profit=paid-totalExpenses;
+  setEl('earn-total','$'+paid.toFixed(2));
+  document.getElementById('earn-sub').textContent='from '+D.gigs.filter(g=>g.rateType==='paid'&&g.status==='delivered').length+' paid gigs · expenses: $'+totalExpenses.toFixed(2)+' · profit: $'+profit.toFixed(2);
+  setEl('ep-paid','$'+paid.toFixed(2));setEl('ep-pend','$'+pend.toFixed(2));setEl('ep-gift',gifted);setEl('ep-mo',mo);
+  // Profit stat card
+  let profitCard=document.getElementById('ep-profit-card');
+  if(!profitCard){
+    const sg=document.querySelector('#pg-earnings .sg, #pg-earnings [style*="grid"]');
+    if(sg){
+      const sc=document.createElement('div');sc.className='sc';sc.id='ep-profit-card';
+      sc.innerHTML='<div class="sc-l">True Profit</div><div class="sc-v c-f" id="ep-profit">$0</div><div class="sc-s">after expenses</div>';
+      sg.appendChild(sc);
+    }
+  }
+  setEl('ep-profit','$'+profit.toFixed(2));
+  const el=document.getElementById('earn-list');
+  const pg=D.gigs.filter(g=>g.rateType==='paid').reverse();
+  el.innerHTML=pg.length?pg.map(g=>{
+    const exp=(g.expenses||[]).reduce((s,e)=>s+(parseFloat(e.amount)||0),0);
+    const pr=parseFloat(g.rate||0)-exp;
+    return`<div style="display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid rgba(0,0,0,.04);">${g.img?`<img src="${g.img}" style="width:34px;height:34px;border-radius:7px;object-fit:cover;">`:''}
+      <div style="flex:1;"><div style="font-size:13px;font-weight:500;">${g.brand}</div><div style="font-size:10px;color:var(--warm-gray);">${g.niche}${g.due?' · '+g.due:''}${exp>0?` · expenses: $${exp.toFixed(2)}`:''}${(g.usageRights&&g.usageRights!=='')?` · ${g.usageRights}`:''}</div></div>
+      <span class="sp s-${g.status}">${sLabel(g.status)}</span>
+      <div style="text-align:right;"><div style="font-family:'DM Mono',monospace;font-size:12px;font-weight:600;color:var(--forest);">$${parseFloat(g.rate||0).toFixed(2)}</div>${exp>0?`<div style="font-size:9px;color:var(--forest);font-family:'DM Mono',monospace;">profit $${pr.toFixed(2)}</div>`:''}</div>
+    </div>`;
+  }).join(''):'<div class="es"><div class="es-icon">💰</div><div class="es-title">No paid gigs yet</div></div>';
+}
+
+// ═══════════════════════════════════════════════════
+// FEATURE: PRODUCT SHELF
+// ═══════════════════════════════════════════════════
+function getShelf(){return D._shelf||[];}
+function saveShelf(){D._shelf=getShelf();save();}
+
+function openShelfModal(id){
+  const sh=id?getShelf().find(x=>x.id===id):null;
+  document.getElementById('shelf-modal-title').innerHTML=sh?'Edit <em>Product</em>':'Add <em>Product</em>';
+  setV('sh-id',id||'');
+  setV('sh-name',sh?sh.name:'');setV('sh-brand',sh?sh.brand:'');setV('sh-arrived',sh?sh.arrived:'');setV('sh-value',sh?sh.value:'');setV('sh-filmed',sh?sh.filmed:'no');setV('sh-film-by',sh?sh.filmBy:'');setV('sh-notes',sh?sh.notes:'');
+  // Populate linked gigs
+  const gsel=document.getElementById('sh-lgig');
+  gsel.innerHTML='<option value="">— none —</option>'+D.gigs.map(g=>`<option value="${g.id}"${sh&&sh.linkedGig===g.id?' selected':''}>${g.brand}</option>`).join('');
+  openModal('shelf-modal');
+}
+function saveShelfProduct(){
+  const name=v('sh-name').trim();if(!name){toast('Product name required');return;}
+  const id=v('sh-id');
+  const obj={id:id||'sh'+Date.now(),name,brand:v('sh-brand'),arrived:v('sh-arrived'),value:v('sh-value'),filmed:v('sh-filmed'),filmBy:v('sh-film-by'),notes:v('sh-notes'),linkedGig:v('sh-lgig'),added:id?(getShelf().find(x=>x.id===id)||{}).added||Date.now():Date.now()};
+  const shelf=getShelf();
+  const idx=shelf.findIndex(x=>x.id===id);
+  if(idx>-1)shelf[idx]=obj;else shelf.push(obj);
+  D._shelf=shelf;
+  // Make sure _shelf is in LIGHT_KEYS
+  if(typeof LIGHT_KEYS!=='undefined'&&!LIGHT_KEYS.includes('_shelf'))LIGHT_KEYS.push('_shelf');
+  save();closeModal('shelf-modal');renderShelf();toast('Product saved ✓');
+}
+function deleteShelfProduct(id){if(!confirm('Remove this product?'))return;D._shelf=getShelf().filter(x=>x.id!==id);save();renderShelf();}
+function toggleShelfFilmed(id){const p=getShelf().find(x=>x.id===id);if(p){p.filmed=p.filmed==='yes'?'no':'yes';save();renderShelf();toast(p.filmed==='yes'?'Marked filmed ✓':'Marked unfilmed');}}
+
+let _shelfFilter='all';
+function shelfFilter(f,btn){
+  _shelfFilter=f;
+  document.querySelectorAll('[id^=shelf-f-]').forEach(b=>b.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  renderShelf();
+}
+function renderShelf(){
+  const shelf=getShelf();
+  const now=new Date();
+  const today=now.toISOString().slice(0,10);
+  const isOverdue=p=>p.filmed==='no'&&p.arrived&&(Math.floor((now-new Date(p.arrived))/86400000)>=7);
+  let filtered=shelf;
+  if(_shelfFilter==='unfilmed')filtered=shelf.filter(p=>p.filmed==='no');
+  else if(_shelfFilter==='filmed')filtered=shelf.filter(p=>p.filmed==='yes');
+  else if(_shelfFilter==='overdue')filtered=shelf.filter(p=>isOverdue(p));
+  const total=shelf.length,unfilmed=shelf.filter(p=>p.filmed==='no').length,filmed=shelf.filter(p=>p.filmed==='yes').length,overdue=shelf.filter(p=>isOverdue(p)).length;
+  setEl('shelf-total',total);setEl('shelf-unfilmed',unfilmed);setEl('shelf-filmed',filmed);setEl('shelf-overdue',overdue);
+  setEl('shelf-badge',unfilmed||'');
+  const list=document.getElementById('shelf-list');
+  const empty=document.getElementById('shelf-empty');
+  if(!list)return;
+  if(!filtered.length){list.innerHTML='';if(empty)empty.style.display='block';return;}
+  if(empty)empty.style.display='none';
+  list.innerHTML=filtered.map(p=>{
+    const over=isOverdue(p);
+    const linkedGig=p.linkedGig?D.gigs.find(g=>g.id===p.linkedGig):null;
+    const daysAgo=p.arrived?Math.floor((now-new Date(p.arrived))/86400000):null;
+    return`<div style="background:#fff;border-radius:var(--r);border:1px solid ${over?'rgba(192,57,43,.25)':p.filmed==='yes'?'rgba(74,107,80,.2)':'rgba(0,0,0,.06)'};padding:14px 16px;position:relative;">
+      ${over?'<div style="position:absolute;top:10px;right:10px;font-size:9px;font-family:\'DM Mono\',monospace;color:#c0392b;background:rgba(192,57,43,.1);padding:2px 8px;border-radius:20px;">⚠ Overdue</div>':''}
+      ${p.filmed==='yes'?'<div style="position:absolute;top:10px;right:10px;font-size:9px;font-family:\'DM Mono\',monospace;color:var(--forest);background:rgba(74,107,80,.1);padding:2px 8px;border-radius:20px;">✓ Filmed</div>':''}
+      <div style="font-weight:500;font-size:14px;margin-bottom:3px;padding-right:80px;">${esc(p.name)}</div>
+      <div style="font-size:11px;color:var(--warm-gray);margin-bottom:8px;">${p.brand?p.brand+' · ':''}${daysAgo!==null?`arrived ${daysAgo===0?'today':daysAgo+'d ago'}`:''} ${p.value?`· ~$${p.value} value`:''}</div>
+      ${linkedGig?`<div style="font-size:10px;color:var(--terracotta);font-family:'DM Mono',monospace;margin-bottom:6px;">📋 Linked: ${linkedGig.brand}</div>`:''}
+      ${p.filmBy?`<div style="font-size:10px;color:${p.filmBy<today?'#c0392b':'var(--warm-gray)'};font-family:'DM Mono',monospace;margin-bottom:6px;">🎬 Film by: ${p.filmBy}</div>`:''}
+      ${p.notes?`<div style="font-size:11px;color:var(--warm-gray);font-style:italic;margin-bottom:8px;">${esc(p.notes.slice(0,80))}${p.notes.length>80?'…':''}</div>`:''}
+      <div style="display:flex;gap:6px;flex-wrap:wrap;">
+        <button class="btn btn-s ${p.filmed==='yes'?'btn-g':'btn-p'}" onclick="toggleShelfFilmed('${p.id}')" style="font-size:10px;">${p.filmed==='yes'?'↩ Unfilm':'✓ Mark Filmed'}</button>
+        <button class="btn btn-g btn-s" style="font-size:10px;" onclick="openShelfModal('${p.id}')">✏ Edit</button>
+        <button class="btn btn-d btn-s" style="font-size:10px;" onclick="deleteShelfProduct('${p.id}')">🗑</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════════
+// FEATURE: MILESTONE RATE TRIGGER (prompt when 5 delivered)
+// ═══════════════════════════════════════════════════
+function renderMilestone(){
+  const bar=document.getElementById('d-milestone-bar');
+  const dots=document.getElementById('d-milestone-dots');
+  const text=document.getElementById('d-milestone-text');
+  const rateEl=document.getElementById('d-milestone-rate');
+  const cta=document.getElementById('d-milestone-cta');
+  if(!bar||!dots)return;
+  const delivered=D.gigs.filter(g=>g.status==='delivered'||g.status==='paid').length;
+  const base=D.rates.find(r=>r.type&&r.type.toLowerCase().includes('video'));
+  const curRate=base?base.price:'$20';
+  const milestones=[5,10,15,20,30];
+  const nextMile=milestones.find(m=>delivered<m)||milestones[milestones.length-1];
+  const prevMile=milestones[milestones.indexOf(nextMile)-1]||0;
+  const progress=Math.min(delivered-prevMile,nextMile-prevMile);
+  const total=nextMile-prevMile;
+  bar.style.display='block';
+  // Draw dots
+  dots.innerHTML='';
+  for(let i=0;i<total;i++){
+    const dot=document.createElement('div');
+    dot.className='milestone-dot'+(i<progress?' filled':'');
+    dots.appendChild(dot);
+  }
+  const reached=delivered>=nextMile||(delivered>0&&milestones.every(m=>delivered>=m));
+  if(reached||delivered>=nextMile){
+    text.innerHTML=`🎉 <strong>Milestone hit!</strong> You've delivered ${delivered} gigs — time to raise your rate!`;
+    if(cta){cta.textContent='→ Update Rates Now';cta.style.color='var(--forest)';cta.style.fontWeight='600';}
+    // Show a toast prompt if just hit
+    const hitKey='milestone_prompted_'+nextMile;
+    if(!sessionStorage.getItem(hitKey)){
+      sessionStorage.setItem(hitKey,'1');
+      setTimeout(()=>toast('🎉 Milestone: '+nextMile+' gigs delivered! Go raise your rate →'),1000);
+    }
+  } else {
+    text.innerHTML=`${nextMile-delivered} more gig${nextMile-delivered!==1?'s':''} to rate increase · ${delivered}/${nextMile} done`;
+    if(cta){cta.textContent='Update rates →';cta.style.color='';cta.style.fontWeight='';}
+  }
+  if(rateEl)rateEl.textContent='Current rate: '+curRate;
+}
+
+// ═══════════════════════════════════════════════════
+// FEATURE: BRAND TARGETS RETAINER / REPEAT SAVE & RENDER
+// ═══════════════════════════════════════════════════
+// Patch saveBT to include retainer fields
+const _origSaveBT=window.saveBT;
+window.saveBT=function(){
+  // Call original save if exists — but we'll override it entirely here to add fields
+  // Find or create the brand target
+  const bt={
+    id:v('bt-edit-id')||'bt'+Date.now(),
+    name:v('bt-name').trim(),niche:v('bt-niche'),status:v('bt-status'),
+    url:v('bt-url'),email:v('bt-email'),contact:v('bt-contact'),
+    platform:v('bt-platform'),rate:v('bt-rate'),priority:v('bt-priority'),
+    pitch:v('bt-pitch'),followupSent:v('bt-followup-sent'),
+    datePitched:v('bt-date-pitched'),dateFollowup:v('bt-date-followup'),
+    followupMsg:v('bt-followup-msg'),response:v('bt-response'),notes:v('bt-notes'),
+    clientType:v('bt-client-type')||'prospect',
+    retainerDate:v('bt-retainer-date'),retainerAmount:v('bt-retainer-amount'),
+    added:v('bt-edit-id')?(stData&&stData.brandTargets?stData.brandTargets.find(x=>x.id===v('bt-edit-id'))||{}:{}).added||Date.now():Date.now()
+  };
+  if(!bt.name){toast('Brand name required');return;}
+  if(typeof stData==='undefined'||!stData){toast('Studio data not loaded');return;}
+  if(!stData.brandTargets)stData.brandTargets=[];
+  const idx=stData.brandTargets.findIndex(x=>x.id===bt.id);
+  if(idx>-1)stData.brandTargets[idx]=bt;else stData.brandTargets.push(bt);
+  stSave();
+  closeModal('bt-modal');
+  if(typeof renderBrandTargets==='function')renderBrandTargets();
+  toast(v('bt-edit-id')?'Brand updated!':'Brand target added ✓');
+};
+
+// Patch openBTModal to populate retainer fields
+const _origOpenBTModal=window.openBTModal;
+window.openBTModal=function(id){
+  if(typeof _origOpenBTModal==='function')_origOpenBTModal(id);
+  // After original opens, set retainer fields
+  setTimeout(()=>{
+    const bt=id&&stData&&stData.brandTargets?stData.brandTargets.find(x=>x.id===id):null;
+    setV('bt-client-type',bt?bt.clientType||'prospect':'prospect');
+    setV('bt-retainer-date',bt?bt.retainerDate||'':'');
+    setV('bt-retainer-amount',bt?bt.retainerAmount||'':'');
+  },50);
+};
+
+// ═══════════════════════════════════════════════════
+// INIT: boot product shelf and patch goTo
+// ═══════════════════════════════════════════════════
+document.addEventListener('fb-ready',function(){
+  if(typeof LIGHT_KEYS!=='undefined'&&!LIGHT_KEYS.includes('_shelf'))LIGHT_KEYS.push('_shelf');
+  // Patch goTo to render shelf page
+  const _pg=window.goTo;
+  window.goTo=function(pg,el){
+    if(typeof _pg==='function')_pg(pg,el);
+    if(pg==='product-shelf')renderShelf();
+  };
+},{once:true});
+
 const PILLAR_COLORS = {
   'African Creator, Global Standards': {border:'rgba(196,113,79,.2)',tag:'rgba(196,113,79,.12)',tagText:'var(--terracotta)',label:'Pillar 1 · Craft'},
   'Hair as Heritage & Craft': {border:'rgba(90,143,106,.2)',tag:'rgba(90,143,106,.12)',tagText:'#4a7a58',label:'Pillar 2 · Hair'},
@@ -6324,7 +6927,656 @@ const _origRDash=window.rDash;
 window.rDash=function(){
   if(typeof _origRDash==='function')_origRDash();
   if(typeof rConsistency==='function')rConsistency();
+  rDashIncomePipeline();
+  rDashProductionKanban();
 };
+
+// ═══════════════════════════════════════════════════
+// GOAL PERIOD TOGGLE (Month / Quarter)
+// ═══════════════════════════════════════════════════
+let _goalPeriod = 'month';
+function switchGoalPeriod(p, btn){
+  _goalPeriod = p;
+  document.getElementById('goal-btn-month').className = 'btn btn-s ' + (p==='month'?'btn-p':'btn-g');
+  document.getElementById('goal-btn-quarter').className = 'btn btn-s ' + (p==='quarter'?'btn-p':'btn-g');
+  rDashIncomePipeline();
+}
+function rDashIncomePipeline(){
+  const now = new Date();
+  const paidGigs = D.gigs.filter(g => g.rateType==='paid');
+  // Earned (delivered)
+  const earned = paidGigs.filter(g => ['delivered','paid'].includes(g.status)).reduce((s,g)=>s+parseFloat(g.rate||0),0);
+  // Confirmed (paid status = confirmed but not yet delivered)
+  const confirmed = paidGigs.filter(g => g.status==='paid').reduce((s,g)=>s+parseFloat(g.rate||0),0);
+  // Pending (negotiating / waitingapproval)
+  const pipeline = paidGigs.filter(g => ['negotiating','waitingapproval'].includes(g.status)).reduce((s,g)=>s+parseFloat(g.rate||0),0);
+
+  const monthGoal = 200;
+  const quarterGoal = monthGoal * 3;
+  const goal = _goalPeriod === 'month' ? monthGoal : quarterGoal;
+  const pct = Math.min(100, (earned/goal)*100);
+  const bar = document.getElementById('d-goal-bar');
+  if(bar) bar.style.width = pct + '%';
+  const lbl = document.getElementById('d-goal-period-label');
+  if(lbl) lbl.textContent = _goalPeriod === 'month' ? 'Monthly Goal ($'+monthGoal+')' : 'Quarterly Goal ($'+quarterGoal+')';
+  const gl = document.getElementById('d-goal-label');
+  if(gl) gl.textContent = '$'+earned.toFixed(0)+' / $'+goal;
+  const sub = document.getElementById('d-goal-sub');
+  if(sub){
+    const rem = goal - earned;
+    if(earned >= goal) sub.textContent = '🎉 Goal reached! Time to raise your rates.';
+    else if(earned >= goal*0.75) sub.textContent = 'Almost there — $'+rem.toFixed(0)+' to go.';
+    else if(earned >= goal*0.5) sub.textContent = 'Halfway — $'+rem.toFixed(0)+' remaining.';
+    else sub.textContent = '$'+rem.toFixed(0)+' remaining — every pitch counts.';
+  }
+  // Pipeline breakdown
+  const pb = document.getElementById('d-pipeline-breakdown');
+  if(pb){
+    const items = [
+      {label:'Earned', val:earned, color:'var(--forest)'},
+      {label:'Confirmed', val:confirmed, color:'var(--sky-deep)'},
+      {label:'In pipeline', val:pipeline, color:'var(--gold)'},
+      {label:'Total potential', val:earned+confirmed+pipeline, color:'var(--terracotta)'},
+    ];
+    pb.innerHTML = items.map(i => `<div style="font-size:10px;color:${i.color};"><span style="font-family:'DM Mono',monospace;font-weight:600;">$${i.val.toFixed(0)}</span><span style="color:var(--mid-gray);font-size:9px;margin-left:3px;">${i.label}</span></div>`).join('');
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// PRODUCTION PIPELINE KANBAN (Dashboard mini-view)
+// ═══════════════════════════════════════════════════
+function rDashProductionKanban(){
+  const el = document.getElementById('d-prod-pipeline');
+  if(!el) return;
+  const stages = [
+    {key:'idea', label:'💡 Idea', color:'rgba(194,174,206,.2)', tc:'#7a5a8a'},
+    {key:'scripting', label:'✍️ Script', color:'rgba(196,150,58,.1)', tc:'var(--gold)'},
+    {key:'filming', label:'🎬 Filming', color:'rgba(196,113,79,.12)', tc:'var(--terracotta)'},
+    {key:'editing', label:'✂️ Editing', color:'rgba(122,174,204,.15)', tc:'var(--sky-deep)'},
+    {key:'done', label:'✓ Done', color:'rgba(74,107,80,.12)', tc:'var(--forest)'},
+  ];
+  el.innerHTML = stages.map(st => {
+    const items = D.ideas.filter(i => (i.status||'idea') === st.key);
+    const gigLinked = items.filter(i => i.linkedGig);
+    return `<div style="background:${st.color};border-radius:10px;padding:9px 10px;min-height:60px;">
+      <div style="font-size:9px;font-weight:600;color:${st.tc};font-family:'DM Mono',monospace;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;">
+        <span>${st.label}</span><span style="background:rgba(0,0,0,.08);border-radius:10px;padding:1px 6px;">${items.length}</span>
+      </div>
+      ${items.slice(0,3).map(i => {
+        const gig = i.linkedGig ? D.gigs.find(g=>g.id===i.linkedGig) : null;
+        return `<div style="background:#fff;border-radius:6px;padding:5px 7px;margin-bottom:4px;cursor:pointer;font-size:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" onclick="editIdea('${i.id}')" title="${esc(i.title)}">${esc(i.title.slice(0,24))}${i.title.length>24?'…':''}${gig?'<span style="display:block;font-size:8px;color:var(--terracotta);font-family:\'DM Mono\',monospace;">🔗 '+esc(gig.brand.slice(0,14))+'</span>':''}</div>`;
+      }).join('')}
+      ${items.length>3?`<div style="font-size:9px;color:${st.tc};text-align:center;margin-top:2px;">+${items.length-3} more</div>`:''}
+    </div>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════════
+// DATA DEFAULTS: ensure new arrays exist
+// ═══════════════════════════════════════════════════
+document.addEventListener('fb-ready', function(){
+  if(!D.contracts) D.contracts = [];
+  if(!D.chasers) D.chasers = [];
+  if(!D.testimonials) D.testimonials = [];
+  if(!D.negotiations) D.negotiations = [];
+  if(!D.pitchSends) D.pitchSends = [];
+  renderContracts();
+  renderChasers();
+  renderTestimonials();
+  renderNegotiations();
+  renderPitchTracker();
+  renderRepurpose();
+  updateChaserBadge();
+  // Populate chaser gig dropdown
+  populateChaserGigs();
+  // Populate pitch template dropdown
+  populatePitchTemplateDD();
+});
+
+function ensureNewArrays(){
+  if(!D.contracts) D.contracts = [];
+  if(!D.chasers) D.chasers = [];
+  if(!D.testimonials) D.testimonials = [];
+  if(!D.negotiations) D.negotiations = [];
+  if(!D.pitchSends) D.pitchSends = [];
+}
+
+// ═══════════════════════════════════════════════════
+// CONTRACTS
+// ═══════════════════════════════════════════════════
+function openContractModal(id){
+  ensureNewArrays();
+  const con = id ? D.contracts.find(x=>x.id===id) : null;
+  document.getElementById('contract-modal-title').innerHTML = con ? 'Edit <em>Contract</em>' : 'New <em>Contract</em>';
+  setV('con-id', con?con.id:'');
+  setV('con-brand', con?con.brand:'');
+  setV('con-project', con?con.project:'');
+  setV('con-rate', con?con.rate:'');
+  setV('con-revisions', con?con.revisions:'1 revision');
+  setV('con-payment-terms', con?con.paymentTerms:'50% upfront, 50% on delivery');
+  setV('con-due', con?con.due:'');
+  setV('con-usage', con?con.usage:'organic-only');
+  setV('con-deliverables', con?con.deliverables:'Raw footage (full unedited)\nEdited MP4 (30s vertical)');
+  setV('con-terms', con?con.terms:'Creator retains right to show work in portfolio.\nBrand may not alter footage without consent.\nLate payment fee: 5% after 14 days.');
+  setV('con-status', con?con.status:'draft');
+  openModal('contract-modal');
+}
+function openContractFromGig(){
+  ensureNewArrays();
+  const active = D.gigs.filter(g=>!['delivered','declined'].includes(g.status));
+  if(!active.length){ toast('No active gigs to generate from'); return; }
+  const g = active[0];
+  setV('con-brand', g.brand);
+  setV('con-project', (g.types||[]).join(', ')||'UGC content');
+  setV('con-rate', g.rateType==='paid'?'$'+g.rate:g.gift||'Gifted');
+  setV('con-due', g.due||'');
+  setV('con-usage', g.usageRights||'organic-only');
+  setV('con-id','');
+  document.getElementById('contract-modal-title').innerHTML = 'New <em>Contract</em> from Gig';
+  openModal('contract-modal');
+}
+function saveContract(){
+  ensureNewArrays();
+  const brand = v('con-brand').trim();
+  if(!brand){ toast('Brand required'); return; }
+  const id = v('con-id');
+  const con = {
+    id: id||'con'+Date.now(), brand, project:v('con-project'),
+    rate:v('con-rate'), revisions:v('con-revisions'),
+    paymentTerms:v('con-payment-terms'), due:v('con-due'),
+    usage:v('con-usage'), deliverables:v('con-deliverables'),
+    terms:v('con-terms'), status:v('con-status'), added:id?undefined:Date.now()
+  };
+  if(!con.added) con.added = (D.contracts.find(x=>x.id===id)||{}).added||Date.now();
+  if(id) D.contracts = D.contracts.map(x=>x.id===id?con:x);
+  else D.contracts.push(con);
+  save(); closeModal('contract-modal'); renderContracts(); toast('Contract saved!');
+}
+function previewContract(){
+  const brand = v('con-brand')||'[Brand]';
+  const project = v('con-project')||'UGC Content';
+  const rate = v('con-rate')||'[Rate]';
+  const revisions = v('con-revisions');
+  const payTerms = v('con-payment-terms');
+  const due = v('con-due')||'[TBD]';
+  const usage = v('con-usage');
+  const deliverables = v('con-deliverables').split('\n').filter(Boolean);
+  const terms = v('con-terms');
+  const usageMap = {'organic-only':'Organic posts only — no paid advertising','paid-ads':'Paid advertising allowed (unlimited)','paid-ads-limited':'Paid advertising allowed (limited run)','whitelisting':'Whitelisting / boosting allowed','full-buyout':'Full buyout — unlimited use in perpetuity'};
+  const preview = `
+    <div style="font-family:'Jost',sans-serif;max-width:620px;margin:0 auto;padding:20px;">
+      <div style="text-align:center;margin-bottom:24px;border-bottom:2px solid var(--ink);padding-bottom:16px;">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:300;">Asha<em style="font-style:italic;color:var(--terracotta);">Jolies</em></div>
+        <div style="font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--warm-gray);margin-top:4px;">UGC Creator · Mitheru, Kenya</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:1.1rem;margin-top:12px;font-weight:400;">Content Creation Agreement</div>
+      </div>
+      <div style="margin-bottom:16px;"><strong>Date:</strong> ${new Date().toLocaleDateString('en-KE',{year:'numeric',month:'long',day:'numeric'})}</div>
+      <div style="margin-bottom:8px;"><strong>Brand / Client:</strong> ${esc(brand)}</div>
+      <div style="margin-bottom:8px;"><strong>Project:</strong> ${esc(project)}</div>
+      <div style="margin-bottom:8px;"><strong>Delivery Date:</strong> ${due}</div>
+      <div style="margin-bottom:8px;"><strong>Agreed Rate:</strong> ${esc(rate)}</div>
+      <div style="margin-bottom:8px;"><strong>Payment Terms:</strong> ${esc(payTerms)}</div>
+      <div style="margin-bottom:16px;"><strong>Revisions Included:</strong> ${esc(revisions)}</div>
+      <div style="margin-bottom:8px;font-weight:600;">Deliverables:</div>
+      <ul style="margin:0 0 16px 18px;">${deliverables.map(d=>`<li style="margin-bottom:4px;">${esc(d)}</li>`).join('')}</ul>
+      <div style="margin-bottom:8px;"><strong>Usage Rights:</strong> ${usageMap[usage]||esc(usage)}</div>
+      ${terms?`<div style="margin-top:16px;padding-top:14px;border-top:1px solid rgba(0,0,0,.1);"><div style="font-weight:600;margin-bottom:6px;">Additional Terms:</div><div style="font-size:12px;line-height:1.6;white-space:pre-line;">${esc(terms)}</div></div>`:''}
+      <div style="margin-top:28px;display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+        <div style="border-top:1px solid var(--ink);padding-top:8px;"><div style="font-size:11px;color:var(--warm-gray);">Creator Signature</div><div style="font-family:'Cormorant Garamond',serif;font-style:italic;margin-top:4px;">Asha Jolies</div></div>
+        <div style="border-top:1px solid var(--ink);padding-top:8px;"><div style="font-size:11px;color:var(--warm-gray);">Brand Representative</div><div style="font-size:11px;color:var(--mid-gray);margin-top:4px;">Signature · Date</div></div>
+      </div>
+    </div>`;
+  document.getElementById('contract-preview-content').innerHTML = preview;
+  openModal('contract-preview-modal');
+}
+function deleteContract(id){ if(!confirm('Delete contract?'))return; D.contracts=D.contracts.filter(x=>x.id!==id); save(); renderContracts(); }
+function renderContracts(){
+  ensureNewArrays();
+  const el = document.getElementById('contracts-list');
+  if(!el) return;
+  if(!D.contracts.length){
+    el.innerHTML = '<div class="es"><div class="es-icon">📝</div><div class="es-title">No contracts yet</div><div class="es-sub">Create a contract before your next gig — protect your work before you start filming.</div></div>';
+    return;
+  }
+  const statusColor = {draft:'var(--warm-gray)',sent:'var(--gold)',signed:'var(--forest)',active:'var(--sky-deep)',completed:'var(--mid-gray)'};
+  el.innerHTML = [...D.contracts].reverse().map(c => `
+    <div style="background:#fff;border-radius:var(--r);border:1px solid rgba(0,0,0,.06);padding:15px 18px;margin-bottom:10px;display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap;">
+      <div style="flex:1;min-width:200px;">
+        <div style="font-size:14px;font-weight:500;margin-bottom:3px;">${esc(c.brand)}</div>
+        <div style="font-size:11px;color:var(--warm-gray);">${esc(c.project||'')}${c.due?' · Due '+c.due:''}</div>
+        <div style="font-size:11px;color:var(--forest);font-family:'DM Mono',monospace;margin-top:4px;">${esc(c.rate||'')} · ${esc(c.revisions||'')}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+        <span class="sp" style="background:rgba(0,0,0,.06);color:${statusColor[c.status]||'var(--warm-gray)'};">${c.status}</span>
+        <div style="display:flex;gap:5px;">
+          <button class="ib" onclick="previewContractById('${c.id}')">👁</button>
+          <button class="ib" onclick="openContractModal('${c.id}')">✏️</button>
+          <button class="ib" onclick="deleteContract('${c.id}')">🗑</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+function previewContractById(id){
+  const c = D.contracts.find(x=>x.id===id); if(!c) return;
+  setV('con-id',c.id); setV('con-brand',c.brand); setV('con-project',c.project||'');
+  setV('con-rate',c.rate||''); setV('con-revisions',c.revisions||'1 revision');
+  setV('con-payment-terms',c.paymentTerms||''); setV('con-due',c.due||'');
+  setV('con-usage',c.usage||'organic-only'); setV('con-deliverables',c.deliverables||'');
+  setV('con-terms',c.terms||'');
+  previewContract();
+}
+
+// ═══════════════════════════════════════════════════
+// PAYMENT CHASER
+// ═══════════════════════════════════════════════════
+function populateChaserGigs(){
+  const sel = document.getElementById('ch-gig'); if(!sel) return;
+  const active = D.gigs.filter(g=>g.rateType==='paid'&&!['declined'].includes(g.status));
+  sel.innerHTML = '<option value="">— none —</option>'+active.map(g=>`<option value="${g.id}">${esc(g.brand)} — $${g.rate}</option>`).join('');
+}
+function openChaserModal(id){
+  ensureNewArrays(); populateChaserGigs();
+  const ch = id ? D.chasers.find(x=>x.id===id) : null;
+  document.getElementById('chaser-modal-title').innerHTML = ch ? 'Edit <em>Payment Chase</em>' : 'Add <em>Payment to Chase</em>';
+  setV('ch-id', ch?ch.id:''); setV('ch-brand',ch?ch.brand:'');
+  setV('ch-amount',ch?ch.amount:''); setV('ch-invoice-date',ch?ch.invoiceDate:'');
+  setV('ch-gig',ch?ch.gigId:''); setV('ch-notes',ch?ch.notes:'');
+  openModal('chaser-modal');
+}
+function saveChaser(){
+  ensureNewArrays();
+  const brand = v('ch-brand').trim(); if(!brand){ toast('Brand required'); return; }
+  const invoiceDate = v('ch-invoice-date'); if(!invoiceDate){ toast('Invoice date required'); return; }
+  const id = v('ch-id');
+  const ch = { id:id||'ch'+Date.now(), brand, amount:parseFloat(v('ch-amount'))||0,
+    invoiceDate, gigId:v('ch-gig'), notes:v('ch-notes'),
+    status:'chasing', resolved:false, added:id?undefined:Date.now() };
+  if(!ch.added) ch.added = (D.chasers.find(x=>x.id===id)||{}).added||Date.now();
+  if(id) D.chasers = D.chasers.map(x=>x.id===id?ch:x);
+  else D.chasers.push(ch);
+  save(); closeModal('chaser-modal'); renderChasers(); updateChaserBadge(); toast('Payment chase saved!');
+}
+function resolveChaser(id){
+  ensureNewArrays();
+  const ch = D.chasers.find(x=>x.id===id); if(!ch) return;
+  ch.resolved = true; ch.resolvedDate = new Date().toISOString().slice(0,10);
+  save(); renderChasers(); updateChaserBadge(); toast('Payment marked as received ✓');
+}
+function deleteChaser(id){ if(!confirm('Remove?'))return; D.chasers=D.chasers.filter(x=>x.id!==id); save(); renderChasers(); updateChaserBadge(); }
+function updateChaserBadge(){
+  ensureNewArrays();
+  const badge = document.getElementById('chaser-badge');
+  const overdue = D.chasers.filter(ch=>{
+    if(ch.resolved) return false;
+    const inv = new Date(ch.invoiceDate);
+    const daysSince = Math.floor((Date.now()-inv.getTime())/86400000);
+    return daysSince >= 7;
+  }).length;
+  if(badge) badge.textContent = overdue||''; badge && (badge.style.display = overdue?'':'none');
+}
+function getChaserStage(ch){
+  const inv = new Date(ch.invoiceDate);
+  const days = Math.floor((Date.now()-inv.getTime())/86400000);
+  if(days < 7) return {label:'Invoice sent', color:'var(--forest)', day:days, next:'Chase on Day 7'};
+  if(days < 14) return {label:'Chase #1 due', color:'var(--gold)', day:days, next:'Final notice on Day 14'};
+  return {label:'Final notice overdue', color:'#c0392b', day:days, next:'Escalate or write off'};
+}
+function renderChasers(){
+  ensureNewArrays();
+  const el = document.getElementById('chaser-list'); if(!el) return;
+  const urgent = document.getElementById('chaser-urgent');
+  const active = D.chasers.filter(x=>!x.resolved);
+  const resolved = D.chasers.filter(x=>x.resolved);
+  // Urgent banner
+  const overdue14 = active.filter(ch=>{ const d=Math.floor((Date.now()-new Date(ch.invoiceDate).getTime())/86400000); return d>=14; });
+  if(urgent){ urgent.innerHTML = overdue14.length ? `<div style="background:rgba(192,57,43,.09);border:1px solid rgba(192,57,43,.2);border-radius:12px;padding:11px 16px;margin-bottom:10px;font-size:12px;color:#c0392b;">⚠ ${overdue14.length} payment${overdue14.length>1?'s':''} at Final Notice stage — take action now.</div>` : ''; }
+  if(!D.chasers.length){
+    el.innerHTML = '<div class="es"><div class="es-icon">💸</div><div class="es-title">No payments being chased</div><div class="es-sub">When you deliver work and send an invoice, log it here. You\'ll get systematic reminders at Day 7 and Day 14.</div></div>'; return;
+  }
+  const totalOwed = active.reduce((s,c)=>s+(c.amount||0),0);
+  el.innerHTML = `<div style="background:var(--ink);border-radius:var(--r);padding:14px 18px;margin-bottom:14px;display:flex;gap:16px;flex-wrap:wrap;">
+    <div><div style="font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:rgba(250,246,239,.4);">Total Owed</div><div style="font-family:'Cormorant Garamond',serif;font-size:1.8rem;color:var(--blush);font-weight:300;">$${totalOwed.toFixed(2)}</div></div>
+    <div style="align-self:center;font-size:11px;color:rgba(250,246,239,.4);">from ${active.length} active chase${active.length!==1?'s':''}</div>
+  </div>` +
+  active.sort((a,b)=>new Date(a.invoiceDate)-new Date(b.invoiceDate)).map(ch=>{
+    const st = getChaserStage(ch);
+    return `<div style="background:#fff;border-radius:var(--r);border:1px solid rgba(0,0,0,.06);padding:14px 17px;margin-bottom:8px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+      <div style="flex:1;min-width:180px;">
+        <div style="font-size:14px;font-weight:500;">${esc(ch.brand)}</div>
+        <div style="font-size:11px;color:var(--warm-gray);">Invoice sent ${ch.invoiceDate} · Day ${st.day}</div>
+        <div style="font-size:10px;color:${st.color};font-family:'DM Mono',monospace;margin-top:3px;">${st.label} · Next: ${st.next}</div>
+        ${ch.notes?`<div style="font-size:11px;color:var(--warm-gray);margin-top:3px;">${esc(ch.notes)}</div>`:''}
+      </div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:1.4rem;color:var(--forest);">$${(ch.amount||0).toFixed(2)}</div>
+      <div style="display:flex;gap:5px;flex-direction:column;align-items:flex-end;">
+        <button class="btn btn-p btn-s" style="font-size:9px;" onclick="resolveChaser('${ch.id}')">✓ Paid!</button>
+        <div style="display:flex;gap:4px;"><button class="ib" onclick="openChaserModal('${ch.id}')">✏️</button><button class="ib" onclick="deleteChaser('${ch.id}')">🗑</button></div>
+      </div>
+    </div>`;
+  }).join('') +
+  (resolved.length ? `<div style="font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--warm-gray);font-family:'DM Mono',monospace;margin:12px 0 8px;">✓ Resolved (${resolved.length})</div>` +
+    resolved.slice(-5).map(ch=>`<div style="background:rgba(74,107,80,.06);border-radius:10px;border:1px solid rgba(74,107,80,.12);padding:10px 14px;margin-bottom:6px;display:flex;align-items:center;gap:10px;opacity:.7;">
+      <div style="flex:1;font-size:12px;">${esc(ch.brand)} — <span style="font-family:'DM Mono',monospace;">$${(ch.amount||0).toFixed(2)}</span></div>
+      <span style="font-size:10px;color:var(--forest);">Received ${ch.resolvedDate||''} ✓</span>
+      <button class="ib" onclick="deleteChaser('${ch.id}')">🗑</button>
+    </div>`).join('') : '');
+}
+
+// ═══════════════════════════════════════════════════
+// TESTIMONIALS
+// ═══════════════════════════════════════════════════
+function openTestimonialModal(id){
+  ensureNewArrays();
+  const t = id ? D.testimonials.find(x=>x.id===id) : null;
+  document.getElementById('test-modal-title').innerHTML = t?'Edit <em>Feedback</em>':'Log <em>Feedback</em>';
+  setV('test-id',t?t.id:''); setV('test-brand',t?t.brand:'');
+  setV('test-date',t?t.date:new Date().toISOString().slice(0,10));
+  setV('test-type',t?t.type:'quote'); setV('test-niche',t?t.niche:'Beauty & Skincare');
+  setV('test-content',t?t.content:''); setV('test-usable',t?t.usable:'yes');
+  openModal('testimonial-modal');
+}
+function saveTestimonial(){
+  ensureNewArrays();
+  const brand = v('test-brand').trim(); if(!brand){toast('Brand required');return;}
+  const content = v('test-content').trim(); if(!content){toast('Feedback content required');return;}
+  const id = v('test-id');
+  const t = {id:id||'tst'+Date.now(),brand,date:v('test-date'),type:v('test-type'),niche:v('test-niche'),content,usable:v('test-usable'),added:id?undefined:Date.now()};
+  if(!t.added) t.added=(D.testimonials.find(x=>x.id===id)||{}).added||Date.now();
+  if(id) D.testimonials=D.testimonials.map(x=>x.id===id?t:x); else D.testimonials.push(t);
+  save(); closeModal('testimonial-modal'); renderTestimonials(); toast('Feedback logged ✓');
+}
+function deleteTestimonial(id){if(!confirm('Delete?'))return;D.testimonials=D.testimonials.filter(x=>x.id!==id);save();renderTestimonials();}
+function renderTestimonials(){
+  ensureNewArrays();
+  const el = document.getElementById('testimonials-list'); if(!el) return;
+  const hi = document.getElementById('testimonials-highlight');
+  const usable = D.testimonials.filter(t=>t.usable==='yes');
+  if(hi && usable.length){
+    const pick = usable[usable.length-1];
+    hi.innerHTML = `<div style="background:var(--ink);border-radius:var(--r);padding:16px 20px;margin-bottom:14px;"><div style="font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--warm-gold);font-family:'DM Mono',monospace;margin-bottom:8px;">✦ Latest Quote for Pitches</div><div style="font-family:'Cormorant Garamond',serif;font-size:1.1rem;color:var(--ivory);font-style:italic;line-height:1.5;">"${esc(pick.content.slice(0,200))}${pick.content.length>200?'…':''}"</div><div style="font-size:10px;color:rgba(250,246,239,.4);margin-top:6px;">— ${esc(pick.brand)} · ${pick.niche}</div></div>`;
+  } else if(hi) hi.innerHTML='';
+  if(!D.testimonials.length){
+    el.innerHTML='<div class="es"><div class="es-icon">⭐</div><div class="es-title">No testimonials yet</div><div class="es-sub">When a brand sends positive feedback or comes back for more, log it here. Over time this becomes your pitch weapon.</div></div>'; return;
+  }
+  const typeLabel = {quote:'💬 Direct quote',returned:'🔄 Came back',referral:'🤝 Referral',rating:'⭐ Rating / metrics',general:'📝 General feedback'};
+  el.innerHTML = [...D.testimonials].reverse().map(t=>`
+    <div style="background:#fff;border-radius:var(--r);border:1px solid ${t.usable==='yes'?'rgba(196,150,58,.25)':'rgba(0,0,0,.06)'};padding:14px 17px;margin-bottom:8px;">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:7px;flex-wrap:wrap;">
+        <div style="font-weight:500;font-size:13px;">${esc(t.brand)}</div>
+        <span style="font-size:9px;font-family:'DM Mono',monospace;color:var(--terracotta);background:rgba(196,113,79,.1);padding:2px 8px;border-radius:20px;">${typeLabel[t.type]||t.type}</span>
+        <span style="font-size:9px;font-family:'DM Mono',monospace;color:var(--warm-gray);">${t.niche}</span>
+        ${t.usable==='yes'?'<span style="font-size:9px;font-family:\'DM Mono\',monospace;color:var(--gold);background:rgba(196,150,58,.1);padding:2px 8px;border-radius:20px;">✦ Use in pitches</span>':''}
+        <span style="margin-left:auto;font-size:10px;color:var(--mid-gray);">${t.date}</span>
+      </div>
+      <div style="font-size:12px;line-height:1.6;color:var(--ink);font-style:italic;">"${esc(t.content)}"</div>
+      <div style="display:flex;gap:5px;margin-top:8px;justify-content:flex-end;">
+        <button class="ib" onclick="openTestimonialModal('${t.id}')">✏️</button>
+        <button class="ib" onclick="deleteTestimonial('${t.id}')">🗑</button>
+      </div>
+    </div>`).join('');
+}
+
+// ═══════════════════════════════════════════════════
+// RATE NEGOTIATION LOG
+// ═══════════════════════════════════════════════════
+function openNegModal(id){
+  ensureNewArrays();
+  const n = id ? D.negotiations.find(x=>x.id===id) : null;
+  document.getElementById('neg-modal-title').innerHTML = n?'Edit <em>Negotiation</em>':'Log <em>Negotiation</em>';
+  setV('neg-id',n?n.id:''); setV('neg-brand',n?n.brand:'');
+  setV('neg-niche',n?n.niche:'Beauty & Skincare');
+  setV('neg-quoted',n?n.quoted:''); setV('neg-counter',n?n.counter:'');
+  setV('neg-agreed',n?n.agreed:''); setV('neg-outcome',n?n.outcome:'accepted-first');
+  setV('neg-date',n?n.date:new Date().toISOString().slice(0,10));
+  setV('neg-notes',n?n.notes:'');
+  openModal('neg-modal');
+}
+function saveNeg(){
+  ensureNewArrays();
+  const brand = v('neg-brand').trim(); if(!brand){toast('Brand required');return;}
+  const id = v('neg-id');
+  const n={id:id||'neg'+Date.now(),brand,niche:v('neg-niche'),quoted:parseFloat(v('neg-quoted'))||0,
+    counter:parseFloat(v('neg-counter'))||0,agreed:parseFloat(v('neg-agreed'))||0,
+    outcome:v('neg-outcome'),date:v('neg-date'),notes:v('neg-notes'),
+    added:id?undefined:Date.now()};
+  if(!n.added) n.added=(D.negotiations.find(x=>x.id===id)||{}).added||Date.now();
+  if(id) D.negotiations=D.negotiations.map(x=>x.id===id?n:x); else D.negotiations.push(n);
+  save(); closeModal('neg-modal'); renderNegotiations(); toast('Negotiation logged!');
+}
+function deleteNeg(id){if(!confirm('Delete?'))return;D.negotiations=D.negotiations.filter(x=>x.id!==id);save();renderNegotiations();}
+function renderNegotiations(){
+  ensureNewArrays();
+  const el = document.getElementById('neg-list'); if(!el) return;
+  const ins = document.getElementById('neg-insights');
+  // Compute insights
+  if(ins && D.negotiations.length>=3){
+    const nicheGroups={};
+    D.negotiations.forEach(n=>{if(!nicheGroups[n.niche])nicheGroups[n.niche]=[];nicheGroups[n.niche].push(n);});
+    const insights=[];
+    Object.entries(nicheGroups).forEach(([niche,items])=>{
+      if(items.length<2) return;
+      const pushback=items.filter(i=>['negotiated-down','declined','walked-away'].includes(i.outcome)).length;
+      const pct=Math.round((pushback/items.length)*100);
+      if(pct>=50) insights.push(`${niche}: ${pct}% pushback rate — consider anchoring higher`);
+      const accepted=items.filter(i=>i.outcome==='accepted-first').length;
+      const acceptPct=Math.round((accepted/items.length)*100);
+      if(acceptPct>=80) insights.push(`${niche}: ${acceptPct}% accept first quote — you may be undercharging`);
+    });
+    ins.innerHTML = insights.length ? `<div style="background:rgba(196,150,58,.1);border:1px solid rgba(196,150,58,.2);border-radius:12px;padding:12px 16px;margin-bottom:14px;">
+      <div style="font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);font-family:'DM Mono',monospace;margin-bottom:8px;">✦ Pricing Insights</div>
+      ${insights.map(i=>`<div style="font-size:12px;color:var(--ink);margin-bottom:4px;">• ${i}</div>`).join('')}
+    </div>` : '';
+  } else if(ins) ins.innerHTML='';
+
+  if(!D.negotiations.length){
+    el.innerHTML='<div class="es"><div class="es-icon">📊</div><div class="es-title">No negotiations logged yet</div><div class="es-sub">Start logging what you quoted vs. what you agreed. After 5–10 entries, patterns appear that tell you where to price harder.</div></div>'; return;
+  }
+  const outcomeLabel={'accepted-first':'✓ First quote accepted','negotiated-down':'↓ Negotiated down','negotiated-up':'↑ Negotiated up','met-in-middle':'⇔ Met in middle','declined':'✗ Declined','walked-away':'🚶 I walked away'};
+  const outcomeColor={'accepted-first':'var(--forest)','negotiated-down':'#c0392b','negotiated-up':'var(--forest)','met-in-middle':'var(--sky-deep)','declined':'var(--warm-gray)','walked-away':'var(--gold)'};
+  el.innerHTML = [...D.negotiations].reverse().map(n=>{
+    const discount = n.agreed&&n.quoted ? Math.round(((n.quoted-n.agreed)/n.quoted)*100) : 0;
+    return `<div style="background:#fff;border-radius:var(--r);border:1px solid rgba(0,0,0,.06);padding:14px 17px;margin-bottom:8px;display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap;">
+      <div style="flex:1;min-width:200px;">
+        <div style="font-weight:500;font-size:13px;margin-bottom:3px;">${esc(n.brand)} <span style="font-size:10px;font-weight:400;color:var(--warm-gray);">· ${n.niche}</span></div>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:5px;">
+          <span style="font-size:11px;color:var(--warm-gray);">Quoted: <strong style="color:var(--ink);">$${n.quoted||0}</strong></span>
+          ${n.counter?`<span style="font-size:11px;color:var(--warm-gray);">Counter: <strong style="color:#c0392b;">$${n.counter}</strong></span>`:''}
+          ${n.agreed?`<span style="font-size:11px;color:var(--warm-gray);">Agreed: <strong style="color:var(--forest);">$${n.agreed}</strong></span>`:''}
+          ${discount>0?`<span style="font-size:10px;color:#c0392b;font-family:'DM Mono',monospace;">${discount}% off</span>`:''}
+        </div>
+        <span style="font-size:9px;font-family:'DM Mono',monospace;color:${outcomeColor[n.outcome]||'var(--warm-gray)'};">${outcomeLabel[n.outcome]||n.outcome}</span>
+        ${n.notes?`<div style="font-size:11px;color:var(--warm-gray);margin-top:4px;">${esc(n.notes)}</div>`:''}
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;">
+        <span style="font-size:10px;color:var(--mid-gray);">${n.date}</span>
+        <div style="display:flex;gap:4px;"><button class="ib" onclick="openNegModal('${n.id}')">✏️</button><button class="ib" onclick="deleteNeg('${n.id}')">🗑</button></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════════
+// PITCH TRACKER (with reply rate analytics)
+// ═══════════════════════════════════════════════════
+function populatePitchTemplateDD(){
+  const sel = document.getElementById('ps-template'); if(!sel) return;
+  sel.innerHTML = '<option value="">— custom / none —</option>'+(D.pitches||[]).map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join('');
+}
+function openPitchSendModal(id){
+  ensureNewArrays(); populatePitchTemplateDD();
+  const ps = id ? D.pitchSends.find(x=>x.id===id) : null;
+  document.getElementById('pitchsend-modal-title').innerHTML = ps?'Edit <em>Pitch Log</em>':'Log <em>Pitch Sent</em>';
+  setV('ps-id',ps?ps.id:''); setV('ps-brand',ps?ps.brand:'');
+  setV('ps-date',ps?ps.date:new Date().toISOString().slice(0,10));
+  setV('ps-template',ps?ps.templateId:''); setV('ps-platform',ps?ps.platform:'Instagram DM');
+  setV('ps-niche',ps?ps.niche:'Beauty & Skincare'); setV('ps-replied',ps?ps.replied:'no');
+  setV('ps-notes',ps?ps.notes:'');
+  openModal('pitchsend-modal');
+}
+function savePitchSend(){
+  ensureNewArrays();
+  const brand = v('ps-brand').trim(); if(!brand){toast('Brand required');return;}
+  const id = v('ps-id');
+  const ps={id:id||'ps'+Date.now(),brand,date:v('ps-date'),templateId:v('ps-template'),
+    platform:v('ps-platform'),niche:v('ps-niche'),replied:v('ps-replied'),notes:v('ps-notes'),
+    added:id?undefined:Date.now()};
+  if(!ps.added) ps.added=(D.pitchSends.find(x=>x.id===id)||{}).added||Date.now();
+  if(id) D.pitchSends=D.pitchSends.map(x=>x.id===id?ps:x); else D.pitchSends.push(ps);
+  save(); closeModal('pitchsend-modal'); renderPitchTracker(); toast('Pitch logged!');
+}
+function deletePitchSend(id){if(!confirm('Delete?'))return;D.pitchSends=D.pitchSends.filter(x=>x.id!==id);save();renderPitchTracker();}
+function updatePitchSendReply(id, val){
+  ensureNewArrays();
+  const ps=D.pitchSends.find(x=>x.id===id);if(!ps)return;
+  ps.replied=val; save(); renderPitchTracker(); toast('Updated');
+}
+function renderPitchTracker(){
+  ensureNewArrays();
+  const statsEl = document.getElementById('pitchtrack-stats');
+  const listEl = document.getElementById('pitchtrack-list');
+  if(!listEl) return;
+  const total = D.pitchSends.length;
+  const replied = D.pitchSends.filter(p=>p.replied&&p.replied!=='no').length;
+  const positive = D.pitchSends.filter(p=>p.replied==='yes-positive').length;
+  const replyRate = total>0?Math.round((replied/total)*100):0;
+  const convRate = total>0?Math.round((positive/total)*100):0;
+  if(statsEl){
+    statsEl.innerHTML = [
+      {l:'Pitches Sent',v:total,c:'var(--sky-deep)'},
+      {l:'Reply Rate',v:replyRate+'%',c:replyRate>=15?'var(--forest)':'var(--gold)'},
+      {l:'Positive Replies',v:positive,c:'var(--forest)'},
+      {l:'Conversion',v:convRate+'%',c:convRate>=10?'var(--forest)':'var(--terracotta)'},
+    ].map(s=>`<div class="sc"><div class="sc-l">${s.l}</div><div class="sc-v" style="color:${s.c};">${s.v}</div></div>`).join('');
+  }
+  // Template performance
+  const tmplPerf = {};
+  D.pitchSends.forEach(ps=>{
+    const key = ps.templateId||'__custom__';
+    if(!tmplPerf[key]) tmplPerf[key]={sent:0,replied:0,positive:0};
+    tmplPerf[key].sent++;
+    if(ps.replied&&ps.replied!=='no') tmplPerf[key].replied++;
+    if(ps.replied==='yes-positive') tmplPerf[key].positive++;
+  });
+  const tmplInsight = Object.entries(tmplPerf).filter(([,v])=>v.sent>=2).map(([key,v])=>{
+    const tmpl = D.pitches.find(p=>p.id===key);
+    const name = tmpl?tmpl.name:'Custom pitch';
+    const rr = Math.round((v.replied/v.sent)*100);
+    return {name,sent:v.sent,rr,positive:v.positive};
+  }).sort((a,b)=>b.rr-a.rr);
+
+  if(!D.pitchSends.length){
+    listEl.innerHTML='<div class="es"><div class="es-icon">📬</div><div class="es-title">No pitches logged yet</div><div class="es-sub">Log every pitch you send. After 10+ entries, you\'ll see which templates get the best reply rates.</div></div>'; return;
+  }
+  const replyLabel={'no':'Pending','yes-positive':'✓ Replied — positive','yes-negative':'✗ Declined','yes-ghosted':'👻 Seen, no reply'};
+  const replyColor={'no':'var(--warm-gray)','yes-positive':'var(--forest)','yes-negative':'#c0392b','yes-ghosted':'var(--gold)'};
+  listEl.innerHTML =
+  (tmplInsight.length?`<div style="background:rgba(122,174,204,.1);border:1px solid rgba(122,174,204,.2);border-radius:12px;padding:12px 16px;margin-bottom:14px;">
+    <div style="font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--sky-deep);font-family:'DM Mono',monospace;margin-bottom:8px;">📈 Template Performance</div>
+    ${tmplInsight.map(t=>`<div style="display:flex;gap:8px;align-items:center;margin-bottom:5px;font-size:12px;">
+      <div style="flex:1;">${esc(t.name)}</div>
+      <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--warm-gray);">${t.sent} sent</span>
+      <span style="font-family:'DM Mono',monospace;font-size:11px;color:${t.rr>=20?'var(--forest)':t.rr>=10?'var(--gold)':'#c0392b'};">${t.rr}% reply</span>
+      <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--forest);">${t.positive} converted</span>
+    </div>`).join('')}
+  </div>`:'') +
+  [...D.pitchSends].reverse().map(ps=>{
+    const tmpl = D.pitches.find(p=>p.id===ps.templateId);
+    return `<div style="background:#fff;border-radius:var(--r);border:1px solid rgba(0,0,0,.06);padding:11px 15px;margin-bottom:6px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+      <div style="flex:1;min-width:160px;">
+        <div style="font-weight:500;font-size:13px;">${esc(ps.brand)}</div>
+        <div style="font-size:10px;color:var(--warm-gray);">${ps.platform} · ${ps.niche}${tmpl?' · "'+esc(tmpl.name)+'"':''}</div>
+      </div>
+      <div style="font-size:10px;color:var(--mid-gray);font-family:'DM Mono',monospace;">${ps.date}</div>
+      <select class="fs" style="font-size:10px;padding:3px 7px;width:auto;" onchange="updatePitchSendReply('${ps.id}',this.value)">
+        ${Object.entries(replyLabel).map(([k,l])=>`<option value="${k}"${ps.replied===k?' selected':''}>${l}</option>`).join('')}
+      </select>
+      <button class="ib" onclick="deletePitchSend('${ps.id}')">🗑</button>
+    </div>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════════
+// REPURPOSE TRACKER
+// ═══════════════════════════════════════════════════
+function scanRepurpose(){
+  ensureNewArrays();
+  renderRepurpose();
+  toast('Scanned gigs for repurpose opportunities ✓');
+}
+function toggleRepurposeFlag(gigId){
+  const g = D.gigs.find(x=>x.id===gigId); if(!g) return;
+  g.canRepurpose = !g.canRepurpose;
+  save(); renderRepurpose(); toast(g.canRepurpose?'Marked as repurposable ✓':'Repurpose flag removed');
+}
+function renderRepurpose(){
+  const el = document.getElementById('repurpose-list'); if(!el) return;
+  // Gigs with usage rights that allow repurpose OR explicitly flagged
+  const deliveredGigs = D.gigs.filter(g=>['delivered','paid'].includes(g.status)||g.status==='gifted');
+  if(!deliveredGigs.length){
+    el.innerHTML='<div class="es"><div class="es-icon">♻️</div><div class="es-title">No delivered gigs yet</div><div class="es-sub">Once you start delivering gigs, this page will show which ones have footage you can repurpose as organic content.</div></div>'; return;
+  }
+  const usageAllowsRepurpose = (u) => !u || u==='organic-only'||u==='paid-ads'||u==='paid-ads-limited'||u==='full-buyout';
+  const repurposable = deliveredGigs.filter(g=>usageAllowsRepurpose(g.usageRights)||g.canRepurpose);
+  const restricted = deliveredGigs.filter(g=>!usageAllowsRepurpose(g.usageRights)&&!g.canRepurpose&&g.usageRights==='whitelisting');
+  el.innerHTML = `<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:16px;">
+    <div class="sc"><div class="sc-l">Repurposable</div><div class="sc-v c-f">${repurposable.length}</div><div class="sc-s">gigs' footage</div></div>
+    <div class="sc"><div class="sc-l">Check Rights</div><div class="sc-v c-g">${restricted.length}</div><div class="sc-s">whitelisting contracts</div></div>
+    <div class="sc"><div class="sc-l">Organic Ideas</div><div class="sc-v" style="color:var(--lavender);">${D.ideas.filter(i=>i.fromRepurpose).length}</div><div class="sc-s">from repurpose</div></div>
+  </div>` +
+  (repurposable.length?`<div style="font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--forest);font-family:'DM Mono',monospace;margin-bottom:10px;">✓ Footage You Can Reuse (${repurposable.length})</div>` +
+  repurposable.map(g=>{
+    const linkedIdeas = D.ideas.filter(i=>i.linkedGig===g.id);
+    const usageMap={'organic-only':'Organic repurpose OK','paid-ads':'Full repurpose OK','paid-ads-limited':'Repurpose OK (limited)','full-buyout':'Full buyout — all uses OK','':`No restriction logged — repurpose likely OK`};
+    return `<div style="background:#fff;border-radius:var(--r);border:1px solid rgba(74,107,80,.18);padding:13px 16px;margin-bottom:8px;display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap;">
+      <div style="flex:1;min-width:180px;">
+        <div style="font-weight:500;font-size:13px;">${esc(g.brand)}</div>
+        <div style="font-size:10px;color:var(--forest);font-family:'DM Mono',monospace;margin-bottom:5px;">${usageMap[g.usageRights||'']}</div>
+        ${g.niche?`<span style="font-size:9px;font-family:'DM Mono',monospace;color:var(--warm-gray);">${g.niche}</span>`:''}
+        ${linkedIdeas.length?`<div style="font-size:10px;color:var(--sky-deep);margin-top:5px;">💡 ${linkedIdeas.length} linked idea${linkedIdeas.length>1?'s':''} already</div>`:''}
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end;">
+        <button class="btn btn-g btn-s" style="font-size:9px;" onclick="openIdeaModal();setTimeout(()=>{setV('i-lgig','${g.id}');setV('i-title','Organic: '+document.getElementById('i-lgig').options[document.getElementById('i-lgig').selectedIndex]?.text?.split('—')[0]?.trim()||'');},100)">+ Create Organic Idea</button>
+      </div>
+    </div>`;
+  }).join('') : '') +
+  (restricted.length?`<div style="font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);font-family:'DM Mono',monospace;margin:14px 0 8px;">⚠ Check Before Reusing (${restricted.length})</div>` +
+  restricted.map(g=>`<div style="background:#fff;border-radius:var(--r);border:1px solid rgba(196,150,58,.2);padding:13px 16px;margin-bottom:8px;">
+    <div style="font-weight:500;font-size:13px;">${esc(g.brand)}</div>
+    <div style="font-size:10px;color:var(--gold);font-family:'DM Mono',monospace;">Whitelisting contract — organic repurpose may conflict. Check your agreement.</div>
+    <button class="btn btn-g btn-s" style="margin-top:7px;font-size:9px;" onclick="toggleRepurposeFlag('${g.id}')">Override: Mark as repurposable</button>
+  </div>`).join('') : '');
+}
+
+// Hook page renders into goTo
+const _origGoTo = window.goTo;
+window.goTo = function(pg, el){
+  if(typeof _origGoTo === 'function') _origGoTo(pg, el);
+  ensureNewArrays();
+  if(pg==='contracts') renderContracts();
+  if(pg==='payment-chaser'){ renderChasers(); populateChaserGigs(); }
+  if(pg==='testimonials') renderTestimonials();
+  if(pg==='rate-negotiations') renderNegotiations();
+  if(pg==='pitch-tracker'){ renderPitchTracker(); populatePitchTemplateDD(); }
+  if(pg==='repurpose') renderRepurpose();
+};
+
+// Also ensure LIGHT_KEYS includes new arrays
+document.addEventListener('fb-ready', function(){
+  if(typeof LIGHT_KEYS!=='undefined'){
+    ['contracts','chasers','testimonials','negotiations','pitchSends'].forEach(k=>{
+      if(!LIGHT_KEYS.includes(k)) LIGHT_KEYS.push(k);
+    });
+  }
+  // Patch mergeRemoteIntoD to handle new keys
+  const _origMerge = window.mergeRemoteIntoD;
+  window.mergeRemoteIntoD = function(remote, localSnap){
+    if(typeof _origMerge==='function') _origMerge(remote, localSnap);
+    ['contracts','chasers','testimonials','negotiations','pitchSends'].forEach(k=>{
+      if(remote[k]) window.D[k] = remote[k];
+    });
+  };
+});
+
 
 </script>
 <!-- ─── PRINT BRIEF (hidden until print) ─── -->
