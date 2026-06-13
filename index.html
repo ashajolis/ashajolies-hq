@@ -723,6 +723,7 @@ body.dark-mode #dark-toggle{border-color:rgba(255,255,255,.15);color:rgba(250,24
     <div class="nl">Overview</div>
     <div class="ni active" onclick="goTo('dashboard',this)"><span class="ni-icon">🏠</span>Dashboard</div>
     <div class="ni" onclick="goTo('earnings',this)"><span class="ni-icon">💰</span>Earnings</div>
+    <div class="ni" onclick="goTo('guide',this)"><span class="ni-icon">📖</span>Setup & Rhythm Guide</div>
     <div class="nl">Gigs</div>
     <div class="ni" onclick="goTo('gigs',this)"><span class="ni-icon">📋</span>Gig Tracker<span class="ni-badge" id="gig-badge"></span></div>
     <div class="ni" onclick="goTo('followup',this)"><span class="ni-icon">🔔</span>Follow-Ups<span class="ni-badge" id="fu-badge" style="background:var(--gold)"></span></div>
@@ -895,7 +896,717 @@ body.dark-mode #dark-toggle{border-color:rgba(255,255,255,.15);color:rgba(250,24
   </div>
 </div>
 
-<!-- ─── EARNINGS ─── -->
+<!-- ─── GUIDE PAGE ─── -->
+<div class="pg" id="pg-guide">
+
+<style>
+/* ── Guide-specific styles ── */
+.guide-hero{background:var(--ink);border-radius:var(--r);padding:24px 28px;margin-bottom:20px;position:relative;overflow:hidden;}
+.guide-hero::after{content:'📖';position:absolute;right:24px;top:50%;transform:translateY(-50%);font-size:64px;opacity:.06;}
+.guide-eyebrow{font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:var(--warm-gold);font-family:'DM Mono',monospace;margin-bottom:6px;}
+.guide-title{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:300;color:var(--ivory);line-height:1.1;margin-bottom:8px;}
+.guide-title em{font-style:italic;color:var(--blush);}
+.guide-subtitle{font-size:12px;color:rgba(250,246,239,.45);line-height:1.6;max-width:480px;}
+
+.guide-tabs{display:flex;gap:0;border-bottom:1px solid rgba(0,0,0,.07);margin-bottom:20px;}
+.guide-tab{padding:9px 18px;font-size:11px;font-weight:500;color:var(--warm-gray);cursor:pointer;border:none;background:transparent;border-bottom:2px solid transparent;font-family:'Jost',sans-serif;letter-spacing:.05em;transition:all .14s;white-space:nowrap;}
+.guide-tab.active,.guide-tab:hover{color:var(--terracotta);border-bottom-color:var(--terracotta);}
+.guide-panel{display:none;}.guide-panel.active{display:block;}
+
+/* Setup steps */
+.setup-step{background:#fff;border-radius:var(--r);border:1px solid rgba(0,0,0,.06);padding:0;margin-bottom:10px;overflow:hidden;}
+.setup-step-hdr{display:flex;align-items:center;gap:12px;padding:14px 18px;cursor:pointer;user-select:none;}
+.setup-step-num{width:28px;height:28px;border-radius:50%;background:var(--terracotta);color:#fff;font-size:11px;font-family:'DM Mono',monospace;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.setup-step-num.done{background:var(--forest);}
+.setup-step-title{flex:1;font-size:13px;font-weight:500;}
+.setup-step-time{font-size:9px;font-family:'DM Mono',monospace;color:var(--warm-gray);background:var(--warm-white);padding:2px 8px;border-radius:20px;}
+.setup-step-arrow{font-size:11px;color:var(--mid-gray);transition:transform .2s;}
+.setup-step.open .setup-step-arrow{transform:rotate(90deg);}
+.setup-step-body{display:none;padding:0 18px 16px 58px;border-top:1px solid rgba(0,0,0,.05);}
+.setup-step.open .setup-step-body{display:block;}
+.setup-step-body p{font-size:12px;color:var(--warm-gray);line-height:1.7;margin-bottom:8px;}
+.setup-step-body strong{color:var(--ink);}
+.step-action{display:inline-flex;align-items:center;gap:6px;font-size:10px;font-family:'DM Mono',monospace;background:var(--warm-white);border:1px solid rgba(0,0,0,.08);border-radius:6px;padding:3px 9px;margin:2px 3px 2px 0;color:var(--terracotta);}
+.step-nav-btn{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-family:'DM Mono',monospace;background:var(--terracotta);color:#fff;border:none;border-radius:20px;padding:4px 12px;cursor:pointer;margin-top:8px;transition:background .14s;}
+.step-nav-btn:hover{background:#b05e3d;}
+.step-warn{background:rgba(196,150,58,.1);border:1px solid rgba(196,150,58,.2);border-radius:8px;padding:8px 12px;font-size:11px;color:#7a5800;margin-top:8px;line-height:1.5;}
+.step-tip{background:rgba(74,107,80,.07);border:1px solid rgba(74,107,80,.15);border-radius:8px;padding:8px 12px;font-size:11px;color:var(--forest);margin-top:8px;line-height:1.5;}
+
+/* Rhythm cards */
+.rhythm-block{margin-bottom:20px;}
+.rhythm-block-hdr{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.rhythm-badge{font-size:9px;letter-spacing:.2em;text-transform:uppercase;font-family:'DM Mono',monospace;font-weight:600;padding:3px 10px;border-radius:20px;}
+.rhythm-badge.daily{background:rgba(196,113,79,.12);color:var(--terracotta);}
+.rhythm-badge.weekly{background:rgba(122,174,204,.15);color:var(--sky-deep);}
+.rhythm-badge.monthly{background:rgba(74,107,80,.12);color:var(--forest);}
+.rhythm-badge.never{background:rgba(181,173,168,.15);color:var(--warm-gray);}
+.rhythm-block-title{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:400;}
+.rhythm-block-time{font-size:10px;font-family:'DM Mono',monospace;color:var(--warm-gray);margin-left:auto;}
+
+.rhythm-tasks{display:flex;flex-direction:column;gap:6px;}
+.rt{background:#fff;border-radius:10px;border:1px solid rgba(0,0,0,.06);padding:11px 14px;display:flex;align-items:flex-start;gap:10px;}
+.rt-icon{font-size:16px;flex-shrink:0;margin-top:1px;}
+.rt-body{flex:1;}
+.rt-label{font-size:12px;font-weight:500;margin-bottom:2px;}
+.rt-desc{font-size:11px;color:var(--warm-gray);line-height:1.5;}
+.rt-where{font-size:9px;font-family:'DM Mono',monospace;color:var(--terracotta);background:rgba(196,113,79,.08);padding:2px 7px;border-radius:20px;display:inline-block;margin-top:4px;}
+.rt.skip{opacity:.55;border-style:dashed;}
+.rt-skip-badge{font-size:9px;font-family:'DM Mono',monospace;color:var(--warm-gray);background:var(--warm-white);padding:2px 7px;border-radius:20px;margin-left:auto;flex-shrink:0;}
+
+/* Rules box */
+.rules-box{background:var(--ink);border-radius:var(--r);padding:18px 22px;margin-bottom:14px;}
+.rules-box-title{font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:var(--warm-gold);font-family:'DM Mono',monospace;margin-bottom:12px;}
+.rule{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05);}
+.rule:last-child{border-bottom:none;}
+.rule-num{font-family:'DM Mono',monospace;font-size:10px;color:var(--blush);flex-shrink:0;padding-top:1px;}
+.rule-text{font-size:12px;color:rgba(250,246,239,.7);line-height:1.5;}
+.rule-text strong{color:var(--ivory);}
+
+/* Progress tracker for setup */
+.setup-progress{background:#fff;border-radius:var(--r);border:1px solid rgba(0,0,0,.06);padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;gap:14px;}
+.sp-bar-wrap{flex:1;background:var(--warm-white);border-radius:100px;height:7px;overflow:hidden;}
+.sp-bar{height:100%;background:linear-gradient(90deg,var(--terracotta),var(--forest));border-radius:100px;transition:width .6s;}
+.sp-label{font-size:10px;font-family:'DM Mono',monospace;color:var(--warm-gray);flex-shrink:0;}
+</style>
+
+<!-- HERO -->
+<div class="guide-hero">
+  <div class="guide-eyebrow">AshaJolies HQ · How to Use This</div>
+  <div class="guide-title">Setup & <em>Rhythm</em> Guide</div>
+  <div class="guide-subtitle">Do the setup once, follow the rhythm forever. This is how you use the app without letting the app use you — 10 minutes a day, 30 minutes a week, 1 hour a month.</div>
+</div>
+
+<!-- TABS -->
+<div class="guide-tabs">
+  <button class="guide-tab active" onclick="switchGuideTab('setup',this)">🚀 One-Time Setup</button>
+  <button class="guide-tab" onclick="switchGuideTab('daily',this)">☀️ Daily (10 min)</button>
+  <button class="guide-tab" onclick="switchGuideTab('weekly',this)">📅 Weekly (30 min)</button>
+  <button class="guide-tab" onclick="switchGuideTab('monthly',this)">📆 Monthly (1 hour)</button>
+  <button class="guide-tab" onclick="switchGuideTab('rules',this)">📐 Ground Rules</button>
+</div>
+
+<!-- ── SETUP TAB ── -->
+<div class="guide-panel active" id="guide-panel-setup">
+
+  <div class="setup-progress">
+    <div style="font-size:12px;font-weight:500;">Setup Progress</div>
+    <div class="sp-bar-wrap"><div class="sp-bar" id="guide-progress-bar" style="width:0%"></div></div>
+    <div class="sp-label" id="guide-progress-label">0 / 10 done</div>
+  </div>
+
+  <div style="font-size:11px;color:var(--warm-gray);margin-bottom:14px;line-height:1.6;">Complete these once. After this, you only touch the app during your daily, weekly, and monthly rhythms. Click each step to expand it.</div>
+
+  <!-- STEP 1 -->
+  <div class="setup-step" id="ss-1" onclick="toggleStep(1)">
+    <div class="setup-step-hdr">
+      <div class="setup-step-num" id="ss-num-1">1</div>
+      <div class="setup-step-title">Set your base rate and add your services</div>
+      <div class="setup-step-time">5 min</div>
+      <div class="setup-step-arrow">›</div>
+    </div>
+    <div class="setup-step-body">
+      <p>Your base rate shows in the sidebar footer and drives everything. Don't start pitching without it set.</p>
+      <p><strong>What to do:</strong></p>
+      <p>Go to <span class="step-action">💼 Services & Rates</span> and add at least 3 rates: a 15–30s video, a 60s video, and a bundle. Edit the price on each card directly — click the number.</p>
+      <div class="step-tip">💡 Start at $20 per video if you have no portfolio. You'll raise it once you have 5 deliveries.</div>
+      <button class="step-nav-btn" onclick="event.stopPropagation();markStep(1);goTo('studio-rates',document.querySelector('.ni[onclick*=studio-rates]'))">Go to Services & Rates →</button>
+    </div>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="setup-step" id="ss-2" onclick="toggleStep(2)">
+    <div class="setup-step-hdr">
+      <div class="setup-step-num" id="ss-num-2">2</div>
+      <div class="setup-step-title">Write your bio and add your links</div>
+      <div class="setup-step-time">5 min</div>
+      <div class="setup-step-arrow">›</div>
+    </div>
+    <div class="setup-step-body">
+      <p>This is what fills your pitches and media kit. Keep it to 2–3 sentences.</p>
+      <p><strong>What to do:</strong> Go to <span class="step-action">🎨 Brand Hub</span> → Bio & Links tab. Write your creator bio and add your email, Instagram, TikTok handle, and any portfolio link.</p>
+      <div class="step-tip">💡 Lead with what you make, who you make it for, and where you're based. "UGC creator in Kenya making authentic beauty and lifestyle content for brands who want real." That's enough.</div>
+      <button class="step-nav-btn" onclick="event.stopPropagation();markStep(2);goTo('brand',document.querySelector('.ni[onclick*=brand]'))">Go to Brand Hub →</button>
+    </div>
+  </div>
+
+  <!-- STEP 3 -->
+  <div class="setup-step" id="ss-3" onclick="toggleStep(3)">
+    <div class="setup-step-hdr">
+      <div class="setup-step-num" id="ss-num-3">3</div>
+      <div class="setup-step-title">Add 3 pitch templates</div>
+      <div class="setup-step-time">15 min</div>
+      <div class="setup-step-arrow">›</div>
+    </div>
+    <div class="setup-step-body">
+      <p>You already have 3 default pitches. Read them, customise them so they sound like <em>you</em>, and add one for each main niche you work in.</p>
+      <p><strong>What to do:</strong> Go to <span class="step-action">✉️ Pitches</span>. Edit the "Beauty — Gifted DM" and "Paid Collab — Email" templates. Change the tone until it doesn't sound copy-pasted.</p>
+      <div class="step-warn">⚠ Brands can smell a template. One personal sentence about their brand at the top — before the template body — is what gets replies.</div>
+      <button class="step-nav-btn" onclick="event.stopPropagation();markStep(3);goTo('pitches',document.querySelector('.ni[onclick*=pitches]'))">Go to Pitches →</button>
+    </div>
+  </div>
+
+  <!-- STEP 4 -->
+  <div class="setup-step" id="ss-4" onclick="toggleStep(4)">
+    <div class="setup-step-hdr">
+      <div class="setup-step-num" id="ss-num-4">4</div>
+      <div class="setup-step-title">Add your first 10 brand targets</div>
+      <div class="setup-step-time">20 min</div>
+      <div class="setup-step-arrow">›</div>
+    </div>
+    <div class="setup-step-body">
+      <p>These are brands you <em>want</em> to work with — not brands you've messaged yet. Build the list first, send pitches second. This is how you stay organised instead of pitching whoever you remember.</p>
+      <p><strong>What to do:</strong> Go to <span class="step-action">🎯 Brand Targets</span> → click "+ Add Brand". Add 10 brands. Set each to "Researching" status. Include their Instagram handle or email and one note on why they fit your content.</p>
+      <div class="step-tip">💡 Look at brands already working with Kenyan creators. Check the comments on your favourite beauty/lifestyle posts. Start with small-to-medium brands — they're more likely to reply.</div>
+      <button class="step-nav-btn" onclick="event.stopPropagation();markStep(4);goTo('studio-brands',document.querySelector('.ni[onclick*=studio-brands]'))">Go to Brand Targets →</button>
+    </div>
+  </div>
+
+  <!-- STEP 5 -->
+  <div class="setup-step" id="ss-5" onclick="toggleStep(5)">
+    <div class="setup-step-hdr">
+      <div class="setup-step-num" id="ss-num-5">5</div>
+      <div class="setup-step-title">Add 5 content ideas to your library</div>
+      <div class="setup-step-time">10 min</div>
+      <div class="setup-step-arrow">›</div>
+    </div>
+    <div class="setup-step-body">
+      <p>Your ideas library is your content bank. When a brand asks "what kind of content do you make?", you pull from here. When you're stuck on what to film, you pull from here.</p>
+      <p><strong>What to do:</strong> Go to <span class="step-action">💡 Ideas & Planner</span> → click "+ Idea". Add 5 ideas — one per niche you cover. Or go to the "Content Pillars" tab to browse pre-built ideas and add them in one click.</p>
+      <div class="step-tip">💡 The hook is the most important field. Write it like you'd write an opening line of a video — "POV: you finally found a moisturiser that works on melanin skin."</div>
+      <button class="step-nav-btn" onclick="event.stopPropagation();markStep(5);goTo('ideas',document.querySelector('.ni[onclick*=ideas]'))">Go to Ideas →</button>
+    </div>
+  </div>
+
+  <!-- STEP 6 -->
+  <div class="setup-step" id="ss-6" onclick="toggleStep(6)">
+    <div class="setup-step-hdr">
+      <div class="setup-step-num" id="ss-num-6">6</div>
+      <div class="setup-step-title">Set up your filming location(s) and camera preset</div>
+      <div class="setup-step-time">10 min</div>
+      <div class="setup-step-arrow">›</div>
+    </div>
+    <div class="setup-step-body">
+      <p>Do this once so you never spend 20 minutes on shoot day re-figuring out your settings. One saved location = one saved camera preset = consistent-looking content.</p>
+      <p><strong>What to do:</strong> Go to <span class="step-action">🎨 Brand Hub</span> → Locations tab, add your main filming spot. Then go to the Camera Settings tab and save your go-to phone settings (resolution, fps, ISO, white balance, lighting).</p>
+      <div class="step-tip">💡 "Kitchen window, morning light, 1080p 30fps, Auto WB" saved once means you never have to think about it again on shoot day.</div>
+      <button class="step-nav-btn" onclick="event.stopPropagation();markStep(6);goTo('brand',document.querySelector('.ni[onclick*=brand]'))">Go to Brand Hub →</button>
+    </div>
+  </div>
+
+  <!-- STEP 7 -->
+  <div class="setup-step" id="ss-7" onclick="toggleStep(7)">
+    <div class="setup-step-hdr">
+      <div class="setup-step-num" id="ss-num-7">7</div>
+      <div class="setup-step-title">Create a contract template</div>
+      <div class="setup-step-time">10 min</div>
+      <div class="setup-step-arrow">›</div>
+    </div>
+    <div class="setup-step-body">
+      <p>Before your first paid gig, have a contract ready to send. You don't negotiate the terms during a contract — you fill in the blanks from the deal you already agreed verbally.</p>
+      <p><strong>What to do:</strong> Go to <span class="step-action">📝 Contracts</span> → click "+ New Contract". Fill in dummy details to build your standard template. Preview it, print it once so you know what it looks like. When a real gig lands, use "Generate from Active Gig" to auto-fill it.</p>
+      <div class="step-warn">⚠ For Kenyan brands especially: send the contract before you start filming, not after. "I'll send the brief" is not an agreement. A signed contract is.</div>
+      <button class="step-nav-btn" onclick="event.stopPropagation();markStep(7);goTo('contracts',document.querySelector('.ni[onclick*=contracts]'))">Go to Contracts →</button>
+    </div>
+  </div>
+
+  <!-- STEP 8 -->
+  <div class="setup-step" id="ss-8" onclick="toggleStep(8)">
+    <div class="setup-step-hdr">
+      <div class="setup-step-num" id="ss-num-8">8</div>
+      <div class="setup-step-title">Review the Gifting Policy and Income Plan</div>
+      <div class="setup-step-time">5 min</div>
+      <div class="setup-step-arrow">›</div>
+    </div>
+    <div class="setup-step-body">
+      <p>These two pages are your business strategy written out. Read them once now, edit them to match your actual situation, and you'll never second-guess whether to accept a gifted deal again.</p>
+      <p><strong>What to do:</strong> Go to <span class="step-action">🎁 Gifting Policy</span> — edit the minimum gift value you'll accept. Then go to <span class="step-action">💰 Income Plan</span> — read the 4-week breakdown and adjust the numbers to your real monthly goal.</p>
+      <div class="step-tip">💡 If you're in Month 1 with no portfolio, accept gifted deals from brands whose products you'd genuinely use. These become your spec work.</div>
+      <button class="step-nav-btn" onclick="event.stopPropagation();markStep(8);goTo('studio-gifting',document.querySelector('.ni[onclick*=studio-gifting]'))">Go to Gifting Policy →</button>
+    </div>
+  </div>
+
+  <!-- STEP 9 -->
+  <div class="setup-step" id="ss-9" onclick="toggleStep(9)">
+    <div class="setup-step-hdr">
+      <div class="setup-step-num" id="ss-num-9">9</div>
+      <div class="setup-step-title">Install as an app on your phone (PWA)</div>
+      <div class="setup-step-time">2 min</div>
+      <div class="setup-step-arrow">›</div>
+    </div>
+    <div class="setup-step-body">
+      <p>This app works offline and installs directly to your home screen — no App Store needed. Once installed, it opens full-screen like a native app and loads instantly even without data.</p>
+      <p><strong>On Android (Chrome):</strong> Tap the three-dot menu → "Add to Home Screen" or look for the install banner that appears automatically.</p>
+      <p><strong>On iPhone (Safari):</strong> Tap the Share button (⬆) at the bottom → "Add to Home Screen".</p>
+      <p><strong>On desktop (Chrome/Edge):</strong> Look for the install icon in the address bar.</p>
+      <div class="step-tip">💡 Install it on both your phone and laptop. The Firebase sync means changes on your phone appear on your laptop within seconds.</div>
+      <button class="step-nav-btn" onclick="event.stopPropagation();markStep(9);">Mark Done ✓</button>
+    </div>
+  </div>
+
+  <!-- STEP 10 -->
+  <div class="setup-step" id="ss-10" onclick="toggleStep(10)">
+    <div class="setup-step-hdr">
+      <div class="setup-step-num" id="ss-num-10">10</div>
+      <div class="setup-step-title">Send your first 3 pitches</div>
+      <div class="setup-step-time">15 min</div>
+      <div class="setup-step-arrow">›</div>
+    </div>
+    <div class="setup-step-body">
+      <p>Setup is complete when you've sent at least one pitch. Don't spend another day in the app without having done this. The app exists to support work — not to replace it.</p>
+      <p><strong>What to do:</strong> Go to <span class="step-action">🎯 Brand Targets</span>, pick 3 brands you added in Step 4, open each one, copy your pitch template, personalise the first sentence, and send it via Instagram DM or email. Log the date and update status to "Pitched".</p>
+      <p>Then go to <span class="step-action">📬 Pitch Tracker</span> and log each one so you have a record.</p>
+      <div class="step-tip">💡 The hardest part is the first pitch. After that, it's just a numbers game. You need roughly 30–50 pitches to land your first paid deal. Start the count today.</div>
+      <button class="step-nav-btn" onclick="event.stopPropagation();markStep(10);goTo('studio-brands',document.querySelector('.ni[onclick*=studio-brands]'))">Go to Brand Targets →</button>
+    </div>
+  </div>
+
+  <div style="background:rgba(74,107,80,.08);border:1px solid rgba(74,107,80,.18);border-radius:12px;padding:14px 18px;margin-top:16px;">
+    <div style="font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--forest);font-family:'DM Mono',monospace;margin-bottom:6px;">✓ Setup complete — what now?</div>
+    <div style="font-size:12px;color:var(--warm-gray);line-height:1.6;">Move to the <strong style="color:var(--ink);">Daily Rhythm</strong> tab. Everything from here runs on autopilot — open the app, do your 10 minutes, close it, and go film or pitch. The setup page is a reference, not a daily visit.</div>
+  </div>
+</div>
+
+<!-- ── DAILY TAB ── -->
+<div class="guide-panel" id="guide-panel-daily">
+  <div style="background:rgba(196,113,79,.08);border:1px solid rgba(196,113,79,.15);border-radius:12px;padding:13px 18px;margin-bottom:16px;">
+    <div style="font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--terracotta);font-family:'DM Mono',monospace;margin-bottom:4px;">The Rule</div>
+    <div style="font-size:13px;font-weight:500;color:var(--ink);">Open the app once a day. Do these 3–4 things. Close it. Go film or pitch.</div>
+    <div style="font-size:11px;color:var(--warm-gray);margin-top:4px;">Total time: 5–10 minutes. If it's taking longer, you're doing too much in the app.</div>
+  </div>
+
+  <div class="rhythm-block">
+    <div class="rhythm-block-hdr">
+      <span class="rhythm-badge daily">Every morning</span>
+      <div class="rhythm-block-title">Check your Today panel</div>
+      <div class="rhythm-block-time">2 min</div>
+    </div>
+    <div class="rhythm-tasks">
+      <div class="rt">
+        <div class="rt-icon">🏠</div>
+        <div class="rt-body">
+          <div class="rt-label">Open Dashboard → look at "Today's Focus"</div>
+          <div class="rt-desc">The dark panel at the top of your dashboard shows you exactly what needs action today — content due, gig deadlines, follow-ups. If it's empty, it's a free day. If it has items, those are your priorities before anything else.</div>
+          <span class="rt-where">→ Dashboard</span>
+        </div>
+      </div>
+      <div class="rt">
+        <div class="rt-icon">⚠️</div>
+        <div class="rt-body">
+          <div class="rt-label">Check the overdue banner (if red)</div>
+          <div class="rt-desc">The red banner below Today's Focus shows overdue follow-ups. If it appears, your only job today (before pitching anything new) is to send those follow-ups. One message. Done.</div>
+          <span class="rt-where">→ Dashboard</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="rhythm-block">
+    <div class="rhythm-block-hdr">
+      <span class="rhythm-badge daily">When something happens</span>
+      <div class="rhythm-block-title">Log it in real time (30 seconds)</div>
+      <div class="rhythm-block-time">30 sec each</div>
+    </div>
+    <div class="rhythm-tasks">
+      <div class="rt">
+        <div class="rt-icon">📋</div>
+        <div class="rt-body">
+          <div class="rt-label">New brand reaches out or you pitch → Add a Gig or log in Pitch Tracker</div>
+          <div class="rt-desc">Use the + Gig button or the FAB (＋) button at the bottom right. Set status to "Pending". This keeps your pipeline accurate so the dashboard stats mean something.</div>
+          <span class="rt-where">→ + Gig button or FAB ＋</span>
+        </div>
+      </div>
+      <div class="rt">
+        <div class="rt-icon">✉️</div>
+        <div class="rt-body">
+          <div class="rt-label">You send a pitch → Log it in Pitch Tracker</div>
+          <div class="rt-desc">Takes 30 seconds. Brand name, which template, platform. Over time this tells you which template gets replies. Without logging, you're guessing.</div>
+          <span class="rt-where">→ 📬 Pitch Tracker</span>
+        </div>
+      </div>
+      <div class="rt">
+        <div class="rt-icon">💬</div>
+        <div class="rt-body">
+          <div class="rt-label">A brand replies positively → Update gig status + log in Negotiations</div>
+          <div class="rt-desc">Go to Gig Tracker, find the gig, change status to "Negotiating". If you agreed a rate, log it in Rate Negotiation Log. What you quoted, what they said, what you landed on.</div>
+          <span class="rt-where">→ 📋 Gig Tracker → 📊 Negotiation Log</span>
+        </div>
+      </div>
+      <div class="rt">
+        <div class="rt-icon">💡</div>
+        <div class="rt-body">
+          <div class="rt-label">An idea hits you → Quick Capture it</div>
+          <div class="rt-desc">Tap the FAB ＋ button → "⚡ Quick Idea". Just write the title and your hook. 20 seconds. Don't lose it to your Notes app where you'll never find it again.</div>
+          <span class="rt-where">→ FAB ＋ → Quick Idea</span>
+        </div>
+      </div>
+      <div class="rt">
+        <div class="rt-icon">⭐</div>
+        <div class="rt-body">
+          <div class="rt-label">A brand compliments your work → Log it as a Testimonial</div>
+          <div class="rt-desc">When a brand DMs "we loved it", screenshot it in your gallery and log the exact quote in Testimonials. Mark it "Use in pitches." Future brands will read it.</div>
+          <span class="rt-where">→ ⭐ Testimonials</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="rhythm-block">
+    <div class="rhythm-block-hdr">
+      <span class="rhythm-badge never">Never do daily</span>
+      <div class="rhythm-block-title">Things that eat your time with no return</div>
+    </div>
+    <div class="rhythm-tasks">
+      <div class="rt skip">
+        <div class="rt-icon">🚫</div>
+        <div class="rt-body">
+          <div class="rt-label">Reorganising your ideas library</div>
+          <div class="rt-desc">Add ideas. Don't sort, filter, tag, and re-read them every day. Ideas exist to be filmed, not admired.</div>
+          <div class="rt-skip-badge">skip daily</div>
+        </div>
+      </div>
+      <div class="rt skip">
+        <div class="rt-icon">🚫</div>
+        <div class="rt-body">
+          <div class="rt-label">Tweaking your pitch templates</div>
+          <div class="rt-desc">Your templates are good enough. Editing them daily instead of sending them is procrastination dressed as productivity.</div>
+          <div class="rt-skip-badge">skip daily</div>
+        </div>
+      </div>
+      <div class="rt skip">
+        <div class="rt-icon">🚫</div>
+        <div class="rt-body">
+          <div class="rt-label">Checking your earnings dashboard when nothing has changed</div>
+          <div class="rt-desc">Watching $0 turn to $0 doesn't make money. Pitching does. Check earnings on Mondays only.</div>
+          <div class="rt-skip-badge">skip daily</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── WEEKLY TAB ── -->
+<div class="guide-panel" id="guide-panel-weekly">
+  <div style="background:rgba(122,174,204,.1);border:1px solid rgba(122,174,204,.2);border-radius:12px;padding:13px 18px;margin-bottom:16px;">
+    <div style="font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--sky-deep);font-family:'DM Mono',monospace;margin-bottom:4px;">When to do it</div>
+    <div style="font-size:13px;font-weight:500;color:var(--ink);">Monday morning. 30 minutes. Every week without exception.</div>
+    <div style="font-size:11px;color:var(--warm-gray);margin-top:4px;">This is your business check-in. It keeps you from being surprised by deadlines, missed payments, or a dry pitch pipeline.</div>
+  </div>
+
+  <div class="rhythm-block">
+    <div class="rhythm-block-hdr">
+      <span class="rhythm-badge weekly">Monday, step 1</span>
+      <div class="rhythm-block-title">Pipeline review (5 min)</div>
+    </div>
+    <div class="rhythm-tasks">
+      <div class="rt">
+        <div class="rt-icon">📋</div>
+        <div class="rt-body">
+          <div class="rt-label">Open Gig Tracker — scan every active gig</div>
+          <div class="rt-desc">Look for anything stuck in "Pending" for more than 5 days with no follow-up. The app will show a yellow "Follow up?" nudge on those gigs. Add a follow-up. Move on. Do not overthink the message — "Hi! Just checking if you had a chance to review my proposal?" is enough.</div>
+          <span class="rt-where">→ 📋 Gig Tracker</span>
+        </div>
+      </div>
+      <div class="rt">
+        <div class="rt-icon">💸</div>
+        <div class="rt-body">
+          <div class="rt-label">Check Payment Chaser — any Day 7 or Day 14 chasers?</div>
+          <div class="rt-desc">If an invoice is at Day 7 or Day 14, send the chase message today. The app tells you exactly which stage each payment is at. Don't let this slip — polite but consistent chasing gets paid faster than hoping.</div>
+          <span class="rt-where">→ 💸 Payment Chaser</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="rhythm-block">
+    <div class="rhythm-block-hdr">
+      <span class="rhythm-badge weekly">Monday, step 2</span>
+      <div class="rhythm-block-title">Pitch this week's 10 brands (20 min)</div>
+    </div>
+    <div class="rhythm-tasks">
+      <div class="rt">
+        <div class="rt-icon">🎯</div>
+        <div class="rt-body">
+          <div class="rt-label">Open Brand Targets, filter to "Researching"</div>
+          <div class="rt-desc">Pick 10 brands from your researching list. Update their status to "Pitched". Go send the actual messages outside the app (Instagram DM, email). Come back and log each one in Pitch Tracker. 10 per week = 40 per month = your pipeline never dries up.</div>
+          <span class="rt-where">→ 🎯 Brand Targets → 📬 Pitch Tracker</span>
+        </div>
+      </div>
+      <div class="rt">
+        <div class="rt-icon">📬</div>
+        <div class="rt-body">
+          <div class="rt-label">Add 5 new brands to your research list</div>
+          <div class="rt-desc">For every 10 you pitch, add 5 new ones to keep the "Researching" bucket full. Scroll Instagram, check hashtags, look at who other Kenyan creators are working with. 5 minutes of research tops up the pipeline for next week.</div>
+          <span class="rt-where">→ 🎯 Brand Targets → + Add Brand</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="rhythm-block">
+    <div class="rhythm-block-hdr">
+      <span class="rhythm-badge weekly">Monday, step 3</span>
+      <div class="rhythm-block-title">Plan this week's content (5 min)</div>
+    </div>
+    <div class="rhythm-tasks">
+      <div class="rt">
+        <div class="rt-icon">📅</div>
+        <div class="rt-body">
+          <div class="rt-label">Schedule 3–5 ideas on the calendar</div>
+          <div class="rt-desc">Go to Ideas & Planner, pick 3–5 ideas with no date set, and add shoot dates for this week. Or open the Calendar view and click on a day to add a content slot. Having a shoot date turns an idea from "someday" to "Tuesday."</div>
+          <span class="rt-where">→ 💡 Ideas & Planner</span>
+        </div>
+      </div>
+      <div class="rt">
+        <div class="rt-icon">♻️</div>
+        <div class="rt-body">
+          <div class="rt-label">Check Repurpose Tracker for footage you can reuse</div>
+          <div class="rt-desc">Every week, check if any recently delivered gigs have b-roll or angles you can turn into organic content. One gig's b-roll can be 3 organic posts. Click "+ Create Organic Idea" directly from the Repurpose page.</div>
+          <span class="rt-where">→ ♻️ Repurpose Tracker</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="rhythm-block">
+    <div class="rhythm-block-hdr">
+      <span class="rhythm-badge never">Skip weekly</span>
+      <div class="rhythm-block-title">Don't do these weekly</div>
+    </div>
+    <div class="rhythm-tasks">
+      <div class="rt skip">
+        <div class="rt-icon">🚫</div>
+        <div class="rt-body">
+          <div class="rt-label">Redoing your rates or packages</div>
+          <div class="rt-desc">Rates change when you hit a milestone (5 gigs delivered, or 10). Not weekly. Changing rates weekly is a sign of uncertainty, not strategy.</div>
+          <div class="rt-skip-badge">monthly only</div>
+        </div>
+      </div>
+      <div class="rt skip">
+        <div class="rt-icon">🚫</div>
+        <div class="rt-body">
+          <div class="rt-label">Rebuilding your brand hub / colours / moodboard</div>
+          <div class="rt-desc">Your brand identity is set once, refined quarterly. Weekly tweaks to your colour palette or aesthetic are a time sink.</div>
+          <div class="rt-skip-badge">quarterly only</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── MONTHLY TAB ── -->
+<div class="guide-panel" id="guide-panel-monthly">
+  <div style="background:rgba(74,107,80,.08);border:1px solid rgba(74,107,80,.15);border-radius:12px;padding:13px 18px;margin-bottom:16px;">
+    <div style="font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--forest);font-family:'DM Mono',monospace;margin-bottom:4px;">When to do it</div>
+    <div style="font-size:13px;font-weight:500;color:var(--ink);">Last Sunday of the month. 1 hour. Treat it like a board meeting with yourself.</div>
+    <div style="font-size:11px;color:var(--warm-gray);margin-top:4px;">This is when you make strategic decisions — not operational ones. Look back, look forward, adjust once, then leave it alone for 4 more weeks.</div>
+  </div>
+
+  <div class="rhythm-block">
+    <div class="rhythm-block-hdr">
+      <span class="rhythm-badge monthly">Month review, part 1</span>
+      <div class="rhythm-block-title">Count the money (10 min)</div>
+    </div>
+    <div class="rhythm-tasks">
+      <div class="rt">
+        <div class="rt-icon">💰</div>
+        <div class="rt-body">
+          <div class="rt-label">Open Earnings — what came in this month?</div>
+          <div class="rt-desc">Check total earned, total pending, and gifted gigs. Write down the number somewhere physical (even a phone note). The trend over 3 months tells you more than any single month.</div>
+          <span class="rt-where">→ 💰 Earnings</span>
+        </div>
+      </div>
+      <div class="rt">
+        <div class="rt-icon">🎯</div>
+        <div class="rt-body">
+          <div class="rt-label">Did you hit your income goal? Switch to quarterly view.</div>
+          <div class="rt-desc">On the dashboard, toggle the income bar to "Quarter" view. If you're behind, your only lever is more pitches next month — not lower rates. If you're ahead, consider raising by $5–10 next month.</div>
+          <span class="rt-where">→ 🏠 Dashboard → Quarter toggle</span>
+        </div>
+      </div>
+      <div class="rt">
+        <div class="rt-icon">📊</div>
+        <div class="rt-body">
+          <div class="rt-label">Review your Rate Negotiation Log</div>
+          <div class="rt-desc">Read all entries from this month. Look for patterns: which niches pushed back? Who accepted first quote? If 3+ people accepted your first quote this month, you're undercharging. Raise by $5 next month and see what happens.</div>
+          <span class="rt-where">→ 📊 Rate Negotiation Log</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="rhythm-block">
+    <div class="rhythm-block-hdr">
+      <span class="rhythm-badge monthly">Month review, part 2</span>
+      <div class="rhythm-block-title">Check your pitch pipeline (10 min)</div>
+    </div>
+    <div class="rhythm-tasks">
+      <div class="rt">
+        <div class="rt-icon">📬</div>
+        <div class="rt-body">
+          <div class="rt-label">Open Pitch Tracker — what's your reply rate?</div>
+          <div class="rt-desc">If reply rate is below 10%, your templates need work — go to Pitches and rewrite the opening line of your lowest-performing template. If it's above 20%, your pitch is strong — send more volume. The dashboard target is 10 per week.</div>
+          <span class="rt-where">→ 📬 Pitch Tracker</span>
+        </div>
+      </div>
+      <div class="rt">
+        <div class="rt-icon">🎯</div>
+        <div class="rt-body">
+          <div class="rt-label">Archive declined brands, add 20 new ones</div>
+          <div class="rt-desc">In Brand Targets, move all "declined" brands to declined status. Then add 20 fresh brands to Researching. This tops up your pipeline for the next month before your Monday pitching sessions start.</div>
+          <span class="rt-where">→ 🎯 Brand Targets</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="rhythm-block">
+    <div class="rhythm-block-hdr">
+      <span class="rhythm-badge monthly">Month review, part 3</span>
+      <div class="rhythm-block-title">Look at what you actually made (15 min)</div>
+    </div>
+    <div class="rhythm-tasks">
+      <div class="rt">
+        <div class="rt-icon">📸</div>
+        <div class="rt-body">
+          <div class="rt-label">Open Feed & Posts — did you post consistently?</div>
+          <div class="rt-desc">Count your posts this month. Your organic content is what makes brands say yes to your pitches. If you posted fewer than 8 times, that's the real reason pitch replies are low — not the templates.</div>
+          <span class="rt-where">→ 📸 Feed & Posts</span>
+        </div>
+      </div>
+      <div class="rt">
+        <div class="rt-icon">♻️</div>
+        <div class="rt-body">
+          <div class="rt-label">Run a repurpose scan on all delivered gigs</div>
+          <div class="rt-desc">Go to Repurpose Tracker → "Scan Gigs". Every piece of footage with organic-only or paid-ads rights can become content. Create one organic idea per delivered gig this month. Free content from work you already did.</div>
+          <span class="rt-where">→ ♻️ Repurpose Tracker</span>
+        </div>
+      </div>
+      <div class="rt">
+        <div class="rt-icon">⭐</div>
+        <div class="rt-body">
+          <div class="rt-label">Update your portfolio with this month's best work</div>
+          <div class="rt-desc">Go to Portfolio Videos and add any videos you delivered this month that you're proud of. Your portfolio is what makes warm leads convert. One new video per month keeps it fresh.</div>
+          <span class="rt-where">→ 🎥 Portfolio Videos</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="rhythm-block">
+    <div class="rhythm-block-hdr">
+      <span class="rhythm-badge monthly">Month reset, part 4</span>
+      <div class="rhythm-block-title">Set next month's goal (5 min)</div>
+    </div>
+    <div class="rhythm-tasks">
+      <div class="rt">
+        <div class="rt-icon">🎯</div>
+        <div class="rt-body">
+          <div class="rt-label">Decide on one rate or strategy change</div>
+          <div class="rt-desc">One change per month. Either: raise your base rate by $5, add a new package, try a new niche, or change your pitch opening line. One change, tested for a full month, then reviewed. Not five changes that you can't measure.</div>
+          <span class="rt-where">→ 💼 Services & Rates or ✉️ Pitches</span>
+        </div>
+      </div>
+      <div class="rt">
+        <div class="rt-icon">💾</div>
+        <div class="rt-body">
+          <div class="rt-label">Export your data as a backup</div>
+          <div class="rt-desc">On the dashboard, scroll down to the Export/Import bar and click "⬇ Export". Save the file somewhere safe (Google Drive, email to yourself). Monthly backup = nothing ever lost if your device breaks.</div>
+          <span class="rt-where">→ 🏠 Dashboard → Export</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── RULES TAB ── -->
+<div class="guide-panel" id="guide-panel-rules">
+  <div class="rules-box">
+    <div class="rules-box-title">✦ Ground Rules — read once, keep forever</div>
+    <div class="rule"><div class="rule-num">01</div><div class="rule-text"><strong>The app is a system, not a destination.</strong> You should spend less time in it as you get more experienced, not more. If opening the app feels like a chore, you're probably overcomplicating your workflow.</div></div>
+    <div class="rule"><div class="rule-num">02</div><div class="rule-text"><strong>Log things the same day they happen.</strong> A gig you forgot to log is a gig you can't track. A pitch you didn't record is a template you can't improve. 30 seconds at the moment it happens beats 10 minutes of reconstruction on Sunday.</div></div>
+    <div class="rule"><div class="rule-num">03</div><div class="rule-text"><strong>Pitching is the only metric that matters in Month 1.</strong> Everything else — moodboards, content pillars, camera settings — is infrastructure. Infrastructure doesn't pay bills. 10 pitches a week does.</div></div>
+    <div class="rule"><div class="rule-num">04</div><div class="rule-text"><strong>Never start work without a contract for paid gigs.</strong> Not even with a brand you trust. Especially with a brand you trust. "We'll sort the details after" is how creators end up delivering content for free.</div></div>
+    <div class="rule"><div class="rule-num">05</div><div class="rule-text"><strong>Follow up every 7 days. Stop after 3 attempts.</strong> One initial pitch, one Day 7 follow-up, one Day 14 final. After that, move the brand to "Declined" and move on. Chasing beyond three messages costs you more energy than the gig is worth.</div></div>
+    <div class="rule"><div class="rule-num">06</div><div class="rule-text"><strong>Make one strategic change per month, not one per week.</strong> Changing your rates, niche, or approach every week means you never learn what's actually working. Commit to something for 4 weeks, then review the data and adjust.</div></div>
+    <div class="rule"><div class="rule-num">07</div><div class="rule-text"><strong>Gifted is a tool, not a trap.</strong> Accept gifted deals that produce portfolio content you couldn't afford to make otherwise. Decline gifted deals from brands whose products you wouldn't use or trust. Never let "but it's free product" be the only reason you say yes.</div></div>
+    <div class="rule"><div class="rule-num">08</div><div class="rule-text"><strong>Your organic content is your real portfolio.</strong> The UGC you deliver to brands proves you can execute. Your organic posts prove you have an audience and a perspective. Brands check both. Post consistently even when you have no active gigs.</div></div>
+    <div class="rule"><div class="rule-num">09</div><div class="rule-text"><strong>Price for where you want to be, not where you are.</strong> If you charge $20 forever, you'll attract $20 brands forever. Every 5 deliveries, raise your base rate by $5–10. The market tells you when you've gone too far — until then, keep raising.</div></div>
+    <div class="rule"><div class="rule-num">10</div><div class="rule-text"><strong>This app works for you — not the other way around.</strong> It is meant to free up your brain so you can focus on creating and pitching. If any section of this app is causing you to spend more time planning than doing — ignore that section until you're ready for it.</div></div>
+  </div>
+
+  <div style="background:#fff;border-radius:var(--r);border:1px solid rgba(0,0,0,.06);padding:16px 20px;">
+    <div style="font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--warm-gray);font-family:'DM Mono',monospace;margin-bottom:10px;">Quick reference — which page for what</div>
+    <div style="display:flex;flex-direction:column;gap:7px;">
+      ${[
+        ['Brand contacts me / I pitch them','📋 Gig Tracker → + Gig'],
+        ['I send a pitch','📬 Pitch Tracker → Log Pitch Sent'],
+        ['A brand replies positively','📋 Gig Tracker → update status to Negotiating'],
+        ['We agree on rate and scope','📊 Rate Negotiation Log → log the deal'],
+        ['I\'m about to start filming','📝 Contracts → Generate from Active Gig'],
+        ['I deliver the work','📋 Gig Tracker → mark Delivered + send Invoice'],
+        ['I send an invoice','🧾 Invoices → + Invoice AND 💸 Payment Chaser → log it'],
+        ['They pay me','💸 Payment Chaser → ✓ Paid! + 📋 Gig Tracker → mark Paid'],
+        ['They compliment the work','⭐ Testimonials → Log Feedback'],
+        ['Random idea hits me','FAB ＋ → Quick Idea'],
+        ['I\'m wondering what to film this week','💡 Ideas & Planner → filter by Status: Idea'],
+        ['Footage I can reuse from a past gig','♻️ Repurpose Tracker → Scan'],
+      ].map(([q,a])=>`<div style="display:flex;gap:10px;padding:6px 0;border-bottom:1px solid rgba(0,0,0,.04);align-items:flex-start;">
+        <div style="flex:1;font-size:11px;color:var(--warm-gray);">${q}</div>
+        <div style="font-size:10px;font-family:'DM Mono',monospace;color:var(--terracotta);white-space:nowrap;">${a}</div>
+      </div>`).join('')}
+    </div>
+  </div>
+</div>
+
+</div>
+<!-- ─── END GUIDE PAGE ─── -->
+
+<script>
+// Guide tab switching
+function switchGuideTab(tab, btn){
+  document.querySelectorAll('.guide-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.guide-tab').forEach(b=>b.classList.remove('active'));
+  const panel = document.getElementById('guide-panel-'+tab);
+  if(panel) panel.classList.add('active');
+  if(btn) btn.classList.add('active');
+}
+
+// Setup step accordion
+function toggleStep(n){
+  const el = document.getElementById('ss-'+n);
+  if(!el) return;
+  el.classList.toggle('open');
+}
+
+// Step completion
+const SETUP_KEY = 'ajhq_setup_steps';
+function getStepsDone(){ try{ return JSON.parse(localStorage.getItem(SETUP_KEY)||'[]'); }catch(e){return [];} }
+function markStep(n){
+  const done = getStepsDone();
+  if(!done.includes(n)) done.push(n);
+  try{ localStorage.setItem(SETUP_KEY, JSON.stringify(done)); }catch(e){}
+  renderSetupProgress();
+  toast('Step '+n+' marked complete ✓');
+}
+function renderSetupProgress(){
+  const done = getStepsDone();
+  const total = 10;
+  const pct = Math.round((done.length/total)*100);
+  const bar = document.getElementById('guide-progress-bar');
+  const lbl = document.getElementById('guide-progress-label');
+  if(bar) bar.style.width = pct+'%';
+  if(lbl) lbl.textContent = done.length+' / '+total+' done';
+  for(let i=1;i<=total;i++){
+    const num = document.getElementById('ss-num-'+i);
+    if(!num) continue;
+    if(done.includes(i)){ num.classList.add('done'); num.textContent='✓'; }
+    else { num.classList.remove('done'); num.textContent=i; }
+  }
+}
+// Init progress on page load
+document.addEventListener('DOMContentLoaded', renderSetupProgress);
+setTimeout(renderSetupProgress, 500);
+</script>
 <div class="pg" id="pg-earnings">
   <div style="font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:var(--terracotta);font-weight:500;margin-bottom:4px;">Financial Overview</div>
   <div style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:300;margin-bottom:16px;">Your <em style="font-style:italic;color:var(--terracotta);">Earnings</em></div>
