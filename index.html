@@ -945,14 +945,10 @@ body.dark-mode #dark-toggle{border-color:rgba(255,255,255,.15);color:rgba(250,24
     <div class="cdh">Sun</div><div class="cdh">Mon</div><div class="cdh">Tue</div><div class="cdh">Wed</div><div class="cdh">Thu</div><div class="cdh">Fri</div><div class="cdh">Sat</div>
   </div>
   <div style="margin-bottom:14px;" id="plan-list2"></div>
-  <!-- MAIN VIEW TOGGLE -->
   <div style="display:flex;gap:6px;margin-bottom:14px;align-items:center;flex-wrap:wrap;">
     <button id="view-my-ideas" class="btn btn-p btn-s" onclick="switchIdeaView('mine',this)">My Ideas</button>
     <button id="view-pillars" class="btn btn-g btn-s" onclick="switchIdeaView('pillars',this)">✦ Content Pillars</button>
-    <span id="pillar-week-hint" style="display:none;font-size:10px;font-family:'DM Mono',monospace;color:var(--warm-gray);margin-left:4px;">6 posts/week · 3 reels · 3 carousels</span>
   </div>
-
-  <!-- MY IDEAS VIEW -->
   <div id="mine-view">
     <div class="tr" id="idea-tabs">
       <button class="tb active" onclick="filterIdeas('all',this)">All</button>
@@ -965,24 +961,13 @@ body.dark-mode #dark-toggle{border-color:rgba(255,255,255,.15);color:rgba(250,24
     </div>
     <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(255px,1fr));gap:12px;" id="ideas-grid"></div>
   </div>
-
-  <!-- PILLARS SPARK VIEW -->
   <div id="pillars-view" style="display:none;">
     <div style="background:#fff;border-radius:14px;border:1px solid rgba(0,0,0,.06);padding:14px 16px;margin-bottom:16px;">
       <div style="font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--warm-gray);font-family:'DM Mono',monospace;margin-bottom:10px;">Your Weekly Rhythm · 6 posts every week</div>
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;">
-        <div style="padding:10px 12px;border-radius:10px;background:rgba(196,113,79,.06);border-left:3px solid var(--terracotta);">
-          <div style="font-size:9px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--terracotta);margin-bottom:3px;">Pillar 1 · Craft</div>
-          <div style="font-size:11px;color:var(--ink);line-height:1.5;">1–2 posts · 1 reel showing process + 1 carousel teaching UGC</div>
-        </div>
-        <div style="padding:10px 12px;border-radius:10px;background:rgba(90,143,106,.06);border-left:3px solid #5A8F6A;">
-          <div style="font-size:9px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#4a7a58;margin-bottom:3px;">Pillar 2 · Hair</div>
-          <div style="font-size:11px;color:var(--ink);line-height:1.5;">2 posts · 1 reel (wash day / styling) + 1 carousel (education)</div>
-        </div>
-        <div style="padding:10px 12px;border-radius:10px;background:rgba(122,155,181,.07);border-left:3px solid #7A9BB5;">
-          <div style="font-size:9px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#5a7a95;margin-bottom:3px;">Pillar 3 · Life</div>
-          <div style="font-size:11px;color:var(--ink);line-height:1.5;">2 posts · 1 reel (home / style) + 1 carousel (systems / living)</div>
-        </div>
+        <div style="padding:10px 12px;border-radius:10px;background:rgba(196,113,79,.06);border-left:3px solid var(--terracotta);"><div style="font-size:9px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--terracotta);margin-bottom:3px;">Pillar 1 · Craft</div><div style="font-size:11px;color:var(--ink);line-height:1.5;">1–2 posts · reel of process + carousel teaching UGC</div></div>
+        <div style="padding:10px 12px;border-radius:10px;background:rgba(90,143,106,.06);border-left:3px solid #5A8F6A;"><div style="font-size:9px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#4a7a58;margin-bottom:3px;">Pillar 2 · Hair</div><div style="font-size:11px;color:var(--ink);line-height:1.5;">2 posts · reel (wash day / styling) + carousel (education)</div></div>
+        <div style="padding:10px 12px;border-radius:10px;background:rgba(122,155,181,.07);border-left:3px solid #7A9BB5;"><div style="font-size:9px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#5a7a95;margin-bottom:3px;">Pillar 3 · Life</div><div style="font-size:11px;color:var(--ink);line-height:1.5;">2 posts · reel (home / style) + carousel (systems)</div></div>
       </div>
     </div>
     <div class="tr" id="pillar-tabs" style="margin-bottom:12px;">
@@ -1653,6 +1638,7 @@ Total cash: $190 + product value</textarea></div>
       <div class="scr-hint">Stage directions in [brackets] are cues for you — not spoken aloud.</div>
     </div>
     <div class="scr-panel" id="g-scr-shots">
+      <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px;align-items:center;"><span style="font-size:10px;color:var(--warm-gray);font-family:'DM Mono',monospace;white-space:nowrap;">Load template:</span><button class="btn btn-g btn-s" style="font-size:10px;" onclick="loadShotTemplate('g','talking-cam')">🎙 Talking to Cam</button><button class="btn btn-g btn-s" style="font-size:10px;" onclick="loadShotTemplate('g','product-demo')">📦 Product Demo</button><button class="btn btn-g btn-s" style="font-size:10px;" onclick="loadShotTemplate('g','wash-day')">🚿 Wash Day</button><button class="btn btn-g btn-s" style="font-size:10px;" onclick="loadShotTemplate('g','broll-asmr')">🎬 B-Roll / ASMR</button><button class="btn btn-g btn-s" style="font-size:10px;" onclick="loadShotTemplate('g','carousel')">📲 Carousel</button></div>
       <div class="scr-shot-hdr"><span>#</span><span>Shot Description</span><span>Direction / Notes</span><span>Type</span><span></span></div>
       <div id="g-shot-rows"></div>
       <button class="scr-add-btn" onclick="addScrShot('g')">+ Add shot</button>
@@ -1718,6 +1704,14 @@ Total cash: $190 + product value</textarea></div>
     <div class="fr f1"><div class="fg"><label class="fl">📸 Linked IG Post</label><select class="fs" id="i-ligpost"><option value="">— none —</option></select></div></div>
     <div class="fr f1"><div class="fg"><label class="fl">Hook</label><input class="fi" id="i-hook" placeholder="Opening line or concept hook"></div></div>
     <div class="fr f1"><div class="fg"><label class="fl">Audio / Sound 🎵</label><input class="fi" id="i-audio" placeholder="Trending sound, original audio, voiceover…"></div></div>
+    <div class="fr f1"><div class="fg">
+      <label class="fl">Hook Variants <span style="font-weight:300;font-size:10px;color:var(--warm-gray);">— write 2–3 options, pick the best on shoot day</span></label>
+      <div id="i-hook-variants-list" style="display:flex;flex-direction:column;gap:4px;margin-bottom:6px;"></div>
+      <div style="display:flex;gap:6px;">
+        <input class="fi" id="i-hook-variant-inp" placeholder="Alternative hook…" style="flex:1;" onkeydown="if(event.key==='Enter'){event.preventDefault();addHookVariant('i');}">
+        <button class="btn btn-g btn-s" onclick="addHookVariant('i')">+ Add</button>
+      </div>
+    </div></div>
     <div class="fr f1"><div class="fg"><label class="fl">Notes</label><textarea class="ft" id="i-notes" placeholder="Shot list ideas, products, references…"></textarea></div></div>
     <div class="fr f1"><div class="fg"><label class="fl">Reference Images <span style="color:var(--mid-gray);font-weight:400;">(up to 8)</span></label><div class="uz" onclick="document.getElementById('i-img-in').click()"><input type="file" id="i-img-in" accept="image/*" multiple onchange="handleMultiImg(event,'i-imgs-pre','i-imgs-data',8)"><div style="font-size:12px;color:var(--warm-gray);">🖼 Click to upload reference images</div></div><div id="i-imgs-pre" class="ig2" style="margin-top:7px;"></div><input type="hidden" id="i-imgs-data" value="[]"><input type="hidden" id="i-img-data"></div></div>
     <div class="scr-section-divider"><span class="scr-section-label">✍️ Script</span></div>
@@ -1731,6 +1725,14 @@ Total cash: $190 + product value</textarea></div>
       <div class="scr-hint">Stage directions in [brackets] are cues for you — not spoken aloud.</div>
     </div>
     <div class="scr-panel" id="i-scr-shots">
+      <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px;align-items:center;">
+        <span style="font-size:10px;color:var(--warm-gray);font-family:'DM Mono',monospace;white-space:nowrap;">Load template:</span>
+        <button class="btn btn-g btn-s" style="font-size:10px;" onclick="loadShotTemplate('i','talking-cam')">🎙 Talking to Cam</button>
+        <button class="btn btn-g btn-s" style="font-size:10px;" onclick="loadShotTemplate('i','product-demo')">📦 Product Demo</button>
+        <button class="btn btn-g btn-s" style="font-size:10px;" onclick="loadShotTemplate('i','wash-day')">🚿 Wash Day</button>
+        <button class="btn btn-g btn-s" style="font-size:10px;" onclick="loadShotTemplate('i','broll-asmr')">🎬 B-Roll / ASMR</button>
+        <button class="btn btn-g btn-s" style="font-size:10px;" onclick="loadShotTemplate('i','carousel')">📲 Carousel</button>
+      </div>
       <div class="scr-shot-hdr"><span>#</span><span>Shot Description</span><span>Direction / Notes</span><span>Type</span><span></span></div>
       <div id="i-shot-rows"></div>
       <button class="scr-add-btn" onclick="addScrShot('i')">+ Add shot</button>
@@ -2361,13 +2363,8 @@ function _startRealtimeSync(uid) {
       if(!window.D[k] || !localSnap[k]) return;
       window.D[k] = window.D[k].map(function(item){
         var local = (localSnap[k]||[]).find(function(x){ return x.id === item.id; });
-        if(item.img === '__local__') {
-          if(local && local.img && local.img !== '__local__') item = Object.assign({}, item, {img: local.img});
-        }
-        if(item.imgs === '__local_imgs__') {
-          if(local && Array.isArray(local.imgs) && local.imgs.length > 0) item = Object.assign({}, item, {imgs: local.imgs});
-          else item = Object.assign({}, item, {imgs: []});
-        }
+        if(item.img === '__local__') { if(local && local.img && local.img !== '__local__') item = Object.assign({}, item, {img: local.img}); }
+        if(item.imgs === '__local_imgs__') { if(local && Array.isArray(local.imgs) && local.imgs.length > 0) item = Object.assign({}, item, {imgs: local.imgs}); else item = Object.assign({}, item, {imgs: []}); }
         return item;
       });
     });
@@ -3171,10 +3168,10 @@ function rGigs(){
     const lc=D.content.find(x=>x.id===g.linkedContent);
     const lip=(g.linkedIGPost&&typeof stData!=='undefined'&&stData.igPosts)?stData.igPosts.find(x=>x.id===g.linkedIGPost):null;
     return `<tr>
-      <td><div style="font-weight:500;">${g.brand}</div>${g.img?`<img src="${g.img}" style="width:34px;height:34px;border-radius:6px;object-fit:cover;margin-top:4px;cursor:pointer;" onclick="lightbox('${g.img}')">`:''}${g.contact?`<div style="font-size:10px;color:var(--warm-gray);">${g.contact}</div>`:''}</td>
+      <td><div style="font-weight:500;">${g.brand}</div>${g.img?`<img src="${g.img}" style="width:34px;height:34px;border-radius:6px;object-fit:cover;margin-top:4px;cursor:pointer;" onclick="lightbox('${g.img}')">`:''}${g.contact?`<div style="font-size:10px;color:var(--warm-gray);">${g.contact}</div>`:''}${(()=>{if(g.status==='pending'){const daysOld=Math.floor((Date.now()-(g.added||Date.now()))/86400000);const hasFU=D.followups.some(f=>(f.brand||'').toLowerCase()===g.brand.toLowerCase()&&!f.done);if(daysOld>=5&&!hasFU)return`<button onclick="event.stopPropagation();fuNudgeFromGig('${g.id}')" style="margin-top:5px;font-size:9px;padding:2px 8px;border-radius:20px;background:rgba(196,150,58,.12);color:#8a6a00;border:1px solid rgba(196,150,58,.2);cursor:pointer;display:block;">🔔 Follow up?</button>`;}return'';})()}</td>
       <td>${typeHtml||'<span style="color:var(--mid-gray);font-size:11px;">—</span>'}</td>
       <td style="font-family:'DM Mono',monospace;font-size:12px;font-weight:500;color:${g.rateType==='paid'?'var(--forest)':'var(--terracotta)'};">${fmtRate(g)}</td>
-      <td><select class="fs" style="padding:3px 7px;font-size:10px;width:auto;border-radius:20px;" onchange="updGigStatus('${g.id}',this.value)">${['pending','negotiating','waitingapproval','paid','gifted','delivered','declined'].map(s=>`<option value="${s}"${g.status===s?' selected':''}>${sLabel(s)}</option>`).join('')}</select></td>
+      <td><div style="display:flex;flex-direction:column;gap:4px;"><select class="fs" style="padding:3px 7px;font-size:10px;width:auto;border-radius:20px;" onchange="updGigStatus('${g.id}',this.value)">${['pending','negotiating','waitingapproval','paid','gifted','delivered','declined'].map(s=>`<option value="${s}"${g.status===s?' selected':''}>${sLabel(s)}</option>`).join('')}</select>${(()=>{const ns=gigNextStep(g);return ns?`<button class="btn btn-p btn-s" style="font-size:9px;padding:2px 9px;" onclick="stepGig('${g.id}')">${ns.label} →</button>`:''})()}</div></td>
       <td style="font-family:'DM Mono',monospace;font-size:10px;color:var(--warm-gray);">${g.due||'—'}</td>
       <td>${li?`<div class="lb2" style="margin-bottom:3px;">💡 ${li.title.slice(0,18)}</div>`:''}${lc?`<div class="lb2" style="margin-bottom:3px;">📅 ${lc.title.slice(0,18)}</div>`:''}${lip?`<div class="lb2" style="background:rgba(225,48,108,.07);border-color:rgba(225,48,108,.2);color:#c13584;">📸 W${lip.week} · ${lip.title.slice(0,14)}</div>`:''}</td>
       <td><div style="display:flex;gap:4px;">
@@ -3187,7 +3184,25 @@ function rGigs(){
   if(!gs.length)tb.innerHTML='<tr><td colspan="7" style="text-align:center;padding:26px;color:var(--mid-gray);">No gigs found.</td></tr>';
   setEl('gig-badge',D.gigs.filter(g=>!['delivered','declined'].includes(g.status)).length||'');
 }
-function updGigStatus(id,val){const g=D.gigs.find(x=>x.id===id);if(g){g.status=val;save();rDash();}toast('Status → '+sLabel(val));}
+function updGigStatus(id,val){const g=D.gigs.find(x=>x.id===id);if(g){g.status=val;save();rDash();rGigs();}toast('Status → '+sLabel(val));}
+function gigNextStep(g){
+  const flow=['pending','negotiating','waitingapproval','paid','filming','delivered'];
+  const idx=flow.indexOf(g.status);
+  if(idx===-1||idx>=flow.length-1)return null;
+  const labels={pending:'Negotiate',negotiating:'Awaiting Approval',waitingapproval:'Mark Paid',paid:'Start Filming',filming:'Mark Delivered'};
+  return{next:flow[idx+1],label:labels[g.status]||sLabel(flow[idx+1])};
+}
+function stepGig(id){
+  const g=D.gigs.find(x=>x.id===id);if(!g)return;
+  const ns=gigNextStep(g);if(!ns)return;
+  g.status=ns.next;save();rGigs();rDash();toast(g.brand+' → '+sLabel(ns.next)+' ✓');
+}
+function fuNudgeFromGig(gigId){
+  const g=D.gigs.find(x=>x.id===gigId);if(!g)return;
+  const fuDate=new Date();fuDate.setDate(fuDate.getDate()+1);
+  openModal('fu-modal');
+  setTimeout(()=>{setV('fu-brand',g.brand);setV('fu-date',fuDate.toISOString().slice(0,10));setV('fu-note','Follow up re: '+g.brand+' collab');},100);
+}
 function togGR(){
   const t=v('g-rtype');
   const rr=document.getElementById('g-rate-row');
@@ -3299,7 +3314,7 @@ function rCal(){
     ${(c.types||[]).length?`<div style="display:flex;flex-wrap:wrap;gap:2px;margin-top:3px;">${(c.types||[]).map(t=>`<span style="font-size:9px;font-family:'DM Mono',monospace;padding:1px 5px;border-radius:20px;background:rgba(196,113,79,.1);color:var(--terracotta);">${t}</span>`).join('')}</div>`:''}</div>
     <select class="fs" style="padding:3px 7px;font-size:9px;width:auto;flex-shrink:0;" onchange="updIdeaStatus('${c.id}',this.value)">${['idea','scripting','filming','editing','done','published'].map(s=>`<option value="${s}"${c.status===s?' selected':''}>${s}</option>`).join('')}</select>
     <button class="ib" onclick="editIdea('${c.id}')" title="Edit">✏️</button>
-    <button class="ib" onclick="schedIdeaToContent('${c.id}')" title="Push to Content Planner" style="color:var(--terracotta);">📅</button>
+    ${['scripting','filming'].includes(c.status)?`<button class="btn btn-p btn-s" style="font-size:10px;padding:3px 9px;" onclick="schedIdeaToContent('${c.id}')">📅 Schedule →</button>`:`<button class="ib" onclick="schedIdeaToContent('${c.id}')" title="Push to Content Planner" style="color:var(--terracotta);">📅</button>`}
     <button class="ib" onclick="delIdea('${c.id}')" title="Delete">🗑</button>
   </div>`;
   }).join('')+'</div>';
@@ -3552,14 +3567,14 @@ function rFeedPosts(){
           </div>
         </div>`:''}
 
-        <!-- LINKED IDEAS (always shown) -->
+        <!-- LINKED ITEMS -->
         <div class="fpc-link-bar" style="margin-bottom:10px;">
           <div class="fpc-link-lbl" style="margin-bottom:6px;">💡 Linked Ideas</div>
-          ${linkedIdeas.length?linkedIdeas.map(i=>`<div style="display:flex;align-items:center;gap:7px;margin-bottom:5px;padding:6px 9px;background:rgba(196,113,79,.04);border-radius:8px;border:1px solid rgba(196,113,79,.1);">
+          ${linkedIdeas.length?linkedIdeas.map(i=>`<div style="display:flex;align-items:center;gap:7px;margin-bottom:5px;padding:5px 8px;background:rgba(196,113,79,.04);border-radius:8px;border:1px solid rgba(196,113,79,.1);">
             <span class="id-tag t-${i.niche}" style="flex-shrink:0;">${i.niche}</span>
             <span style="flex:1;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${i.title}</span>
             <span class="sp s-${i.status}" style="flex-shrink:0;">${i.status}</span>
-            <button onclick="event.stopPropagation();fpcUnlinkIdea('${p.id}','${i.id}')" style="background:none;border:none;cursor:pointer;font-size:13px;color:var(--mid-gray);line-height:1;padding:0 2px;" title="Unlink">✕</button>
+            <button onclick="event.stopPropagation();fpcUnlinkIdea('${p.id}','${i.id}')" style="background:none;border:none;cursor:pointer;font-size:13px;color:var(--mid-gray);padding:0 2px;" title="Unlink">✕</button>
           </div>`).join(''):`<div style="font-size:11px;color:var(--mid-gray);font-style:italic;margin-bottom:6px;">No ideas linked yet</div>`}
           <div style="position:relative;" id="idea-picker-wrap-${p.id}">
             <button class="btn btn-g btn-s" style="width:100%;text-align:left;" onclick="event.stopPropagation();toggleIdeaPicker('${p.id}')">+ Link an Idea</button>
@@ -3576,8 +3591,8 @@ function rFeedPosts(){
               </div>
             </div>
           </div>
-          ${linkedGigs.length?`<div class="fpc-link-lbl" style="margin:8px 0 6px;">🔗 Linked Gigs</div>${linkedGigs.map(g=>`<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;font-size:11px;padding:5px 8px;background:rgba(74,107,80,.04);border-radius:7px;"><span>🔗</span><strong>${g.brand}</strong><span class="sp s-${g.status}" style="margin-left:auto;">${g.status}</span></div>`).join('')}`:''}
-          ${linkedContent.length?`<div class="fpc-link-lbl" style="margin:8px 0 6px;">📅 Linked Content</div>${linkedContent.map(c=>`<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;font-size:11px;padding:5px 8px;background:rgba(122,174,204,.05);border-radius:7px;"><span>📅</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${c.title}</span>${c.date?`<span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--terracotta);">${c.date}</span>`:''}</div>`).join('')}`:''}
+          ${linkedGigs.length?`<div class="fpc-link-lbl" style="margin:8px 0 5px;">🔗 Linked Gigs</div>${linkedGigs.map(g=>`<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;font-size:11px;padding:5px 8px;background:rgba(74,107,80,.04);border-radius:7px;"><span>🔗</span><strong>${g.brand}</strong><span class="sp s-${g.status}" style="margin-left:auto;">${g.status}</span></div>`).join('')}`:''}
+          ${linkedContent.length?`<div class="fpc-link-lbl" style="margin:8px 0 5px;">📅 Linked Content</div>${linkedContent.map(c=>`<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;font-size:11px;padding:5px 8px;background:rgba(122,174,204,.05);border-radius:7px;"><span>📅</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${c.title}</span>${c.date?`<span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--terracotta);">${c.date}</span>`:''}</div>`).join('')}`:''}
         </div>
 
         <div style="display:flex;justify-content:flex-end;margin-top:10px;">
@@ -3642,36 +3657,12 @@ function fpcDel(id){
   if(feedOpenPost===id)feedOpenPost=null;
   stSave();rFeedPosts();rFeedGrid();toast('Post deleted');
 }
-function fpcLinkIdea(postId,ideaId){
-  const idea=D.ideas.find(x=>x.id===ideaId);
-  if(!idea)return;
-  idea.linkedIGPost=postId;
-  save();closeIdeaPickers();rFeedPosts();rIdeas(ideaFilt);toast('Idea linked ✓');
-}
-function fpcUnlinkIdea(postId,ideaId){
-  const idea=D.ideas.find(x=>x.id===ideaId);
-  if(!idea)return;
-  idea.linkedIGPost='';
-  save();rFeedPosts();rIdeas(ideaFilt);toast('Idea unlinked');
-}
+function fpcLinkIdea(postId,ideaId){const idea=D.ideas.find(x=>x.id===ideaId);if(!idea)return;idea.linkedIGPost=postId;save();closeIdeaPickers();rFeedPosts();rIdeas(ideaFilt);toast('Idea linked ✓');}
+function fpcUnlinkIdea(postId,ideaId){const idea=D.ideas.find(x=>x.id===ideaId);if(!idea)return;idea.linkedIGPost='';save();rFeedPosts();rIdeas(ideaFilt);toast('Idea unlinked');}
 let _openIdeaPicker=null;
-function toggleIdeaPicker(postId){
-  const el=document.getElementById('idea-picker-'+postId);
-  if(!el)return;
-  const isOpen=el.style.display!=='none';
-  closeIdeaPickers();
-  if(!isOpen){el.style.display='block';_openIdeaPicker=postId;}
-}
-function closeIdeaPickers(){
-  if(_openIdeaPicker){const el=document.getElementById('idea-picker-'+_openIdeaPicker);if(el)el.style.display='none';_openIdeaPicker=null;}
-}
-function filterIdeaPicker(postId,q){
-  const list=document.getElementById('idea-picker-list-'+postId);
-  if(!list)return;
-  const linkedIds=new Set(D.ideas.filter(i=>i.linkedIGPost===postId).map(i=>i.id));
-  const filtered=q?D.ideas.filter(i=>!linkedIds.has(i.id)&&i.title.toLowerCase().includes(q.toLowerCase())):D.ideas.filter(i=>!linkedIds.has(i.id));
-  list.innerHTML=filtered.map(i=>`<div onclick="event.stopPropagation();fpcLinkIdea('${postId}','${i.id}')" style="display:flex;align-items:center;gap:8px;padding:8px 12px;cursor:pointer;font-size:12px;" onmouseover="this.style.background='var(--warm-white)'" onmouseout="this.style.background=''"><span class="id-tag t-${i.niche}" style="flex-shrink:0;">${i.niche}</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${i.title}</span><span class="sp s-${i.status}">${i.status}</span></div>`).join('')||'<div style="padding:12px;font-size:11px;color:var(--mid-gray);text-align:center;">No ideas found</div>';
-}
+function toggleIdeaPicker(postId){const el=document.getElementById('idea-picker-'+postId);if(!el)return;const isOpen=el.style.display!=='none';closeIdeaPickers();if(!isOpen){el.style.display='block';_openIdeaPicker=postId;}}
+function closeIdeaPickers(){if(_openIdeaPicker){const el=document.getElementById('idea-picker-'+_openIdeaPicker);if(el)el.style.display='none';_openIdeaPicker=null;}}
+function filterIdeaPicker(postId,q){const list=document.getElementById('idea-picker-list-'+postId);if(!list)return;const linkedIds=new Set(D.ideas.filter(i=>i.linkedIGPost===postId).map(i=>i.id));const filtered=q?D.ideas.filter(i=>!linkedIds.has(i.id)&&i.title.toLowerCase().includes(q.toLowerCase())):D.ideas.filter(i=>!linkedIds.has(i.id));list.innerHTML=filtered.map(i=>`<div onclick="event.stopPropagation();fpcLinkIdea('${postId}','${i.id}')" style="display:flex;align-items:center;gap:8px;padding:8px 12px;cursor:pointer;font-size:12px;" onmouseover="this.style.background='var(--warm-white)'" onmouseout="this.style.background=''"><span class="id-tag t-${i.niche}" style="flex-shrink:0;">${i.niche}</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${i.title}</span><span class="sp s-${i.status}">${i.status}</span></div>`).join('')||'<div style="padding:12px;font-size:11px;color:var(--mid-gray);text-align:center;">No ideas found</div>';}
 
 function feedAddPost(){
   if(typeof stData==='undefined')stLoad();
@@ -5845,8 +5836,7 @@ document.addEventListener('fb-ready',function(){
 })();
 
 // Close search on outside click
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeSearch();document.getElementById('moodboard').classList.contains('open')&&closeMB();if(typeof closeIdeaPickers==='function')closeIdeaPickers();}});
-document.addEventListener('click',function(e){if(typeof _openIdeaPicker!=='undefined'&&_openIdeaPicker&&!e.target.closest('#idea-picker-wrap-'+_openIdeaPicker))closeIdeaPickers();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeSearch();document.getElementById('moodboard').classList.contains('open')&&closeMB();}});
 
 // ── BOOT ──
 (function bootWhenReady(){
@@ -5879,7 +5869,274 @@ document.addEventListener('click',function(e){if(typeof _openIdeaPicker!=='undef
   updateOnlineBar();
 })();
 
-// ═══ CONTENT PILLARS SPARK ═══
+// ═══════════════════════════════════════════════════
+// FEATURE 1: QUICK CAPTURE
+// ═══════════════════════════════════════════════════
+function openQuickCapture(){
+  const m=document.getElementById('quick-capture-modal');
+  if(m){m.style.display='flex';setTimeout(()=>document.getElementById('qc-title').focus(),100);}
+}
+function closeQuickCapture(){
+  const m=document.getElementById('quick-capture-modal');
+  if(m){m.style.display='none';document.getElementById('qc-title').value='';}
+}
+function saveQuickCapture(){
+  const title=document.getElementById('qc-title').value.trim();
+  if(!title){document.getElementById('qc-title').focus();return;}
+  const niche=document.getElementById('qc-niche').value;
+  const idea={id:'i'+Date.now(),title,niche,platform:'Instagram',status:'idea',
+    date:'',types:[],linkedGig:'',linkedIGPost:'',hook:'',audio:'',notes:'',
+    img:'',imgs:[],script:'',scrnotes:'',shots:[],added:Date.now()};
+  window.D.ideas.push(idea);
+  save();
+  closeQuickCapture();
+  rIdeas(ideaFilt);
+  rDash();
+  toast('"'+title.slice(0,28)+(title.length>28?'…':'')+'" captured ✓');
+}
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape'){
+    closeSearch();
+    if(document.getElementById('moodboard').classList.contains('open'))closeMB();
+    if(typeof closeIdeaPickers==='function')closeIdeaPickers();
+    closeQuickCapture();
+  }
+});
+document.addEventListener('click',function(e){
+  const m=document.getElementById('quick-capture-modal');
+  if(m&&m.style.display!=='none'&&e.target===m)closeQuickCapture();
+  if(typeof _openIdeaPicker!=='undefined'&&_openIdeaPicker&&!e.target.closest('#idea-picker-wrap-'+_openIdeaPicker))closeIdeaPickers();
+});
+
+// ═══════════════════════════════════════════════════
+// FEATURE 2+5: CONSISTENCY TRACKER + PILLAR BALANCE
+// ═══════════════════════════════════════════════════
+function rConsistency(){
+  const dotsEl=document.getElementById('d-week-dots');
+  const labelEl=document.getElementById('d-streak-label');
+  const badgeEl=document.getElementById('d-streak-badge');
+  const pillarsEl=document.getElementById('d-pillar-counters');
+  if(!dotsEl)return;
+
+  // Build this week's 7 days
+  const now=new Date();
+  const day=now.getDay(); // 0=Sun
+  const weekStart=new Date(now);weekStart.setDate(now.getDate()-day);weekStart.setHours(0,0,0,0);
+  const days=[];
+  for(let i=0;i<7;i++){const d=new Date(weekStart);d.setDate(weekStart.getDate()+i);days.push(d);}
+
+  // Get published dates from ideas + content
+  const pubDates=new Set();
+  const allItems=[...(window.D.ideas||[]),...(window.D.content||[])];
+  allItems.forEach(item=>{
+    if(['published','done'].includes(item.status)&&item.date)pubDates.add(item.date);
+  });
+
+  const dayNames=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const todayStr=now.toISOString().slice(0,10);
+  let weekCount=0;
+
+  dotsEl.innerHTML=days.map((d,i)=>{
+    const ds=d.toISOString().slice(0,10);
+    const published=pubDates.has(ds);
+    const isToday=ds===todayStr;
+    const isPast=d<now&&!isToday;
+    if(published)weekCount++;
+    const bg=published?'var(--forest)':isToday?'rgba(196,113,79,.15)':'rgba(0,0,0,.05)';
+    const border=isToday?'2px solid var(--terracotta)':'2px solid transparent';
+    const tick=published?'<span style="color:#fff;font-size:9px;">✓</span>':'';
+    return`<div style="display:flex;flex-direction:column;align-items:center;gap:3px;flex:1;">
+      <div style="width:32px;height:32px;border-radius:50%;background:${bg};border:${border};display:flex;align-items:center;justify-content:center;">${tick}</div>
+      <span style="font-size:9px;font-family:'DM Mono',monospace;color:${isToday?'var(--terracotta)':'var(--warm-gray)'};">${dayNames[i]}</span>
+    </div>`;
+  }).join('');
+
+  if(labelEl)labelEl.textContent=weekCount===0?'No posts marked published this week yet':weekCount===1?'1 post published this week — keep going':weekCount+' posts published this week'+(weekCount>=6?' — full week! 🔥':'');
+
+  // Streak: count consecutive weeks with at least 1 published
+  let streak=0;
+  if(weekCount>0){
+    streak=1;
+    for(let w=1;w<=12;w++){
+      const ws=new Date(weekStart);ws.setDate(ws.getDate()-w*7);
+      const we=new Date(ws);we.setDate(ws.getDate()+7);
+      const wsDates=[];
+      for(let d=0;d<7;d++){const dd=new Date(ws);dd.setDate(ws.getDate()+d);wsDates.push(dd.toISOString().slice(0,10));}
+      const hadPost=wsDates.some(ds=>pubDates.has(ds));
+      if(hadPost)streak++;else break;
+    }
+  }
+  if(badgeEl){
+    if(streak>=2){badgeEl.style.display='';badgeEl.textContent=streak+' week streak 🔥';}
+    else badgeEl.style.display='none';
+  }
+
+  // Pillar balance counters
+  if(pillarsEl){
+    // Map niche to pillar
+    const pillarMap={Hair:{label:'✂️ Hair',target:2,color:'rgba(90,143,106,.1)',text:'#3a6b40'},Lifestyle:{label:'🏡 Life',target:2,color:'rgba(122,155,181,.1)',text:'#3d6b8a'},Beauty:{label:'💄 Craft/Editorial',target:2,color:'rgba(196,113,79,.1)',text:'#9a4c28'}};
+    const weekIdeas=(window.D.ideas||[]).filter(i=>{
+      if(!i.date)return false;
+      const d=new Date(i.date);return d>=weekStart&&d<=now;
+    });
+    const weekContent=(window.D.content||[]).filter(i=>{
+      if(!i.date)return false;
+      const d=new Date(i.date);return d>=weekStart&&d<=now;
+    });
+    const allWeek=[...weekIdeas,...weekContent];
+    const counts={Hair:0,Lifestyle:0,Beauty:0};
+    allWeek.forEach(i=>{ if(counts[i.niche]!==undefined)counts[i.niche]++; });
+    pillarsEl.innerHTML=Object.entries(pillarMap).map(([niche,cfg])=>{
+      const n=counts[niche]||0;const pct=Math.min(100,Math.round(n/cfg.target*100));
+      return`<div style="padding:8px 10px;border-radius:9px;background:${cfg.color};cursor:pointer;" onclick="switchIdeaView('pillars',document.getElementById('view-pillars'))">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+          <span style="font-size:10px;font-weight:500;color:${cfg.text};">${cfg.label}</span>
+          <span style="font-size:10px;font-family:'DM Mono',monospace;color:${cfg.text};">${n}/${cfg.target}</span>
+        </div>
+        <div style="background:rgba(0,0,0,.08);border-radius:100px;height:4px;overflow:hidden;">
+          <div style="background:${cfg.text};height:100%;border-radius:100px;width:${pct}%;transition:width .4s;"></div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// FEATURE 3: SHOT LIST TEMPLATES
+// ═══════════════════════════════════════════════════
+const SHOT_TEMPLATES = {
+  'talking-cam': [
+    {desc:'Hook opener — you talking directly to camera, eye contact',direction:'Start mid-sentence, confident, fill frame',type:'Talking Head'},
+    {desc:'Problem / relatable moment',direction:'Lean in slightly, pause before punchline',type:'Talking Head'},
+    {desc:'Product / solution reveal — hold up or use product',direction:'Bring product into frame from below',type:'Product Close'},
+    {desc:'Benefit demonstration — apply or use it',direction:'Close-up on hands or face',type:'B-Roll'},
+    {desc:'Result / reaction — your honest face',direction:'Natural reaction, no over-acting',type:'Reaction'},
+    {desc:'CTA close — direct to camera',direction:'Smile, say exactly one thing to do',type:'Talking Head'}
+  ],
+  'product-demo': [
+    {desc:'Product flat lay — bottle/packaging on surface',direction:'Top-down, golden hour light, styled with props',type:'B-Roll'},
+    {desc:'Texture close-up — cream / oil / liquid',direction:'Extreme macro, slow pour or spread on hand',type:'Product Close'},
+    {desc:'Unboxing or first open — peel seal, first pump',direction:'ASMR sounds on, slow deliberate movement',type:'B-Roll'},
+    {desc:'Application on skin/hair — real usage',direction:'Close-up, natural light, no ring light',type:'B-Roll'},
+    {desc:'Before/after side or reaction shot',direction:'Same angle both times',type:'Reaction'},
+    {desc:'Product in setting — outdoor or window light',direction:'Hold at arm length, background blurred',type:'Lifestyle'}
+  ],
+  'wash-day': [
+    {desc:'Hair before — dry, pre-wash state',direction:'Good light, show texture clearly',type:'B-Roll'},
+    {desc:'Product lineup — everything you're using today',direction:'Flat lay on bathroom surface',type:'B-Roll'},
+    {desc:'Detangle in sections — wide-tooth comb on wet hair',direction:'Close-up on comb moving through curl',type:'B-Roll'},
+    {desc:'Product application — hands working through curls',direction:'Slow, close-up, ambient water sound',type:'B-Roll'},
+    {desc:'Deep condition — steam cap or wait time',direction:'Lifestyle shot — you doing something else nearby',type:'Lifestyle'},
+    {desc:'Rinse — water through curls',direction:'Overhead close-up, catch the curl definition',type:'B-Roll'},
+    {desc:'Styling and final result',direction:'Good light, show curl pattern clearly',type:'B-Roll'}
+  ],
+  'broll-asmr': [
+    {desc:'Hands interacting with product — slow, deliberate',direction:'Macro lens if possible, ambient sound on',type:'Product Close'},
+    {desc:'Pouring / applying — liquid, cream, or powder',direction:'Top-down or side angle, slow pour',type:'B-Roll'},
+    {desc:'Surface texture — fabric, skin, packaging material',direction:'Extreme close-up, slight camera movement',type:'B-Roll'},
+    {desc:'Environment establishing shot',direction:'Wide, show your setting — land, kitchen, window',type:'Lifestyle'},
+    {desc:'Click/snap/peel ASMR moment',direction:'Mic close to product, no voice',type:'B-Roll'},
+    {desc:'Still life — product placed in natural setting',direction:'No hands, product sits alone in your world',type:'B-Roll'}
+  ],
+  'carousel': [
+    {desc:'Slide 1: Hook headline — bold single statement',direction:'Text overlay on strong image or close-up',type:'B-Roll'},
+    {desc:'Slide 2: Problem — relatable situation',direction:'You or your space, honest real-life moment',type:'Lifestyle'},
+    {desc:'Slide 3: Step 1 or point 1',direction:'Clear visual of the thing you're teaching',type:'B-Roll'},
+    {desc:'Slide 4: Step 2 or point 2',direction:'Same visual style as slide 3',type:'B-Roll'},
+    {desc:'Slide 5: Step 3 or point 3',direction:'Consistent aesthetic throughout',type:'B-Roll'},
+    {desc:'Slide 6: Result or takeaway',direction:'Strong image — your face or clear outcome',type:'Reaction'},
+    {desc:'Slide 7: CTA — one clear action',direction:'Simple, direct — save / follow / DM',type:'Talking Head'}
+  ]
+};
+
+function loadShotTemplate(prefix, templateKey){
+  const tpl = SHOT_TEMPLATES[templateKey];
+  if(!tpl)return;
+  if(SCR_SHOTS[prefix]&&SCR_SHOTS[prefix].length>0){
+    if(!confirm('Replace current shot list with the '+templateKey.replace('-',' ')+' template?'))return;
+  }
+  SCR_SHOTS[prefix]=[];
+  tpl.forEach(sh=>{
+    scrShotCtr++;
+    SCR_SHOTS[prefix].push({id:scrShotCtr,desc:sh.desc,direction:sh.direction,type:sh.type});
+  });
+  renderScrShots(prefix);
+  // Switch to shots tab
+  const modal=prefix==='i'?'idea-modal':prefix==='g'?'gig-modal':'content-modal';
+  scrTab(prefix,'shots',document.querySelector('#'+modal+' .scr-tab:nth-child(2)'));
+  toast(tpl.length+' shots loaded ✓');
+}
+
+// ═══════════════════════════════════════════════════
+// FEATURE 8: HOOK VARIANTS
+// ═══════════════════════════════════════════════════
+let _hookVariants = {};
+
+function addHookVariant(prefix){
+  const inp=document.getElementById(prefix+'-hook-variant-inp');
+  if(!inp)return;
+  const val=inp.value.trim();if(!val)return;
+  if(!_hookVariants[prefix])_hookVariants[prefix]=[];
+  _hookVariants[prefix].push(val);
+  inp.value='';
+  renderHookVariants(prefix);
+}
+
+function renderHookVariants(prefix){
+  const list=document.getElementById(prefix+'-hook-variants-list');
+  if(!list)return;
+  const vars=_hookVariants[prefix]||[];
+  list.innerHTML=vars.map((v,i)=>`<div style="display:flex;align-items:center;gap:6px;padding:6px 10px;background:rgba(196,113,79,.05);border-radius:8px;border:1px solid rgba(196,113,79,.1);">
+    <span style="font-size:12px;flex:1;font-style:italic;">"${esc(v)}"</span>
+    <button onclick="useHookVariant('${prefix}',${i})" style="font-size:10px;padding:2px 8px;border-radius:20px;background:rgba(196,113,79,.1);color:var(--terracotta);border:1px solid rgba(196,113,79,.2);cursor:pointer;white-space:nowrap;">Use this</button>
+    <button onclick="delHookVariant('${prefix}',${i})" style="background:none;border:none;cursor:pointer;font-size:13px;color:var(--mid-gray);">×</button>
+  </div>`).join('');
+}
+
+function useHookVariant(prefix,idx){
+  const v=(_hookVariants[prefix]||[])[idx];
+  if(!v)return;
+  setV(prefix+'-hook',v);
+  toast('Hook set ✓');
+}
+
+function delHookVariant(prefix,idx){
+  if(_hookVariants[prefix])_hookVariants[prefix].splice(idx,1);
+  renderHookVariants(prefix);
+}
+
+// Patch openIdeaModal and editIdea to clear/load hook variants
+const _origOpenIdeaModal=window.openIdeaModal;
+window.openIdeaModal=function(){
+  _hookVariants['i']=[];
+  if(typeof renderHookVariants==='function')renderHookVariants('i');
+  if(typeof _origOpenIdeaModal==='function')_origOpenIdeaModal();
+};
+const _origEditIdea=window.editIdea;
+window.editIdea=function(id){
+  const idea=D.ideas.find(x=>x.id===id);
+  _hookVariants['i']=idea&&idea.hookVariants?[...idea.hookVariants]:[];
+  if(typeof renderHookVariants==='function')renderHookVariants('i');
+  if(typeof _origEditIdea==='function')_origEditIdea(id);
+};
+
+// Patch saveIdea to include hookVariants
+const _origSaveIdea=window.saveIdea;
+window.saveIdea=function(){
+  const id=document.getElementById('i-id')?document.getElementById('i-id').value:'';
+  const existingIdea=id?D.ideas.find(i=>i.id===id):null;
+  if(typeof _origSaveIdea==='function')_origSaveIdea();
+  // Attach variants to the saved idea
+  setTimeout(()=>{
+    const savedId=id||((D.ideas[D.ideas.length-1]||{}).id);
+    const saved=D.ideas.find(x=>x.id===savedId);
+    if(saved){saved.hookVariants=[...(_hookVariants['i']||[])];save();}
+  },100);
+};
+
+// ═══════════════════════════════════════════════════
+// CONTENT PILLARS
+// ═══════════════════════════════════════════════════
 const PILLAR_IDEAS = [{"id": "sp_0", "pillar": "African Creator, Global Standards", "category": "UGC Craft & Process", "title": "My filming setup on the land — Sony ZV-E10, golden hour, no ring light", "hook": "This is where I film. No studio. No ring light. Just Mitheru.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_1", "pillar": "African Creator, Global Standards", "category": "UGC Craft & Process", "title": "How I approach a brand brief — from read to filming in one day", "hook": "A brand brief arrived at 9am. I had the video filmed by 3pm.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_2", "pillar": "African Creator, Global Standards", "category": "UGC Craft & Process", "title": "Reaction hook in real time — product arrives, camera on before I open it", "hook": "Camera was already rolling when this arrived.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_3", "pillar": "African Creator, Global Standards", "category": "UGC Craft & Process", "title": "Product shot formula — how I frame products in my world not against a wall", "hook": "Most creators put products on a white wall. Here is what I do instead.", "format": "Carousel", "niche": "Lifestyle"}, {"id": "sp_4", "pillar": "African Creator, Global Standards", "category": "UGC Craft & Process", "title": "Before and after — raw footage vs delivered UGC final cut", "hook": "Raw clip versus delivered ad. Same 30 seconds. Different world.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_5", "pillar": "African Creator, Global Standards", "category": "UGC Craft & Process", "title": "My golden hour window — why I film at exactly this time every day", "hook": "My light is free. But it only comes for 90 minutes.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_6", "pillar": "African Creator, Global Standards", "category": "UGC Craft & Process", "title": "Carousel: 5 things that make my UGC look different from everyone else's", "hook": "Why brands come back. The 5 things I never compromise.", "format": "Carousel", "niche": "Lifestyle"}, {"id": "sp_7", "pillar": "African Creator, Global Standards", "category": "UGC Craft & Process", "title": "Hook writing process — how I open a 30-second ad for a brand", "hook": "The first 3 seconds either stop the scroll or they don't.", "format": "Carousel", "niche": "Lifestyle"}, {"id": "sp_8", "pillar": "African Creator, Global Standards", "category": "UGC Craft & Process", "title": "Over-delivery moment — what I add that wasn't in the brief", "hook": "The brief asked for one thing. I delivered it and this.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_9", "pillar": "African Creator, Global Standards", "category": "UGC Craft & Process", "title": "Flat lay shot process — wooden surface, window light, product styled", "hook": "Flat lay on my kitchen table. Here is exactly how.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_10", "pillar": "African Creator, Global Standards", "category": "UGC Craft & Process", "title": "CapCut edit walkthrough — how I cut and finish a reel on my phone New", "hook": "From raw footage to final ad. My whole edit on a phone.", "format": "Carousel", "niche": "Lifestyle"}, {"id": "sp_11", "pillar": "African Creator, Global Standards", "category": "UGC Craft & Process", "title": "ASMR product unboxing — done intentionally as a brand would want it shot", "hook": "The unboxing that actually makes someone want the product.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_12", "pillar": "African Creator, Global Standards", "category": "Portfolio Showcase", "title": "Product in my world — any beauty item used in golden hour outdoor setting", "hook": "This product has never been filmed here before.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_13", "pillar": "African Creator, Global Standards", "category": "Portfolio Showcase", "title": "Talking to camera product review — honest, calm, specific benefit", "hook": "I have been using this for 3 weeks. Honest verdict.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_14", "pillar": "African Creator, Global Standards", "category": "Portfolio Showcase", "title": "Before/after product result — same angle, same light, genuine change", "hook": "I documented every day. This is Day 1 versus Day 14.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_15", "pillar": "African Creator, Global Standards", "category": "Portfolio Showcase", "title": "B-roll sequence — hands, product, setting, close-ups in one minute New", "hook": "60 seconds of the B-roll I film on every shoot. Brands use every clip.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_16", "pillar": "African Creator, Global Standards", "category": "Portfolio Showcase", "title": "Spec ad for a Kenyan brand — treated exactly like a paid brief", "hook": "I filmed this as if they paid me. Because this is the work.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_17", "pillar": "African Creator, Global Standards", "category": "Portfolio Showcase", "title": "Carousel: My rate card explained — what you get when you book me New", "hook": "What brands actually receive when they work with me.", "format": "Carousel", "niche": "Lifestyle"}, {"id": "sp_18", "pillar": "African Creator, Global Standards", "category": "Portfolio Showcase", "title": "Three-hook variations for one product — same product, three different opens", "hook": "Same product. Three completely different hooks. Which one wins?", "format": "Carousel", "niche": "Lifestyle"}, {"id": "sp_19", "pillar": "African Creator, Global Standards", "category": "Portfolio Showcase", "title": "Carousel: Why Mitheru is my studio — location as UGC asset New", "hook": "My backdrop costs nothing. That is exactly why it converts.", "format": "Carousel", "niche": "Lifestyle"}, {"id": "sp_20", "pillar": "African Creator, Global Standards", "category": "Creator POV & Industry Knowledge", "title": "What UGC actually is — and why brands pay for it over influencer content", "hook": "Brands don't pay me for followers. They pay me for this.", "format": "Carousel", "niche": "Lifestyle"}, {"id": "sp_21", "pillar": "African Creator, Global Standards", "category": "Creator POV & Industry Knowledge", "title": "How I pitch a brand — from DM to signed brief step by step", "hook": "The pitch that works. Every step.", "format": "Carousel", "niche": "Lifestyle"}, {"id": "sp_22", "pillar": "African Creator, Global Standards", "category": "Creator POV & Industry Knowledge", "title": "What makes UGC convert — hook, benefit, CTA explained simply", "hook": "Every ad that works has these three things.", "format": "Carousel", "niche": "Lifestyle"}, {"id": "sp_23", "pillar": "African Creator, Global Standards", "category": "Creator POV & Industry Knowledge", "title": "My first paid brand deal — what happened and what I learned", "hook": "My first paid deal. What went right. What went wrong.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_24", "pillar": "African Creator, Global Standards", "category": "Creator POV & Industry Knowledge", "title": "African creator advantage — what we offer that Western creators can't", "hook": "There is a gap in the market. We are it.", "format": "Carousel", "niche": "Lifestyle"}, {"id": "sp_25", "pillar": "African Creator, Global Standards", "category": "Creator POV & Industry Knowledge", "title": "Reading a brand brief — what to look for before you say yes", "hook": "Not every brand deal is worth taking. Here is how I decide.", "format": "Carousel", "niche": "Lifestyle"}, {"id": "sp_26", "pillar": "African Creator, Global Standards", "category": "Creator POV & Industry Knowledge", "title": "Volume creates luck — why I film something every single day", "hook": "I cannot predict which video changes everything. So I film everything.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_27", "pillar": "African Creator, Global Standards", "category": "Creator POV & Industry Knowledge", "title": "Rejection as a creator — what brands say no to and why it doesn't matter", "hook": "17 no's to 3 yes's. The maths of pitching.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_28", "pillar": "Hair as Heritage & Craft", "category": "Wash Day Rituals", "title": "Full 3b/3c wash day start to finish — detangle, wash, condition, style", "hook": "Wash day. Everything I do. Nothing skipped.", "format": "Reel", "niche": "Hair"}, {"id": "sp_29", "pillar": "Hair as Heritage & Craft", "category": "Wash Day Rituals", "title": "Slow voiceover wash day — meditative, cinematic on the land", "hook": "Wash day is the one hour a week I protect for myself.", "format": "Reel", "niche": "Hair"}, {"id": "sp_30", "pillar": "Hair as Heritage & Craft", "category": "Wash Day Rituals", "title": "Carousel: My wash day product lineup — what I use at each step and why", "hook": "Every product in my wash day routine. What it does. Why it stayed.", "format": "Carousel", "niche": "Hair"}, {"id": "sp_31", "pillar": "Hair as Heritage & Craft", "category": "Wash Day Rituals", "title": "Pre-poo treatment — oil application before shampooing", "hook": "The step before shampoo that changed my curl retention.", "format": "Reel", "niche": "Hair"}, {"id": "sp_32", "pillar": "Hair as Heritage & Craft", "category": "Wash Day Rituals", "title": "Detangling 3b/3c curls — wide-tooth comb on wet hair", "hook": "The right way to detangle. This takes patience and this tool.", "format": "Reel", "niche": "Hair"}, {"id": "sp_33", "pillar": "Hair as Heritage & Craft", "category": "Wash Day Rituals", "title": "Deep conditioning with natural light — steam cap, window, 30 mins", "hook": "Deep conditioning in Kenyan sun. My version of a salon treatment.", "format": "Reel", "niche": "Hair"}, {"id": "sp_34", "pillar": "Hair as Heritage & Craft", "category": "Wash Day Rituals", "title": "Product buildup on 3b curls — clarifying wash result shown", "hook": "This is what product buildup actually looks like removed.", "format": "Reel", "niche": "Hair"}, {"id": "sp_35", "pillar": "Hair as Heritage & Craft", "category": "Wash Day Rituals", "title": "Wash day as self-care ritual — the mindset around it, not just the steps", "hook": "I protect wash day. Here is exactly why.", "format": "Carousel", "niche": "Hair"}, {"id": "sp_36", "pillar": "Hair as Heritage & Craft", "category": "Wash Day Rituals", "title": "Night routine for curls — bonnet, pineapple, silk pillowcase", "hook": "Five minutes every night. This is what saves my curls by morning.", "format": "Reel", "niche": "Hair"}, {"id": "sp_37", "pillar": "Hair as Heritage & Craft", "category": "Wash Day Rituals", "title": "Refresh routine — second day curls revived without rewashing", "hook": "Day 2 curls. No wash. Here is how I revive them.", "format": "Reel", "niche": "Hair"}, {"id": "sp_38", "pillar": "Hair as Heritage & Craft", "category": "Multi-Texture Household", "title": "Same product on 3 different textures — my curls and both daughters' hair", "hook": "One product. Three hair types. Same house. Here is what happened.", "format": "Reel", "niche": "Hair"}, {"id": "sp_39", "pillar": "Hair as Heritage & Craft", "category": "Multi-Texture Household", "title": "Carousel: Understanding the curl types in our home — 3b, 3c, 4C explained", "hook": "Three hair types live in this house. Here is what that means for care.", "format": "Carousel", "niche": "Hair"}, {"id": "sp_40", "pillar": "Hair as Heritage & Craft", "category": "Multi-Texture Household", "title": "Daughter's 4C wash day — gentle detangle, protective style prep", "hook": "Her wash day. How I do it. What I use.", "format": "Reel", "niche": "Hair"}, {"id": "sp_41", "pillar": "Hair as Heritage & Craft", "category": "Multi-Texture Household", "title": "Teaching daughters about their hair — the conversation, not just the routine", "hook": "What I teach my daughters about their hair and exactly why.", "format": "Carousel", "niche": "Hair"}, {"id": "sp_42", "pillar": "Hair as Heritage & Craft", "category": "Multi-Texture Household", "title": "Daughter's reaction after new braids — pure joy moment", "hook": "She saw herself in the mirror for the first time with this style.", "format": "Reel", "niche": "Hair"}, {"id": "sp_43", "pillar": "Hair as Heritage & Craft", "category": "Multi-Texture Household", "title": "Product test across both daughters — same brand, different results", "hook": "Same bottle. Her 4C versus her sister's 3c. Night and day.", "format": "Reel", "niche": "Hair"}, {"id": "sp_44", "pillar": "Hair as Heritage & Craft", "category": "Multi-Texture Household", "title": "Braiding daughter's hair — full cornrow or protective style process", "hook": "I do her hair at home. This is the full process.", "format": "Reel", "niche": "Hair"}, {"id": "sp_45", "pillar": "Hair as Heritage & Craft", "category": "Multi-Texture Household", "title": "What I keep in my daughters' hair care kit — every product explained New", "hook": "Everything I use on their hair. Nothing in this kit is accidental.", "format": "Carousel", "niche": "Hair"}, {"id": "sp_46", "pillar": "Hair as Heritage & Craft", "category": "Multi-Texture Household", "title": "Hair heritage conversation — what our curls mean in our family New", "hook": "I didn't grow up knowing how to love my hair. My daughters will.", "format": "Reel", "niche": "Hair"}, {"id": "sp_47", "pillar": "Hair as Heritage & Craft", "category": "Multi-Texture Household", "title": "6-month length check — same position, same light, all three of us New", "hook": "Six months of consistent care. All three of us. Same position.", "format": "Reel", "niche": "Hair"}, {"id": "sp_48", "pillar": "Hair as Heritage & Craft", "category": "Curl Styling & Protective Styles", "title": "Defined curl set — product application, diffuse or air dry, final result", "hook": "The wash and go that actually works on 3b curls.", "format": "Reel", "niche": "Hair"}, {"id": "sp_49", "pillar": "Hair as Heritage & Craft", "category": "Curl Styling & Protective Styles", "title": "Half-up style on natural curls — keeps eyes as focal point", "hook": "The half-up. My most-worn style. Here is exactly how.", "format": "Reel", "niche": "Hair"}, {"id": "sp_50", "pillar": "Hair as Heritage & Craft", "category": "Curl Styling & Protective Styles", "title": "Volume styling — diffuser and afro pick technique", "hook": "The two tools that give my curls the volume I want.", "format": "Reel", "niche": "Hair"}, {"id": "sp_51", "pillar": "Hair as Heritage & Craft", "category": "Curl Styling & Protective Styles", "title": "Protective style install — mini twists or flat twists on natural hair", "hook": "Two hours. My hair protected for 6 weeks.", "format": "Reel", "niche": "Hair"}, {"id": "sp_52", "pillar": "Hair as Heritage & Craft", "category": "Curl Styling & Protective Styles", "title": "Carousel: 5 ways I wear my curls this week — all natural, all different", "hook": "Five styles. Zero heat. All this week.", "format": "Carousel", "niche": "Hair"}, {"id": "sp_53", "pillar": "Hair as Heritage & Craft", "category": "Curl Styling & Protective Styles", "title": "Frizz control in Kenyan humidity — what actually works", "hook": "Styled at 7am. Mitheru humidity by 9am. Here is what survived.", "format": "Reel", "niche": "Hair"}, {"id": "sp_54", "pillar": "Hair as Heritage & Craft", "category": "Curl Styling & Protective Styles", "title": "Box braids reveal — full before and after with daughters watching", "hook": "They watched the whole thing. Their reaction at the end.", "format": "Reel", "niche": "Hair"}, {"id": "sp_55", "pillar": "Hair as Heritage & Craft", "category": "Curl Styling & Protective Styles", "title": "Carousel: Protective style length retention — what I used, how long I wore it, the result", "hook": "8 weeks in braids. Here is the length I retained.", "format": "Carousel", "niche": "Hair"}, {"id": "sp_56", "pillar": "Hair as Heritage & Craft", "category": "Curl Styling & Protective Styles", "title": "Curl pattern in golden hour — no product, no style, just your natural texture in the light New", "hook": "My hair. Unfiltered. Golden hour on the land.", "format": "Reel", "niche": "Hair"}, {"id": "sp_57", "pillar": "Hair as Heritage & Craft", "category": "Curl Styling & Protective Styles", "title": "Hair journey — where I started and where consistent care brought me", "hook": "My hair three years ago. My hair now. Same person.", "format": "Carousel", "niche": "Hair"}, {"id": "sp_58", "pillar": "Hair as Heritage & Craft", "category": "Hair Education & Knowledge", "title": "Carousel: Curl porosity explained — why it matters for every product you buy", "hook": "If you buy hair products without knowing this, you are wasting money.", "format": "Carousel", "niche": "Hair"}, {"id": "sp_59", "pillar": "Hair as Heritage & Craft", "category": "Hair Education & Knowledge", "title": "Carousel: Protein vs moisture — how to know which your curls need right now", "hook": "Your curls are either thirsty or over-fed. Here is how to tell.", "format": "Carousel", "niche": "Hair"}, {"id": "sp_60", "pillar": "Hair as Heritage & Craft", "category": "Hair Education & Knowledge", "title": "Carousel: Understanding the LOC method on 3b/3c curls", "hook": "The LOC method. What it actually does. Whether it works for your hair.", "format": "Carousel", "niche": "Hair"}, {"id": "sp_61", "pillar": "Hair as Heritage & Craft", "category": "Hair Education & Knowledge", "title": "Scalp health first — why your scalp is more important than your strands", "hook": "Fix the scalp. The curls fix themselves.", "format": "Carousel", "niche": "Hair"}, {"id": "sp_62", "pillar": "Hair as Heritage & Craft", "category": "Hair Education & Knowledge", "title": "Braiding tension — why tight braids cause damage and what the right tension feels like", "hook": "Tight braids are not good braids. Here is the difference.", "format": "Carousel", "niche": "Hair"}, {"id": "sp_63", "pillar": "Hair as Heritage & Craft", "category": "Hair Education & Knowledge", "title": "Ingredients to avoid in natural hair products — what I check for before buying New", "hook": "I read every ingredient label before buying. Here is what I avoid.", "format": "Carousel", "niche": "Hair"}, {"id": "sp_64", "pillar": "Hair as Heritage & Craft", "category": "Hair Education & Knowledge", "title": "Talking cam: What I wish I knew when I started my natural hair journey", "hook": "Three years in. Here is what I would tell myself at the beginning.", "format": "Reel", "niche": "Hair"}, {"id": "sp_65", "pillar": "Hair as Heritage & Craft", "category": "Hair Education & Knowledge", "title": "Heat-free styling — why I have not used heat in over a year", "hook": "No heat. No heat damage. Over a year. Here is what changed.", "format": "Reel", "niche": "Hair"}, {"id": "sp_66", "pillar": "Building a Life That Works", "category": "Intentional Style", "title": "One piece, four ways — cornerstone format filmed on land at golden hour", "hook": "One trouser. Four completely different looks. Same land.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_67", "pillar": "Building a Life That Works", "category": "Intentional Style", "title": "OOTD on the land — outfit of the day, Mitheru as the backdrop", "hook": "Today's outfit. My backdrop earns its place.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_68", "pillar": "Building a Life That Works", "category": "Intentional Style", "title": "Linen in golden hour — fabric texture in natural light, no filter", "hook": "Linen in Kenyan golden hour. The filter is free.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_69", "pillar": "Building a Life That Works", "category": "Intentional Style", "title": "Carousel: My capsule wardrobe — every piece earns its place", "hook": "Everything in my wardrobe right now. All of it. Why each piece stayed.", "format": "Carousel", "niche": "Lifestyle"}, {"id": "sp_70", "pillar": "Building a Life That Works", "category": "Intentional Style", "title": "Outfit transition — homeschool morning to filming afternoon", "hook": "Teaching at 8am. Filming at 10am. Two looks.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_71", "pillar": "Building a Life That Works", "category": "Intentional Style", "title": "I made this — sewing machine reveal, piece she made herself", "hook": "I made this. On my sewing machine. In my kitchen.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_72", "pillar": "Building a Life That Works", "category": "Intentional Style", "title": "Kitenge everyday styling — African print as daily wear not occasion wear", "hook": "Kitenge is not just for special occasions in my house.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_73", "pillar": "Building a Life That Works", "category": "Intentional Style", "title": "Matching mother-daughter outfits — all three, on the land", "hook": "She wanted to match. So we all matched.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_74", "pillar": "Building a Life That Works", "category": "Intentional Style", "title": "Carousel: How I dress for my body — the rules I follow every time", "hook": "I know my body. I have learned how to dress for it. Here is everything.", "format": "Carousel", "niche": "Lifestyle"}, {"id": "sp_75", "pillar": "Building a Life That Works", "category": "Intentional Style", "title": "Slow fashion — buying one item per month and why", "hook": "One new clothing item per month maximum. Here is what changed.", "format": "Carousel", "niche": "Lifestyle"}, {"id": "sp_76", "pillar": "Building a Life That Works", "category": "Intentional Style", "title": "Earth tones week — every outfit shown, same palette throughout", "hook": "One colour palette. Seven days. Every outfit.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_77", "pillar": "Building a Life That Works", "category": "Intentional Style", "title": "Getting dressed as self-respect — the mindset behind getting dressed even at home", "hook": "Getting dressed every day is an act of self-respect. Let me explain.", "format": "Carousel", "niche": "Lifestyle"}, {"id": "sp_78", "pillar": "Building a Life That Works", "category": "Home, Cleaning & Intentional Living", "title": "Morning reset before homeschool — clean kitchen as the daily non-negotiable", "hook": "Every day starts the same. Kitchen clean before the girls sit down.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_79", "pillar": "Building a Life That Works", "category": "Home, Cleaning & Intentional Living", "title": "ASMR clean — speed clean the kitchen, spray and wipe, satisfying sounds", "hook": "Lunch done. Kitchen reset in 3 minutes.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_80", "pillar": "Building a Life That Works", "category": "Home, Cleaning & Intentional Living", "title": "Sunday bathroom refresh — weekly ritual", "hook": "Every Sunday. Every week. Non-negotiable.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_81", "pillar": "Building a Life That Works", "category": "Home, Cleaning & Intentional Living", "title": "Window cleaning — the Mitheru view behind clean glass", "hook": "Clean windows in Mitheru. The view earns the effort.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_82", "pillar": "Building a Life That Works", "category": "Home, Cleaning & Intentional Living", "title": "Laundry on the line — air drying with Kenyan sunshine", "hook": "No dryer. Just Kenyan sunshine. It works better.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_83", "pillar": "Building a Life That Works", "category": "Home, Cleaning & Intentional Living", "title": "Carousel: SAHM cleaning schedule — organised around homeschooling", "hook": "How I organise cleaning, cooking, and teaching in one day.", "format": "Carousel", "niche": "Lifestyle"}, {"id": "sp_84", "pillar": "Building a Life That Works", "category": "Home, Cleaning & Intentional Living", "title": "Evening 15-minute tidy — so you wake up to a calm house", "hook": "15 minutes every evening. I wake up to this.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_85", "pillar": "Building a Life That Works", "category": "Home, Cleaning & Intentional Living", "title": "Kids' chores — what each daughter does and at what age they started", "hook": "My 7-year-old has chores. Here is exactly what she does.", "format": "Carousel", "niche": "Lifestyle"}, {"id": "sp_86", "pillar": "Building a Life That Works", "category": "Home, Cleaning & Intentional Living", "title": "Mess to clean transition — problem and solution in one video", "hook": "This happened. I fixed it in 4 minutes.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_87", "pillar": "Building a Life That Works", "category": "Home, Cleaning & Intentional Living", "title": "Stain removal test — daughter's school uniform, 3 products, one winner", "hook": "Her uniform. Grass and food stain. Three cleaners. One winner.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_88", "pillar": "Building a Life That Works", "category": "Home, Cleaning & Intentional Living", "title": "Cleaning and mental clarity — the connection between home state and headspace New", "hook": "The state of my home is the state of my mind. Here is why I protect both.", "format": "Carousel", "niche": "Lifestyle"}, {"id": "sp_89", "pillar": "Building a Life That Works", "category": "Home, Cleaning & Intentional Living", "title": "Organised kitchen — under-sink flat lay, everything in its place New", "hook": "Everything under my kitchen sink. All earned their place.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_90", "pillar": "Building a Life That Works", "category": "Tech, Apps & Building Digitally", "title": "I built an app with Claude — what it does and how I made it without coding", "hook": "I built an app. In rural Kenya. With no coding background.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_91", "pillar": "Building a Life That Works", "category": "Tech, Apps & Building Digitally", "title": "Carousel: How I use AI in my daily life — homeschooling, budgeting, content planning", "hook": "AI tools changed how I run my home and my business. Here is how.", "format": "Carousel", "niche": "Lifestyle"}, {"id": "sp_92", "pillar": "Building a Life That Works", "category": "Tech, Apps & Building Digitally", "title": "CapCut as a UGC tool — my full editing workflow on my phone", "hook": "My entire editing studio fits in my pocket.", "format": "Carousel", "niche": "Lifestyle"}, {"id": "sp_93", "pillar": "Building a Life That Works", "category": "Tech, Apps & Building Digitally", "title": "How I homeschool with technology — apps and tools we use every day", "hook": "We homeschool with this. Here is the full setup.", "format": "Carousel", "niche": "Lifestyle"}, {"id": "sp_94", "pillar": "Building a Life That Works", "category": "Tech, Apps & Building Digitally", "title": "WhatsApp Business for UGC creators — how I communicate with brands professionally", "hook": "WhatsApp Business made my creator communication professional.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_95", "pillar": "Building a Life That Works", "category": "Tech, Apps & Building Digitally", "title": "Sony ZV-E10 honest review — the camera I use for everything, including UGC", "hook": "This camera. Every video you have seen on this page.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_96", "pillar": "Building a Life That Works", "category": "Tech, Apps & Building Digitally", "title": "Digital income for rural African women — what is possible from where I live New", "hook": "I earn digitally. From Mitheru. Here is what that actually means.", "format": "Carousel", "niche": "Lifestyle"}, {"id": "sp_97", "pillar": "Building a Life That Works", "category": "Tech, Apps & Building Digitally", "title": "Canva for UGC creators — how I make carousels, media kits, and rate cards", "hook": "My media kit, my rate card, my carousels. All made here.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_98", "pillar": "Building a Life That Works", "category": "Tech, Apps & Building Digitally", "title": "Tech that surprised me — tools I resisted and then couldn't work without New", "hook": "I resisted these for months. Now I can't run my business without them.", "format": "Carousel", "niche": "Lifestyle"}, {"id": "sp_99", "pillar": "Building a Life That Works", "category": "Tech, Apps & Building Digitally", "title": "Tracking UGC income — the simple system I use on my phone", "hook": "How I track what I earn and what I spend as a creator.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_100", "pillar": "Building a Life That Works", "category": "How I Work — Systems, Homeschooling, Creative Business", "title": "My content creation day — what actually happens from morning to filmed reel", "hook": "What my content creation day actually looks like.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_101", "pillar": "Building a Life That Works", "category": "How I Work — Systems, Homeschooling, Creative Business", "title": "Carousel: How I plan a week of content — 3 reels + 3 carousels in one afternoon", "hook": "One planning session. A full week of content mapped.", "format": "Carousel", "niche": "Lifestyle"}, {"id": "sp_102", "pillar": "Building a Life That Works", "category": "How I Work — Systems, Homeschooling, Creative Business", "title": "Batching content — how I film multiple posts in one golden hour session", "hook": "90 minutes of golden hour. Three pieces of content filmed.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_103", "pillar": "Building a Life That Works", "category": "How I Work — Systems, Homeschooling, Creative Business", "title": "Homeschool morning to creator afternoon — the transition", "hook": "Teaching at 8am. Camera out at 2pm. Here is how both happen.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_104", "pillar": "Building a Life That Works", "category": "How I Work — Systems, Homeschooling, Creative Business", "title": "Carousel: My homeschool setup — what we use, how the day runs", "hook": "We homeschool. Here is the full setup and how the day runs.", "format": "Carousel", "niche": "Lifestyle"}, {"id": "sp_105", "pillar": "Building a Life That Works", "category": "How I Work — Systems, Homeschooling, Creative Business", "title": "Responding to a brand brief — same day, start to deliver", "hook": "Brief received 9am. Delivered by 5pm. Here is what happened between.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_106", "pillar": "Building a Life That Works", "category": "How I Work — Systems, Homeschooling, Creative Business", "title": "Cooking and creating — how both fit in one day without compromise New", "hook": "I cook every meal from scratch and I run a creative business. Here is how.", "format": "Carousel", "niche": "Lifestyle"}, {"id": "sp_107", "pillar": "Building a Life That Works", "category": "How I Work — Systems, Homeschooling, Creative Business", "title": "The discipline behind the aesthetic — what the visible calm actually costs New", "hook": "Everything looks calm. Here is what it takes to keep it that way.", "format": "Carousel", "niche": "Lifestyle"}, {"id": "sp_108", "pillar": "Building a Life That Works", "category": "Beauty & Skincare in Real Life", "title": "Morning skincare ritual in window light — real skin, real routine, no filter", "hook": "My morning. My skin. Natural light only.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_109", "pillar": "Building a Life That Works", "category": "Beauty & Skincare in Real Life", "title": "Face mask while doing kitchen tasks — beauty that fits into real life", "hook": "Skincare while the kettle boils. Multitasking I actually do.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_110", "pillar": "Building a Life That Works", "category": "Beauty & Skincare in Real Life", "title": "Melanin skin in golden hour — no makeup, just the light", "hook": "No filter. No makeup. Just Kenyan golden hour on my skin.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_111", "pillar": "Building a Life That Works", "category": "Beauty & Skincare in Real Life", "title": "Carousel: My skincare routine — every product, every step, why each stayed", "hook": "My full skincare routine. Honest about every product.", "format": "Carousel", "niche": "Lifestyle"}, {"id": "sp_112", "pillar": "Building a Life That Works", "category": "Beauty & Skincare in Real Life", "title": "Lip care teaching moment — doing it with daughters as part of morning", "hook": "We do lip care together. Here is what I teach them.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_113", "pillar": "Building a Life That Works", "category": "Beauty & Skincare in Real Life", "title": "Sunscreen for melanin skin — why I use it in Kenya and what I use New", "hook": "Kenyan sun is serious. I use sunscreen. Here is what I use and why.", "format": "Carousel", "niche": "Lifestyle"}, {"id": "sp_114", "pillar": "Building a Life That Works", "category": "Beauty & Skincare in Real Life", "title": "Nighttime body care — shea butter, oils, the routine before sleep", "hook": "The 5 minutes before bed that my skin relies on.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_115", "pillar": "Building a Life That Works", "category": "Beauty & Skincare in Real Life", "title": "Tinted lip balm on dark lips — shade test, which actually shows", "hook": "Which shade actually shows on melanin lips? I tested four.", "format": "Reel", "niche": "Lifestyle"}, {"id": "sp_116", "pillar": "Creative Layer — Editorial & Product", "category": "Product-Focused Content — Beyond the Demo", "title": "Slow product reveal — hands open product, close-up macro, held up to golden hour light", "hook": "Before I tell you what this does — look at it.", "format": "Reel", "niche": "Beauty"}, {"id": "sp_117", "pillar": "Creative Layer — Editorial & Product", "category": "Product-Focused Content — Beyond the Demo", "title": "Texture study — cream, oil, or serum applied to back of hand, filmed close in window light, slow spread", "hook": "The texture tells you everything about what this does.", "format": "Reel", "niche": "Beauty"}, {"id": "sp_118", "pillar": "Creative Layer — Editorial & Product", "category": "Product-Focused Content — Beyond the Demo", "title": "Product on red earth flat lay — product in soil, natural elements around it, golden light", "hook": "I took this outside. Here is what happened.", "format": "Reel", "niche": "Beauty"}, {"id": "sp_119", "pillar": "Creative Layer — Editorial & Product", "category": "Product-Focused Content — Beyond the Demo", "title": "Three-angle product study — top, side, close-up in one edit. Silent, ambient, loopable.", "hook": "Three angles. One product. No words needed.", "format": "Reel", "niche": "Beauty"}, {"id": "sp_120", "pillar": "Creative Layer — Editorial & Product", "category": "Product-Focused Content — Beyond the Demo", "title": "ASMR product interaction — peel the seal, first pump, lid click, liquid pour — sounds only, no voice", "hook": "The first time.", "format": "Reel", "niche": "Beauty"}, {"id": "sp_121", "pillar": "Creative Layer — Editorial & Product", "category": "Product-Focused Content — Beyond the Demo", "title": "Carousel: Product story — 5 slides, each a different angle or moment. No tutorial. Pure visual.", "hook": "Five frames. One product. You decide.", "format": "Carousel", "niche": "Beauty"}, {"id": "sp_122", "pillar": "Creative Layer — Editorial & Product", "category": "Product-Focused Content — Beyond the Demo", "title": "Product in or near the pool — teal and terracotta colour contrast, no words", "hook": "This product and this pool. Unplanned. Perfect.", "format": "Reel", "niche": "Beauty"}, {"id": "sp_123", "pillar": "Creative Layer — Editorial & Product", "category": "Product-Focused Content — Beyond the Demo", "title": "The pour shot — oil, serum, or conditioner poured slowly onto hand, filmed close from above in morning light", "hook": "Watch the consistency. That is how you know.", "format": "Reel", "niche": "Beauty"}, {"id": "sp_124", "pillar": "Creative Layer — Editorial & Product", "category": "Product-Focused Content — Beyond the Demo", "title": "Carousel: Same product in 4 locations on your land — shows your range as a product photographer", "hook": "Same product. Four locations. One land.", "format": "Carousel", "niche": "Beauty"}, {"id": "sp_125", "pillar": "Creative Layer — Editorial & Product", "category": "Product-Focused Content — Beyond the Demo", "title": "Ingredient close-up — shea, aloe, or oil filmed raw, then the product filmed. Visual from ingredient to finished product.", "hook": "Where it comes from. What it becomes.", "format": "Reel", "niche": "Beauty"}, {"id": "sp_126", "pillar": "Creative Layer — Editorial & Product", "category": "Product-Focused Content — Beyond the Demo", "title": "The scent face — you smell the product for the first time on camera. Real reaction. Nothing scripted.", "hook": "I was not ready for that.", "format": "Reel", "niche": "Beauty"}, {"id": "sp_127", "pillar": "Creative Layer — Editorial & Product", "category": "Product-Focused Content — Beyond the Demo", "title": "Before light vs after light — same product in flat overcast light versus golden hour. Why your light matters.", "hook": "Same product. Same day. Different light. This is why I wait for it.", "format": "Carousel", "niche": "Beauty"}, {"id": "sp_128", "pillar": "Creative Layer — Editorial & Product", "category": "Hair Editorial — Your Curls as Subject", "title": "Curl close-up in canopy light — extreme macro on curl definition, moving slightly in breeze, no voice", "hook": "These are 3b curls. Natural light. No filter.", "format": "Reel", "niche": "Beauty"}, {"id": "sp_129", "pillar": "Creative Layer — Editorial & Product", "category": "Hair Editorial — Your Curls as Subject", "title": "Hair movement reel — walking on the land, hair loose, filmed from behind at golden hour. No words.", "hook": "The way it moves is the whole point.", "format": "Reel", "niche": "Beauty"}, {"id": "sp_130", "pillar": "Creative Layer — Editorial & Product", "category": "Hair Editorial — Your Curls as Subject", "title": "Wash day water moment — water running through curls, close-up from above. ASMR. Pure texture.", "hook": "The sound. The feeling. Wash day.", "format": "Reel", "niche": "Beauty"}, {"id": "sp_131", "pillar": "Creative Layer — Editorial & Product", "category": "Hair Editorial — Your Curls as Subject", "title": "Carousel: Curl portrait series — same curls in 5 different light conditions. Morning window, midday shade, golden hour, cloudy, canopy.", "hook": "My curls in five different lights. Same hair. Different world.", "format": "Carousel", "niche": "Beauty"}, {"id": "sp_132", "pillar": "Creative Layer — Editorial & Product", "category": "Hair Editorial — Your Curls as Subject", "title": "Shrinkage versus stretched — side by side, close-up, no narration, just the visual contrast", "hook": "Same curl. Wet versus stretched.", "format": "Reel", "niche": "Beauty"}, {"id": "sp_133", "pillar": "Creative Layer — Editorial & Product", "category": "Hair Editorial — Your Curls as Subject", "title": "Product application as ritual — hands working through curls slowly, close-up, ambient sound only. No voiceover.", "hook": "This is what care looks like.", "format": "Reel", "niche": "Beauty"}, {"id": "sp_134", "pillar": "Creative Layer — Editorial & Product", "category": "Hair Editorial — Your Curls as Subject", "title": "Daughter's braid pattern — overhead close-up of a completed cornrow or flat twist. Geometric, beautiful, no words needed.", "hook": "I did this. At home. On her 4C hair.", "format": "Reel", "niche": "Beauty"}, {"id": "sp_135", "pillar": "Creative Layer — Editorial & Product", "category": "Hair Editorial — Your Curls as Subject", "title": "Hair in the mist — early morning, loose curls, mist behind you. Walk toward camera or stand still. Nothing else needed.", "hook": "Mitheru mornings and my hair.", "format": "Reel", "niche": "Beauty"}, {"id": "sp_136", "pillar": "Creative Layer — Editorial & Product", "category": "Fashion Editorial — Your Land as Studio", "title": "Earth tone outfit against green canopy — mustard or terracotta, stand at the treeline, camera low, looking away. No speaking.", "hook": "Dressed for where I live.", "format": "Reel", "niche": "Beauty"}, {"id": "sp_137", "pillar": "Creative Layer — Editorial & Product", "category": "Fashion Editorial — Your Land as Studio", "title": "Carousel: One outfit, four compositions — walking, still, close detail, wide land shot. The outfit is the subject, not the occasion.", "hook": "The same outfit. Four ways to see it.", "format": "Carousel", "niche": "Beauty"}, {"id": "sp_138", "pillar": "Creative Layer — Editorial & Product", "category": "Fashion Editorial — Your Land as Studio", "title": "Fabric detail reel — close-up of linen, kitenge, or knitwear, hands smooth it, light catches the texture. No face needed.", "hook": "The fabric is the whole story.", "format": "Reel", "niche": "Beauty"}, {"id": "sp_139", "pillar": "Creative Layer — Editorial & Product", "category": "Fashion Editorial — Your Land as Studio", "title": "Silhouette at golden hour — backlit, outline visible, hair defined against the light. Any outfit. The light does the editorial work.", "hook": "This light. Every evening. For free.", "format": "Reel", "niche": "Beauty"}, {"id": "sp_140", "pillar": "Creative Layer — Editorial & Product", "category": "Fashion Editorial — Your Land as Studio", "title": "Sitting in the land — seated on the ground or a stone, outfit styled, looking at the land not the camera. Wide shot. Still.", "hook": "I am not performing for anyone here.", "format": "Reel", "niche": "Beauty"}, {"id": "sp_141", "pillar": "Creative Layer — Editorial & Product", "category": "Fashion Editorial — Your Land as Studio", "title": "Carousel: Handmade piece editorial — a garment you sewed, photographed on the land in 5 styled compositions. Your craft as fashion content.", "hook": "I made this. Here is every angle.", "format": "Carousel", "niche": "Beauty"}, {"id": "sp_142", "pillar": "Creative Layer — Editorial & Product", "category": "Fashion Editorial — Your Land as Studio", "title": "Colour study reel — you wear one colour, stand in front of the complementary landscape. Pool teal against terracotta earth. Cobalt against the green canopy.", "hook": "Dressed for the landscape. Not in spite of it.", "format": "Reel", "niche": "Beauty"}, {"id": "sp_143", "pillar": "Creative Layer — Editorial & Product", "category": "Fashion Editorial — Your Land as Studio", "title": "Matching outfits wide shot — you and your daughters on the land, wide angle, landscape visible. Not a tutorial. A portrait of three women who match.", "hook": "Three of us. One land. One morning.", "format": "Reel", "niche": "Beauty"}];
 
 const PILLAR_COLORS = {
@@ -5889,119 +6146,90 @@ const PILLAR_COLORS = {
   'Creative Layer — Editorial & Product': {border:'rgba(155,127,182,.2)',tag:'rgba(155,127,182,.12)',tagText:'#7a5a9a',label:'✦ Editorial'}
 };
 
-let _pillarFilter = 'all';
+let _pillarFilter='all';
 
-function switchIdeaView(view, btn) {
-  const mineView = document.getElementById('mine-view');
-  const pillarsView = document.getElementById('pillars-view');
-  const hint = document.getElementById('pillar-week-hint');
-  if(!mineView || !pillarsView) return;
-  const myBtn = document.getElementById('view-my-ideas');
-  const plBtn = document.getElementById('view-pillars');
-  if(myBtn) myBtn.className = 'btn btn-g btn-s';
-  if(plBtn) plBtn.className = 'btn btn-g btn-s';
-  if(btn) btn.className = 'btn btn-p btn-s';
-  if(view === 'mine') {
-    mineView.style.display = '';
-    pillarsView.style.display = 'none';
-    if(hint) hint.style.display = 'none';
-  } else {
-    mineView.style.display = 'none';
-    pillarsView.style.display = '';
-    if(hint) hint.style.display = '';
-    renderPillarIdeas();
-  }
+function switchIdeaView(view,btn){
+  const mineView=document.getElementById('mine-view');
+  const pillarsView=document.getElementById('pillars-view');
+  if(!mineView||!pillarsView)return;
+  const myBtn=document.getElementById('view-my-ideas');
+  const plBtn=document.getElementById('view-pillars');
+  if(myBtn)myBtn.className='btn btn-g btn-s';
+  if(plBtn)plBtn.className='btn btn-g btn-s';
+  if(btn)btn.className='btn btn-p btn-s';
+  if(view==='mine'){mineView.style.display='';pillarsView.style.display='none';}
+  else{mineView.style.display='none';pillarsView.style.display='';renderPillarIdeas();}
 }
 
-function filterPillars(f, el) {
-  _pillarFilter = f;
-  document.querySelectorAll('#pillar-tabs .tb').forEach(b => b.classList.remove('active'));
-  if(el) el.classList.add('active');
+function filterPillars(f,el){
+  _pillarFilter=f;
+  document.querySelectorAll('#pillar-tabs .tb').forEach(b=>b.classList.remove('active'));
+  if(el)el.classList.add('active');
   renderPillarIdeas();
 }
 
-function renderPillarIdeas() {
-  const grid = document.getElementById('pillars-grid');
-  const countEl = document.getElementById('pillars-count');
-  if(!grid) return;
-  const q = (document.getElementById('pillar-search')||{value:''}).value.toLowerCase().trim();
-  const addedTitles = new Set((window.D && window.D.ideas ? window.D.ideas : []).map(i => i.title.toLowerCase().trim()));
-  let filtered = PILLAR_IDEAS.filter(idea => {
-    if(_pillarFilter === 'reel') return idea.format.toLowerCase() === 'reel';
-    if(_pillarFilter === 'carousel') return idea.format.toLowerCase() === 'carousel';
-    if(_pillarFilter !== 'all' && idea.pillar !== _pillarFilter) return false;
-    if(q) return idea.title.toLowerCase().includes(q) || idea.hook.toLowerCase().includes(q) || idea.category.toLowerCase().includes(q);
+function renderPillarIdeas(){
+  const grid=document.getElementById('pillars-grid');
+  const countEl=document.getElementById('pillars-count');
+  if(!grid)return;
+  const q=(document.getElementById('pillar-search')||{value:''}).value.toLowerCase().trim();
+  let filtered=PILLAR_IDEAS.filter(idea=>{
+    if(_pillarFilter==='reel')return idea.format.toLowerCase()==='reel';
+    if(_pillarFilter==='carousel')return idea.format.toLowerCase()==='carousel';
+    if(_pillarFilter!=='all'&&idea.pillar!==_pillarFilter)return false;
+    if(q)return idea.title.toLowerCase().includes(q)||idea.hook.toLowerCase().includes(q)||idea.category.toLowerCase().includes(q);
     return true;
   });
-
-  if(countEl) countEl.textContent = filtered.length + ' ideas' + (q ? ' matching "' + q + '"' : '');
-
-  if(!filtered.length) {
-    grid.innerHTML = '<div class="es" style="grid-column:1/-1"><div class="es-icon">🔍</div><div class="es-title">No ideas match</div><div class="es-sub">Try a different keyword or filter</div></div>';
-    return;
-  }
-
-  // Group by category
-  const groups = {};
-  filtered.forEach(idea => {
-    const key = idea.pillar + '||' + idea.category;
-    if(!groups[key]) groups[key] = {pillar: idea.pillar, category: idea.category, ideas: []};
-    groups[key].ideas.push(idea);
-  });
-
-  const showFlat = q || _pillarFilter === 'reel' || _pillarFilter === 'carousel';
-  let html = '';
-
-  if(showFlat) {
-    filtered.forEach(idea => { html += buildPillarCard(idea, addedTitles); });
-  } else {
-    Object.values(groups).forEach(group => {
-      const col = PILLAR_COLORS[group.pillar] || PILLAR_COLORS['African Creator, Global Standards'];
-      html += '<div style="grid-column:1/-1;display:flex;align-items:center;gap:10px;margin-top:12px;margin-bottom:2px;">';
-      html += '<span style="font-size:9px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:' + col.tagText + ';font-family:\'DM Mono\',monospace;white-space:nowrap;">' + col.label + ' · ' + group.category + '</span>';
-      html += '<div style="flex:1;height:1px;background:rgba(0,0,0,.07);"></div></div>';
-      group.ideas.forEach(idea => { html += buildPillarCard(idea, addedTitles); });
-    });
-  }
-  grid.innerHTML = html;
+  if(countEl)countEl.textContent=filtered.length+' ideas'+(q?' matching "'+q+'"':'');
+  if(!filtered.length){grid.innerHTML='<div class="es" style="grid-column:1/-1"><div class="es-icon">🔍</div><div class="es-title">No ideas match</div><div class="es-sub">Try a different keyword or filter</div></div>';return;}
+  const groups={};
+  filtered.forEach(idea=>{const key=idea.pillar+'||'+idea.category;if(!groups[key])groups[key]={pillar:idea.pillar,category:idea.category,ideas:[]};groups[key].ideas.push(idea);});
+  const showFlat=q||_pillarFilter==='reel'||_pillarFilter==='carousel';
+  let html='';
+  if(showFlat){filtered.forEach(idea=>{html+=buildPillarCard(idea);});}
+  else{Object.values(groups).forEach(group=>{const col=PILLAR_COLORS[group.pillar]||PILLAR_COLORS['African Creator, Global Standards'];html+='<div style="grid-column:1/-1;display:flex;align-items:center;gap:10px;margin-top:12px;margin-bottom:2px;"><span style="font-size:9px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:'+col.tagText+';font-family:\'DM Mono\',monospace;white-space:nowrap;">'+col.label+' · '+group.category+'</span><div style="flex:1;height:1px;background:rgba(0,0,0,.07);"></div></div>';group.ideas.forEach(idea=>{html+=buildPillarCard(idea);});});}
+  grid.innerHTML=html;
 }
 
-function buildPillarCard(idea, addedTitles) {
-  const col = PILLAR_COLORS[idea.pillar] || PILLAR_COLORS['African Creator, Global Standards'];
-  const addedCount = (window.D && window.D.ideas ? window.D.ideas : [])
-    .filter(i => i.title.toLowerCase().trim() === idea.title.toLowerCase().trim()).length;
-  const fmtBg = idea.format.toLowerCase() === 'reel' ? 'rgba(225,48,108,.1)' : 'rgba(64,93,230,.09)';
-  const fmtColor = idea.format.toLowerCase() === 'reel' ? '#c13584' : '#405DE6';
-  const tEsc = idea.title.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
-  const hEsc = idea.hook.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
-  return '<div style="background:#fff;border-radius:13px;border:1px solid ' + col.border + ';padding:13px 14px;display:flex;flex-direction:column;gap:7px;">' +
-    '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">' +
-      '<span style="font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:2px 8px;border-radius:20px;background:' + col.tag + ';color:' + col.tagText + ';font-family:\'DM Mono\',monospace;white-space:nowrap;">' + col.label + '</span>' +
-      '<span style="font-size:9px;padding:2px 8px;border-radius:20px;background:' + fmtBg + ';color:' + fmtColor + ';font-weight:600;font-family:\'DM Mono\',monospace;">' + idea.format + '</span>' +
-      (addedCount > 0 ? '<span style="margin-left:auto;font-size:9px;font-family:\'DM Mono\',monospace;color:var(--sage);">✓ In your ideas' + (addedCount > 1 ? ' ×' + addedCount : '') + '</span>' : '') +
-    '</div>' +
-    '<div style="font-family:\'Cormorant Garamond\',serif;font-size:.98rem;font-weight:400;line-height:1.35;">' + esc(idea.title) + '</div>' +
-    '<div style="font-size:11px;color:var(--warm-gray);font-style:italic;line-height:1.5;">"' + esc(idea.hook) + '"</div>' +
-    '<button class="btn ' + (addedCount > 0 ? 'btn-g' : 'btn-p') + ' btn-s" style="margin-top:2px;align-self:flex-start;" onclick="addFromPillar(\'' + tEsc + '\',\'' + hEsc + '\',\'' + idea.niche + '\',\'' + idea.format + '\')">' + (addedCount > 0 ? '+ Add again (new version)' : '+ Add to My Ideas') + '</button>' +
+function buildPillarCard(idea){
+  const col=PILLAR_COLORS[idea.pillar]||PILLAR_COLORS['African Creator, Global Standards'];
+  const addedCount=(window.D&&window.D.ideas?window.D.ideas:[]).filter(i=>i.title.toLowerCase().trim()===idea.title.toLowerCase().trim()).length;
+  const fmtBg=idea.format.toLowerCase()==='reel'?'rgba(225,48,108,.1)':'rgba(64,93,230,.09)';
+  const fmtColor=idea.format.toLowerCase()==='reel'?'#c13584':'#405DE6';
+  const tEsc=idea.title.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+  const hEsc=idea.hook.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+  return'<div style="background:#fff;border-radius:13px;border:1px solid '+col.border+';padding:13px 14px;display:flex;flex-direction:column;gap:7px;">'+
+    '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">'+
+      '<span style="font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:2px 8px;border-radius:20px;background:'+col.tag+';color:'+col.tagText+';font-family:\'DM Mono\',monospace;white-space:nowrap;">'+col.label+'</span>'+
+      '<span style="font-size:9px;padding:2px 8px;border-radius:20px;background:'+fmtBg+';color:'+fmtColor+';font-weight:600;font-family:\'DM Mono\',monospace;">'+idea.format+'</span>'+
+      (addedCount>0?'<span style="margin-left:auto;font-size:9px;font-family:\'DM Mono\',monospace;color:var(--sage);">✓ In your ideas'+(addedCount>1?' ×'+addedCount:'')+'</span>':'')+
+    '</div>'+
+    '<div style="font-family:\'Cormorant Garamond\',serif;font-size:.98rem;font-weight:400;line-height:1.35;">'+esc(idea.title)+'</div>'+
+    '<div style="font-size:11px;color:var(--warm-gray);font-style:italic;line-height:1.5;">"'+esc(idea.hook)+'"</div>'+
+    '<button class="btn '+(addedCount>0?'btn-g':'btn-p')+' btn-s" style="margin-top:2px;align-self:flex-start;" onclick="addFromPillar(\''+tEsc+'\',\''+hEsc+'\',\''+idea.niche+'\',\''+idea.format+'\')">'+(addedCount>0?'+ Add again':'+ Add to My Ideas')+'</button>'+
   '</div>';
 }
 
-function addFromPillar(title, hook, niche, format) {
-  if(!window.D) return;
-  const typeMap = {'Reel':'Talking to Camera','reel':'Talking to Camera','Carousel':'Tutorial','carousel':'Tutorial'};
-  const idea = {
-    id: 'i' + Date.now(),
-    title, niche, platform: 'Instagram', status: 'idea',
-    date: '', types: [typeMap[format] || 'Talking to Camera'],
-    linkedGig: '', linkedIGPost: '', hook, audio: '', notes: '',
-    img: '', imgs: [], script: '', scrnotes: '', shots: [],
-    added: Date.now()
-  };
+function addFromPillar(title,hook,niche,format){
+  if(!window.D)return;
+  const typeMap={'Reel':'Talking to Camera','reel':'Talking to Camera','Carousel':'Tutorial','carousel':'Tutorial'};
+  const idea={id:'i'+Date.now(),title,niche,platform:'Instagram',status:'idea',
+    date:'',types:[typeMap[format]||'Talking to Camera'],linkedGig:'',linkedIGPost:'',
+    hook,audio:'',notes:'',img:'',imgs:[],script:'',scrnotes:'',shots:[],added:Date.now()};
   window.D.ideas.push(idea);
   save();
   renderPillarIdeas();
-  toast('\'' + title.slice(0,30) + (title.length > 30 ? '…' : '') + '\' added ✓');
+  toast('\''+title.slice(0,28)+(title.length>28?'…':'')+'' added ✓');
 }
+
+// ═══════════════════════════════════════════════════
+// PATCH rDash to call rConsistency
+// ═══════════════════════════════════════════════════
+const _origRDash=window.rDash;
+window.rDash=function(){
+  if(typeof _origRDash==='function')_origRDash();
+  if(typeof rConsistency==='function')rConsistency();
+};
 
 </script>
 <!-- ─── PRINT BRIEF (hidden until print) ─── -->
