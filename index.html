@@ -1722,7 +1722,7 @@ setTimeout(renderSetupProgress, 500);
       <button class="tb active" onclick="filterPillars('all',this)">All 144</button>
       <button class="tb" onclick="filterPillars('African Creator, Global Standards',this)">🎬 Craft</button>
       <button class="tb" onclick="filterPillars('Hair as Heritage & Craft',this)">✂️ Hair</button>
-      <button class="tb" onclick="filterPillars('Building a Life That Works',this)">🏡 Life</button>
+      <button class="tb" onclick="filterPillars('A Life Composed',this)">🏡 Life</button>
       <button class="tb" onclick="filterPillars('Creative Layer — Editorial & Product',this)">✦ Editorial</button>
       <button class="tb" onclick="filterPillars('reel',this)">Reels only</button>
       <button class="tb" onclick="filterPillars('carousel',this)">Carousels only</button>
@@ -2723,7 +2723,7 @@ Total cash: $190 + product value</textarea></div>
     <div class="fr f1"><div class="fg"><label class="fl">Title *</label><input class="fi" id="i-title" placeholder="Video title or concept"></div></div>
     <div class="fr f1"><div class="fg"><label class="fl">Content Types</label><div class="tp-wrap"><div class="tp" id="i-types-tp" onclick="focusTP('i-types-inp')"><div id="i-types-tags"></div><input class="tp-input" id="i-types-inp" placeholder="Search or type…" oninput="filterDD('i')" onfocus="showDD('i')" onblur="setTimeout(()=>hideDD('i'),200)" onkeydown="tpKey(event,'i')"></div><div class="tp-dd" id="i-dd"></div></div></div></div>
     <div class="fr"><div class="fg"><label class="fl">Niche</label><select class="fs" id="i-niche"><option>Beauty</option><option>Hair</option><option>Lifestyle</option><option>Tech</option><option>Fashion</option><option>Food</option></select></div><div class="fg"><label class="fl">Platform</label><select class="fs" id="i-plat"><option>TikTok</option><option>Instagram</option><option>Instagram Reels</option><option>YouTube</option><option>YouTube Shorts</option><option>Threads</option><option>Pinterest</option><option>Multiple</option></select></div></div>
-    <div class="fr"><div class="fg"><label class="fl">Date (optional — adds to calendar)</label><input class="fi" id="i-date" type="date"></div><div class="fg"><label class="fl">Status</label><select class="fs" id="i-status"><option value="idea">Idea 💡</option><option value="scripting">Scripting ✍️</option><option value="filming">Filming 🎬</option><option value="editing">Editing ✂️</option><option value="done">Done ✓</option><option value="published">Published 🚀</option></select></div></div>
+    <div class="fr f3"><div class="fg"><label class="fl">Date (optional — adds to calendar)</label><input class="fi" id="i-date" type="date"></div><div class="fg"><label class="fl">Content Style</label><select class="fs" id="i-content-style"><option value="">— Select —</option><option value="Post">📸 Post (Static)</option><option value="Carousel">📲 Carousel</option><option value="Reel">🎬 Reel</option></select></div><div class="fg"><label class="fl">Status</label><select class="fs" id="i-status"><option value="idea">Idea 💡</option><option value="scripting">Scripting ✍️</option><option value="filming">Filming 🎬</option><option value="editing">Editing ✂️</option><option value="done">Done ✓</option><option value="published">Published 🚀</option></select></div></div>
     <div class="fr"><div class="fg"><label class="fl">Linked Gig</label><select class="fs" id="i-lgig"><option value="">— none —</option></select></div><div class="fg"></div></div>
     <div class="fr f1"><div class="fg"><label class="fl">📸 Linked IG Post</label><select class="fs" id="i-ligpost"><option value="">— none —</option></select></div></div>
     <div class="fr f1"><div class="fg"><label class="fl">Hook</label><input class="fi" id="i-hook" placeholder="Opening line or concept hook"></div></div>
@@ -4469,7 +4469,7 @@ function rIdeas(filt){
       ${(i.imgs && i.imgs.length>0)?`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(70px,1fr));gap:4px;margin-top:2px;">${i.imgs.slice(0,4).map((src,idx)=>`<img src="${src}" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:6px;cursor:pointer;" onclick="lbIdea('${i.id}',${idx})">`).join('')}${i.imgs.length>4?`<div style="aspect-ratio:1;border-radius:6px;background:var(--warm-white);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--warm-gray);">+${i.imgs.length-4}</div>`:''}</div>`:(i.img?`<img src="${i.img}" class="id-img" onclick="lbIdea('${i.id}',0)">`:'')}      <div style="font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:400;line-height:1.3;">${i.title}</div>
       ${typeHtml?`<div style="display:flex;flex-wrap:wrap;gap:3px;">${typeHtml}</div>`:''}
       ${i.hook?`<div style="font-size:11px;color:var(--warm-gray);font-style:italic;">"${i.hook}"</div>`:''}
-      ${i.date?`<div style="font-size:10px;font-family:'DM Mono',monospace;color:var(--terracotta);margin-top:1px;">📅 ${i.date}</div>`:''}${i.audio?`<div class="au-chip">🎵 ${i.audio.slice(0,35)}</div>`:''}
+      ${i.date?`<div style="font-size:10px;font-family:'DM Mono',monospace;color:var(--terracotta);margin-top:1px;">📅 ${i.date}</div>`:''}${i.contentStyle?`<span style="font-size:9px;font-family:'DM Mono',monospace;padding:2px 8px;border-radius:20px;background:${i.contentStyle==='Reel'?'rgba(225,48,108,.1)':i.contentStyle==='Carousel'?'rgba(64,93,230,.09)':'rgba(0,0,0,.06)'};color:${i.contentStyle==='Reel'?'#c13584':i.contentStyle==='Carousel'?'#405DE6':'var(--warm-gray)'};display:inline-block;margin-top:2px;">${i.contentStyle==='Reel'?'🎬 Reel':i.contentStyle==='Carousel'?'📲 Carousel':'📸 Post'}</span>`:''}${i.audio?`<div class="au-chip">🎵 ${i.audio.slice(0,35)}</div>`:''}
       ${i.script?`<div style="font-size:9px;font-family:'DM Mono',monospace;padding:2px 8px;border-radius:20px;background:rgba(196,113,79,.08);color:var(--terracotta);display:inline-block;margin-top:2px;">✍️ Script ready</div>`:''}
       ${lg?`<div class="lb2">🔗 ${lg.brand}</div>`:''}
       ${lip?`<div class="lb2" style="background:rgba(225,48,108,.07);border-color:rgba(225,48,108,.2);color:#c13584;margin-top:2px;">📸 W${lip.week} · ${lip.title.slice(0,22)}</div>`:''}
@@ -4489,7 +4489,7 @@ function updIdeaStatus(id,val){const i=D.ideas.find(x=>x.id===id);if(i){i.status
 function editIdea(id){
   const idea=D.ideas.find(x=>x.id===id);if(!idea)return;
   const mt=document.getElementById('idea-modal-title');if(mt)mt.innerHTML='Edit <em>Idea</em>';
-  setV('i-id',id);setV('i-title',idea.title);setV('i-niche',idea.niche);setV('i-plat',idea.platform);setV('i-status',idea.status);setV('i-date',idea.date||'');setV('i-hook',idea.hook||'');setV('i-audio',idea.audio||'');setV('i-notes',idea.notes||'');setV('i-img-data',idea.img||'');
+  setV('i-id',id);setV('i-title',idea.title);setV('i-niche',idea.niche);setV('i-plat',idea.platform);setV('i-status',idea.status);setV('i-content-style',idea.contentStyle||'');setV('i-date',idea.date||'');setV('i-hook',idea.hook||'');setV('i-audio',idea.audio||'');setV('i-notes',idea.notes||'');setV('i-img-data',idea.img||'');
   setTP('i',idea.types||[]);
   // Load multi-images
   const imgs = idea.imgs || (idea.img ? [idea.img] : []);
@@ -4510,9 +4510,9 @@ function saveIdea(){
   try { imgs = JSON.parse(v('i-imgs-data')||'[]'); } catch(e){ imgs=[]; }
   if(!imgs.length && existingIdea) imgs = existingIdea.imgs || (existingIdea.img?[existingIdea.img]:[]);
   const imgData = imgs[0] || (existingIdea ? existingIdea.img : '');
-  const idea={id:id||'i'+Date.now(),title,niche:v('i-niche'),platform:v('i-plat'),status:v('i-status'),date:v('i-date'),types:TP.i||[],linkedGig:v('i-lgig'),linkedIGPost:v('i-ligpost'),hook:v('i-hook'),audio:v('i-audio'),notes:v('i-notes'),img:imgData,imgs:imgs,script:scrData.script,scrnotes:scrData.scrnotes,shots:scrData.shots,added:id?(existingIdea&&existingIdea.added?existingIdea.added:Date.now()):Date.now()};
+  const idea={id:id||'i'+Date.now(),title,niche:v('i-niche'),platform:v('i-plat'),status:v('i-status'),contentStyle:v('i-content-style'),date:v('i-date'),types:TP.i||[],linkedGig:v('i-lgig'),linkedIGPost:v('i-ligpost'),hook:v('i-hook'),audio:v('i-audio'),notes:v('i-notes'),img:imgData,imgs:imgs,script:scrData.script,scrnotes:scrData.scrnotes,shots:scrData.shots,added:id?(existingIdea&&existingIdea.added?existingIdea.added:Date.now()):Date.now()};
   if(id)D.ideas=D.ideas.map(x=>x.id===id?idea:x);else D.ideas.push(idea);
-  save();closeModal('idea-modal');resetTP('i');['i-title','i-hook','i-audio','i-notes','i-lgig','i-id','i-date'].forEach(i=>setV(i,''));setV('i-img-data','');setV('i-imgs-data','[]');document.getElementById('i-imgs-pre').innerHTML='';resetScrData('i');
+  save();closeModal('idea-modal');resetTP('i');['i-title','i-hook','i-audio','i-notes','i-lgig','i-id','i-date'].forEach(i=>setV(i,''));setV('i-content-style','');setV('i-img-data','');setV('i-imgs-data','[]');document.getElementById('i-imgs-pre').innerHTML='';resetScrData('i');
   rIdeas(ideaFilt);rCal();rDash();toast('Idea saved!');
 }
 function delIdea(id){if(!confirm('Delete idea?'))return;D.ideas=D.ideas.filter(x=>x.id!==id);save();rIdeas(ideaFilt);rCal();rDash();}
@@ -7621,12 +7621,14 @@ function buildPillarCard(idea){
 
 function addFromPillar(title,hook,niche,format){
   if(!window.D)return;
+  const styleMap={'Reel':'Reel','reel':'Reel','Carousel':'Carousel','carousel':'Carousel'};
   const typeMap={'Reel':'Talking to Camera','reel':'Talking to Camera','Carousel':'Tutorial','carousel':'Tutorial'};
   const idea={id:'i'+Date.now(),title,niche,platform:'Instagram',status:'idea',
+    contentStyle:styleMap[format]||'',
     date:'',types:[typeMap[format]||'Talking to Camera'],linkedGig:'',linkedIGPost:'',
     hook,audio:'',notes:'',img:'',imgs:[],script:'',scrnotes:'',shots:[],added:Date.now()};
   window.D.ideas.push(idea);
-  save();
+  if(typeof window.save==='function')window.save();
   renderPillarIdeas();
   toast('\''+title.slice(0,28)+(title.length>28?'…':'')+"' added ✓");
 }
