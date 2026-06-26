@@ -1718,18 +1718,13 @@ setTimeout(renderSetupProgress, 500);
         <div style="padding:10px 12px;border-radius:10px;background:rgba(122,155,181,.07);border-left:3px solid #7A9BB5;"><div style="font-size:9px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#5a7a95;margin-bottom:3px;">Pillar 3 · A Life Composed</div><div style="font-size:11px;color:var(--ink);line-height:1.5;">2 posts · reel (home / style / bold move) + carousel (systems / intentional choice)</div></div>
       </div>
     </div>
-    <div class="tr" id="pillar-tabs" style="margin-bottom:12px;">
-      <button class="tb active" onclick="filterPillars('all',this)">All 144</button>
-      <button class="tb" onclick="filterPillars('African Creator, Global Standards',this)">🎬 Craft</button>
-      <button class="tb" onclick="filterPillars('Hair as Heritage & Craft',this)">✂️ Hair</button>
-      <button class="tb" onclick="filterPillars('A Life Composed',this)">🏡 Life</button>
-      <button class="tb" onclick="filterPillars('Creative Layer — Editorial & Product',this)">✦ Editorial</button>
-      <button class="tb" onclick="filterPillars('reel',this)">Reels only</button>
-      <button class="tb" onclick="filterPillars('carousel',this)">Carousels only</button>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+      <div class="tr" id="pillar-tabs" style="margin-bottom:0;flex:1;"></div>
+      <button class="btn btn-g btn-s" style="flex-shrink:0;" onclick="openPillarManager()">⚙ Manage Pillars</button>
     </div>
     <div style="position:relative;margin-bottom:14px;">
       <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:13px;opacity:.35;">🔍</span>
-      <input id="pillar-search" class="fi" style="padding-left:36px;" placeholder="Search 154 ready-made ideas…" oninput="renderPillarIdeas()">
+      <input id="pillar-search" class="fi" style="padding-left:36px;" placeholder="Search ready-made ideas…" oninput="renderPillarIdeas()">
     </div>
     <div id="pillars-count" style="font-size:10px;color:var(--warm-gray);font-family:'DM Mono',monospace;margin-bottom:10px;"></div>
     <div id="pillars-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(268px,1fr));gap:10px;"></div>
@@ -2768,6 +2763,31 @@ Total cash: $190 + product value</textarea></div>
   </div>
 </div>
 </div>
+
+<!-- MANAGE CONTENT PILLARS -->
+<div class="mo" id="pillar-manage-modal"><div class="md">
+  <div class="mh"><div class="mt">Manage <em>Pillars</em></div><button class="mc" onclick="closeModal('pillar-manage-modal')">×</button></div>
+  <div class="mb2">
+    <div style="font-size:11px;color:var(--warm-gray);margin-bottom:14px;line-height:1.5;">Pillars are the content themes you organise your ideas around. Rename, recolor, remove, or add new ones — changes apply everywhere pillars show up.</div>
+    <div id="pillars-manage-list" style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;"></div>
+    <button class="btn btn-p btn-s" onclick="openPillarForm()">+ Add Pillar</button>
+  </div>
+</div></div>
+
+<!-- ADD / EDIT SINGLE PILLAR -->
+<div class="mo" id="pillar-modal"><div class="md" style="max-width:420px;">
+  <div class="mh"><div class="mt" id="pillar-modal-title">Add <em>Pillar</em></div><button class="mc" onclick="closeModal('pillar-modal')">×</button></div>
+  <div class="mb2">
+    <input type="hidden" id="pl-id">
+    <input type="hidden" id="pl-color" value="terracotta">
+    <div class="fr" style="grid-template-columns:80px 1fr;"><div class="fg"><label class="fl">Icon</label><input class="fi" id="pl-icon" placeholder="✦" maxlength="4"></div><div class="fg"><label class="fl">Pillar Name *</label><input class="fi" id="pl-name" placeholder="e.g. Behind the Scenes"></div></div>
+    <div class="fg" style="margin-bottom:6px;">
+      <label class="fl">Color</label>
+      <div id="pl-color-swatches" style="display:flex;gap:9px;margin-top:6px;"></div>
+    </div>
+    <div class="fa"><button class="btn btn-g" onclick="closeModal('pillar-modal')">Cancel</button><button class="btn btn-p" onclick="savePillarType()">Save Pillar</button></div>
+  </div>
+</div></div>
 
 <!-- CLIENT BRIEF -->
 <div class="mo" id="brief-modal">
@@ -7548,16 +7568,58 @@ document.addEventListener('fb-ready',function(){
   };
 },{once:true});
 
-const PILLAR_COLORS = {
-  'African Creator, Global Standards': {border:'rgba(196,113,79,.2)',tag:'rgba(196,113,79,.12)',tagText:'var(--terracotta)',label:'Pillar 1 · Craft'},
-  'Hair as Heritage & Craft': {border:'rgba(90,143,106,.2)',tag:'rgba(90,143,106,.12)',tagText:'#4a7a58',label:'Pillar 2 · Hair'},
-  'A Life Composed': {border:'rgba(122,155,181,.2)',tag:'rgba(122,155,181,.12)',tagText:'#5a7a95',label:'Pillar 3 · A Life Composed'},
-  'Creative Layer — Editorial & Product': {border:'rgba(155,127,182,.2)',tag:'rgba(155,127,182,.12)',tagText:'#7a5a9a',label:'✦ Editorial'}
+// ── Editable color palette for pillars (kept consistent with the app's design tokens) ──
+const PILLAR_PALETTE = {
+  terracotta:{border:'rgba(196,113,79,.2)', tag:'rgba(196,113,79,.12)', tagText:'var(--terracotta)', swatch:'#C4714F'},
+  forest:{border:'rgba(90,143,106,.2)', tag:'rgba(90,143,106,.12)', tagText:'#4a7a58', swatch:'#5A8F6A'},
+  sky:{border:'rgba(122,155,181,.2)', tag:'rgba(122,155,181,.12)', tagText:'#5a7a95', swatch:'#7A9BB5'},
+  lavender:{border:'rgba(155,127,182,.2)', tag:'rgba(155,127,182,.12)', tagText:'#7a5a9a', swatch:'#9B7FB6'},
+  gold:{border:'rgba(196,150,58,.2)', tag:'rgba(196,150,58,.12)', tagText:'#9a7423', swatch:'#C4963A'},
+  rose:{border:'rgba(201,137,122,.2)', tag:'rgba(201,137,122,.12)', tagText:'#9a5a4c', swatch:'#C9897A'}
 };
+const PILLAR_PALETTE_ORDER = ['terracotta','forest','sky','lavender','gold','rose'];
+
+// Default pillar types — match the original 4 built-in categories
+const DEFAULT_PILLARS = [
+  {id:'p1', name:'African Creator, Global Standards', icon:'🎬', color:'terracotta'},
+  {id:'p2', name:'Hair as Heritage & Craft', icon:'✂️', color:'forest'},
+  {id:'p3', name:'A Life Composed', icon:'🏡', color:'sky'},
+  {id:'p4', name:'Creative Layer — Editorial & Product', icon:'✦', color:'lavender'}
+];
+
+// The 144 ready-made ideas were authored against these literal pillar names.
+// Map them once to stable IDs so renaming/deleting a pillar never breaks matching.
+const _PILLAR_LEGACY_NAME_TO_ID = {
+  'African Creator, Global Standards':'p1',
+  'Hair as Heritage & Craft':'p2',
+  'A Life Composed':'p3',
+  'Creative Layer — Editorial & Product':'p4'
+};
+PILLAR_IDEAS.forEach(idea=>{ if(!idea.pillarId) idea.pillarId = _PILLAR_LEGACY_NAME_TO_ID[idea.pillar] || 'p1'; });
+
+// Make sure pillar data is part of what gets saved locally + synced
+if(typeof LIGHT_KEYS!=='undefined' && !LIGHT_KEYS.includes('pillars')) LIGHT_KEYS.push('pillars');
+
+function ensurePillarsData(){
+  if(!window.D) return;
+  if(!Array.isArray(D.pillars) || !D.pillars.length){
+    D.pillars = DEFAULT_PILLARS.map(p=>({...p}));
+  }
+}
+ensurePillarsData();
+
+function pillarStyle(pillarId){
+  ensurePillarsData();
+  const p=D.pillars.find(x=>x.id===pillarId);
+  if(!p) return {border:'rgba(150,142,135,.25)', tag:'rgba(150,142,135,.12)', tagText:'var(--warm-gray)', icon:'❔', name:'Uncategorized'};
+  const pal=PILLAR_PALETTE[p.color]||PILLAR_PALETTE.terracotta;
+  return {border:pal.border, tag:pal.tag, tagText:pal.tagText, icon:p.icon||'✦', name:p.name};
+}
 
 let _pillarFilter='all';
 
 function switchIdeaView(view,btn){
+  ensurePillarsData();
   const mineView=document.getElementById('mine-view');
   const pillarsView=document.getElementById('pillars-view');
   if(!mineView||!pillarsView)return;
@@ -7567,7 +7629,20 @@ function switchIdeaView(view,btn){
   if(plBtn)plBtn.className='btn btn-g btn-s';
   if(btn)btn.className='btn btn-p btn-s';
   if(view==='mine'){mineView.style.display='';pillarsView.style.display='none';}
-  else{mineView.style.display='none';pillarsView.style.display='';renderPillarIdeas();}
+  else{mineView.style.display='none';pillarsView.style.display='';renderPillarTabs();renderPillarIdeas();}
+}
+
+function renderPillarTabs(){
+  ensurePillarsData();
+  const wrap=document.getElementById('pillar-tabs');
+  if(!wrap)return;
+  let html='<button class="tb'+(_pillarFilter==='all'?' active':'')+'" onclick="filterPillars(\'all\',this)">All '+PILLAR_IDEAS.length+'</button>';
+  D.pillars.forEach(p=>{
+    html+='<button class="tb'+(_pillarFilter===p.id?' active':'')+'" onclick="filterPillars(\''+p.id+'\',this)">'+(p.icon||'✦')+' '+esc(p.name)+'</button>';
+  });
+  html+='<button class="tb'+(_pillarFilter==='reel'?' active':'')+'" onclick="filterPillars(\'reel\',this)">Reels only</button>';
+  html+='<button class="tb'+(_pillarFilter==='carousel'?' active':'')+'" onclick="filterPillars(\'carousel\',this)">Carousels only</button>';
+  wrap.innerHTML=html;
 }
 
 function filterPillars(f,el){
@@ -7578,38 +7653,51 @@ function filterPillars(f,el){
 }
 
 function renderPillarIdeas(){
+  ensurePillarsData();
   const grid=document.getElementById('pillars-grid');
   const countEl=document.getElementById('pillars-count');
   if(!grid)return;
+  const validIds=new Set(D.pillars.map(p=>p.id));
   const q=(document.getElementById('pillar-search')||{value:''}).value.toLowerCase().trim();
   let filtered=PILLAR_IDEAS.filter(idea=>{
     if(_pillarFilter==='reel')return idea.format.toLowerCase()==='reel';
     if(_pillarFilter==='carousel')return idea.format.toLowerCase()==='carousel';
-    if(_pillarFilter!=='all'&&idea.pillar!==_pillarFilter)return false;
+    if(_pillarFilter!=='all'&&idea.pillarId!==_pillarFilter)return false;
     if(q)return idea.title.toLowerCase().includes(q)||idea.hook.toLowerCase().includes(q)||idea.category.toLowerCase().includes(q);
     return true;
   });
   if(countEl)countEl.textContent=filtered.length+' ideas'+(q?' matching "'+q+'"':'');
   if(!filtered.length){grid.innerHTML='<div class="es" style="grid-column:1/-1"><div class="es-icon">🔍</div><div class="es-title">No ideas match</div><div class="es-sub">Try a different keyword or filter</div></div>';return;}
   const groups={};
-  filtered.forEach(idea=>{const key=idea.pillar+'||'+idea.category;if(!groups[key])groups[key]={pillar:idea.pillar,category:idea.category,ideas:[]};groups[key].ideas.push(idea);});
+  filtered.forEach(idea=>{
+    const pid=validIds.has(idea.pillarId)?idea.pillarId:'_orphan';
+    const key=pid+'||'+idea.category;
+    if(!groups[key])groups[key]={pillarId:pid,category:idea.category,ideas:[]};
+    groups[key].ideas.push(idea);
+  });
   const showFlat=q||_pillarFilter==='reel'||_pillarFilter==='carousel';
   let html='';
   if(showFlat){filtered.forEach(idea=>{html+=buildPillarCard(idea);});}
-  else{Object.values(groups).forEach(group=>{const col=PILLAR_COLORS[group.pillar]||PILLAR_COLORS['African Creator, Global Standards'];html+='<div style="grid-column:1/-1;display:flex;align-items:center;gap:10px;margin-top:12px;margin-bottom:2px;"><span style="font-size:9px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:'+col.tagText+';font-family:\'DM Mono\',monospace;white-space:nowrap;">'+col.label+' · '+group.category+'</span><div style="flex:1;height:1px;background:rgba(0,0,0,.07);"></div></div>';group.ideas.forEach(idea=>{html+=buildPillarCard(idea);});});}
+  else{
+    Object.values(groups).forEach(group=>{
+      const st=pillarStyle(group.pillarId);
+      html+='<div style="grid-column:1/-1;display:flex;align-items:center;gap:10px;margin-top:12px;margin-bottom:2px;"><span style="font-size:9px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:'+st.tagText+';font-family:\'DM Mono\',monospace;white-space:nowrap;">'+st.icon+' '+esc(st.name)+' · '+esc(group.category)+'</span><div style="flex:1;height:1px;background:rgba(0,0,0,.07);"></div></div>';
+      group.ideas.forEach(idea=>{html+=buildPillarCard(idea);});
+    });
+  }
   grid.innerHTML=html;
 }
 
 function buildPillarCard(idea){
-  const col=PILLAR_COLORS[idea.pillar]||PILLAR_COLORS['African Creator, Global Standards'];
+  const st=pillarStyle(idea.pillarId);
   const addedCount=(window.D&&window.D.ideas?window.D.ideas:[]).filter(i=>i.title.toLowerCase().trim()===idea.title.toLowerCase().trim()).length;
   const fmtBg=idea.format.toLowerCase()==='reel'?'rgba(225,48,108,.1)':'rgba(64,93,230,.09)';
   const fmtColor=idea.format.toLowerCase()==='reel'?'#c13584':'#405DE6';
   const tEsc=idea.title.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
   const hEsc=idea.hook.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
-  return'<div style="background:#fff;border-radius:13px;border:1px solid '+col.border+';padding:13px 14px;display:flex;flex-direction:column;gap:7px;">'+
+  return'<div style="background:#fff;border-radius:13px;border:1px solid '+st.border+';padding:13px 14px;display:flex;flex-direction:column;gap:7px;">'+
     '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">'+
-      '<span style="font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:2px 8px;border-radius:20px;background:'+col.tag+';color:'+col.tagText+';font-family:\'DM Mono\',monospace;white-space:nowrap;">'+col.label+'</span>'+
+      '<span style="font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:2px 8px;border-radius:20px;background:'+st.tag+';color:'+st.tagText+';font-family:\'DM Mono\',monospace;white-space:nowrap;">'+st.icon+' '+esc(st.name)+'</span>'+
       '<span style="font-size:9px;padding:2px 8px;border-radius:20px;background:'+fmtBg+';color:'+fmtColor+';font-weight:600;font-family:\'DM Mono\',monospace;">'+idea.format+'</span>'+
       (addedCount>0?'<span style="margin-left:auto;font-size:9px;font-family:\'DM Mono\',monospace;color:var(--sage);">✓ In your ideas'+(addedCount>1?' ×'+addedCount:'')+'</span>':'')+
     '</div>'+
@@ -7632,6 +7720,95 @@ function addFromPillar(title,hook,niche,format){
   renderPillarIdeas();
   toast('\''+title.slice(0,28)+(title.length>28?'…':'')+"' added ✓");
 }
+
+// ── PILLAR MANAGER: add / edit / delete pillar types ──
+function openPillarManager(){
+  ensurePillarsData();
+  renderPillarManageList();
+  openModal('pillar-manage-modal');
+}
+
+function renderPillarManageList(){
+  ensurePillarsData();
+  const el=document.getElementById('pillars-manage-list');
+  if(!el)return;
+  if(!D.pillars.length){el.innerHTML='<div class="es"><div class="es-icon">✦</div><div class="es-title">No pillars yet</div><div class="es-sub">Add your first content pillar below.</div></div>';return;}
+  el.innerHTML=D.pillars.map(p=>{
+    const pal=PILLAR_PALETTE[p.color]||PILLAR_PALETTE.terracotta;
+    const count=PILLAR_IDEAS.filter(i=>i.pillarId===p.id).length;
+    return '<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;background:var(--warm-white);border:1px solid rgba(0,0,0,.06);">'+
+      '<span style="width:28px;height:28px;border-radius:50%;background:'+pal.swatch+';flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px;">'+(p.icon||'✦')+'</span>'+
+      '<div style="flex:1;min-width:0;">'+
+        '<div style="font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+esc(p.name)+'</div>'+
+        '<div style="font-size:10px;color:var(--warm-gray);font-family:\'DM Mono\',monospace;">'+count+' library idea'+(count!==1?'s':'')+'</div>'+
+      '</div>'+
+      '<button class="btn btn-g btn-s" onclick="openPillarForm(\''+p.id+'\')">Edit</button>'+
+      '<button class="btn btn-d btn-s" onclick="deletePillarType(\''+p.id+'\')">Delete</button>'+
+    '</div>';
+  }).join('');
+}
+
+function openPillarForm(id){
+  ensurePillarsData();
+  const p=id?D.pillars.find(x=>x.id===id):null;
+  const mt=document.getElementById('pillar-modal-title');if(mt)mt.innerHTML=p?'Edit <em>Pillar</em>':'Add <em>Pillar</em>';
+  setV('pl-id',p?p.id:'');
+  setV('pl-icon',p?p.icon:'✦');
+  setV('pl-name',p?p.name:'');
+  setV('pl-color',p?p.color:PILLAR_PALETTE_ORDER[D.pillars.length%PILLAR_PALETTE_ORDER.length]);
+  renderPillarColorSwatches();
+  openModal('pillar-modal');
+}
+
+function renderPillarColorSwatches(){
+  const el=document.getElementById('pl-color-swatches');
+  if(!el)return;
+  const current=v('pl-color')||'terracotta';
+  el.innerHTML=PILLAR_PALETTE_ORDER.map(key=>{
+    const pal=PILLAR_PALETTE[key];
+    const active=key===current;
+    return '<span onclick="pickPillarColor(\''+key+'\')" title="'+key+'" style="width:26px;height:26px;border-radius:50%;background:'+pal.swatch+';cursor:pointer;display:inline-block;box-shadow:'+(active?'0 0 0 2px #fff inset, 0 0 0 4px '+pal.swatch:'none')+';"></span>';
+  }).join('');
+}
+function pickPillarColor(key){ setV('pl-color',key); renderPillarColorSwatches(); }
+
+function savePillarType(){
+  ensurePillarsData();
+  const id=v('pl-id');
+  const name=v('pl-name').trim();
+  if(!name){toast('Give the pillar a name first');return;}
+  const icon=v('pl-icon').trim()||'✦';
+  const color=v('pl-color')||'terracotta';
+  if(id){
+    const p=D.pillars.find(x=>x.id===id);
+    if(p){p.name=name;p.icon=icon;p.color=color;}
+  } else {
+    D.pillars.push({id:'pl'+Date.now(),name,icon,color});
+  }
+  save();
+  closeModal('pillar-modal');
+  renderPillarManageList();
+  renderPillarTabs();
+  renderPillarIdeas();
+  toast('Pillar saved ✓');
+}
+
+function deletePillarType(id){
+  ensurePillarsData();
+  const p=D.pillars.find(x=>x.id===id);
+  if(!p)return;
+  const count=PILLAR_IDEAS.filter(i=>i.pillarId===id).length;
+  if(!confirm('Delete "'+p.name+'"? '+(count?count+' ready-made idea'+(count!==1?'s':'')+' using it will show as Uncategorized. ':'')+'This can\'t be undone.'))return;
+  D.pillars=D.pillars.filter(x=>x.id!==id);
+  if(_pillarFilter===id)_pillarFilter='all';
+  save();
+  renderPillarManageList();
+  renderPillarTabs();
+  renderPillarIdeas();
+  toast('Pillar deleted');
+}
+
+
 
 // ═══════════════════════════════════════════════════
 // PATCH rDash to call rConsistency
