@@ -1720,6 +1720,7 @@ setTimeout(renderSetupProgress, 500);
     </div>
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
       <div class="tr" id="pillar-tabs" style="margin-bottom:0;flex:1;"></div>
+      <button class="btn btn-g btn-s" style="flex-shrink:0;" onclick="openCustomPillarIdeaModal(D&&D.pillars&&D.pillars[0]?D.pillars[0].id:'')">+ Add My Idea</button>
       <button class="btn btn-g btn-s" style="flex-shrink:0;" onclick="openPillarManager()">⚙ Manage Pillars</button>
     </div>
     <div style="position:relative;margin-bottom:14px;">
@@ -2789,6 +2790,20 @@ Total cash: $190 + product value</textarea></div>
   </div>
 </div></div>
 
+<!-- ADD / EDIT CUSTOM PILLAR IDEA -->
+<div class="mo" id="cpi-modal"><div class="md" style="max-width:500px;">
+  <div class="mh"><div class="mt" id="cpi-modal-title">Add <em>Your Idea</em></div><button class="mc" onclick="closeModal('cpi-modal')">×</button></div>
+  <div class="mb2">
+    <input type="hidden" id="cpi-id">
+    <input type="hidden" id="cpi-orig-id">
+    <div class="fr f1"><div class="fg"><label class="fl">Idea Title *</label><input class="fi" id="cpi-title" placeholder="e.g. My golden hour unboxing ritual"></div></div>
+    <div class="fr f1"><div class="fg"><label class="fl">Hook / Opening Line</label><input class="fi" id="cpi-hook" placeholder="e.g. Camera was already rolling when this arrived."></div></div>
+    <div class="fr"><div class="fg"><label class="fl">Pillar</label><select class="fs" id="cpi-pillar"></select></div><div class="fg"><label class="fl">Category / Theme</label><input class="fi" id="cpi-category" placeholder="e.g. Behind the Scenes"></div></div>
+    <div class="fr"><div class="fg"><label class="fl">Format</label><select class="fs" id="cpi-format"><option value="Reel">Reel</option><option value="Carousel">Carousel</option><option value="Story">Story</option></select></div><div class="fg"><label class="fl">Niche</label><select class="fs" id="cpi-niche"><option>Lifestyle</option><option>Hair</option><option>Beauty</option><option>Fashion</option><option>Tech</option></select></div></div>
+    <div class="fa"><button class="btn btn-g" onclick="closeModal('cpi-modal')">Cancel</button><button class="btn btn-p" onclick="saveCustomPillarIdea()">Save Idea</button></div>
+  </div>
+</div></div>
+
 <!-- CLIENT BRIEF -->
 <div class="mo" id="brief-modal">
 <div class="md xl">
@@ -3221,7 +3236,7 @@ gProvider = new firebase.auth.GoogleAuthProvider();
 
 
 HEAVY      = ['feedIg','feedTt','feedBank','visuals','outfits','moodboards','locations','cameras'];
-LIGHT_KEYS = ['gigs','content','ideas','followups','pitches','rates','colors','niches','platforms','bio','links','calM','calY','studioData','invoicesData'];
+LIGHT_KEYS = ['gigs','content','ideas','followups','pitches','rates','colors','niches','platforms','bio','links','calM','calY','studioData','invoicesData','customPillarIdeas','hiddenPillarIdeas','overriddenPillarIdeas'];
 LS_KEY     = 'ajhq_data_v1';
 LS_USER    = 'ajhq_user_v1';
 LS_DIRTY   = 'ajhq_dirty_v1';
@@ -3309,6 +3324,9 @@ const DEFAULTS = () => ({
   calM:new Date().getMonth(),calY:new Date().getFullYear(),
   studioData:null,
   invoicesData:null,
+  customPillarIdeas:[],
+  hiddenPillarIdeas:[],
+  overriddenPillarIdeas:[],
 });
 
 window.D = DEFAULTS();
@@ -7519,8 +7537,9 @@ const _origSaveBT=window.saveBT;
 window.saveBT=function(){
   // Call original save if exists — but we'll override it entirely here to add fields
   // Find or create the brand target
+  const editId=v('bt-edit-id');
   const bt={
-    id:v('bt-edit-id')||'bt'+Date.now(),
+    id:editId||'bt'+Date.now(),
     name:v('bt-name').trim(),niche:v('bt-niche'),status:v('bt-status'),
     url:v('bt-url'),email:v('bt-email'),contact:v('bt-contact'),
     platform:v('bt-platform'),rate:v('bt-rate'),priority:v('bt-priority'),
@@ -7529,17 +7548,22 @@ window.saveBT=function(){
     followupMsg:v('bt-followup-msg'),response:v('bt-response'),notes:v('bt-notes'),
     clientType:v('bt-client-type')||'prospect',
     retainerDate:v('bt-retainer-date'),retainerAmount:v('bt-retainer-amount'),
-    added:v('bt-edit-id')?(stData&&stData.brandTargets?stData.brandTargets.find(x=>x.id===v('bt-edit-id'))||{}:{}).added||Date.now():Date.now()
+    added:editId?(stData&&stData.brandTargets?stData.brandTargets.find(x=>x.id===editId)||{}:{}).added||Date.now():Date.now()
   };
   if(!bt.name){toast('Brand name required');return;}
   if(typeof stData==='undefined'||!stData){toast('Studio data not loaded');return;}
+  // Save to brandTargets (extended store)
   if(!stData.brandTargets)stData.brandTargets=[];
   const idx=stData.brandTargets.findIndex(x=>x.id===bt.id);
   if(idx>-1)stData.brandTargets[idx]=bt;else stData.brandTargets.push(bt);
+  // FIX: also keep stData.brands in sync so stRenderBrands() shows the entry
+  if(!stData.brands)stData.brands=[];
+  const idx2=stData.brands.findIndex(x=>x.id===bt.id);
+  if(idx2>-1)stData.brands[idx2]=bt;else stData.brands.push(bt);
   stSave();
   closeModal('bt-modal');
-  if(typeof renderBrandTargets==='function')renderBrandTargets();
-  toast(v('bt-edit-id')?'Brand updated!':'Brand target added ✓');
+  stRenderBrands(); // always call the main render function
+  toast(editId?'Brand updated ✓':'Brand target added ✓');
 };
 
 // Patch openBTModal to populate retainer fields
@@ -7657,13 +7681,21 @@ function renderPillarIdeas(){
   const grid=document.getElementById('pillars-grid');
   const countEl=document.getElementById('pillars-count');
   if(!grid)return;
+  ensureCustomPillarIdeas();
   const validIds=new Set(D.pillars.map(p=>p.id));
   const q=(document.getElementById('pillar-search')||{value:''}).value.toLowerCase().trim();
-  let filtered=PILLAR_IDEAS.filter(idea=>{
+  const hidden=new Set(window.D.hiddenPillarIdeas||[]);
+  const overrides=window.D.overriddenPillarIdeas||[];
+  const overriddenOrigIds=new Set(overrides.map(o=>o.origId).filter(Boolean));
+  // Library ideas: exclude hidden ones and ones that have been overridden (override replaces them)
+  const libraryIdeas=PILLAR_IDEAS.filter(i=>!hidden.has(i.id)&&!overriddenOrigIds.has(i.id));
+  // Merge: library + overrides + custom
+  const allIdeas=[...libraryIdeas,...overrides,...(window.D.customPillarIdeas||[])];
+  let filtered=allIdeas.filter(idea=>{
     if(_pillarFilter==='reel')return idea.format.toLowerCase()==='reel';
     if(_pillarFilter==='carousel')return idea.format.toLowerCase()==='carousel';
     if(_pillarFilter!=='all'&&idea.pillarId!==_pillarFilter)return false;
-    if(q)return idea.title.toLowerCase().includes(q)||idea.hook.toLowerCase().includes(q)||idea.category.toLowerCase().includes(q);
+    if(q)return (idea.title||'').toLowerCase().includes(q)||(idea.hook||'').toLowerCase().includes(q)||(idea.category||'').toLowerCase().includes(q);
     return true;
   });
   if(countEl)countEl.textContent=filtered.length+' ideas'+(q?' matching "'+q+'"':'');
@@ -7679,11 +7711,22 @@ function renderPillarIdeas(){
   let html='';
   if(showFlat){filtered.forEach(idea=>{html+=buildPillarCard(idea);});}
   else{
+    const shownAddBtn=new Set();
     Object.values(groups).forEach(group=>{
       const st=pillarStyle(group.pillarId);
-      html+='<div style="grid-column:1/-1;display:flex;align-items:center;gap:10px;margin-top:12px;margin-bottom:2px;"><span style="font-size:9px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:'+st.tagText+';font-family:\'DM Mono\',monospace;white-space:nowrap;">'+st.icon+' '+esc(st.name)+' · '+esc(group.category)+'</span><div style="flex:1;height:1px;background:rgba(0,0,0,.07);"></div></div>';
+      const addBtnHtml=!shownAddBtn.has(group.pillarId)&&group.pillarId!=='_orphan'?'<button class="btn btn-g btn-s" style="font-size:9px;" onclick="openCustomPillarIdeaModal(\''+group.pillarId+'\')">+ Add My Idea</button>':'';
+      if(addBtnHtml)shownAddBtn.add(group.pillarId);
+      html+='<div style="grid-column:1/-1;display:flex;align-items:center;gap:10px;margin-top:12px;margin-bottom:2px;"><span style="font-size:9px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:'+st.tagText+';font-family:\'DM Mono\',monospace;white-space:nowrap;">'+st.icon+' '+esc(st.name)+' · '+esc(group.category)+'</span><div style="flex:1;height:1px;background:rgba(0,0,0,.07);"></div>'+addBtnHtml+'</div>';
       group.ideas.forEach(idea=>{html+=buildPillarCard(idea);});
     });
+    if(_pillarFilter==='all'){
+      D.pillars.forEach(p=>{
+        if(!shownAddBtn.has(p.id)){
+          const st=pillarStyle(p.id);
+          html+='<div style="grid-column:1/-1;display:flex;align-items:center;gap:10px;margin-top:12px;margin-bottom:2px;"><span style="font-size:9px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:'+st.tagText+';font-family:\'DM Mono\',monospace;white-space:nowrap;">'+st.icon+' '+esc(st.name)+'</span><div style="flex:1;height:1px;background:rgba(0,0,0,.07);"></div><button class="btn btn-g btn-s" style="font-size:9px;" onclick="openCustomPillarIdeaModal(\''+p.id+'\')">+ Add My Idea</button></div>';
+        }
+      });
+    }
   }
   grid.innerHTML=html;
 }
@@ -7695,15 +7738,22 @@ function buildPillarCard(idea){
   const fmtColor=idea.format.toLowerCase()==='reel'?'#c13584':'#405DE6';
   const tEsc=idea.title.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
   const hEsc=idea.hook.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+  const isCustom=idea.id&&idea.id.startsWith('cpi_');
+  const isOverride=idea.id&&idea.id.startsWith('ovr_');
   return'<div style="background:#fff;border-radius:13px;border:1px solid '+st.border+';padding:13px 14px;display:flex;flex-direction:column;gap:7px;">'+
     '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">'+
       '<span style="font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:2px 8px;border-radius:20px;background:'+st.tag+';color:'+st.tagText+';font-family:\'DM Mono\',monospace;white-space:nowrap;">'+st.icon+' '+esc(st.name)+'</span>'+
       '<span style="font-size:9px;padding:2px 8px;border-radius:20px;background:'+fmtBg+';color:'+fmtColor+';font-weight:600;font-family:\'DM Mono\',monospace;">'+idea.format+'</span>'+
+      (isCustom||isOverride?'<span style="font-size:9px;font-family:\'DM Mono\',monospace;color:var(--forest);background:rgba(74,107,80,.1);padding:2px 7px;border-radius:20px;">✦ My idea</span>':'')+
       (addedCount>0?'<span style="margin-left:auto;font-size:9px;font-family:\'DM Mono\',monospace;color:var(--sage);">✓ In your ideas'+(addedCount>1?' ×'+addedCount:'')+'</span>':'')+
     '</div>'+
     '<div style="font-family:\'Cormorant Garamond\',serif;font-size:.98rem;font-weight:400;line-height:1.35;">'+esc(idea.title)+'</div>'+
     '<div style="font-size:11px;color:var(--warm-gray);font-style:italic;line-height:1.5;">"'+esc(idea.hook)+'"</div>'+
-    '<button class="btn '+(addedCount>0?'btn-g':'btn-p')+' btn-s" style="margin-top:2px;align-self:flex-start;" onclick="addFromPillar(\''+tEsc+'\',\''+hEsc+'\',\''+idea.niche+'\',\''+idea.format+'\')">'+(addedCount>0?'+ Add again':'+ Add to My Ideas')+'</button>'+
+    '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:2px;">'+
+      '<button class="btn '+(addedCount>0?'btn-g':'btn-p')+' btn-s" onclick="addFromPillar(\''+tEsc+'\',\''+hEsc+'\',\''+idea.niche+'\',\''+idea.format+'\')">'+(addedCount>0?'+ Add again':'+ Add to My Ideas')+'</button>'+
+      '<button class="btn btn-g btn-s" onclick="editAnyPillarIdea(\''+idea.id+'\')">✏️ Edit</button>'+
+      '<button class="btn btn-d btn-s" onclick="deleteAnyPillarIdea(\''+idea.id+'\')">🗑</button>'+
+    '</div>'+
   '</div>';
 }
 
@@ -7719,6 +7769,121 @@ function addFromPillar(title,hook,niche,format){
   if(typeof window.save==='function')window.save();
   renderPillarIdeas();
   toast('\''+title.slice(0,28)+(title.length>28?'…':'')+"' added ✓");
+}
+
+// ── CUSTOM PILLAR IDEAS: add / edit / delete ideas in any pillar ──
+function ensureCustomPillarIdeas(){
+  if(!window.D.customPillarIdeas)window.D.customPillarIdeas=[];
+  if(!window.D.hiddenPillarIdeas)window.D.hiddenPillarIdeas=[];   // library idea IDs hidden by user
+  if(!window.D.overriddenPillarIdeas)window.D.overriddenPillarIdeas=[]; // edited copies of library ideas
+  ['customPillarIdeas','hiddenPillarIdeas','overriddenPillarIdeas'].forEach(k=>{
+    if(typeof LIGHT_KEYS!=='undefined'&&!LIGHT_KEYS.includes(k))LIGHT_KEYS.push(k);
+  });
+}
+
+// Open add-idea modal (new blank idea)
+function openCustomPillarIdeaModal(pillarId){
+  ensureCustomPillarIdeas();
+  ensurePillarsData();
+  const dd=document.getElementById('cpi-pillar');
+  if(dd) dd.innerHTML=D.pillars.map(p=>'<option value="'+p.id+'"'+(p.id===pillarId?' selected':'')+'>'+esc(p.name)+'</option>').join('');
+  setV('cpi-id',''); setV('cpi-orig-id','');
+  setV('cpi-title',''); setV('cpi-hook',''); setV('cpi-category','');
+  setV('cpi-format','Reel'); setV('cpi-niche','Lifestyle');
+  const mt=document.getElementById('cpi-modal-title');
+  if(mt)mt.innerHTML='Add <em>Your Idea</em>';
+  openModal('cpi-modal');
+}
+
+// Universal edit — works for library ideas (sp_*), overrides (ovr_*), and custom ideas (cpi_*)
+function editAnyPillarIdea(id){
+  ensureCustomPillarIdeas();
+  ensurePillarsData();
+  // Find the idea in: overrides, custom list, or library
+  let idea = window.D.overriddenPillarIdeas.find(x=>x.id===id)
+          || window.D.customPillarIdeas.find(x=>x.id===id)
+          || PILLAR_IDEAS.find(x=>x.id===id);
+  if(!idea)return;
+  const dd=document.getElementById('cpi-pillar');
+  if(dd) dd.innerHTML=D.pillars.map(p=>'<option value="'+p.id+'"'+(p.id===idea.pillarId?' selected':'')+'>'+esc(p.name)+'</option>').join('');
+  // Store the original library id so we can link override to it
+  const isLibrary=id.startsWith('sp_');
+  setV('cpi-id', isLibrary ? '' : idea.id);   // blank = will create new record
+  setV('cpi-orig-id', isLibrary ? id : '');    // track which library card we're overriding
+  setV('cpi-title', idea.title||'');
+  setV('cpi-hook', idea.hook||'');
+  setV('cpi-category', idea.category||'');
+  setV('cpi-format', idea.format||'Reel');
+  setV('cpi-niche', idea.niche||'Lifestyle');
+  const mt=document.getElementById('cpi-modal-title');
+  if(mt)mt.innerHTML='Edit <em>Idea</em>';
+  openModal('cpi-modal');
+}
+
+// Universal delete — hides library ideas, removes custom/override ideas
+function deleteAnyPillarIdea(id){
+  ensureCustomPillarIdeas();
+  if(!confirm('Remove this idea from your content pillars?'))return;
+  if(id.startsWith('sp_')){
+    // Library idea — just hide it
+    if(!window.D.hiddenPillarIdeas.includes(id)) window.D.hiddenPillarIdeas.push(id);
+  } else if(id.startsWith('ovr_')){
+    // Override — remove it AND un-hide the original library idea
+    const ovr=window.D.overriddenPillarIdeas.find(x=>x.id===id);
+    window.D.overriddenPillarIdeas=window.D.overriddenPillarIdeas.filter(x=>x.id!==id);
+    if(ovr&&ovr.origId) window.D.hiddenPillarIdeas=window.D.hiddenPillarIdeas.filter(x=>x!==ovr.origId);
+  } else {
+    // Custom idea
+    window.D.customPillarIdeas=window.D.customPillarIdeas.filter(x=>x.id!==id);
+  }
+  if(typeof window.save==='function')window.save();
+  renderPillarIdeas();
+  toast('Idea removed ✓');
+}
+
+// Keep old names as aliases so nothing breaks
+function editCustomPillarIdea(id){ editAnyPillarIdea(id); }
+function deleteCustomPillarIdea(id){ deleteAnyPillarIdea(id); }
+
+function saveCustomPillarIdea(){
+  ensureCustomPillarIdeas();
+  const title=v('cpi-title').trim();
+  if(!title){toast('Idea title is required');return;}
+  const editId=v('cpi-id');
+  const origId=v('cpi-orig-id'); // set when editing a library idea
+  const pillarId=v('cpi-pillar');
+  const p=D.pillars.find(x=>x.id===pillarId);
+  const idea={
+    id: editId || (origId ? 'ovr_'+Date.now() : 'cpi_'+Date.now()),
+    origId: origId||null,
+    title,
+    hook:v('cpi-hook').trim(),
+    category:v('cpi-category').trim()||'My Ideas',
+    format:v('cpi-format')||'Reel',
+    niche:v('cpi-niche')||'Lifestyle',
+    pillarId,
+    pillar: p?p.name:'',
+  };
+
+  if(origId){
+    // Editing a library idea → save as override, hide the original
+    const idx=window.D.overriddenPillarIdeas.findIndex(x=>x.origId===origId);
+    if(idx>-1) window.D.overriddenPillarIdeas[idx]=idea;
+    else window.D.overriddenPillarIdeas.push(idea);
+    if(!window.D.hiddenPillarIdeas.includes(origId)) window.D.hiddenPillarIdeas.push(origId);
+  } else if(editId){
+    // Editing an existing custom or override idea
+    const isOvr=editId.startsWith('ovr_');
+    const arr=isOvr?window.D.overriddenPillarIdeas:window.D.customPillarIdeas;
+    const idx=arr.findIndex(x=>x.id===editId);
+    if(idx>-1) arr[idx]=idea; else arr.push(idea);
+  } else {
+    window.D.customPillarIdeas.push(idea);
+  }
+  if(typeof window.save==='function')window.save();
+  closeModal('cpi-modal');
+  renderPillarIdeas();
+  toast(editId||origId?'Idea updated ✓':'Idea added to pillar ✓');
 }
 
 // ── PILLAR MANAGER: add / edit / delete pillar types ──
