@@ -677,7 +677,7 @@ body.dark-mode .inv-preview{background:#1E1A16;color:var(--ivory);}
 .milestone-row{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
 .milestone-dots{display:flex;gap:5px;align-items:center;flex:1;flex-wrap:wrap;}
 .milestone-dot{width:22px;height:22px;border-radius:50%;border:2px solid rgba(0,0,0,.1);display:flex;align-items:center;justify-content:center;font-size:10px;transition:all .2s;flex-shrink:0;}
-.milestone-dot.done{background:var(--forest);border-color:var(--forest);color:#fff;}
+.milestone-dot.done,.milestone-dot.filled{background:var(--forest);border-color:var(--forest);color:#fff;}
 .milestone-dot.next{border-color:var(--terracotta);background:rgba(196,113,79,.1);}
 .milestone-cta{font-size:11px;color:var(--terracotta);font-weight:600;cursor:pointer;text-decoration:underline;text-underline-offset:2px;flex-shrink:0;}
 
@@ -724,6 +724,8 @@ body.dark-mode #dark-toggle{border-color:rgba(255,255,255,.15);color:rgba(250,24
     <div class="ni active" onclick="goTo('dashboard',this)"><span class="ni-icon">🏠</span>Dashboard</div>
     <div class="ni" onclick="goTo('earnings',this)"><span class="ni-icon">💰</span>Earnings</div>
     <div class="ni" onclick="goTo('guide',this)"><span class="ni-icon">📖</span>Setup & Rhythm Guide</div>
+    <div class="ni" onclick="goTo('foundation',this)" style="border-left:2px solid var(--forest);color:var(--sage);"><span class="ni-icon">🌱</span>Foundation Phase</div>
+    <div class="ni" onclick="goTo('showup',this)" style="border-left:2px solid var(--terracotta);"><span class="ni-icon">🔥</span>Show-Up Tracker</div>
     <div class="nl">Gigs</div>
     <div class="ni" onclick="goTo('gigs',this)"><span class="ni-icon">📋</span>Gig Tracker<span class="ni-badge" id="gig-badge"></span></div>
     <div class="ni" onclick="goTo('followup',this)"><span class="ni-icon">🔔</span>Follow-Ups<span class="ni-badge" id="fu-badge" style="background:var(--gold)"></span></div>
@@ -755,8 +757,8 @@ body.dark-mode #dark-toggle{border-color:rgba(255,255,255,.15);color:rgba(250,24
   <div class="sb-foot">
     <div class="sb-rate">
       <div class="sb-rate-label">Base Rate</div>
-      <div class="sb-rate-val" id="sb-rate">$20</div>
-      <div class="sb-rate-sub">per UGC video</div>
+      <div class="sb-rate-val" id="sb-rate">$75</div>
+      <div class="sb-rate-sub">per UGC video · raise after 3 deals</div>
     </div>
     <!-- User info + sign out -->
     <div style="display:flex;align-items:center;gap:8px;margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.06);">
@@ -808,9 +810,9 @@ body.dark-mode #dark-toggle{border-color:rgba(255,255,255,.15);color:rgba(250,24
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;gap:10px;flex-wrap:wrap;">
       <div>
         <div style="font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--warm-gray);font-family:'DM Mono',monospace;margin-bottom:2px;">Rate Milestone</div>
-        <div style="font-size:13px;font-weight:500;" id="d-milestone-text">Complete 5 gigs → raise your rate by $10</div>
+        <div style="font-size:13px;font-weight:500;" id="d-milestone-text">Complete 3 gigs → raise your rate by $25</div>
       </div>
-      <div style="font-family:'Cormorant Garamond',serif;font-size:1.4rem;color:var(--forest);font-weight:300;" id="d-milestone-rate">Current rate: $35</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:1.4rem;color:var(--forest);font-weight:300;" id="d-milestone-rate">Current rate: $75</div>
     </div>
     <div class="milestone-row">
       <div class="milestone-dots" id="d-milestone-dots"></div>
@@ -828,7 +830,7 @@ body.dark-mode #dark-toggle{border-color:rgba(255,255,255,.15);color:rgba(250,24
     <div class="sc"><div class="sc-l">Total Earned</div><div class="sc-v c-f" id="s-earned">$0</div><div class="sc-s">paid &amp; delivered</div></div>
     <div class="sc"><div class="sc-l">Delivered</div><div class="sc-v c-k" id="s-delivered">0</div><div class="sc-s">completed</div></div>
     <div class="sc"><div class="sc-l">Ideas</div><div class="sc-v" id="s-ideas" style="color:var(--lavender)">0</div><div class="sc-s">in library</div></div>
-    <div class="sc"><div class="sc-l">Pitches This Week</div><div class="sc-v" id="s-pitches-week" style="color:var(--sky-deep)">0</div><div class="sc-s">/ 10 goal</div></div>
+    <div class="sc"><div class="sc-l">Pitches This Week</div><div class="sc-v" id="s-pitches-week" style="color:var(--sky-deep)">0</div><div class="sc-s">/ 5 goal</div></div>
   </div>
 
   <!-- WEEKLY CONSISTENCY TRACKER -->
@@ -855,7 +857,10 @@ body.dark-mode #dark-toggle{border-color:rgba(255,255,255,.15);color:rgba(250,24
           <button class="btn btn-p btn-s" id="goal-btn-month" onclick="switchGoalPeriod('month',this)" style="font-size:9px;padding:3px 9px;">Month</button>
           <button class="btn btn-g btn-s" id="goal-btn-quarter" onclick="switchGoalPeriod('quarter',this)" style="font-size:9px;padding:3px 9px;">Quarter</button>
         </div>
-        <div style="font-family:'Cormorant Garamond',serif;font-size:1.4rem;color:var(--forest);font-weight:300;" id="d-goal-label">$0 / $200</div>
+        <div style="display:flex;align-items:center;gap:5px;">
+          <div style="font-family:'Cormorant Garamond',serif;font-size:1.4rem;color:var(--forest);font-weight:300;" id="d-goal-label">$0 / $200</div>
+          <button class="ib" title="Set your monthly income goal" onclick="editIncomeGoal()" style="font-size:11px;opacity:.55;">✏️</button>
+        </div>
       </div>
     </div>
     <div style="background:var(--warm-white);border-radius:100px;height:8px;overflow:hidden;">
@@ -897,6 +902,374 @@ body.dark-mode #dark-toggle{border-color:rgba(255,255,255,.15);color:rgba(250,24
 </div>
 
 <!-- ─── GUIDE PAGE ─── -->
+<!-- ─── FOUNDATION PHASE PAGE ─── -->
+<div class="pg" id="pg-foundation">
+<style>
+.fp-hero{background:var(--ink);border-radius:var(--r);padding:22px 26px;margin-bottom:18px;position:relative;overflow:hidden;}
+.fp-hero::after{content:'🌱';position:absolute;right:22px;top:50%;transform:translateY(-50%);font-size:60px;opacity:.07;}
+.fp-eyebrow{font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:var(--sage);font-family:'DM Mono',monospace;margin-bottom:6px;}
+.fp-title{font-family:'Cormorant Garamond',serif;font-size:1.9rem;font-weight:300;color:var(--ivory);line-height:1.1;margin-bottom:7px;}
+.fp-title em{font-style:italic;color:var(--blush);}
+.fp-sub{font-size:12px;color:rgba(250,246,239,.42);line-height:1.65;max-width:500px;}
+
+.fp-identity{background:#fff;border-radius:var(--r);border:1px solid rgba(0,0,0,.06);padding:18px 20px;margin-bottom:14px;border-left:4px solid var(--terracotta);}
+.fp-identity-lbl{font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:var(--terracotta);font-family:'DM Mono',monospace;margin-bottom:8px;font-weight:600;}
+.fp-identity-text{font-size:13px;color:var(--ink);line-height:1.75;}
+.fp-identity-text strong{font-weight:600;}
+
+.fp-week{background:#fff;border-radius:var(--r);border:1px solid rgba(0,0,0,.06);overflow:hidden;margin-bottom:10px;}
+.fp-week-hdr{display:flex;align-items:center;gap:12px;padding:13px 18px;cursor:pointer;user-select:none;}
+.fp-week-num{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-family:'DM Mono',monospace;font-weight:700;flex-shrink:0;color:#fff;}
+.fp-week-title{flex:1;font-size:13px;font-weight:500;}
+.fp-week-badge{font-size:9px;letter-spacing:.1em;text-transform:uppercase;font-family:'DM Mono',monospace;padding:3px 9px;border-radius:20px;font-weight:600;}
+.fp-week-arrow{font-size:11px;color:var(--mid-gray);transition:transform .2s;}
+.fp-week.open .fp-week-arrow{transform:rotate(90deg);}
+.fp-week-body{display:none;padding:0 18px 16px 62px;border-top:1px solid rgba(0,0,0,.05);}
+.fp-week.open .fp-week-body{display:block;}
+.fp-week-body p{font-size:12px;color:var(--warm-gray);line-height:1.75;margin-bottom:8px;}
+.fp-week-body strong{color:var(--ink);}
+.fp-task{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid rgba(0,0,0,.04);}
+.fp-task:last-child{border-bottom:none;}
+.fp-task-check{width:18px;height:18px;border:2px solid rgba(0,0,0,.15);border-radius:4px;flex-shrink:0;margin-top:1px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:10px;transition:all .14s;}
+.fp-task-check.checked{background:var(--forest);border-color:var(--forest);color:#fff;}
+.fp-task-text{font-size:12px;color:var(--ink);line-height:1.6;}
+.fp-task-text.checked-text{text-decoration:line-through;color:var(--mid-gray);}
+.fp-task-sub{font-size:11px;color:var(--warm-gray);margin-top:2px;}
+
+.fp-anatomy{background:var(--ink);border-radius:var(--r);padding:18px 22px;margin-bottom:14px;}
+.fp-anatomy-lbl{font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:var(--warm-gold);font-family:'DM Mono',monospace;margin-bottom:12px;}
+.fp-anatomy-row{display:grid;grid-template-columns:120px 1fr;gap:0;background:rgba(255,255,255,.04);margin-bottom:2px;border-radius:6px;overflow:hidden;}
+.fp-anatomy-tag{padding:12px 14px;display:flex;align-items:center;}
+.fp-anatomy-tag p{font-size:10px;font-weight:700;color:var(--blush);font-family:'DM Mono',monospace;line-height:1.3;}
+.fp-anatomy-body{padding:12px 14px;border-left:1px solid rgba(255,255,255,.06);}
+.fp-anatomy-body p{font-size:12px;color:rgba(250,246,239,.65);line-height:1.65;}
+
+.fp-contingency{background:#fff;border-radius:var(--r);border:1px solid rgba(0,0,0,.06);overflow:hidden;margin-bottom:14px;}
+.fp-cont-hdr{padding:14px 18px;background:rgba(196,113,79,.06);border-bottom:1px solid rgba(196,113,79,.1);}
+.fp-cont-hdr-text{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--terracotta);font-family:'DM Mono',monospace;font-weight:600;}
+.fp-cont-item{padding:13px 18px;border-bottom:1px solid rgba(0,0,0,.04);}
+.fp-cont-item:last-child{border-bottom:none;}
+.fp-cont-scenario{font-size:11px;font-weight:600;color:var(--ink);margin-bottom:4px;}
+.fp-cont-fix{font-size:12px;color:var(--warm-gray);line-height:1.65;}
+
+.fp-rule{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid rgba(0,0,0,.05);align-items:flex-start;}
+.fp-rule:last-child{border-bottom:none;}
+.fp-rule-dot{width:8px;height:8px;border-radius:50%;background:var(--terracotta);flex-shrink:0;margin-top:5px;}
+.fp-rule-title{font-size:12px;font-weight:600;color:var(--ink);margin-bottom:3px;}
+.fp-rule-body{font-size:12px;color:var(--warm-gray);line-height:1.65;}
+
+.fp-readiness{background:#fff;border-radius:var(--r);border:1px solid rgba(0,0,0,.06);padding:16px 20px;margin-bottom:14px;}
+.fp-ready-item{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px solid rgba(0,0,0,.04);}
+.fp-ready-item:last-child{border-bottom:none;}
+.fp-ready-check{width:20px;height:20px;border:2px solid var(--earth,#C4854A);border-radius:4px;flex-shrink:0;margin-top:1px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:11px;transition:all .14s;}
+.fp-ready-check.checked{background:var(--forest);border-color:var(--forest);color:#fff;}
+.fp-ready-text{font-size:13px;color:var(--ink);line-height:1.5;font-weight:500;}
+.fp-ready-sub{font-size:11px;color:var(--warm-gray);margin-top:3px;line-height:1.6;}
+
+.fp-daughters-rule{background:rgba(139,58,58,.05);border:1px solid rgba(139,58,58,.15);border-radius:12px;padding:15px 18px;margin-bottom:14px;}
+.fp-daughters-lbl{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:#8b3a3a;font-family:'DM Mono',monospace;font-weight:600;margin-bottom:8px;}
+.fp-daughters-text{font-size:13px;color:var(--ink);line-height:1.75;}
+
+.fp-floor{background:var(--ink);border-radius:var(--r);padding:18px 22px;margin-bottom:14px;}
+.fp-floor-lbl{font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:var(--warm-gold);font-family:'DM Mono',monospace;margin-bottom:12px;}
+.fp-floor-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.06);}
+.fp-floor-row:last-child{border-bottom:none;}
+.fp-floor-key{font-size:12px;color:rgba(250,246,239,.6);}
+.fp-floor-val{font-size:13px;font-weight:700;color:var(--warm-gold);font-family:'DM Mono',monospace;}
+
+.fp-pillar-seq{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px;}
+.fp-pillar{border-radius:12px;padding:14px;border-top:3px solid;}
+.fp-pillar-num{font-size:9px;letter-spacing:.2em;text-transform:uppercase;font-family:'DM Mono',monospace;font-weight:700;margin-bottom:5px;}
+.fp-pillar-name{font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:400;line-height:1.2;margin-bottom:5px;}
+.fp-pillar-name em{font-style:italic;}
+.fp-pillar-job{font-size:10px;color:var(--warm-gray);line-height:1.5;}
+@media(max-width:600px){.fp-pillar-seq{grid-template-columns:1fr;}}
+</style>
+
+<div class="fp-hero">
+  <div class="fp-eyebrow">Month 1 · The Only Job</div>
+  <div class="fp-title">Build First.<br><em>Pitch Later.</em></div>
+  <div class="fp-sub">You are not a content creator who also does UGC. You are a UGC creator whose content makes brands find you. Month 1 is not for pitching — it is for building the world a brand wants to enter.</div>
+</div>
+
+<!-- IDENTITY FRAME -->
+<div class="fp-identity">
+  <div class="fp-identity-lbl">✦ Your Identity — Say This Out Loud</div>
+  <div class="fp-identity-text">
+    <strong>You are a UGC creator.</strong> That means brands pay you to make content they use — in their ads, on their pages, in their campaigns. They do not need your follower count. They need your eye, your environment, and your ability to make their product feel like it belongs in a real life.<br><br>
+    Your content on Instagram and TikTok is <em>not the product</em> — it is the shop window. The product is the video you deliver to a brand. When a brand asks "how many followers do you have?" before asking "can I see your work?" — they want an influencer. You are not an influencer. Direct them to your portfolio.
+  </div>
+</div>
+
+<!-- PILLAR ORDER (CORRECT SEQUENCE) -->
+<div style="background:#fff;border-radius:var(--r);border:1px solid rgba(0,0,0,.06);padding:16px 20px;margin-bottom:14px;">
+  <div style="font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--warm-gray);font-family:'DM Mono',monospace;margin-bottom:12px;font-weight:600;">The Three Pillars — In the Correct Order</div>
+  <div class="fp-pillar-seq">
+    <div class="fp-pillar" style="background:rgba(61,107,138,.05);border-color:#7A9BB5;">
+      <div class="fp-pillar-num" style="color:#3d6b8a;">Pillar 1 · Brand Magnet</div>
+      <div class="fp-pillar-name">Life In <em>Full View</em></div>
+      <div class="fp-pillar-job">Your environment. Your homeschool mornings, your land, your kitchen. One Reel + one Carousel per week. Job: make a brand's marketing manager stop and think "I want our product in that world."</div>
+    </div>
+    <div class="fp-pillar" style="background:rgba(45,74,53,.05);border-color:var(--forest);">
+      <div class="fp-pillar-num" style="color:var(--forest);">Pillar 2 · Audience Builder</div>
+      <div class="fp-pillar-name">Hair Done <em>Once, Shown Right</em></div>
+      <div class="fp-pillar-job">One hair session per week becomes your content. Protective styles for a homeschool family. Real results, three hair textures, your mother's perspective. One Reel + one Carousel per week.</div>
+    </div>
+    <div class="fp-pillar" style="background:rgba(196,113,79,.05);border-color:var(--terracotta);">
+      <div class="fp-pillar-num" style="color:var(--terracotta);">Pillar 3 · Brand Converter</div>
+      <div class="fp-pillar-name">UGC <em>In the Open</em></div>
+      <div class="fp-pillar-job">Show work, don't talk about work. Behind-the-shot, mock briefs, before/after edits. This pillar is not for other creators — it's a public portfolio that answers every question a brand would ask before hiring you.</div>
+    </div>
+  </div>
+  <div style="font-size:11px;color:var(--warm-gray);background:rgba(196,113,79,.06);border-radius:8px;padding:9px 12px;">⚠ The order matters. Build the lifestyle world first (brands need to see your environment). Show your craft second (hair proves close-up filming ability). Demonstrate UGC skill third (converts interested brands into paying ones).</div>
+</div>
+
+<!-- WEEK BY WEEK -->
+<div style="font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--warm-gray);font-family:'DM Mono',monospace;margin-bottom:10px;font-weight:600;">Month 1 · Week by Week</div>
+
+<div class="fp-week open" id="fpw-1">
+  <div class="fp-week-hdr" onclick="this.parentElement.classList.toggle('open')">
+    <div class="fp-week-num" style="background:var(--forest);">W1</div>
+    <div class="fp-week-title">Weeks 1–2 · Post Only. Nothing Else.</div>
+    <div class="fp-week-badge" style="background:rgba(74,107,80,.1);color:var(--forest);">No pitching</div>
+    <div class="fp-week-arrow">›</div>
+  </div>
+  <div class="fp-week-body">
+    <p>Your only job these two weeks is to establish the rhythm and produce your first 6–12 posts. A brand who receives your pitch in Month 2 will click your profile. There needs to be something there worth clicking on.</p>
+    <div class="fp-task"><div class="fp-task-check" onclick="toggleFPTask(this)"></div><div><div class="fp-task-text">Write your bio before posting anything. Formula: <em>[What you make] · [Who you are in one real line] · [Where] · Brands: DM for collabs</em></div><div class="fp-task-sub">Example: UGC Creator · Homeschool mum on the land · Mitheru, Kenya 🇰🇪 · Natural light, real life, protective styles · Brands: DM for collabs</div></div></div>
+    <div class="fp-task"><div class="fp-task-check" onclick="toggleFPTask(this)"></div><div><div class="fp-task-text">Film and post your first Lifestyle Reel — your environment, your morning, your world. No product. No UGC. Just your life made visible.</div></div></div>
+    <div class="fp-task"><div class="fp-task-check" onclick="toggleFPTask(this)"></div><div><div class="fp-task-text">Post your first Hair carousel — Sunday session, before + after + one thing you know about why you do it this way.</div></div></div>
+    <div class="fp-task"><div class="fp-task-check" onclick="toggleFPTask(this)"></div><div><div class="fp-task-text">Film one mock UGC video with a product you already own. Apply the UGC Anatomy checklist below — hook, product screen time, benefit moment, CTA. Save it. This is spec work.</div></div></div>
+    <div class="fp-task"><div class="fp-task-check" onclick="toggleFPTask(this)"></div><div><div class="fp-task-text">Post all 6 weekly posts in Week 2 — for the first time using all 3 pillars across the full week.</div></div></div>
+    <div class="fp-task"><div class="fp-task-check" onclick="toggleFPTask(this)"></div><div><div class="fp-task-text">Decision: decide now — and write it below — exactly how much of your daughters you will show and under what conditions. No brand deal ever changes this.</div><div class="fp-task-sub">See "Daughters Rule" section below before continuing.</div></div></div>
+  </div>
+</div>
+
+<div class="fp-week" id="fpw-3">
+  <div class="fp-week-hdr" onclick="this.parentElement.classList.toggle('open')">
+    <div class="fp-week-num" style="background:var(--earth,#C4854A);">W3</div>
+    <div class="fp-week-title">Week 3 · First Gifted Collabs Open</div>
+    <div class="fp-week-badge" style="background:rgba(196,113,79,.1);color:var(--terracotta);">Gifted only · 2 max ever</div>
+    <div class="fp-week-arrow">›</div>
+  </div>
+  <div class="fp-week-body">
+    <p>You have 6–12 posts live. Your profile has content. Now you can approach 3–5 small brands for gifted collabs — not for income, but for <strong>experience, real product, and a testimonial you'll use in every paid pitch you ever send.</strong></p>
+    <div class="fp-task"><div class="fp-task-check" onclick="toggleFPTask(this)"></div><div><div class="fp-task-text">Choose 3–5 brands whose products you genuinely want to use. Natural skincare, hair care, food, home — your actual niches. Small-to-medium brands reply faster.</div><div class="fp-task-sub">Check Instagram, search your favourite beauty/lifestyle hashtags, look at who Kenyan creators are already working with.</div></div></div>
+    <div class="fp-task"><div class="fp-task-check" onclick="toggleFPTask(this)"></div><div><div class="fp-task-text">Send the gifted pitch script (Gifting Policy page). One personalised sentence about their brand first — before the template body.</div><div class="fp-task-sub">Brands smell a template. "I've been using [product] for three months and I love how it [specific thing]" is the sentence that gets replies.</div></div></div>
+    <div class="fp-task"><div class="fp-task-check" onclick="toggleFPTask(this)"></div><div><div class="fp-task-text">When a brand says yes: log it as a Gig in the Gig Tracker (type: Gifted). Do not skip this step.</div></div></div>
+    <div class="fp-task"><div class="fp-task-check" onclick="toggleFPTask(this)"></div><div><div class="fp-task-text">Deliver within 5–7 days of receiving the product. Use the UGC anatomy checklist. No brief = no video (even for gifted).</div></div></div>
+    <div class="fp-task"><div class="fp-task-check" onclick="toggleFPTask(this)"></div><div><div class="fp-task-text">Within 48 hours of delivery: ask for written feedback. Log it in Testimonials. Mark "Use in pitches."</div></div></div>
+    <div class="fp-task"><div class="fp-task-check" onclick="toggleFPTask(this)"></div><div><div class="fp-task-text">Send the transition script to move them to paid (Gifting Policy page). Do this every time. Even if it feels early. Especially if it feels early.</div></div></div>
+    <div style="background:rgba(192,57,43,.06);border:1px solid rgba(192,57,43,.15);border-radius:8px;padding:9px 12px;margin-top:10px;font-size:11px;color:#c0392b;line-height:1.6;">
+      <strong>Hard limit: 2 gifted collabs total. Ever.</strong> After that, every brand pays. Gifting exists once, at the start, to build your first two testimonials and real delivery experience. It is not a business model.
+    </div>
+  </div>
+</div>
+
+<div class="fp-week" id="fpw-4">
+  <div class="fp-week-hdr" onclick="this.parentElement.classList.toggle('open')">
+    <div class="fp-week-num" style="background:var(--sage);">W4</div>
+    <div class="fp-week-title">Week 4 · Review + Month 2 Prep</div>
+    <div class="fp-week-badge" style="background:rgba(122,158,126,.12);color:var(--forest);">Quality gate</div>
+    <div class="fp-week-arrow">›</div>
+  </div>
+  <div class="fp-week-body">
+    <p>Month 1 ends here. Before Month 2 starts — which is when you build infrastructure and begin pitching — pass this quality gate. Not a time gate. A quality gate.</p>
+    <div class="fp-task"><div class="fp-task-check" onclick="toggleFPTask(this)"></div><div><div class="fp-task-text">12+ posts live across all 3 pillars.</div></div></div>
+    <div class="fp-task"><div class="fp-task-check" onclick="toggleFPTask(this)"></div><div><div class="fp-task-text">3 UGC videos you would be proud to send to a brand you genuinely respect. Not 3 videos — 3 you're proud of.</div></div></div>
+    <div class="fp-task"><div class="fp-task-check" onclick="toggleFPTask(this)"></div><div><div class="fp-task-text">Your last 6 posts look like they come from the same person — same light, same palette, same energy.</div></div></div>
+    <div class="fp-task"><div class="fp-task-check" onclick="toggleFPTask(this)"></div><div><div class="fp-task-text">At least 1 testimonial from a gifted collab delivery, logged in the Testimonials page.</div></div></div>
+    <div class="fp-task"><div class="fp-task-check" onclick="toggleFPTask(this)"></div><div><div class="fp-task-text">Every mock UGC video has all 5 anatomy elements: hook, product screen time, pacing, benefit moment, CTA. Check each one below.</div></div></div>
+    <p style="margin-top:12px;"><strong>If all five are true:</strong> you are ready for Month 2 (portfolio page, rate card, pitching). <strong>If not:</strong> stay in Month 1 for another week and fix the one thing that's missing. The calendar does not decide. Your work does.</p>
+  </div>
+</div>
+
+<!-- UGC ANATOMY CHECKLIST -->
+<div style="font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--warm-gray);font-family:'DM Mono',monospace;margin:18px 0 10px;font-weight:600;">UGC Anatomy — Check Every Video Before Delivering</div>
+<div class="fp-anatomy">
+  <div class="fp-anatomy-lbl">✦ The 5 Elements Every UGC Video Must Have</div>
+  <div class="fp-anatomy-row">
+    <div class="fp-anatomy-tag"><p>Hook<br>0–3 sec</p></div>
+    <div class="fp-anatomy-body"><p>Opens on a problem, a result, or a moment of curiosity — not on you talking to camera. "I never thought I'd find a product that…" or a close-up of the product in use before a word is spoken. If your video opens with you saying "Hey guys" — reshoot the first 3 seconds.</p></div>
+  </div>
+  <div class="fp-anatomy-row">
+    <div class="fp-anatomy-tag"><p>Product<br>Screen Time</p></div>
+    <div class="fp-anatomy-body"><p>The product appears in the first 5 seconds and is visible for at least 40% of the video. In a lifestyle video a product might appear once and briefly. In UGC it is the subject. Brands need their product seen — not glimpsed.</p></div>
+  </div>
+  <div class="fp-anatomy-row">
+    <div class="fp-anatomy-tag"><p>Pacing</p></div>
+    <div class="fp-anatomy-body"><p>UGC cuts every 1.5–2.5 seconds. Lifestyle content can hold a shot for 4–5 seconds — UGC cannot. Faster pacing signals "ad-ready content." If your edit feels slow and cinematic, it reads as lifestyle content, not UGC.</p></div>
+  </div>
+  <div class="fp-anatomy-row">
+    <div class="fp-anatomy-tag"><p>Benefit<br>Moment</p></div>
+    <div class="fp-anatomy-body"><p>Seconds 8–20: name one specific benefit in your own words. Not a list — one thing. "My hair retains moisture for the whole week." "My skin didn't react." Lifestyle content almost never does this. UGC always does.</p></div>
+  </div>
+  <div class="fp-anatomy-row">
+    <div class="fp-anatomy-tag"><p>CTA</p></div>
+    <div class="fp-anatomy-body"><p>Every UGC video ends with a call to action — even your practice ones. "Link in bio," "Find it at [retailer]," "Try it this week." One line. If your mock brief videos don't have a CTA, they don't read as UGC to a brand — they read as lifestyle content.</p></div>
+  </div>
+</div>
+
+<!-- HAIR CONTINGENCY -->
+<div style="font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--warm-gray);font-family:'DM Mono',monospace;margin:18px 0 10px;font-weight:600;">Hair Pillar · When Hair Day Goes Wrong</div>
+<div class="fp-contingency">
+  <div class="fp-cont-hdr"><div class="fp-cont-hdr-text">Contingency Plan — for every scenario that will actually happen</div></div>
+  <div class="fp-cont-item">
+    <div class="fp-cont-scenario">Light is gone by the time styling is done</div>
+    <div class="fp-cont-fix">Film the before shot and product moment at the start of the session, in whatever light exists. For the result shot: photograph the finished style the next morning by a window. Monday morning light for Sunday's style is still honest content.</div>
+  </div>
+  <div class="fp-cont-item">
+    <div class="fp-cont-scenario">Your daughters don't want to be filmed</div>
+    <div class="fp-cont-fix">Film only your own hair this week. You, your hands, your process, your result. Their participation is always optional. Your own hair is sufficient content — always.</div>
+  </div>
+  <div class="fp-cont-item">
+    <div class="fp-cont-scenario">Session ran long and you have no footage at all</div>
+    <div class="fp-cont-fix">Post a carousel instead of a Reel. Pull stills from any existing footage, or photograph the finished style. Caption: "No camera this week — just did the hair." That honesty is content. The carousel counts. The Reel is not mandatory every week.</div>
+  </div>
+  <div class="fp-cont-item">
+    <div class="fp-cont-scenario">Everything went wrong and you have nothing</div>
+    <div class="fp-cont-fix">See the floor below. A missed hair post does not break the month. Post one lifestyle thing instead. The rhythm holds if you post something — not necessarily everything.</div>
+  </div>
+</div>
+
+<!-- DAUGHTERS RULE -->
+<div class="fp-daughters-rule">
+  <div class="fp-daughters-lbl">⚠ The Daughters Rule — Decide This Once, Before Any Brand Asks</div>
+  <div class="fp-daughters-text">
+    Decide now — before a brand ever mentions your daughters, before a brief mentions children, before anyone asks — exactly how much of your daughters you will show and under what conditions. Write it down in the box below. No brand deal changes that line. Not ever. Not for any rate.<br><br>
+    When you have decided: make it your internal rule. It does not need to be in your media kit. It does not need to be explained to brands. It just needs to be decided, in advance, by you.
+  </div>
+  <div style="margin-top:12px;">
+    <div style="font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:#8b3a3a;font-family:'DM Mono',monospace;margin-bottom:5px;">Your rule (write it here — for yourself, not for brands)</div>
+    <textarea class="st-editable" id="fp-daughters-rule-text" placeholder="e.g. I will show my daughters in lifestyle content only — never in product demos. I will never show their faces in brand deals without their consent on the day. I will never accept a brief that asks for child close-ups or product use shots involving my daughters." style="min-height:90px;border-color:rgba(139,58,58,.2);" onchange="saveFPDaughtersRule()"></textarea>
+  </div>
+</div>
+
+<!-- MINIMUM VIABLE WEEK -->
+<div style="font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--warm-gray);font-family:'DM Mono',monospace;margin:18px 0 10px;font-weight:600;">Your Floor — When Life Interrupts</div>
+<div class="fp-floor">
+  <div class="fp-floor-lbl">✦ Minimum Viable Week — Month 1</div>
+  <div class="fp-floor-row"><span class="fp-floor-key">Target week</span><span class="fp-floor-val">6 posts</span></div>
+  <div class="fp-floor-row"><span class="fp-floor-key">Solid week</span><span class="fp-floor-val">4 posts</span></div>
+  <div class="fp-floor-row"><span class="fp-floor-key">Minimum viable week</span><span class="fp-floor-val">2 posts</span></div>
+  <div class="fp-floor-row"><span class="fp-floor-key">Non-negotiable (even in the worst week)</span><span class="fp-floor-val">1 post</span></div>
+  <div style="margin-top:12px;font-size:11px;color:rgba(250,246,239,.45);line-height:1.65;">Zero is the only outcome you are trying to avoid. A week where homeschool ran long and you posted one imperfect lifestyle Reel is not a failed week — it is proof that you showed up under real conditions. If you hit the floor two weeks in a row, that is information not failure. Adjust one thing: drop UGC to every other week, or let the hair carousel be photos only.</div>
+</div>
+
+<!-- PROTECTION RULES -->
+<div style="font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--warm-gray);font-family:'DM Mono',monospace;margin:18px 0 10px;font-weight:600;">Foundation Rules — Not Optional</div>
+<div style="background:#fff;border-radius:var(--r);border:1px solid rgba(0,0,0,.06);padding:16px 20px;margin-bottom:14px;">
+  <div class="fp-rule"><div class="fp-rule-dot"></div><div><div class="fp-rule-title">Your content is the shop window. Not the product.</div><div class="fp-rule-body">The product is the UGC video you deliver to a brand. Never confuse building an audience with building a business. They run in parallel — they are not the same thing.</div></div></div>
+  <div class="fp-rule"><div class="fp-rule-dot"></div><div><div class="fp-rule-title">Post imperfect over post nothing.</div><div class="fp-rule-body">A 70% video posted is portfolio. A 100% video in your drafts is nothing. Nothing is the only content that cannot be improved.</div></div></div>
+  <div class="fp-rule"><div class="fp-rule-dot"></div><div><div class="fp-rule-title">Never deliver without a brief in writing — even for gifted.</div><div class="fp-rule-body">Even informal. Even a DM. "Warm tones, 30 seconds, our product used in a kitchen setting" — that in writing is a brief. No brief, no video. Start this habit from your very first delivery.</div></div></div>
+  <div class="fp-rule"><div class="fp-rule-dot"></div><div><div class="fp-rule-title">Show work. Don't talk about work.</div><div class="fp-rule-body">In the UGC pillar, if your caption starts with "here are my tips for…" — stop. Reframe it: show one example, then explain it in the caption. Demonstration converts. Advice attracts other creators, not brands.</div></div></div>
+  <div class="fp-rule"><div class="fp-rule-dot"></div><div><div class="fp-rule-title">Overthinking is not planning. Planning is not working.</div><div class="fp-rule-body">When you notice you are thinking about content instead of making content — open your camera. Film something. Anything. The momentum of making is the only cure for the paralysis of thinking.</div></div></div>
+</div>
+
+<script>
+function toggleFPTask(el){
+  el.classList.toggle('checked');
+  const textEl = el.parentElement.querySelector('.fp-task-text');
+  if(textEl) textEl.classList.toggle('checked-text');
+  saveFPTasks();
+}
+function saveFPTasks(){
+  const checks = document.querySelectorAll('.fp-task-check');
+  const states = [...checks].map(c=>c.classList.contains('checked'));
+  try{localStorage.setItem('ajhq_fp_tasks', JSON.stringify(states));}catch(e){}
+}
+function loadFPTasks(){
+  try{
+    const states = JSON.parse(localStorage.getItem('ajhq_fp_tasks')||'[]');
+    const checks = document.querySelectorAll('.fp-task-check');
+    checks.forEach((c,i)=>{
+      if(states[i]){
+        c.classList.add('checked');
+        c.textContent='✓';
+        const textEl = c.parentElement.querySelector('.fp-task-text');
+        if(textEl) textEl.classList.add('checked-text');
+      }
+    });
+  }catch(e){}
+}
+function saveFPDaughtersRule(){
+  const v = document.getElementById('fp-daughters-rule-text')?.value||'';
+  try{localStorage.setItem('ajhq_fp_daughters',v);}catch(e){}
+}
+function loadFPDaughtersRule(){
+  try{
+    const v = localStorage.getItem('ajhq_fp_daughters')||'';
+    const el = document.getElementById('fp-daughters-rule-text');
+    if(el&&v) el.value=v;
+  }catch(e){}
+}
+document.addEventListener('DOMContentLoaded',()=>{loadFPTasks();loadFPDaughtersRule();});
+setTimeout(()=>{loadFPTasks();loadFPDaughtersRule();},600);
+</script>
+</div>
+<!-- ─── END FOUNDATION PHASE PAGE ─── -->
+
+<!-- ─── SHOW-UP TRACKER PAGE ─── -->
+<div class="pg" id="pg-showup">
+  <div style="font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:var(--terracotta);font-weight:500;margin-bottom:4px;">Daily Consistency</div>
+  <div style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:300;margin-bottom:4px;">Show-Up <em style="font-style:italic;color:var(--terracotta);">Tracker</em></div>
+  <div style="font-size:12px;color:var(--warm-gray);margin-bottom:16px;line-height:1.5;">Set the day you officially started showing up. Tick each day you do, log what you actually did, and what you're planning — then look back and count the days.</div>
+
+  <!-- FIRST-TIME: set start date -->
+  <div id="su-start-wrap" style="background:#fff;border-radius:var(--r);border:1px solid rgba(0,0,0,.06);padding:24px 20px;text-align:center;">
+    <div style="font-size:32px;margin-bottom:8px;">🔥</div>
+    <div style="font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:300;margin-bottom:6px;">When did you start showing up?</div>
+    <div style="font-size:12px;color:var(--warm-gray);margin-bottom:16px;">Pick today, or the day you actually began. From here on, you tick every day you show up.</div>
+    <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;align-items:center;">
+      <input type="date" id="su-start-input" class="fi" style="width:auto;">
+      <button class="btn btn-p btn-s" onclick="confirmShowUpStartDate()">Start Tracking →</button>
+    </div>
+  </div>
+
+  <!-- MAIN TRACKER (hidden until start date is set) -->
+  <div id="su-main-wrap" style="display:none;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:6px;">
+      <div style="font-size:12px;color:var(--warm-gray);">Started <strong style="color:var(--ink);" id="su-start-date-display"></strong></div>
+      <button class="ib" style="font-size:11px;opacity:.6;" onclick="changeShowUpStartDate()">✏️ Change start date</button>
+    </div>
+
+    <!-- STATS -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px;margin-bottom:16px;">
+      <div class="sc"><div class="sc-l">Days Tracked</div><div class="sc-v c-t" id="su-total-days">0</div></div>
+      <div class="sc"><div class="sc-l">Days Shown Up</div><div class="sc-v c-f" id="su-shown-days">0</div></div>
+      <div class="sc"><div class="sc-l">Current Streak</div><div class="sc-v c-g" id="su-streak">0</div></div>
+      <div class="sc"><div class="sc-l">Best Streak</div><div class="sc-v c-k" id="su-longest">0</div></div>
+      <div class="sc"><div class="sc-l">Show-Up Rate</div><div class="sc-v" style="color:var(--sky-deep);" id="su-rate">0%</div></div>
+    </div>
+    <div id="su-encourage" style="font-size:12px;color:var(--forest);margin-bottom:16px;"></div>
+
+    <!-- TODAY -->
+    <div style="background:var(--ink);border-radius:var(--r);padding:18px 20px;margin-bottom:18px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
+        <div style="font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:var(--warm-gold);font-family:'DM Mono',monospace;">Today · <span id="su-today-date"></span></div>
+        <label style="display:flex;align-items:center;gap:7px;cursor:pointer;color:#fff;font-size:12px;">
+          <input type="checkbox" id="su-today-check" onchange="toggleShowUpDay(todayStr())" style="width:18px;height:18px;cursor:pointer;accent-color:var(--forest);">
+          I showed up today
+        </label>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div>
+          <div style="font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(250,246,239,.45);margin-bottom:4px;">What I did today</div>
+          <textarea class="ft" id="su-today-did" rows="2" placeholder="Posted a reel, filmed a gifted collab…" oninput="updateShowUpField(todayStr(),'did',this.value)" style="font-size:12px;"></textarea>
+        </div>
+        <div>
+          <div style="font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(250,246,239,.45);margin-bottom:4px;">What I'm planning</div>
+          <textarea class="ft" id="su-today-plan" rows="2" placeholder="Film tomorrow's hair tutorial…" oninput="updateShowUpField(todayStr(),'plan',this.value)" style="font-size:12px;"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div style="font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--mid-gray);font-family:'DM Mono',monospace;margin-bottom:8px;">Look Back</div>
+    <div id="su-list"></div>
+  </div>
+</div>
+<!-- ─── END SHOW-UP TRACKER PAGE ─── -->
+
 <div class="pg" id="pg-guide">
 
 <style>
@@ -996,10 +1369,26 @@ body.dark-mode #dark-toggle{border-color:rgba(255,255,255,.15);color:rgba(250,24
 
   <div style="font-size:11px;color:var(--warm-gray);margin-bottom:14px;line-height:1.6;">Complete these once. After this, you only touch the app during your daily, weekly, and monthly rhythms. Click each step to expand it.</div>
 
-  <!-- STEP 1 -->
+  <!-- STEP 1 (was step 10) -->
   <div class="setup-step" id="ss-1" onclick="toggleStep(1)">
     <div class="setup-step-hdr">
       <div class="setup-step-num" id="ss-num-1">1</div>
+      <div class="setup-step-title">Start the Foundation Phase — not pitching yet</div>
+      <div class="setup-step-time">Ongoing · Month 1</div>
+      <div class="setup-step-arrow">›</div>
+    </div>
+    <div class="setup-step-body">
+      <p>Setup is complete when the app is built. <strong>Pitching is not part of setup</strong> — it is Month 2 work. What you do next is go to the <span class="step-action">🌱 Foundation Phase</span> page and follow the Month 1 plan.</p>
+      <p><strong>What to do this week:</strong> Post your first Lifestyle Reel and Hair carousel. Film one mock UGC video with a product you already own. Write your bio. Come back to this app for 10 minutes each morning to log and plan — then close it and go film.</p>
+      <p><strong>When gifted collabs open:</strong> Week 3 of Month 1. Not before. The Foundation Phase page has the gifted pitch script, the 2-collab limit, and the transition message to move gifted brands to paid once Month 3 opens.</p>
+      <div class="step-tip">💡 The most common mistake UGC creators make is pitching before their portfolio is ready. A brand who receives your pitch clicks your profile. There needs to be something there worth clicking. Build that first.</div>
+      <button class="step-nav-btn" onclick="event.stopPropagation();markStep(1);goTo('foundation',document.querySelector('.ni[onclick*=foundation]'))">Go to Foundation Phase →</button>
+    </div>
+  </div>
+  <!-- STEP 2 (was step 1) -->
+  <div class="setup-step" id="ss-2" onclick="toggleStep(2)">
+    <div class="setup-step-hdr">
+      <div class="setup-step-num" id="ss-num-2">2</div>
       <div class="setup-step-title">Set your base rate and add your services</div>
       <div class="setup-step-time">5 min</div>
       <div class="setup-step-arrow">›</div>
@@ -1008,15 +1397,15 @@ body.dark-mode #dark-toggle{border-color:rgba(255,255,255,.15);color:rgba(250,24
       <p>Your base rate shows in the sidebar footer and drives everything. Don't start pitching without it set.</p>
       <p><strong>What to do:</strong></p>
       <p>Go to <span class="step-action">💼 Services & Rates</span> and add at least 3 rates: a 15–30s video, a 60s video, and a bundle. Edit the price on each card directly — click the number.</p>
-      <div class="step-tip">💡 Start at $20 per video if you have no portfolio. You'll raise it once you have 5 deliveries.</div>
-      <button class="step-nav-btn" onclick="event.stopPropagation();markStep(1);goTo('studio-rates',document.querySelector('.ni[onclick*=studio-rates]'))">Go to Services & Rates →</button>
+      <div class="step-tip">💡 Start at $75 per video. This is the blueprint floor — not a premium rate, a starting point. After every 3 paid deliveries, raise by $25. The only way to know if you've overpriced is to get a no — and a no is not a disaster, it's data.</div>
+      <button class="step-nav-btn" onclick="event.stopPropagation();markStep(2);goTo('studio-rates',document.querySelector('.ni[onclick*=studio-rates]'))">Go to Services & Rates →</button>
     </div>
   </div>
 
-  <!-- STEP 2 -->
-  <div class="setup-step" id="ss-2" onclick="toggleStep(2)">
+  <!-- STEP 3 (was step 2) -->
+  <div class="setup-step" id="ss-3" onclick="toggleStep(3)">
     <div class="setup-step-hdr">
-      <div class="setup-step-num" id="ss-num-2">2</div>
+      <div class="setup-step-num" id="ss-num-3">3</div>
       <div class="setup-step-title">Write your bio and add your links</div>
       <div class="setup-step-time">5 min</div>
       <div class="setup-step-arrow">›</div>
@@ -1025,46 +1414,14 @@ body.dark-mode #dark-toggle{border-color:rgba(255,255,255,.15);color:rgba(250,24
       <p>This is what fills your pitches and media kit. Keep it to 2–3 sentences.</p>
       <p><strong>What to do:</strong> Go to <span class="step-action">🎨 Brand Hub</span> → Bio & Links tab. Write your creator bio and add your email, Instagram, TikTok handle, and any portfolio link.</p>
       <div class="step-tip">💡 Lead with what you make, who you make it for, and where you're based. "UGC creator in Kenya making authentic beauty and lifestyle content for brands who want real." That's enough.</div>
-      <button class="step-nav-btn" onclick="event.stopPropagation();markStep(2);goTo('brand',document.querySelector('.ni[onclick*=brand]'))">Go to Brand Hub →</button>
+      <button class="step-nav-btn" onclick="event.stopPropagation();markStep(3);goTo('brand',document.querySelector('.ni[onclick*=brand]'))">Go to Brand Hub →</button>
     </div>
   </div>
 
-  <!-- STEP 3 -->
-  <div class="setup-step" id="ss-3" onclick="toggleStep(3)">
-    <div class="setup-step-hdr">
-      <div class="setup-step-num" id="ss-num-3">3</div>
-      <div class="setup-step-title">Add 3 pitch templates</div>
-      <div class="setup-step-time">15 min</div>
-      <div class="setup-step-arrow">›</div>
-    </div>
-    <div class="setup-step-body">
-      <p>You already have 3 default pitches. Read them, customise them so they sound like <em>you</em>, and add one for each main niche you work in.</p>
-      <p><strong>What to do:</strong> Go to <span class="step-action">✉️ Pitches</span>. Edit the "Beauty — Gifted DM" and "Paid Collab — Email" templates. Change the tone until it doesn't sound copy-pasted.</p>
-      <div class="step-warn">⚠ Brands can smell a template. One personal sentence about their brand at the top — before the template body — is what gets replies.</div>
-      <button class="step-nav-btn" onclick="event.stopPropagation();markStep(3);goTo('pitches',document.querySelector('.ni[onclick*=pitches]'))">Go to Pitches →</button>
-    </div>
-  </div>
-
-  <!-- STEP 4 -->
+  <!-- STEP 4 (was step 5) -->
   <div class="setup-step" id="ss-4" onclick="toggleStep(4)">
     <div class="setup-step-hdr">
       <div class="setup-step-num" id="ss-num-4">4</div>
-      <div class="setup-step-title">Add your first 10 brand targets</div>
-      <div class="setup-step-time">20 min</div>
-      <div class="setup-step-arrow">›</div>
-    </div>
-    <div class="setup-step-body">
-      <p>These are brands you <em>want</em> to work with — not brands you've messaged yet. Build the list first, send pitches second. This is how you stay organised instead of pitching whoever you remember.</p>
-      <p><strong>What to do:</strong> Go to <span class="step-action">🎯 Brand Targets</span> → click "+ Add Brand". Add 10 brands. Set each to "Researching" status. Include their Instagram handle or email and one note on why they fit your content.</p>
-      <div class="step-tip">💡 Look at brands already working with Kenyan creators. Check the comments on your favourite beauty/lifestyle posts. Start with small-to-medium brands — they're more likely to reply.</div>
-      <button class="step-nav-btn" onclick="event.stopPropagation();markStep(4);goTo('studio-brands',document.querySelector('.ni[onclick*=studio-brands]'))">Go to Brand Targets →</button>
-    </div>
-  </div>
-
-  <!-- STEP 5 -->
-  <div class="setup-step" id="ss-5" onclick="toggleStep(5)">
-    <div class="setup-step-hdr">
-      <div class="setup-step-num" id="ss-num-5">5</div>
       <div class="setup-step-title">Add 5 content ideas to your library</div>
       <div class="setup-step-time">10 min</div>
       <div class="setup-step-arrow">›</div>
@@ -1073,14 +1430,14 @@ body.dark-mode #dark-toggle{border-color:rgba(255,255,255,.15);color:rgba(250,24
       <p>Your ideas library is your content bank. When a brand asks "what kind of content do you make?", you pull from here. When you're stuck on what to film, you pull from here.</p>
       <p><strong>What to do:</strong> Go to <span class="step-action">💡 Ideas & Planner</span> → click "+ Idea". Add 5 ideas — one per niche you cover. Or go to the "Content Pillars" tab to browse pre-built ideas and add them in one click.</p>
       <div class="step-tip">💡 The hook is the most important field. Write it like you'd write an opening line of a video — "POV: you finally found a moisturiser that works on melanin skin."</div>
-      <button class="step-nav-btn" onclick="event.stopPropagation();markStep(5);goTo('ideas',document.querySelector('.ni[onclick*=ideas]'))">Go to Ideas →</button>
+      <button class="step-nav-btn" onclick="event.stopPropagation();markStep(4);goTo('ideas',document.querySelector('.ni[onclick*=ideas]'))">Go to Ideas →</button>
     </div>
   </div>
 
-  <!-- STEP 6 -->
-  <div class="setup-step" id="ss-6" onclick="toggleStep(6)">
+  <!-- STEP 5 (was step 6) -->
+  <div class="setup-step" id="ss-5" onclick="toggleStep(5)">
     <div class="setup-step-hdr">
-      <div class="setup-step-num" id="ss-num-6">6</div>
+      <div class="setup-step-num" id="ss-num-5">5</div>
       <div class="setup-step-title">Set up your filming location(s) and camera preset</div>
       <div class="setup-step-time">10 min</div>
       <div class="setup-step-arrow">›</div>
@@ -1089,11 +1446,27 @@ body.dark-mode #dark-toggle{border-color:rgba(255,255,255,.15);color:rgba(250,24
       <p>Do this once so you never spend 20 minutes on shoot day re-figuring out your settings. One saved location = one saved camera preset = consistent-looking content.</p>
       <p><strong>What to do:</strong> Go to <span class="step-action">🎨 Brand Hub</span> → Locations tab, add your main filming spot. Then go to the Camera Settings tab and save your go-to phone settings (resolution, fps, ISO, white balance, lighting).</p>
       <div class="step-tip">💡 "Kitchen window, morning light, 1080p 30fps, Auto WB" saved once means you never have to think about it again on shoot day.</div>
-      <button class="step-nav-btn" onclick="event.stopPropagation();markStep(6);goTo('brand',document.querySelector('.ni[onclick*=brand]'))">Go to Brand Hub →</button>
+      <button class="step-nav-btn" onclick="event.stopPropagation();markStep(5);goTo('brand',document.querySelector('.ni[onclick*=brand]'))">Go to Brand Hub →</button>
     </div>
   </div>
 
-  <!-- STEP 7 -->
+  <!-- STEP 6 (was step 8) -->
+  <div class="setup-step" id="ss-6" onclick="toggleStep(6)">
+    <div class="setup-step-hdr">
+      <div class="setup-step-num" id="ss-num-6">6</div>
+      <div class="setup-step-title">Review the Gifting Policy and Income Plan</div>
+      <div class="setup-step-time">5 min</div>
+      <div class="setup-step-arrow">›</div>
+    </div>
+    <div class="setup-step-body">
+      <p>These two pages are your business strategy written out. Read them once now, edit them to match your actual situation, and you'll never second-guess whether to accept a gifted deal again.</p>
+      <p><strong>What to do:</strong> Go to <span class="step-action">🎁 Gifting Policy</span> — edit the minimum gift value you'll accept. Then go to <span class="step-action">💰 Income Plan</span> — read the 4-week breakdown and adjust the numbers to your real monthly goal.</p>
+      <div class="step-tip">💡 If you're in Month 1 with no portfolio, accept gifted deals from brands whose products you'd genuinely use. These become your spec work.</div>
+      <button class="step-nav-btn" onclick="event.stopPropagation();markStep(6);goTo('studio-gifting',document.querySelector('.ni[onclick*=studio-gifting]'))">Go to Gifting Policy →</button>
+    </div>
+  </div>
+
+  <!-- STEP 7 (was step 7) -->
   <div class="setup-step" id="ss-7" onclick="toggleStep(7)">
     <div class="setup-step-hdr">
       <div class="setup-step-num" id="ss-num-7">7</div>
@@ -1109,26 +1482,42 @@ body.dark-mode #dark-toggle{border-color:rgba(255,255,255,.15);color:rgba(250,24
     </div>
   </div>
 
-  <!-- STEP 8 -->
+  <!-- STEP 8 (was step 3) -->
   <div class="setup-step" id="ss-8" onclick="toggleStep(8)">
     <div class="setup-step-hdr">
       <div class="setup-step-num" id="ss-num-8">8</div>
-      <div class="setup-step-title">Review the Gifting Policy and Income Plan</div>
-      <div class="setup-step-time">5 min</div>
+      <div class="setup-step-title">Prep 3 pitch templates (for Month 2)</div>
+      <div class="setup-step-time">15 min</div>
       <div class="setup-step-arrow">›</div>
     </div>
     <div class="setup-step-body">
-      <p>These two pages are your business strategy written out. Read them once now, edit them to match your actual situation, and you'll never second-guess whether to accept a gifted deal again.</p>
-      <p><strong>What to do:</strong> Go to <span class="step-action">🎁 Gifting Policy</span> — edit the minimum gift value you'll accept. Then go to <span class="step-action">💰 Income Plan</span> — read the 4-week breakdown and adjust the numbers to your real monthly goal.</p>
-      <div class="step-tip">💡 If you're in Month 1 with no portfolio, accept gifted deals from brands whose products you'd genuinely use. These become your spec work.</div>
-      <button class="step-nav-btn" onclick="event.stopPropagation();markStep(8);goTo('studio-gifting',document.querySelector('.ni[onclick*=studio-gifting]'))">Go to Gifting Policy →</button>
+      <p>This is pitch infrastructure, not pitching — you're prepping templates now so they're ready when Month 2 opens, not sending anything yet. You already have 3 default pitches. Read them, customise them so they sound like <em>you</em>, and add one for each main niche you work in.</p>
+      <p><strong>What to do:</strong> Go to <span class="step-action">✉️ Pitches</span>. Edit the "Beauty — Gifted DM" and "Paid Collab — Email" templates. Change the tone until it doesn't sound copy-pasted.</p>
+      <div class="step-warn">⚠ Brands can smell a template. One personal sentence about their brand at the top — before the template body — is what gets replies.</div>
+      <button class="step-nav-btn" onclick="event.stopPropagation();markStep(8);goTo('pitches',document.querySelector('.ni[onclick*=pitches]'))">Go to Pitches →</button>
     </div>
   </div>
 
-  <!-- STEP 9 -->
+  <!-- STEP 9 (was step 4) -->
   <div class="setup-step" id="ss-9" onclick="toggleStep(9)">
     <div class="setup-step-hdr">
       <div class="setup-step-num" id="ss-num-9">9</div>
+      <div class="setup-step-title">Research 10 brand targets (for Month 2)</div>
+      <div class="setup-step-time">20 min</div>
+      <div class="setup-step-arrow">›</div>
+    </div>
+    <div class="setup-step-body">
+      <p>These are brands you <em>want</em> to work with — not brands you've messaged yet, and not this month. Build the list now while you're thinking about it, so it's ready when Month 2 opens; don't pitch any of them during Month 1.</p>
+      <p><strong>What to do:</strong> Go to <span class="step-action">🎯 Brand Targets</span> → click "+ Add Brand". Add 10 brands. Set each to "Researching" status. Include their Instagram handle or email and one note on why they fit your content.</p>
+      <div class="step-tip">💡 Look at brands already working with Kenyan creators. Check the comments on your favourite beauty/lifestyle posts. Start with small-to-medium brands — they're more likely to reply.</div>
+      <button class="step-nav-btn" onclick="event.stopPropagation();markStep(9);goTo('studio-brands',document.querySelector('.ni[onclick*=studio-brands]'))">Go to Brand Targets →</button>
+    </div>
+  </div>
+
+  <!-- STEP 10 (was step 9) -->
+  <div class="setup-step" id="ss-10" onclick="toggleStep(10)">
+    <div class="setup-step-hdr">
+      <div class="setup-step-num" id="ss-num-10">10</div>
       <div class="setup-step-title">Install as an app on your phone (PWA)</div>
       <div class="setup-step-time">2 min</div>
       <div class="setup-step-arrow">›</div>
@@ -1139,26 +1528,10 @@ body.dark-mode #dark-toggle{border-color:rgba(255,255,255,.15);color:rgba(250,24
       <p><strong>On iPhone (Safari):</strong> Tap the Share button (⬆) at the bottom → "Add to Home Screen".</p>
       <p><strong>On desktop (Chrome/Edge):</strong> Look for the install icon in the address bar.</p>
       <div class="step-tip">💡 Install it on both your phone and laptop. The Firebase sync means changes on your phone appear on your laptop within seconds.</div>
-      <button class="step-nav-btn" onclick="event.stopPropagation();markStep(9);">Mark Done ✓</button>
+      <button class="step-nav-btn" onclick="event.stopPropagation();markStep(10);">Mark Done ✓</button>
     </div>
   </div>
 
-  <!-- STEP 10 -->
-  <div class="setup-step" id="ss-10" onclick="toggleStep(10)">
-    <div class="setup-step-hdr">
-      <div class="setup-step-num" id="ss-num-10">10</div>
-      <div class="setup-step-title">Send your first 3 pitches</div>
-      <div class="setup-step-time">15 min</div>
-      <div class="setup-step-arrow">›</div>
-    </div>
-    <div class="setup-step-body">
-      <p>Setup is complete when you've sent at least one pitch. Don't spend another day in the app without having done this. The app exists to support work — not to replace it.</p>
-      <p><strong>What to do:</strong> Go to <span class="step-action">🎯 Brand Targets</span>, pick 3 brands you added in Step 4, open each one, copy your pitch template, personalise the first sentence, and send it via Instagram DM or email. Log the date and update status to "Pitched".</p>
-      <p>Then go to <span class="step-action">📬 Pitch Tracker</span> and log each one so you have a record.</p>
-      <div class="step-tip">💡 The hardest part is the first pitch. After that, it's just a numbers game. You need roughly 30–50 pitches to land your first paid deal. Start the count today.</div>
-      <button class="step-nav-btn" onclick="event.stopPropagation();markStep(10);goTo('studio-brands',document.querySelector('.ni[onclick*=studio-brands]'))">Go to Brand Targets →</button>
-    </div>
-  </div>
 
   <div style="background:rgba(74,107,80,.08);border:1px solid rgba(74,107,80,.18);border-radius:12px;padding:14px 18px;margin-top:16px;">
     <div style="font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--forest);font-family:'DM Mono',monospace;margin-bottom:6px;">✓ Setup complete — what now?</div>
@@ -1320,23 +1693,23 @@ body.dark-mode #dark-toggle{border-color:rgba(255,255,255,.15);color:rgba(250,24
   <div class="rhythm-block">
     <div class="rhythm-block-hdr">
       <span class="rhythm-badge weekly">Monday, step 2</span>
-      <div class="rhythm-block-title">Pitch this week's 10 brands (20 min)</div>
+      <div class="rhythm-block-title">Pitching (Month 2+ only — not Month 1)</div>
     </div>
     <div class="rhythm-tasks">
       <div class="rt">
         <div class="rt-icon">🎯</div>
         <div class="rt-body">
-          <div class="rt-label">Open Brand Targets, filter to "Researching"</div>
-          <div class="rt-desc">Pick 10 brands from your researching list. Update their status to "Pitched". Go send the actual messages outside the app (Instagram DM, email). Come back and log each one in Pitch Tracker. 10 per week = 40 per month = your pipeline never dries up.</div>
-          <span class="rt-where">→ 🎯 Brand Targets → 📬 Pitch Tracker</span>
+          <div class="rt-label">Month 1: Skip this block entirely. Go film instead.</div>
+          <div class="rt-desc">In Month 1, your Monday step 2 is: film one piece of content. If you've already filmed, edit one piece. If you've already edited, post it. Pitching opens in Month 2 — after your portfolio has 12+ posts and 3 UGC videos you're proud of. The Foundation Phase page tells you when you're ready.</div>
+          <span class="rt-where">→ 🌱 Foundation Phase (check readiness gate first)</span>
         </div>
       </div>
       <div class="rt">
         <div class="rt-icon">📬</div>
         <div class="rt-body">
-          <div class="rt-label">Add 5 new brands to your research list</div>
-          <div class="rt-desc">For every 10 you pitch, add 5 new ones to keep the "Researching" bucket full. Scroll Instagram, check hashtags, look at who other Kenyan creators are working with. 5 minutes of research tops up the pipeline for next week.</div>
-          <span class="rt-where">→ 🎯 Brand Targets → + Add Brand</span>
+          <div class="rt-label">Month 2+: Pitch 5 brands per week (not 10 — quality matters more early)</div>
+          <div class="rt-desc">Pick 5 brands from your "Researching" list. Personalise each pitch — one specific sentence about their brand before the template body. Brands smell templates. Log each pitch in Pitch Tracker. Add 3 new research targets to refill the bucket. 5 quality pitches outperforms 10 rushed ones every time.</div>
+          <span class="rt-where">→ 🎯 Brand Targets → 📬 Pitch Tracker</span>
         </div>
       </div>
     </div>
@@ -1377,7 +1750,7 @@ body.dark-mode #dark-toggle{border-color:rgba(255,255,255,.15);color:rgba(250,24
         <div class="rt-icon">🚫</div>
         <div class="rt-body">
           <div class="rt-label">Redoing your rates or packages</div>
-          <div class="rt-desc">Rates change when you hit a milestone (5 gigs delivered, or 10). Not weekly. Changing rates weekly is a sign of uncertainty, not strategy.</div>
+          <div class="rt-desc">Rates change when you hit a milestone (every 3 paid gigs delivered). Not weekly. Changing rates weekly is a sign of uncertainty, not strategy.</div>
           <div class="rt-skip-badge">monthly only</div>
         </div>
       </div>
@@ -1437,22 +1810,47 @@ body.dark-mode #dark-toggle{border-color:rgba(255,255,255,.15);color:rgba(250,24
   <div class="rhythm-block">
     <div class="rhythm-block-hdr">
       <span class="rhythm-badge monthly">Month review, part 2</span>
-      <div class="rhythm-block-title">Check your pitch pipeline (10 min)</div>
+      <div class="rhythm-block-title">Month 1: review content & readiness instead (10 min)</div>
+    </div>
+    <div class="rhythm-tasks">
+      <div class="rt">
+        <div class="rt-icon">🌱</div>
+        <div class="rt-body">
+          <div class="rt-label">Still in Month 1? Skip the pitch pipeline review below entirely.</div>
+          <div class="rt-desc">You shouldn't have sent any pitches yet, so a reply-rate review or pipeline top-up doesn't apply. Instead: open Foundation Phase and check the readiness gate — 12+ posts, 3 UGC videos you're proud of, 1–2 gifted collabs delivered. If all true, you're clear to open Month 2 next week. If not, stay in Month 1 and fix the one thing that's missing.</div>
+          <span class="rt-where">→ 🌱 Foundation Phase → readiness gate</span>
+        </div>
+      </div>
+      <div class="rt">
+        <div class="rt-icon">🎁</div>
+        <div class="rt-body">
+          <div class="rt-label">Count gifted collabs delivered this month</div>
+          <div class="rt-desc">Open Product Shelf and Gig Tracker — how many gifted collabs did you deliver? Month 1's target is 1–2. Each one should have produced a UGC video you'd be comfortable sending to a paid brand as a portfolio sample.</div>
+          <span class="rt-where">→ 📦 Product Shelf → 📋 Gig Tracker</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="rhythm-block">
+    <div class="rhythm-block-hdr">
+      <span class="rhythm-badge monthly">Month review, part 2b</span>
+      <div class="rhythm-block-title">Month 2+: check your pitch pipeline (10 min)</div>
     </div>
     <div class="rhythm-tasks">
       <div class="rt">
         <div class="rt-icon">📬</div>
         <div class="rt-body">
           <div class="rt-label">Open Pitch Tracker — what's your reply rate?</div>
-          <div class="rt-desc">If reply rate is below 10%, your templates need work — go to Pitches and rewrite the opening line of your lowest-performing template. If it's above 20%, your pitch is strong — send more volume. The dashboard target is 10 per week.</div>
+          <div class="rt-desc">If reply rate is below 10%, your templates need work — go to Pitches and rewrite the opening line of your lowest-performing template. If it's above 20%, your pitch is strong — keep the volume steady. The dashboard target is 5 per week, not 10 — quality over volume early on.</div>
           <span class="rt-where">→ 📬 Pitch Tracker</span>
         </div>
       </div>
       <div class="rt">
         <div class="rt-icon">🎯</div>
         <div class="rt-body">
-          <div class="rt-label">Archive declined brands, add 20 new ones</div>
-          <div class="rt-desc">In Brand Targets, move all "declined" brands to declined status. Then add 20 fresh brands to Researching. This tops up your pipeline for the next month before your Monday pitching sessions start.</div>
+          <div class="rt-label">Archive declined brands, add 5–10 new ones</div>
+          <div class="rt-desc">In Brand Targets, move all "declined" brands to declined status. Then add 5–10 fresh brands to Researching — enough to cover 1–2 weeks of your 5-per-week pitching rhythm. This tops up your pipeline before your Monday pitching sessions start.</div>
           <span class="rt-where">→ 🎯 Brand Targets</span>
         </div>
       </div>
@@ -1524,13 +1922,13 @@ body.dark-mode #dark-toggle{border-color:rgba(255,255,255,.15);color:rgba(250,24
     <div class="rules-box-title">✦ Ground Rules — read once, keep forever</div>
     <div class="rule"><div class="rule-num">01</div><div class="rule-text"><strong>The app is a system, not a destination.</strong> You should spend less time in it as you get more experienced, not more. If opening the app feels like a chore, you're probably overcomplicating your workflow.</div></div>
     <div class="rule"><div class="rule-num">02</div><div class="rule-text"><strong>Log things the same day they happen.</strong> A gig you forgot to log is a gig you can't track. A pitch you didn't record is a template you can't improve. 30 seconds at the moment it happens beats 10 minutes of reconstruction on Sunday.</div></div>
-    <div class="rule"><div class="rule-num">03</div><div class="rule-text"><strong>Pitching is the only metric that matters in Month 1.</strong> Everything else — moodboards, content pillars, camera settings — is infrastructure. Infrastructure doesn't pay bills. 10 pitches a week does.</div></div>
+    <div class="rule"><div class="rule-num">03</div><div class="rule-text"><strong>Build first. Pitch in Month 2.</strong> In Month 1, content is the only metric that matters. Every day you spend pitching before your portfolio has 12+ posts is a day brands click your profile and see nothing. Pitching without a portfolio is a waste of both your time and theirs. Post. Then pitch.</div></div>
     <div class="rule"><div class="rule-num">04</div><div class="rule-text"><strong>Never start work without a contract for paid gigs.</strong> Not even with a brand you trust. Especially with a brand you trust. "We'll sort the details after" is how creators end up delivering content for free.</div></div>
     <div class="rule"><div class="rule-num">05</div><div class="rule-text"><strong>Follow up every 7 days. Stop after 3 attempts.</strong> One initial pitch, one Day 7 follow-up, one Day 14 final. After that, move the brand to "Declined" and move on. Chasing beyond three messages costs you more energy than the gig is worth.</div></div>
     <div class="rule"><div class="rule-num">06</div><div class="rule-text"><strong>Make one strategic change per month, not one per week.</strong> Changing your rates, niche, or approach every week means you never learn what's actually working. Commit to something for 4 weeks, then review the data and adjust.</div></div>
     <div class="rule"><div class="rule-num">07</div><div class="rule-text"><strong>Gifted is a tool, not a trap.</strong> Accept gifted deals that produce portfolio content you couldn't afford to make otherwise. Decline gifted deals from brands whose products you wouldn't use or trust. Never let "but it's free product" be the only reason you say yes.</div></div>
     <div class="rule"><div class="rule-num">08</div><div class="rule-text"><strong>Your organic content is your real portfolio.</strong> The UGC you deliver to brands proves you can execute. Your organic posts prove you have an audience and a perspective. Brands check both. Post consistently even when you have no active gigs.</div></div>
-    <div class="rule"><div class="rule-num">09</div><div class="rule-text"><strong>Price for where you want to be, not where you are.</strong> If you charge $20 forever, you'll attract $20 brands forever. Every 5 deliveries, raise your base rate by $5–10. The market tells you when you've gone too far — until then, keep raising.</div></div>
+    <div class="rule"><div class="rule-num">09</div><div class="rule-text"><strong>Price for where you want to be, not where you are.</strong> If you charge $20 forever, you'll attract $20 brands forever. Every 3 deliveries, raise your base rate by $25. The market tells you when you've gone too far — until then, keep raising.</div></div>
     <div class="rule"><div class="rule-num">10</div><div class="rule-text"><strong>This app works for you — not the other way around.</strong> It is meant to free up your brain so you can focus on creating and pitching. If any section of this app is causing you to spend more time planning than doing — ignore that section until you're ready for it.</div></div>
   </div>
 
@@ -1616,7 +2014,7 @@ setTimeout(renderSetupProgress, 500);
   </div>
   <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:14px;">
     <div class="sc"><div class="sc-l">Paid Out</div><div class="sc-v c-f" id="ep-paid">$0</div></div>
-    <div class="sc"><div class="sc-l">Pending</div><div class="sc-v c-g" id="ep-pend">$0</div></div>
+    <div class="sc"><div class="sc-l">Pending (Delivered/Negotiating)</div><div class="sc-v c-g" id="ep-pend">$0</div></div>
     <div class="sc"><div class="sc-l">Gifted Gigs</div><div class="sc-v c-t" id="ep-gift">0</div></div>
     <div class="sc"><div class="sc-l">This Month</div><div class="sc-v c-k" id="ep-mo">0</div></div>
   </div>
@@ -1713,9 +2111,10 @@ setTimeout(renderSetupProgress, 500);
     <div style="background:#fff;border-radius:14px;border:1px solid rgba(0,0,0,.06);padding:14px 16px;margin-bottom:16px;">
       <div style="font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--warm-gray);font-family:'DM Mono',monospace;margin-bottom:10px;">Your Weekly Rhythm · 6 posts every week</div>
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;">
-        <div style="padding:10px 12px;border-radius:10px;background:rgba(196,113,79,.06);border-left:3px solid var(--terracotta);"><div style="font-size:9px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--terracotta);margin-bottom:3px;">Pillar 1 · Craft</div><div style="font-size:11px;color:var(--ink);line-height:1.5;">1–2 posts · reel of process + carousel teaching UGC</div></div>
-        <div style="padding:10px 12px;border-radius:10px;background:rgba(90,143,106,.06);border-left:3px solid #5A8F6A;"><div style="font-size:9px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#4a7a58;margin-bottom:3px;">Pillar 2 · Hair</div><div style="font-size:11px;color:var(--ink);line-height:1.5;">2 posts · reel (wash day / styling) + carousel (education)</div></div>
-        <div style="padding:10px 12px;border-radius:10px;background:rgba(122,155,181,.07);border-left:3px solid #7A9BB5;"><div style="font-size:9px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#5a7a95;margin-bottom:3px;">Pillar 3 · A Life Composed</div><div style="font-size:11px;color:var(--ink);line-height:1.5;">2 posts · reel (home / style / bold move) + carousel (systems / intentional choice)</div></div>
+        <div style="padding:10px 12px;border-radius:10px;background:rgba(122,155,181,.06);border-left:3px solid #7A9BB5;"><div style="font-size:9px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#3d6b8a;margin-bottom:3px;">Pillar 1 · Life In Full View</div><div style="font-size:11px;color:var(--ink);line-height:1.5;">2 posts · reel (your world, your land, your environment) + carousel (your life, your choices, your systems)</div></div>
+        <div style="padding:10px 12px;border-radius:10px;background:rgba(74,107,80,.06);border-left:3px solid var(--forest);"><div style="font-size:9px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--forest);margin-bottom:3px;">Pillar 2 · Hair Done Once, Shown Right</div><div style="font-size:11px;color:var(--ink);line-height:1.5;">2 posts · reel (wash day, styling, results) + carousel (education, multi-texture household)</div></div>
+        <div style="padding:10px 12px;border-radius:10px;background:rgba(196,113,79,.07);border-left:3px solid var(--terracotta);"><div style="font-size:9px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--terracotta);margin-bottom:3px;">Pillar 3 · UGC In the Open</div><div style="font-size:11px;color:var(--ink);line-height:1.5;">2 posts · reel (process, mock brief, before/after edit) + carousel (brief → delivery, anatomy, portfolio piece)</div></div>
+        <div style="margin-top:8px;font-size:11px;color:var(--warm-gray);background:rgba(0,0,0,.03);border-radius:8px;padding:9px 12px;line-height:1.65;">Editorial and product-focused content (texture shots, silhouettes, ASMR unboxings) belongs inside Pillars 1 and 3 — not as a separate track. Pillar 1 when the environment is the subject. Pillar 3 when the product is the subject.</div>
       </div>
     </div>
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
@@ -1965,10 +2364,17 @@ setTimeout(renderSetupProgress, 500);
   <div class="st-card">
     <div class="st-card-hdr"><span class="st-card-title">The Gifting Rule</span></div>
     <div class="st-card-body">
-      <div class="st-field"><div class="st-field-lbl">Maximum Gifting Collabs</div><input type="number" class="st-editable" id="st-gifting-max" value="5" style="max-width:120px;" onchange="stSave()"></div>
-      <div class="st-field"><div class="st-field-lbl">Gifting Policy Statement</div><textarea class="st-editable xl" id="st-gifting-policy" onchange="stSave()">Accept gifting collabs from brands whose products fit genuinely into your life and content. Do not accept gifting for products you would never use. Every gifting collab must produce content that adds to your portfolio.
+      <div class="st-field"><div class="st-field-lbl">Maximum Gifting Collabs (total, ever)</div><input type="number" class="st-editable" id="st-gifting-max" value="2" style="max-width:120px;" onchange="stSave()"></div>
+      <div class="st-field"><div class="st-field-lbl">Gifting Policy Statement</div><textarea class="st-editable xl" id="st-gifting-policy" onchange="stSave()">Gifted collabs start in Week 3 of Month 1 — not for income, but for three things:
+1. Experience delivering to a real brand under a real brief
+2. A testimonial you can use in future paid pitches
+3. Portfolio content made with a real product (not a mock)
 
-Never do more than 5 gifting collabs in total. After that, every brand pays. Gifting exists to build your portfolio, not to be your business model.</textarea></div>
+Accept gifting ONLY from brands whose products genuinely belong in your life and content. No gifted deal for something you would never use.
+
+Maximum 2 gifted collabs total. After that, every brand pays. Gifting is a tool you use once at the start — not a permanent mode.
+
+The transition script to move a gifted brand to paid is in the section below. Use it every time, without exception.</textarea></div>
     </div>
   </div>
   <div class="st-card">
@@ -1980,7 +2386,9 @@ Never do more than 5 gifting collabs in total. After that, every brand pays. Gif
   <div class="st-card">
     <div class="st-card-hdr"><span class="st-card-title">Transitioning to Paid</span></div>
     <div class="st-card-body">
-      <div class="st-field"><div class="st-field-lbl">Message to Send After Every Gifting Delivery</div><textarea class="st-editable xl" id="st-gifting-transition" onchange="stSave()">"I hope you've been happy with the content. For future collaborations, I'd love to move to a paid arrangement. My rate for a single video is $35, and I offer a bundle of 3 for $85. Would you be open to continuing?"</textarea></div>
+      <div class="st-field"><div class="st-field-lbl">Message to Send After Every Gifting Delivery</div><textarea class="st-editable xl" id="st-gifting-transition" onchange="stSave()">"I'm glad you enjoyed the content — it was a pleasure to make. I'm now opening my paid calendar for Month 3. My rate for a single 30–60 second video is $75–$100, and I offer a bundle of 3 for $220. Would you like to be one of my first paid partners?"
+
+Send this message within 48 hours of delivery, while they're still warm on the work. If they say yes, send a rate card and contract. If they say they'll think about it, follow up in 7 days once only.</textarea></div>
     </div>
   </div>
 </div>
@@ -1989,44 +2397,75 @@ Never do more than 5 gifting collabs in total. After that, every brand pays. Gif
 <div class="pg" id="pg-studio-income">
   <div class="st-hdr">
     <div class="st-eyebrow">Studio · Income</div>
-    <div class="st-title">$200 in <em>Month One</em></div>
-    <div class="st-desc">Your week-by-week income targets and the actions to hit $200 in month one.</div>
+    <div class="st-title">Build First, <em>Then Earn</em></div>
+    <div class="st-desc">Months 1–2 are foundation. Month 3 is when you open for paid business. Gifted collabs start Week 3 of Month 1 — to build your portfolio and get testimonials, not income.</div>
   </div>
-  <div class="st-info warn"><strong>The critical rule:</strong> Post content AND pitch brands simultaneously from day one. The Instagram posts and portfolio videos run in parallel with outreach.</div>
+  <div class="st-info warn"><strong>The sequence that works:</strong> Month 1 = post content + accept gifted deals from Week 3. Month 2 = build infrastructure, send pitches. Month 3 = paid business opens. Pitching too early (before 12+ portfolio posts) means a brand clicks your page and sees nothing. Don't let the HQ rush you.</div>
   <div class="st-money-grid" id="studio-money-grid"></div>
   <div class="st-card">
     <div class="st-card-hdr"><span class="st-card-title">Weekly Actions</span></div>
     <div class="st-card-body">
       <div class="st-g2">
-        <div class="st-field"><div class="st-field-lbl">Week 1 Actions</div><textarea class="st-editable lg" id="st-income-w1-actions" onchange="stSave()">• Post your first 5 Instagram posts (Tue–Sat)
-• Film your intro + outro video
-• Send 10 pitches — DM, WhatsApp, email
-• Set up your "Work With Me" story highlight
-• Film 2 portfolio spec videos with products you own</textarea></div>
-        <div class="st-field"><div class="st-field-lbl">Week 2 Actions</div><textarea class="st-editable lg" id="st-income-w2-actions" onchange="stSave()">• Post Instagram posts 6–13
-• Send 10 more pitches (new brands)
-• Send follow-up 1 to week 1 pitches
-• Film and deliver 1 paid video ($35)
-• Set up Fiverr profile as secondary income</textarea></div>
-        <div class="st-field"><div class="st-field-lbl">Week 3 Actions</div><textarea class="st-editable lg" id="st-income-w3-actions" onchange="stSave()">• Post Instagram posts 14–21
-• Deliver 2 paid videos ($35 × 2 = $70)
-• Pitch your first bundle ($85) to interested brands
-• Send follow-up 2 to earliest pitches (final close)</textarea></div>
-        <div class="st-field"><div class="st-field-lbl">Week 4 Actions</div><textarea class="st-editable lg" id="st-income-w4-actions" onchange="stSave()">• Post Instagram posts 22–30
-• Close 1 × $85 bundle (week 4 target)
-• OR close 4 × $35 singles = $140 + week 3
-• Pin your rate card carousel post
-• Quote month 2 retainer to best brand</textarea></div>
+        <div class="st-field"><div class="st-field-lbl">Month 1 · Week 1 — Post Only</div><textarea class="st-editable lg" id="st-income-w1-actions" onchange="stSave()">GOAL: Establish the rhythm. No pitching yet.
+• Post your first Lifestyle Reel (your world, your environment)
+• Post your first Hair carousel (before + after Sunday session)
+• Film 1 mock UGC video with a product you already own
+• Write your bio: UGC Creator · [who you are] · [where] · Brands: DM for collabs
+• Set up your accounts — Instagram + TikTok if not already done
+• Do NOT send any brand pitches this week. Build first.</textarea></div>
+        <div class="st-field"><div class="st-field-lbl">Month 1 · Week 2 — Build the Rhythm</div><textarea class="st-editable lg" id="st-income-w2-actions" onchange="stSave()">GOAL: Post all 3 pillars for the first time.
+• Post Hair Reel + Lifestyle Carousel (Mon)
+• Post Lifestyle Reel + Hair Carousel (Wed)
+• Post UGC Reel + UGC Carousel (Fri)
+• Film 1 more mock UGC video (different product category)
+• Check: does your grid look cohesive? Same light, same palette?
+• Still no pitching — you need at least 6 posts before brands see anything.</textarea></div>
+        <div class="st-field"><div class="st-field-lbl">Month 1 · Week 3 — First Gifted Collabs</div><textarea class="st-editable lg" id="st-income-w3-actions" onchange="stSave()">GOAL: Get experience delivering to a real brand + earn first testimonials.
+• Continue posting your weekly rhythm (6 posts)
+• Reach out to 3–5 small brands for GIFTED collabs only:
+  → Brands whose products you genuinely want to use
+  → Use the gifted pitch script from the Gifting Policy page
+  → Natural skincare, hair care, food — your niches
+• When a brand says yes: log it as a Gig (type: Gifted)
+• Deliver the content within 5–7 days of receiving the product
+• After delivery, ask for written feedback → log in Testimonials
+• This is portfolio + proof building. Not income. That comes in Month 3.</textarea></div>
+        <div class="st-field"><div class="st-field-lbl">Month 1 · Week 4 — Review + Prepare Month 2</div><textarea class="st-editable lg" id="st-income-w4-actions" onchange="stSave()">GOAL: End Month 1 with a real portfolio and readiness to pitch paid deals.
+• Post your weekly rhythm (6 posts)
+• Deliver any outstanding gifted collab content
+• Run the Month 1 Review (4 questions — see Rules section in blueprint):
+  → Which pillar was hardest to film?
+  → What got the most genuine engagement?
+  → Does my grid look like one person's world?
+  → Do I have 3 UGC videos I'd be proud to send a brand?
+• If yes to the last question: you are ready to build Month 2 infrastructure.
+• If no: film one more mock brief this week before Month 2 starts.</textarea></div>
       </div>
     </div>
   </div>
   <div class="st-card">
     <div class="st-card-hdr"><span class="st-card-title">Conservative Month 1 Breakdown</span></div>
     <div class="st-card-body">
-      <div class="st-field"><div class="st-field-lbl">How $200 Is Built</div><textarea class="st-editable" id="st-income-breakdown" onchange="stSave()">3 × single videos ($35 each) = $105
-1 × Starter Bundle ($85) = $85
-Gifting value received ≈ $40–80 in products
-Total cash: $190 + product value</textarea></div>
+      <div class="st-field"><div class="st-field-lbl">How Month 3 Income Is Built (after foundation)</div><textarea class="st-editable" id="st-income-breakdown" onchange="stSave()">Month 1 (Weeks 1–4): Portfolio building
+→ Weeks 1–2: Post content only. No pitching.
+→ Week 3 onward: Accept gifted collabs for experience + testimonials
+→ Target: 2 gifted collabs, 12+ posts, UGC anatomy on every video
+
+Month 2: Infrastructure + first paid pitches
+→ Portfolio page live, rate card set, mock UGC videos done
+→ Begin outreach (5 pitches/week — quality over volume early)
+→ First paid deal closes here ideally
+
+Month 3: Open for paid business
+→ 2 × single videos ($75–$100 each) = $150–$200
+→ 1 × bundle ($220–$300) if possible
+→ Total realistic Month 3: $200–$400 cash
+
+Your floor rate (never go below):
+→ 15–30s video: $75
+→ 31–60s video: $100
+→ Bundle × 3: $220
+→ Raise by $25 after every 3 paid deals</textarea></div>
     </div>
   </div>
 </div>
@@ -2846,11 +3285,12 @@ Total cash: $190 + product value</textarea></div>
 
     <!-- MOOD BOARD TAB -->
     <div class="bm-panel" id="bm-panel-mood">
-      <div style="font-size:11px;color:var(--warm-gray);margin-bottom:12px;line-height:1.5;">Upload reference images, aesthetic inspo, or product photos. These print alongside your brief on shoot day.</div>
+      <div style="font-size:11px;color:var(--warm-gray);margin-bottom:12px;line-height:1.5;">Upload reference images, aesthetic inspo, or product photos. These print alongside your brief on shoot day. For a full drag-and-drop board — sticky notes, shot direction, layout — use the moodboard canvas below; it lives with this brief and pulls in anything you upload here too.</div>
       <div class="mood-upload-grid" id="br-mood-grid"></div>
       <label class="mood-add-btn" style="display:flex;width:90px;height:90px;" onclick="document.getElementById('br-mood-upload').click()">+</label>
       <input type="file" id="br-mood-upload" accept="image/*" multiple style="display:none" onchange="addBriefMoodImages(event)">
       <div style="font-size:10px;color:var(--mid-gray);margin-top:10px;">Upload up to 8 reference images · They'll appear on the printable brief</div>
+      <button class="btn btn-g btn-s" style="margin-top:12px;" onclick="openBriefMoodboardCanvas()">🎨 Open Moodboard Canvas →</button>
     </div>
 
     <!-- PRODUCTION NOTES TAB -->
@@ -3236,7 +3676,7 @@ gProvider = new firebase.auth.GoogleAuthProvider();
 
 
 HEAVY      = ['feedIg','feedTt','feedBank','visuals','outfits','moodboards','locations','cameras'];
-LIGHT_KEYS = ['gigs','content','ideas','followups','pitches','rates','colors','niches','platforms','bio','links','calM','calY','studioData','invoicesData','customPillarIdeas','hiddenPillarIdeas','overriddenPillarIdeas'];
+LIGHT_KEYS = ['gigs','content','ideas','followups','pitches','rates','colors','niches','platforms','bio','links','calM','calY','studioData','invoicesData','customPillarIdeas','hiddenPillarIdeas','overriddenPillarIdeas','incomeGoalMonth','showUp'];
 LS_KEY     = 'ajhq_data_v1';
 LS_USER    = 'ajhq_user_v1';
 LS_DIRTY   = 'ajhq_dirty_v1';
@@ -3294,13 +3734,13 @@ const DEFAULTS = () => ({
   ],
   followups:[],
   pitches:[
-    {id:'p1',name:'Beauty — Gifted DM',niche:'Beauty',type:'Gifted Collab',platform:'Instagram DM',subject:'',body:"Hi [Brand Name] team! 👋\n\nI'm Asha Jolies, a UGC creator based in Kenya creating authentic content for beauty brands.\n\nI'd love to collaborate on a gifted basis — I'll create a genuine review/tutorial of [Product] and deliver raw UGC files.\n\nWhat I offer:\n✦ Talking-to-camera or voiceover videos\n✦ Melanin skin perspective — largely underserved audience\n✦ 3–5 day turnaround · Full usage rights included\n\nHappy to share my portfolio!\n\nWarmly,\nAsha Jolies | @ashajoliesUgc"},
-    {id:'p2',name:'Paid Collab — Email',niche:'General',type:'Paid Collab',platform:'Email',subject:'UGC Creator Collaboration – Asha Jolies | Starting from $20',body:"Hi [Brand] team,\n\nMy name is Asha Jolies — UGC creator based in Kenya specialising in beauty, hair, lifestyle and tech.\n\nRates start from $20 per UGC video. Full raw files + usage rights included.\n\nCould I send my media kit?\n\nBest,\nAsha Jolies\nashajoliesugc@email.com | @ashajoliesUgc"},
-    {id:'p3',name:'Hair — Gifted Email',niche:'Hair',type:'Gifted Collab',platform:'Email',subject:'UGC Hair Content – Gifted Collaboration | Asha Jolies',body:"Hello [Brand Name],\n\nI'm Asha Jolies, a creator focused on African hair care.\n\nI'd love to create UGC for [Product] on a gifted basis:\n✂️ Honest review video (30–60s)\n✂️ Styling/tutorial clip\n✂️ Full raw footage files\n\nAsha Jolies | @ashajoliesUgc"},
+    {id:'p1',name:'Beauty — Gifted DM',niche:'Beauty',type:'Gifted Collab',platform:'Instagram DM',subject:'',body:"Hi [Brand Name] team,\n\nI'm Asha Jolies — a UGC creator based in Mitheru, Kenya. I'm building my portfolio in the natural beauty and skincare space and I'd like to feature [Product] in an upcoming piece of content.\n\nI'm offering this as a gifted collaboration. In return you'd receive:\n✦ One 30–60 second UGC video (talking-to-camera or voiceover)\n✦ Full raw files + usage rights\n✦ Melanin skin perspective — an underserved and high-trust audience\n✦ 5–7 day delivery from product receipt\n\nI create for brands whose products genuinely belong in my world. If [Product] is something you'd like to see featured, I'd love to make it.\n\nPortfolio: [your link]\n\nAsha Jolies | @ashajoliesUgc"},
+    {id:'p2',name:'Paid Collab — Email',niche:'General',type:'Paid Collab',platform:'Email',subject:'UGC Creator Collaboration – Asha Jolies',body:"Hi [Brand] team,\n\nMy name is Asha Jolies — UGC creator based in Kenya specialising in natural beauty, hair care, and lifestyle.\n\nI create ad-ready content for brands: authentic, melanin-skin perspective, natural light, real home environment. Brands use my content in paid ads, on their product pages, and in organic campaigns.\n\nRates start from $75 per video (15–30 seconds). Full raw files and usage rights included.\n\nI'd love to send my portfolio and rate card — would that be useful?\n\nBest,\nAsha Jolies\nashajoliesugc@email.com | @ashajoliesUgc"},
+    {id:'p3',name:'Hair — Gifted Email',niche:'Hair',type:'Gifted Collab',platform:'Email',subject:'UGC Hair Content – Gifted Collaboration | Asha Jolies',body:"Hello [Brand Name],\n\nI'm Asha Jolies — a UGC creator building a portfolio in the natural and protective hair care space. I have a 3b/3c curl pattern and I care for two daughters with different hair textures (3c and 4C), so I create across a genuine multi-texture household.\n\nI'd like to feature [Product] in a gifted collaboration. What you'd receive:\n✂️ One honest review or styling video (30–60s)\n✂️ Filmed with natural light in a real home environment — not a studio\n✂️ Full raw footage files + usage rights\n✂️ 5–7 day delivery from product receipt\n\nPortfolio: [your link]\n\nAsha Jolies | @ashajoliesUgc"},
   ],
   rates:[
-    {id:'r1',type:'UGC Video (15–30s)',price:'$20',desc:'Talking to camera or voiceover, 1 revision'},
-    {id:'r2',type:'UGC Video (60s)',price:'$30',desc:'Full review or tutorial, 1 revision'},
+    {id:'r1',type:'UGC Video (15–30s)',price:'$75',desc:'Talking to camera or voiceover, 1 revision'},
+    {id:'r2',type:'UGC Video (60s)',price:'$100',desc:'Full review or tutorial, 1 revision'},
     {id:'r3',type:'Photo Set (3 images)',price:'$15',desc:'Flat lay or lifestyle photos'},
     {id:'r4',type:'Bundle (2 videos + 3 photos)',price:'$70',desc:'Full content package'},
     {id:'r5',type:'Gifted Collab',price:'Product only',desc:'Product in exchange for UGC'},
@@ -3327,6 +3767,8 @@ const DEFAULTS = () => ({
   customPillarIdeas:[],
   hiddenPillarIdeas:[],
   overriddenPillarIdeas:[],
+  incomeGoalMonth:200,
+  showUp:{startDate:'',days:{}},
 });
 
 window.D = DEFAULTS();
@@ -3927,7 +4369,7 @@ function resetTP(ns){TP[ns]=[];renderTPTags(ns);}
 function setTP(ns,arr){TP[ns]=[...(arr||[])];renderTPTags(ns);}
 
 // ── NAVIGATION ──
-const PAGES={dashboard:'Good morning, <em>Asha</em> ✨',earnings:'Earnings',gigs:'Gig Tracker',followup:'Follow-Ups',planner:'Ideas &amp; Planner',ideas:'Ideas &amp; Planner',feed:'Feed & Posts',pitches:'Pitch Templates',brand:'Brand Hub','studio-rates':'Services & Rates','studio-packages':'Packages & Add-Ons','studio-portfolio':'Portfolio Videos','studio-gifting':'Gifting Policy','studio-income':'Income Plan','studio-brands':'Brand Targets','invoices':'Invoices'};
+const PAGES={dashboard:'Good morning, <em>Asha</em> ✨',earnings:'Earnings',gigs:'Gig Tracker',followup:'Follow-Ups',planner:'Ideas &amp; Planner',ideas:'Ideas &amp; Planner',feed:'Feed & Posts',pitches:'Pitch Templates',brand:'Brand Hub','studio-rates':'Services & Rates','studio-packages':'Packages & Add-Ons','studio-portfolio':'Portfolio Videos','studio-gifting':'Gifting Policy','studio-income':'Income Plan','studio-brands':'Brand Targets','invoices':'Invoices',foundation:'🌱 Foundation Phase — Month 1',showup:'🔥 Show-Up Tracker'};
 let currentPage='dashboard';
 function goTo(page,el){
   document.querySelectorAll('.pg').forEach(p=>p.classList.remove('active'));
@@ -4244,25 +4686,6 @@ function rKanban(){
       }).join(''):`<div style="font-size:11px;color:var(--mid-gray);text-align:center;padding:10px 0;">Empty</div>`}
     </div>`;
   }).join('');
-}
-
-// ── EARNINGS ──
-function rEarnings(){
-  const paid=D.gigs.filter(g=>g.rateType==='paid'&&g.status==='delivered').reduce((s,g)=>s+parseFloat(g.rate||0),0);
-  const pend=D.gigs.filter(g=>g.rateType==='paid'&&['paid','negotiating','waitingapproval'].includes(g.status)).reduce((s,g)=>s+parseFloat(g.rate||0),0);
-  const gifted=D.gigs.filter(g=>g.rateType==='gifted').length;
-  const now=new Date();
-  const mo=D.gigs.filter(g=>{const d=new Date(g.added||Date.now());return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();}).length;
-  setEl('earn-total','$'+paid.toFixed(2));
-  document.getElementById('earn-sub').textContent='from '+D.gigs.filter(g=>g.rateType==='paid'&&g.status==='delivered').length+' paid gigs';
-  setEl('ep-paid','$'+paid.toFixed(2));setEl('ep-pend','$'+pend.toFixed(2));setEl('ep-gift',gifted);setEl('ep-mo',mo);
-  const el=document.getElementById('earn-list');
-  const pg=D.gigs.filter(g=>g.rateType==='paid').reverse();
-  el.innerHTML=pg.length?pg.map(g=>`<div style="display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid rgba(0,0,0,.04);">${g.img?`<img src="${g.img}" style="width:34px;height:34px;border-radius:7px;object-fit:cover;">`:''}
-    <div style="flex:1;"><div style="font-size:13px;font-weight:500;">${g.brand}</div><div style="font-size:10px;color:var(--warm-gray);">${g.niche}${g.due?' · '+g.due:''}</div></div>
-    <span class="sp s-${g.status}">${sLabel(g.status)}</span>
-    <span style="font-family:'DM Mono',monospace;font-size:12px;font-weight:600;color:var(--forest);">$${g.rate}</span>
-  </div>`).join(''):'<div class="es"><div class="es-icon">💰</div><div class="es-title">No paid gigs yet</div></div>';
 }
 
 // ── GIG TRACKER ──
@@ -6278,53 +6701,7 @@ function renderDeadlineAlerts(){
   el.innerHTML = html;
 }
 
-// ── DASHBOARD: MILESTONE TRACKER ──
-function renderMilestone(){
-  const bar = document.getElementById('d-milestone-bar');
-  if(!bar) return;
-  const delivered = D.gigs.filter(g=>g.status==='delivered'&&g.rateType==='paid');
-  const count = delivered.length;
-  if(count===0 && D.gigs.length===0){ bar.style.display='none'; return; }
-  bar.style.display='block';
-  const milestone = 5;
-  const progress = count % milestone;
-  const level = Math.floor(count / milestone);
-  const baseRate = 35;
-  const currentRate = baseRate + (level * 10);
-  const nextRate = currentRate + 10;
-  const remaining = milestone - progress;
 
-  document.getElementById('d-milestone-rate').textContent = 'Current: $'+currentRate+'/video';
-  document.getElementById('d-milestone-text').textContent =
-    count===0 ? 'Complete your first 5 paid gigs to raise your rate by $10'
-    : level>0 ? `${remaining} more gig${remaining!==1?'s':''} until $${nextRate}/video 🎯`
-    : `${count}/5 paid gigs done — ${remaining} more to raise to $${nextRate}`;
-
-  const dots = document.getElementById('d-milestone-dots');
-  if(dots){
-    let html='';
-    for(let i=0;i<milestone;i++){
-      const done = i<progress;
-      const isNext = i===progress;
-      html += `<div class="milestone-dot ${done?'done':isNext?'next':''}">${done?'✓':isNext?'→':''}</div>`;
-    }
-    if(level>0) html = `<span style="font-size:10px;color:var(--forest);font-family:'DM Mono',monospace;font-weight:600;">Level ${level} 🏆</span>&nbsp;`+html;
-    dots.innerHTML = html;
-  }
-
-  const cta = document.getElementById('d-milestone-cta');
-  if(cta){
-    if(progress===0 && count>0){
-      cta.textContent='🎉 Raise your rate now →';
-      cta.style.color='var(--forest)';
-    } else {
-      cta.textContent='Update rates →';
-      cta.style.color='';
-    }
-  }
-}
-
-// ── DASHBOARD: PITCHES THIS WEEK ──
 function renderPitchesThisWeek(){
   const el = document.getElementById('s-pitches-week');
   if(!el || typeof stData==='undefined') return;
@@ -6333,7 +6710,7 @@ function renderPitchesThisWeek(){
   const weekAgoStr = weekAgo.toISOString().slice(0,10);
   const count = (stData.brands||[]).filter(b=>b.datePitched && b.datePitched>=weekAgoStr).length;
   el.textContent = count;
-  el.style.color = count>=10 ? 'var(--forest)' : count>=5 ? 'var(--gold)' : 'var(--sky-deep)';
+  el.style.color = count>=5 ? 'var(--forest)' : count>=3 ? 'var(--gold)' : 'var(--sky-deep)';
 }
 
 // rDash extensions injected directly into rDash body above
@@ -6609,8 +6986,9 @@ window.renderBriefs=function(filter){
 };
 
 function renderBriefCard(b){
-  const moodHtml=b.moodImages&&b.moodImages.length
-    ?b.moodImages.slice(0,4).map(img=>`<img src="${img}" class="brief-mood-img" alt="">`).join('')
+  const _moodImgs=getBriefMoodImages(b);
+  const moodHtml=_moodImgs.length
+    ?_moodImgs.slice(0,4).map(img=>`<img src="${img}" class="brief-mood-img" alt="">`).join('')
     :'<div style="font-size:11px;color:var(--mid-gray);padding:8px 0;">No mood board images yet</div>';
   const shotsHtml=b.shots&&b.shots.length
     ?`<table class="brief-shot-table"><thead><tr><th>#</th><th>Shot</th><th>Direction</th><th>Type</th></tr></thead><tbody>${b.shots.map((s,i)=>`<tr><td style="font-family:'DM Mono',monospace;color:var(--warm-gray);">${i+1}</td><td>${esc(s.desc||'')}</td><td>${esc(s.notes||'')}</td><td>${esc(s.type||'')}</td></tr>`).join('')}</tbody></table>`
@@ -6638,7 +7016,7 @@ function renderBriefCard(b){
       ${b.hook?`<div class="brief-section"><div class="brief-section-lbl">Hook</div><div style="font-size:13px;font-style:italic;color:var(--ink);">"${esc(b.hook)}"</div></div>`:''}
       ${b.script?`<div class="brief-section"><div class="brief-section-lbl">Script</div><div class="brief-script-box">${esc(b.script)}</div></div>`:''}
       ${b.shots&&b.shots.length?`<div class="brief-section"><div class="brief-section-lbl">Shot List (${b.shots.length} shots)</div>${shotsHtml}</div>`:''}
-      ${b.moodImages&&b.moodImages.length?`<div class="brief-section"><div class="brief-section-lbl">Mood Board</div><div class="brief-mood-grid">${moodHtml}</div></div>`:''}
+      ${_moodImgs.length?`<div class="brief-section"><div class="brief-section-lbl">Mood Board</div><div class="brief-mood-grid">${moodHtml}</div></div>`:''}
       ${(b.location||b.lighting||b.camera)?`<div class="brief-section"><div class="brief-section-lbl">Production Notes</div><div style="font-size:12px;color:var(--warm-gray);line-height:1.7;">${b.location?'📍 '+esc(b.location)+'<br>':''}${b.lighting?'💡 '+esc(b.lighting)+'<br>':''}${b.camera?'📷 '+esc(b.camera):''}</div></div>`:''}
     </div>
     <div class="brief-status-bar">
@@ -6781,12 +7159,44 @@ window.deleteBrief=function(id){
   save();renderBriefs();toast('Brief deleted');
 };
 
+// ── Bridge: brief mood images ↔ moodboard canvas (FIX: these used to be two unconnected systems) ──
+// Returns every image that belongs to a brief — flat uploads plus any image items
+// placed on its linked canvas board — deduped, so neither view shows stale/missing images.
+function getBriefMoodImages(b){
+  const flat = b.moodImages||[];
+  const board = (typeof D!=='undefined' && D.moodboards && D.moodboards['brief_'+b.id]) ? D.moodboards['brief_'+b.id].items||[] : [];
+  const fromBoard = board.filter(i=>i.type==='image'&&i.src).map(i=>i.src);
+  return [...new Set([...flat, ...fromBoard])];
+}
+window.openBriefMoodboardCanvas=function(){
+  let id=document.getElementById('br-id').value;
+  if(!id){
+    // Brief hasn't been saved yet — save it first so the canvas has a stable id to attach to
+    window.saveBrief();
+    id=document.getElementById('br-id').value;
+    if(!id){ const b=getBriefs()[getBriefs().length-1]; if(b) id=b.id; }
+    if(!id){ toast('Add a title or brand name first'); return; }
+  }
+  const b=getBriefs().find(x=>x.id===id);
+  const name=(b&&(b.title||b.brand))||'Brief';
+  const key='brief_'+id;
+  // First time opening this brief's canvas: seed it from any images already uploaded
+  // in the Mood Board tab, so they aren't orphaned from the richer canvas view.
+  if(!D.moodboards[key] && _briefMoodImages && _briefMoodImages.length){
+    D.moodboards[key]={items:_briefMoodImages.map((src,i)=>({id:'mb'+Date.now()+'_'+i,type:'image',x:80+((i%3)*150),y:80+(Math.floor(i/3)*150),w:130,h:130,src})),drawing:''};
+    save();
+  }
+  closeModal('brief-modal');
+  openMB('brief',id,name);
+};
+
 // ── Print brief ──
 window.printBrief=function(id){
   const b=getBriefs().find(x=>x.id===id);
   if(!b)return;
-  const moodHtml=b.moodImages&&b.moodImages.length
-    ?`<div class="print-section-hdr">Mood Board</div><div class="print-mood-grid">${b.moodImages.slice(0,8).map(img=>`<img src="${img}" class="print-mood-img" alt="">`).join('')}</div>`:'';
+  const _printMoodImgs=getBriefMoodImages(b);
+  const moodHtml=_printMoodImgs.length
+    ?`<div class="print-section-hdr">Mood Board</div><div class="print-mood-grid">${_printMoodImgs.slice(0,8).map(img=>`<img src="${img}" class="print-mood-img" alt="">`).join('')}</div>`:'';
   const shotsHtml=b.shots&&b.shots.length
     ?`<div class="print-section-hdr">Shot List</div>
        <table class="print-shot-tbl"><thead><tr><th>#</th><th>Shot Description</th><th>Direction / Notes</th><th>Type</th></tr></thead>
@@ -7115,7 +7525,7 @@ function rConsistency(){
   // Pillar balance counters
   if(pillarsEl){
     // Map niche to pillar
-    const pillarMap={Hair:{label:'✂️ Hair',target:2,color:'rgba(90,143,106,.1)',text:'#3a6b40'},Lifestyle:{label:'🏡 Life',target:2,color:'rgba(122,155,181,.1)',text:'#3d6b8a'},Beauty:{label:'💄 Craft/Editorial',target:2,color:'rgba(196,113,79,.1)',text:'#9a4c28'}};
+    const pillarMap={Lifestyle:{label:'🏡 Life In Full View',target:2,color:'rgba(122,155,181,.1)',text:'#3d6b8a'},Hair:{label:'✂️ Hair',target:2,color:'rgba(74,107,80,.1)',text:'#3a6b40'},Beauty:{label:'🎬 UGC In the Open',target:2,color:'rgba(196,113,79,.1)',text:'#9a4c28'}};
     const weekIdeas=(window.D.ideas||[]).filter(i=>{
       if(!i.date)return false;
       const d=new Date(i.date);return d>=weekStart&&d<=now;
@@ -7376,15 +7786,17 @@ function addGigExpense(){
 // Patch rEarnings to show profit
 const _origREarnings=window.rEarnings||rEarnings;
 function rEarnings(){
-  const paid=D.gigs.filter(g=>g.rateType==='paid'&&g.status==='delivered').reduce((s,g)=>s+parseFloat(g.rate||0),0);
-  const pend=D.gigs.filter(g=>g.rateType==='paid'&&['paid','negotiating','waitingapproval'].includes(g.status)).reduce((s,g)=>s+parseFloat(g.rate||0),0);
+  // Cash actually received — 'paid' status only. 'delivered' means the work is done and
+  // invoiced, not that money has landed; those gigs belong in the Pending bucket below.
+  const paid=D.gigs.filter(g=>g.rateType==='paid'&&g.status==='paid').reduce((s,g)=>s+parseFloat(g.rate||0),0);
+  const pend=D.gigs.filter(g=>g.rateType==='paid'&&['delivered','negotiating','waitingapproval'].includes(g.status)).reduce((s,g)=>s+parseFloat(g.rate||0),0);
   const gifted=D.gigs.filter(g=>g.rateType==='gifted').length;
   const now=new Date();
   const mo=D.gigs.filter(g=>{const d=new Date(g.added||Date.now());return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();}).length;
-  const totalExpenses=D.gigs.filter(g=>g.rateType==='paid'&&g.status==='delivered').reduce((s,g)=>s+((g.expenses||[]).reduce((es,e)=>es+(parseFloat(e.amount)||0),0)),0);
+  const totalExpenses=D.gigs.filter(g=>g.rateType==='paid'&&g.status==='paid').reduce((s,g)=>s+((g.expenses||[]).reduce((es,e)=>es+(parseFloat(e.amount)||0),0)),0);
   const profit=paid-totalExpenses;
   setEl('earn-total','$'+paid.toFixed(2));
-  document.getElementById('earn-sub').textContent='from '+D.gigs.filter(g=>g.rateType==='paid'&&g.status==='delivered').length+' paid gigs · expenses: $'+totalExpenses.toFixed(2)+' · profit: $'+profit.toFixed(2);
+  document.getElementById('earn-sub').textContent='from '+D.gigs.filter(g=>g.rateType==='paid'&&g.status==='paid').length+' paid gigs · expenses: $'+totalExpenses.toFixed(2)+' · profit: $'+profit.toFixed(2)+(pend>0?' · $'+pend.toFixed(2)+' delivered/pending, not yet paid':'');
   setEl('ep-paid','$'+paid.toFixed(2));setEl('ep-pend','$'+pend.toFixed(2));setEl('ep-gift',gifted);setEl('ep-mo',mo);
   // Profit stat card
   let profitCard=document.getElementById('ep-profit-card');
@@ -7405,7 +7817,7 @@ function rEarnings(){
     return`<div style="display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid rgba(0,0,0,.04);">${g.img?`<img src="${g.img}" style="width:34px;height:34px;border-radius:7px;object-fit:cover;">`:''}
       <div style="flex:1;"><div style="font-size:13px;font-weight:500;">${g.brand}</div><div style="font-size:10px;color:var(--warm-gray);">${g.niche}${g.due?' · '+g.due:''}${exp>0?` · expenses: $${exp.toFixed(2)}`:''}${(g.usageRights&&g.usageRights!=='')?` · ${g.usageRights}`:''}</div></div>
       <span class="sp s-${g.status}">${sLabel(g.status)}</span>
-      <div style="text-align:right;"><div style="font-family:'DM Mono',monospace;font-size:12px;font-weight:600;color:var(--forest);">$${parseFloat(g.rate||0).toFixed(2)}</div>${exp>0?`<div style="font-size:9px;color:var(--forest);font-family:'DM Mono',monospace;">profit $${pr.toFixed(2)}</div>`:''}</div>
+      <div style="text-align:right;"><div style="font-family:'DM Mono',monospace;font-size:12px;font-weight:600;color:${g.status==='paid'?'var(--forest)':'var(--warm-gray)'};">$${parseFloat(g.rate||0).toFixed(2)}</div>${g.status!=='paid'?`<div style="font-size:9px;color:var(--gold);font-family:'DM Mono',monospace;">not yet paid</div>`:exp>0?`<div style="font-size:9px;color:var(--forest);font-family:'DM Mono',monospace;">profit $${pr.toFixed(2)}</div>`:''}</div>
     </div>`;
   }).join(''):'<div class="es"><div class="es-icon">💰</div><div class="es-title">No paid gigs yet</div></div>';
 }
@@ -7487,7 +7899,7 @@ function renderShelf(){
 }
 
 // ═══════════════════════════════════════════════════
-// FEATURE: MILESTONE RATE TRIGGER (prompt when 5 delivered)
+// FEATURE: MILESTONE RATE TRIGGER (prompt every 3 paid deliveries — matches the $75 floor / +$25-per-3-deals rule in the sidebar and Income Plan)
 // ═══════════════════════════════════════════════════
 function renderMilestone(){
   const bar=document.getElementById('d-milestone-bar');
@@ -7498,32 +7910,39 @@ function renderMilestone(){
   if(!bar||!dots)return;
   const delivered=D.gigs.filter(g=>g.status==='delivered'||g.status==='paid').length;
   const base=D.rates.find(r=>r.type&&r.type.toLowerCase().includes('video'));
-  const curRate=base?base.price:'$20';
-  const milestones=[5,10,15,20,30];
-  const nextMile=milestones.find(m=>delivered<m)||milestones[milestones.length-1];
-  const prevMile=milestones[milestones.indexOf(nextMile)-1]||0;
-  const progress=Math.min(delivered-prevMile,nextMile-prevMile);
-  const total=nextMile-prevMile;
+  const curRate=base?base.price:'$75';
+  const curRateNum=parseFloat(String(curRate).replace(/[^0-9.]/g,''))||75;
+  const milestoneSize=3;     // raise rate every 3 paid deliveries
+  const raiseAmount=25;      // by $25, per the blueprint floor rule
   bar.style.display='block';
+
+  const progress=delivered%milestoneSize;
+  const justHit=delivered>0&&progress===0;
+  const filled=justHit?milestoneSize:progress;
+  const remaining=justHit?milestoneSize:milestoneSize-progress;
+
   // Draw dots
   dots.innerHTML='';
-  for(let i=0;i<total;i++){
+  for(let i=0;i<milestoneSize;i++){
     const dot=document.createElement('div');
-    dot.className='milestone-dot'+(i<progress?' filled':'');
+    dot.className='milestone-dot'+(i<filled?' filled':'');
     dots.appendChild(dot);
   }
-  const reached=delivered>=nextMile||(delivered>0&&milestones.every(m=>delivered>=m));
-  if(reached||delivered>=nextMile){
-    text.innerHTML=`🎉 <strong>Milestone hit!</strong> You've delivered ${delivered} gigs — time to raise your rate!`;
-    if(cta){cta.textContent='→ Update Rates Now';cta.style.color='var(--forest)';cta.style.fontWeight='600';}
-    // Show a toast prompt if just hit
-    const hitKey='milestone_prompted_'+nextMile;
+
+  if(delivered===0){
+    text.innerHTML=`Complete your first ${milestoneSize} paid gigs to raise your rate by $${raiseAmount}`;
+    if(cta){cta.textContent='Update rates →';cta.style.color='';cta.style.fontWeight='';}
+  } else if(justHit){
+    const suggested=curRateNum+raiseAmount;
+    text.innerHTML=`🎉 <strong>Milestone hit!</strong> You've delivered ${delivered} paid gigs — raise your rate from ${curRate} to $${suggested}.`;
+    if(cta){cta.textContent='🎉 Raise your rate now →';cta.style.color='var(--forest)';cta.style.fontWeight='600';}
+    const hitKey='milestone_prompted_'+delivered;
     if(!sessionStorage.getItem(hitKey)){
       sessionStorage.setItem(hitKey,'1');
-      setTimeout(()=>toast('🎉 Milestone: '+nextMile+' gigs delivered! Go raise your rate →'),1000);
+      setTimeout(()=>toast('🎉 Milestone: '+delivered+' paid gigs delivered! Go raise your rate →'),1000);
     }
   } else {
-    text.innerHTML=`${nextMile-delivered} more gig${nextMile-delivered!==1?'s':''} to rate increase · ${delivered}/${nextMile} done`;
+    text.innerHTML=`${remaining} more gig${remaining!==1?'s':''} until your next rate increase (+$${raiseAmount}) · ${progress}/${milestoneSize} done`;
     if(cta){cta.textContent='Update rates →';cta.style.color='';cta.style.fontWeight='';}
   }
   if(rateEl)rateEl.textContent='Current rate: '+curRate;
@@ -7605,19 +8024,21 @@ const PILLAR_PALETTE_ORDER = ['terracotta','forest','sky','lavender','gold','ros
 
 // Default pillar types — match the original 4 built-in categories
 const DEFAULT_PILLARS = [
-  {id:'p1', name:'African Creator, Global Standards', icon:'🎬', color:'terracotta'},
-  {id:'p2', name:'Hair as Heritage & Craft', icon:'✂️', color:'forest'},
-  {id:'p3', name:'A Life Composed', icon:'🏡', color:'sky'},
-  {id:'p4', name:'Creative Layer — Editorial & Product', icon:'✦', color:'lavender'}
+  {id:'p1', name:'Life In Full View', icon:'🏡', color:'sky'},
+  {id:'p2', name:'Hair Done Once, Shown Right', icon:'✂️', color:'forest'},
+  {id:'p3', name:'UGC In the Open', icon:'🎬', color:'terracotta'}
 ];
 
-// The 144 ready-made ideas were authored against these literal pillar names.
-// Map them once to stable IDs so renaming/deleting a pillar never breaks matching.
+// Legacy name → stable ID mapping.
+// "African Creator, Global Standards" (UGC craft/process) → p3 (UGC In the Open)
+// "Hair as Heritage & Craft" → p2
+// "A Life Composed" (lifestyle/home/style/tech) → p1 (Life In Full View)
+// "Creative Layer — Editorial & Product" (product/editorial/fashion) → p1 (absorbed into Lifestyle; editorial work IS the lifestyle pillar at its highest expression)
 const _PILLAR_LEGACY_NAME_TO_ID = {
-  'African Creator, Global Standards':'p1',
+  'African Creator, Global Standards':'p3',
   'Hair as Heritage & Craft':'p2',
-  'A Life Composed':'p3',
-  'Creative Layer — Editorial & Product':'p4'
+  'A Life Composed':'p1',
+  'Creative Layer — Editorial & Product':'p1'
 };
 PILLAR_IDEAS.forEach(idea=>{ if(!idea.pillarId) idea.pillarId = _PILLAR_LEGACY_NAME_TO_ID[idea.pillar] || 'p1'; });
 
@@ -7996,17 +8417,28 @@ function switchGoalPeriod(p, btn){
   document.getElementById('goal-btn-quarter').className = 'btn btn-s ' + (p==='quarter'?'btn-p':'btn-g');
   rDashIncomePipeline();
 }
+function editIncomeGoal(){
+  const cur = D.incomeGoalMonth || 200;
+  const val = prompt('Set your monthly income goal ($):', cur);
+  if(val===null) return;
+  const num = parseFloat(val);
+  if(isNaN(num) || num<=0){ toast('Enter a valid number above 0'); return; }
+  D.incomeGoalMonth = Math.round(num);
+  save();
+  rDashIncomePipeline();
+  toast('Monthly goal set to $'+D.incomeGoalMonth+' ✓');
+}
 function rDashIncomePipeline(){
-  const now = new Date();
   const paidGigs = D.gigs.filter(g => g.rateType==='paid');
-  // Earned (delivered)
-  const earned = paidGigs.filter(g => ['delivered','paid'].includes(g.status)).reduce((s,g)=>s+parseFloat(g.rate||0),0);
-  // Confirmed (paid status = confirmed but not yet delivered)
-  const confirmed = paidGigs.filter(g => g.status==='paid').reduce((s,g)=>s+parseFloat(g.rate||0),0);
+  // Cash actually received — status 'paid' only. 'delivered' means the work is done and
+  // invoiced/awaiting payment, NOT that money has landed yet (see Earnings page note).
+  const earned = paidGigs.filter(g => g.status==='paid').reduce((s,g)=>s+parseFloat(g.rate||0),0);
+  // Delivered but not yet marked paid — invoiced, waiting on the brand
+  const deliveredUnpaid = paidGigs.filter(g => g.status==='delivered').reduce((s,g)=>s+parseFloat(g.rate||0),0);
   // Pending (negotiating / waitingapproval)
   const pipeline = paidGigs.filter(g => ['negotiating','waitingapproval'].includes(g.status)).reduce((s,g)=>s+parseFloat(g.rate||0),0);
 
-  const monthGoal = 200;
+  const monthGoal = D.incomeGoalMonth || 200;
   const quarterGoal = monthGoal * 3;
   const goal = _goalPeriod === 'month' ? monthGoal : quarterGoal;
   const pct = Math.min(100, (earned/goal)*100);
@@ -8028,10 +8460,10 @@ function rDashIncomePipeline(){
   const pb = document.getElementById('d-pipeline-breakdown');
   if(pb){
     const items = [
-      {label:'Earned', val:earned, color:'var(--forest)'},
-      {label:'Confirmed', val:confirmed, color:'var(--sky-deep)'},
+      {label:'Cash received', val:earned, color:'var(--forest)'},
+      {label:'Delivered, awaiting payment', val:deliveredUnpaid, color:'var(--sky-deep)'},
       {label:'In pipeline', val:pipeline, color:'var(--gold)'},
-      {label:'Total potential', val:earned+confirmed+pipeline, color:'var(--terracotta)'},
+      {label:'Total potential', val:earned+deliveredUnpaid+pipeline, color:'var(--terracotta)'},
     ];
     pb.innerHTML = items.map(i => `<div style="font-size:10px;color:${i.color};"><span style="font-family:'DM Mono',monospace;font-weight:600;">$${i.val.toFixed(0)}</span><span style="color:var(--mid-gray);font-size:9px;margin-left:3px;">${i.label}</span></div>`).join('');
   }
@@ -8551,8 +8983,99 @@ function renderPitchTracker(){
 }
 
 // ═══════════════════════════════════════════════════
-// REPURPOSE TRACKER
+// FIX: Bidirectional sync between Brand Targets and Pitch Tracker
+// (previously two separate, un-synced records of the same event —
+// a pitch logged in one never appeared in the other, so reply-rate
+// math in Pitch Tracker was tracking a different, smaller dataset
+// than the brands actually pitched in Brand Targets)
 // ═══════════════════════════════════════════════════
+(function(){
+  function syncBrandFromPitchReply(ps){
+    if(!ps || !ps.linkedBrandId || typeof stData==='undefined' || !stData || !stData.brands) return;
+    const bt = stData.brands.find(x=>x.id===ps.linkedBrandId);
+    if(!bt) return;
+    if(ps.replied==='yes-positive' && ['researching','pitched','followed-up'].includes(bt.status)){
+      bt.status='replied';
+    } else if(ps.replied==='yes-negative'){
+      bt.status='declined';
+    }
+    if(stData.brandTargets){
+      const btIdx = stData.brandTargets.findIndex(x=>x.id===bt.id);
+      if(btIdx>-1) stData.brandTargets[btIdx].status = bt.status;
+    }
+    stSave();
+    if(typeof stRenderBrands==='function') stRenderBrands();
+  }
+
+  // Brand Targets → Pitch Tracker: saving a pitch date auto-creates/updates a pitch log entry
+  const _origSaveBT = window.saveBT;
+  window.saveBT = function(){
+    const editId = v('bt-edit-id');
+    _origSaveBT();
+    if(typeof stData==='undefined' || !stData || !stData.brands) return;
+    ensureNewArrays();
+    const bt = editId
+      ? stData.brands.find(x=>x.id===editId)
+      : stData.brands[stData.brands.length-1];
+    if(!bt) return;
+    if(bt.datePitched){
+      if(bt.status==='researching') bt.status='pitched';
+      let ps = bt.linkedPitchSendId ? D.pitchSends.find(x=>x.id===bt.linkedPitchSendId) : null;
+      if(!ps) ps = D.pitchSends.find(x=>!x.linkedBrandId && x.brand && x.brand.toLowerCase()===bt.name.toLowerCase());
+      if(ps){
+        ps.brand = bt.name; ps.date = bt.datePitched; ps.linkedBrandId = bt.id;
+        bt.linkedPitchSendId = ps.id;
+      } else {
+        ps = {id:'ps_auto_'+bt.id, brand:bt.name, date:bt.datePitched, templateId:'',
+          platform:bt.platform||'Email', niche:'Beauty & Skincare', replied:'no',
+          notes:'Auto-logged from Brand Targets', linkedBrandId:bt.id, added:Date.now()};
+        D.pitchSends.push(ps);
+        bt.linkedPitchSendId = ps.id;
+      }
+      if(stData.brandTargets){
+        const btIdx = stData.brandTargets.findIndex(x=>x.id===bt.id);
+        if(btIdx>-1){ stData.brandTargets[btIdx].linkedPitchSendId = bt.linkedPitchSendId; stData.brandTargets[btIdx].status = bt.status; }
+      }
+      stSave(); save();
+      if(typeof renderPitchTracker==='function') renderPitchTracker();
+    }
+  };
+
+  // Pitch Tracker → Brand Targets: logging a reply updates the linked brand's status
+  const _origUpdatePitchSendReply = window.updatePitchSendReply;
+  window.updatePitchSendReply = function(id, val){
+    _origUpdatePitchSendReply(id, val);
+    syncBrandFromPitchReply(D.pitchSends.find(x=>x.id===id));
+  };
+
+  // A pitch logged directly in Pitch Tracker (not via Brand Targets) auto-links to a
+  // matching brand by name, so the two pages stay describing the same outreach
+  const _origSavePitchSend = window.savePitchSend;
+  window.savePitchSend = function(){
+    const editId = v('ps-id');
+    _origSavePitchSend();
+    if(editId) return; // only auto-link brand-new manual entries, not edits
+    const ps = D.pitchSends[D.pitchSends.length-1];
+    if(!ps || ps.linkedBrandId || typeof stData==='undefined' || !stData) return;
+    ensureNewArrays();
+    if(!stData.brands) stData.brands=[];
+    const bt = stData.brands.find(x=>x.name && x.name.toLowerCase()===ps.brand.toLowerCase());
+    if(bt){
+      ps.linkedBrandId = bt.id;
+      if(!bt.linkedPitchSendId) bt.linkedPitchSendId = ps.id;
+      if(!bt.datePitched) bt.datePitched = ps.date;
+      if(bt.status==='researching') bt.status='pitched';
+      syncBrandFromPitchReply(ps);
+      stSave();
+      if(typeof stRenderBrands==='function') stRenderBrands();
+    }
+    save();
+  };
+})();
+
+// ═══════════════════════════════════════════════
+// REPURPOSE TRACKER
+// ═══════════════════════════════════════════════
 function scanRepurpose(){
   ensureNewArrays();
   renderRepurpose();
@@ -8602,7 +9125,150 @@ function renderRepurpose(){
   </div>`).join('') : '');
 }
 
-// Hook page renders into goTo
+// ═══════════════════════════════════════════════════
+// FEATURE: SHOW-UP TRACKER
+// Set a start date, tick every day you show up, log what you
+// actually did and what you're planning for that day, then look
+// back and count the days.
+// ═══════════════════════════════════════════════════
+function ensureShowUp(){
+  if(!D.showUp) D.showUp = {startDate:'', days:{}};
+  if(!D.showUp.days) D.showUp.days = {};
+}
+function todayStr(){ return new Date().toISOString().slice(0,10); }
+function fmtDateLong(d){
+  return new Date(d+'T00:00:00').toLocaleDateString('en',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
+}
+function dateRangeArray(start,end){
+  const arr=[]; let d=new Date(start+'T00:00:00'); const endD=new Date(end+'T00:00:00');
+  if(d>endD) return [start]; // start date in the future relative to today — just show that one day
+  while(d<=endD){ arr.push(d.toISOString().slice(0,10)); d.setDate(d.getDate()+1); }
+  return arr;
+}
+function confirmShowUpStartDate(){
+  ensureShowUp();
+  const val = v('su-start-input') || todayStr();
+  D.showUp.startDate = val;
+  save();
+  renderShowUp();
+  toast("Start date set — let's go 🔥");
+}
+function changeShowUpStartDate(){
+  ensureShowUp();
+  const cur = D.showUp.startDate || todayStr();
+  const val = prompt('Change your start date (YYYY-MM-DD):', cur);
+  if(val===null) return;
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(val)){ toast('Use the format YYYY-MM-DD'); return; }
+  D.showUp.startDate = val;
+  save();
+  renderShowUp();
+  toast('Start date updated ✓');
+}
+function toggleShowUpDay(d){
+  ensureShowUp();
+  if(!D.showUp.days[d]) D.showUp.days[d]={done:false,did:'',plan:''};
+  D.showUp.days[d].done = !D.showUp.days[d].done;
+  save();
+  renderShowUp();
+}
+function updateShowUpField(d,field,val){
+  ensureShowUp();
+  if(!D.showUp.days[d]) D.showUp.days[d]={done:false,did:'',plan:''};
+  D.showUp.days[d][field]=val;
+  save();
+  renderShowUpStatsOnly(); // avoid full re-render while typing so focus isn't lost
+}
+function computeShowUpStats(){
+  ensureShowUp();
+  if(!D.showUp.startDate) return null;
+  const today=todayStr();
+  const start = D.showUp.startDate <= today ? D.showUp.startDate : today;
+  const range=dateRangeArray(start,today);
+  const totalDays=range.length;
+  const shownDays=range.filter(d=>D.showUp.days[d]&&D.showUp.days[d].done).length;
+  let streak=0;
+  for(let i=range.length-1;i>=0;i--){
+    if(D.showUp.days[range[i]]&&D.showUp.days[range[i]].done) streak++; else break;
+  }
+  let longest=0,cur=0;
+  range.forEach(d=>{
+    if(D.showUp.days[d]&&D.showUp.days[d].done){cur++;longest=Math.max(longest,cur);} else cur=0;
+  });
+  const rate = totalDays>0 ? Math.round((shownDays/totalDays)*100) : 0;
+  return {totalDays,shownDays,streak,longest,rate,range};
+}
+function renderShowUpStatsOnly(){
+  const stats=computeShowUpStats();
+  if(!stats) return;
+  setEl('su-total-days',stats.totalDays);
+  setEl('su-shown-days',stats.shownDays);
+  setEl('su-streak',stats.streak+(stats.streak>0?' 🔥':''));
+  setEl('su-longest',stats.longest);
+  setEl('su-rate',stats.rate+'%');
+  const enc=document.getElementById('su-encourage');
+  if(enc){
+    if(stats.streak>=7) enc.textContent='🔥 '+stats.streak+'-day streak. This is becoming who you are.';
+    else if(stats.streak>=3) enc.textContent='🔥 '+stats.streak+' days in a row — momentum is building.';
+    else if(stats.shownDays===0) enc.textContent='Tick today\'s box once you\'ve shown up — day one starts now.';
+    else enc.textContent="You've shown up "+stats.shownDays+' of '+stats.totalDays+' days so far. Keep stacking them.';
+  }
+}
+function renderShowUpRow(d){
+  const rec=D.showUp.days[d]||{done:false,did:'',plan:''};
+  const dow=new Date(d+'T00:00:00').toLocaleDateString('en',{weekday:'short'});
+  const niceDate=new Date(d+'T00:00:00').toLocaleDateString('en',{month:'short',day:'numeric'});
+  return `<div style="background:#fff;border-radius:var(--r);border:1px solid rgba(0,0,0,.06);padding:11px 15px;margin-bottom:8px;">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+      <button onclick="toggleShowUpDay('${d}')" title="Mark as shown up" style="width:26px;height:26px;border-radius:50%;border:2px solid ${rec.done?'var(--forest)':'rgba(0,0,0,.15)'};background:${rec.done?'var(--forest)':'transparent'};color:#fff;font-size:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;padding:0;">${rec.done?'✓':''}</button>
+      <div style="flex:1;font-weight:500;font-size:13px;">${dow} · ${niceDate}</div>
+      ${rec.done?'<span class="sp s-paid" style="font-size:9px;">Showed up</span>':'<span style="font-size:9px;color:var(--mid-gray);font-family:\'DM Mono\',monospace;">not ticked</span>'}
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+      <div>
+        <div style="font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--warm-gray);margin-bottom:3px;">What I did</div>
+        <textarea class="ft" rows="2" placeholder="—" oninput="updateShowUpField('${d}','did',this.value)" style="font-size:12px;">${esc(rec.did||'')}</textarea>
+      </div>
+      <div>
+        <div style="font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--warm-gray);margin-bottom:3px;">What I planned</div>
+        <textarea class="ft" rows="2" placeholder="—" oninput="updateShowUpField('${d}','plan',this.value)" style="font-size:12px;">${esc(rec.plan||'')}</textarea>
+      </div>
+    </div>
+  </div>`;
+}
+function renderShowUp(){
+  ensureShowUp();
+  const startWrap=document.getElementById('su-start-wrap');
+  const mainWrap=document.getElementById('su-main-wrap');
+  if(!startWrap||!mainWrap) return;
+  if(!D.showUp.startDate){
+    startWrap.style.display='';
+    mainWrap.style.display='none';
+    const inp=document.getElementById('su-start-input');
+    if(inp&&!inp.value) inp.value=todayStr();
+    return;
+  }
+  startWrap.style.display='none';
+  mainWrap.style.display='';
+  setEl('su-start-date-display', fmtDateLong(D.showUp.startDate));
+  renderShowUpStatsOnly();
+  const today=todayStr();
+  const todayRec=D.showUp.days[today]||{done:false,did:'',plan:''};
+  setEl('su-today-date', fmtDateLong(today).split(',')[0]);
+  const chk=document.getElementById('su-today-check');
+  if(chk) chk.checked=!!todayRec.done;
+  setV('su-today-did', todayRec.did||'');
+  setV('su-today-plan', todayRec.plan||'');
+  const stats=computeShowUpStats();
+  const list=document.getElementById('su-list');
+  if(list && stats){
+    const histDays=[...stats.range].reverse().filter(d=>d!==today);
+    list.innerHTML = histDays.length
+      ? histDays.map(d=>renderShowUpRow(d)).join('')
+      : '<div class="es"><div class="es-icon">🔥</div><div class="es-title">Today is day one</div><div class="es-sub">Tick the box above once you\'ve shown up — your history builds from here.</div></div>';
+  }
+}
+
+
 const _origGoTo = window.goTo;
 window.goTo = function(pg, el){
   if(typeof _origGoTo === 'function') _origGoTo(pg, el);
@@ -8613,6 +9279,7 @@ window.goTo = function(pg, el){
   if(pg==='rate-negotiations') renderNegotiations();
   if(pg==='pitch-tracker'){ renderPitchTracker(); populatePitchTemplateDD(); }
   if(pg==='repurpose') renderRepurpose();
+  if(pg==='showup') renderShowUp();
 };
 
 // Also ensure LIGHT_KEYS includes new arrays
